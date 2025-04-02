@@ -1,3 +1,19 @@
+<?php
+
+// Start the session and set session configurations before any HTML output
+// if (session_status() === PHP_SESSION_NONE) {
+// session_start();
+// }
+ini_set('session.cookie_domain', '.sabooksonline.co.za');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Include database connection and other files after the session start
+include 'includes/database_connections/sabooks.php';
+// include 'analytics/track_user.php';
+?>
+
+
 <style>
     /* Style for the floating buttons */
     .download-button {
@@ -38,18 +54,19 @@
   </style>
 
 
-<?php  ini_set('session.cookie_domain', '.sabooksonline.co.za');
-session_start();
+<!-- <?php  
+// ini_set('session.cookie_domain', '.sabooksonline.co.za');
+// session_start();
 
-include 'includes/database_connections/sabooks.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// include 'includes/database_connections/sabooks.php';
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
-//TRACK USER VIA IP AND STORE
-include 'analytics/track_user.php';
+// //TRACK USER VIA IP AND STORE
+// include 'analytics/track_user.php';
 
 
-?>
+?> -->
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>

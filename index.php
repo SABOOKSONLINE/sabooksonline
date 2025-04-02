@@ -96,6 +96,20 @@
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
+/* General style for the strip card */
+.strip {
+    opacity: 0; /* Initially hidden */
+    transform: translateX(-100px); /* Start off-screen */
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+/* Animation for each strip to come into view */
+.strip.visible {
+    opacity: 1; /* Make item visible */
+    transform: translateX(0); /* Move to original position */
+}
+
+
 
 	
 		
@@ -219,13 +233,11 @@
                         echo '<div class="item">
                                 <div class="strip">
                                     <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                    <span class="ribbon off">' . $row['CATEGORY'] . '</span>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0','20')) . '</a>
-                                        <p class="mt-1"><a href="book?q=' . strtolower($row['CONTENTID']) . '">' . substr($row['TITLE'], 0, 20) . '</a></p>
                                     </div>
                                 </div>
                             </div>';
@@ -244,9 +256,9 @@
         </div>
         <!-- /bg_gray -->
 
-        <div class="container mb-3"> 
+        <!-- <div class="container mb-3"> 
             <a href="https://ourapp.is/SA-Books-Online"><img src="img/banners/banner-download-mobile-app-new.jpg" width="100%" style="border-radius: 5px;"></a> 
-        </div>
+        </div> -->
 
         <div class="bg_gray container" id="books" style="border-radius: 20px" >
             <div class="container margin_60">
@@ -278,13 +290,11 @@
                         echo '<div class="item">
                                 <div class="strip">
                                     <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                    <span class="ribbon off">' . $row['CATEGORY'] . '</span>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0','20')) . '</a>
-                                        <p class="mt-1"><a href="book?q=' . strtolower($row['CONTENTID']) . '">' . substr($row['TITLE'], 0, 20) . '</a></p>
                                     </div>
                                 </div>
                             </div>';
@@ -343,13 +353,11 @@
                         echo '<div class="item">
                                 <div class="strip">
                                     <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                    <span class="ribbon off">' . $row['CATEGORY'] . '</span>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0','20')) . '</a>
-                                        <p class="mt-1"><a href="book?q=' . strtolower($row['CONTENTID']) . '">' . substr($row['TITLE'], 0, 20) . '</a></p>
                                     </div>
                                 </div>
                             </div>';
@@ -399,13 +407,11 @@
                         echo '<div class="item">
                                 <div class="strip">
                                     <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                    <span class="ribbon off">' . $row['CATEGORY'] . '</span>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
                                         <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0','20')) . '</a>
-                                        <p class="mt-1"><a href="book?q=' . strtolower($row['CONTENTID']) . '">' . substr($row['TITLE'], 0, 20) . '</a></p>
                                     </div>
                                 </div>
                             </div>';
@@ -445,6 +451,24 @@
 <script src="js/vegas.min.js"></script>
 <script src="js/specific_listing.js"></script>
 
+
+
+
+<script>
+
+   document.addEventListener('DOMContentLoaded', function () {
+    const strips = document.querySelectorAll('.strip'); // Select all .strip elements
+
+    strips.forEach((strip, index) => {
+        setTimeout(() => {
+            strip.classList.add('visible'); // Add 'visible' class with delay
+        }, index * 1000); // Each item appears 3 seconds apart
+    });
+});
+
+
+
+</script>
 <script>
     $(document).ready(function() {
          $('.owl-carousel').owlCarousel({
