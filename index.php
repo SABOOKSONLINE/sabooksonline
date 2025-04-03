@@ -169,8 +169,7 @@
                 $sql = "SELECT * FROM banners WHERE TYPE = 'Home' ORDER BY ID DESC LIMIT 1;";
                 //$sql = "SELECT * FROM posts WHERE TYPE = '$name' AND CATEGORY LIKE '%$name%' OR DESCRIPTION LIKE '%$name%' ORDER BY ID DESC;";
                 $result = mysqli_query($conn, $sql);
-                if (mysqli_num_rows($result) == false) {
-                } else {
+                if (mysqli_num_rows($result)) {
                     while ($row = mysqli_fetch_assoc($result)) {
 
                         echo '<div class="carousel-item active">
@@ -188,8 +187,6 @@
                 $counter = 0; // Initialize a counter to track results
 
                 if (mysqli_num_rows($result) == false) {
-                    // No results to display
-                } else {
                     while ($row = mysqli_fetch_assoc($result)) {
                         if ($counter > 0) { // Skip the first result
                             echo '<div class="carousel-item">
