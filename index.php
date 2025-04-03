@@ -232,7 +232,7 @@
 
                         echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -289,7 +289,7 @@
 
                         echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -352,7 +352,7 @@
 
                         echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -406,7 +406,7 @@
 
                         echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -462,7 +462,7 @@
     strips.forEach((strip, index) => {
         setTimeout(() => {
             strip.classList.add('visible'); // Add 'visible' class with delay
-        }, index * 1000); // Each item appears 3 seconds apart
+        }, index * 500); // Each item appears 3 seconds apart
     });
 });
 
