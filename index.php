@@ -211,7 +211,7 @@
             </button>
         </div>
 
-        <div class="py-3 page_header d-none" style="border-radius: 0 0px 30px 30px;">
+        <div class="py-3 page_header d-none bg--black" style="border-radius: 0 0px 30px 30px;">
             <div class="container col-12">
                 <!--<h2 class="title_small">Top Categories</h2>-->
                 <div class="owl-carousel owl-theme categories_carousel">
@@ -268,7 +268,7 @@
 
                             echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -325,7 +325,7 @@
 
                             echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -388,7 +388,7 @@
 
                             echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
@@ -442,7 +442,7 @@
 
                             echo '<div class="item">
                                 <div class="strip">
-                                    <a href="book?q=' . strtolower($row['CONTENTID']) . '"><figure>
+                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
                                         <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
                                     </figure></a>
                                     <div class="bottom-text">
