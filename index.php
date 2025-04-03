@@ -491,39 +491,42 @@
         document.addEventListener('DOMContentLoaded', function() {
             const strips = document.querySelectorAll('.strip'); // Select all .strip elements
 
-            strips.forEach((strip, index) => {
-                setTimeout(() => {
-                    strip.classList.add('visible'); // Add 'visible' class with delay
-                }, index * 1000); // Each item appears 3 seconds apart
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.owl-carousel').owlCarousel({
-                loop: true,
-                margin: 10,
-                autoPlay: true,
-                nav: true,
-                rewindNav: false,
-                responsive: {
-                    0: {
-                        items: 1,
-                        loop: true
-                    },
-                    600: {
-                        items: 3,
-                        loop: true
+    strips.forEach((strip, index) => {
+        setTimeout(() => {
+            strip.classList.add('visible'); // Add 'visible' class with delay
+        }, index * 500); // Each item appears 3 seconds apart
+    });
+});
 
-                    },
-                    1000: {
-                        items: 4,
-                        loop: true
-                    }
-                }
-            })
-        });
-    </script>
+
+
+</script>
+<script>
+    $(document).ready(function() {
+         $('.owl-carousel').owlCarousel({
+loop:true,
+margin:10,
+autoPlay:true,
+nav:true,
+rewindNav:false,
+responsive:{
+    0:{
+        items:1,
+        loop: true
+    },
+    600:{
+        items:3,
+        loop: true
+        
+    },
+    1000:{
+        items:4,
+        loop: true
+    }
+}
+  })
+    });
+</script>
     <script>
         $(document).ready(function() {
 
