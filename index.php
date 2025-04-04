@@ -222,7 +222,7 @@
                         while ($row = mysqli_fetch_assoc($result)) {
 
                             $contentid = $row['CATEGORY'];
-                            echo '<a href="library?k=' . $row['CATEGORY'] . '" class="badge bg-white text-dark p-3 m-0 w-100 cat-switch ';
+                            echo '<a href="library.php?k=' . $row['CATEGORY'] . '" class="badge bg-white text-dark p-3 m-0 w-100 cat-switch ';
                             $rows_query = mysqli_query($conn, "SELECT COUNT(*) as number_rows FROM posts WHERE CATEGORY = '$contentid' AND STATUS = 'active' ORDER BY number_rows DESC;");
                             $rows =                                                                             mysqli_fetch_assoc($rows_query);
                             echo $rows["number_rows"];
