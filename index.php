@@ -208,7 +208,7 @@
             </button>
         </div>
 
-        <div class="py-3 page_header d-none bg--black" style="border-radius: 0 0px 30px 30px;">
+        <div class="py-3 page_header d-none" style="border-radius: 0 0px 30px 30px;">
             <div class="container col-12">
                 <!--<h2 class="title_small">Top Categories</h2>-->
                 <div class="owl-carousel owl-theme categories_carousel">
@@ -246,42 +246,13 @@
                 <div class="owl-carousel owl-theme" id="choice">
 
                     <?php
-                    // Assuming you have a valid database connection in 'includes/database_connections/sabooks.php'
-                    include 'includes/database_connections/sabooks.php';
+                    include_once 'includes/database_connections/sabooks.php';
+                    include_once 'database/models/Book.php';
 
-                    // Create an SQL query to select books based on CONTENTID and CATEGORY
-                    $sql = "SELECT p.* FROM posts AS p
-                        JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                        WHERE l.CATEGORY = 'Editors Choice' AND p.STATUS = 'active'
-                        ORDER BY RAND() LIMIT 20 ;";
-
-                    $result = mysqli_query($conn, $sql);
-
-                    if (mysqli_num_rows($result) == 0) {
-                        // No results to display
-                    } else {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $username = ucwords(substr($row['PUBLISHER'], 0, 20));
-
-                            echo '<div class="item">
-                                <div class="strip">
-                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                        <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                                    </figure></a>
-                                    <div class="bottom-text">
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0', '20')) . '</a>
-                                    </div>
-                                </div>
-                            </div>';
-                        }
-                    }
-
-                    // Close the database connection
-                    mysqli_close($conn);
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Editors Choice", 20);
+                    $book->renderBooks($books);
                     ?>
-
-
 
                 </div>
                 <!-- /carousel -->
@@ -302,42 +273,15 @@
                     <a href="library">View All Books &rarr;</a>
                 </div>
                 <div class="owl-carousel owl-theme">
+
                     <?php
-                    // Assuming you have a valid database connection in 'includes/database_connections/sabooks.php'
-                    include 'includes/database_connections/sabooks.php';
+                    include_once 'includes/database_connections/sabooks.php';
+                    include_once 'database/models/Book.php';
 
-                    // Create an SQL query to select books based on CONTENTID and CATEGORY
-                    $sql = "SELECT p.* FROM posts AS p
-                        JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                        WHERE l.CATEGORY = 'Latest Collections' AND p.STATUS = 'active'
-                        ORDER BY RAND() LIMIT 20;";
-
-                    $result = mysqli_query($conn, $sql);
-
-                    if (mysqli_num_rows($result) == 0) {
-                        // No results to display
-                    } else {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $username = ucwords(substr($row['PUBLISHER'], 0, 20));
-
-                            echo '<div class="item">
-                                <div class="strip">
-                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                        <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                                    </figure></a>
-                                    <div class="bottom-text">
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0', '20')) . '</a>
-                                    </div>
-                                </div>
-                            </div>';
-                        }
-                    }
-
-                    // Close the database connection
-                    mysqli_close($conn);
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Latest Collections", 20);
+                    $book->renderBooks($books);
                     ?>
-
 
                 </div>
                 <!-- /carousel -->
@@ -366,41 +310,13 @@
                 <div class="owl-carousel owl-theme">
 
                     <?php
-                    // Assuming you have a valid database connection in 'includes/database_connections/sabooks.php'
-                    include 'includes/database_connections/sabooks.php';
+                    include_once 'includes/database_connections/sabooks.php';
+                    include_once 'database/models/Book.php';
 
-                    // Create an SQL query to select books based on CONTENTID and CATEGORY
-                    $sql = "SELECT p.* FROM posts AS p
-                        JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                        WHERE l.CATEGORY = 'Fiction Collections' AND p.STATUS = 'active'
-                        ORDER BY RAND() LIMIT 20;";
-
-                    $result = mysqli_query($conn, $sql);
-
-                    if (mysqli_num_rows($result) == 0) {
-                        // No results to display
-                    } else {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $username = ucwords(substr($row['PUBLISHER'], 0, 20));
-
-                            echo '<div class="item">
-                                <div class="strip">
-                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                        <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                                    </figure></a>
-                                    <div class="bottom-text">
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0', '20')) . '</a>
-                                    </div>
-                                </div>
-                            </div>';
-                        }
-                    }
-
-                    // Close the database connection
-                    mysqli_close($conn);
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Fiction Collections", 20);
+                    $book->renderBooks($books);
                     ?>
-
 
                 </div>
                 <!-- /carousel -->
@@ -420,48 +336,13 @@
                 <div class="owl-carousel owl-theme">
 
                     <?php
-                    // Assuming you have a valid database connection in 'includes/database_connections/sabooks.php'
-                    include 'includes/database_connections/sabooks.php';
+                    include_once 'includes/database_connections/sabooks.php';
+                    include_once 'database/models/Book.php';
 
-                    // Create an SQL query to select books based on CONTENTID and CATEGORY
-                    $sql = "SELECT p.* FROM posts AS p
-                        JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                        WHERE l.CATEGORY = 'Childrens Collection' AND p.STATUS = 'active'
-                        ORDER BY RAND() LIMIT 20;";
-
-                    $result = mysqli_query($conn, $sql);
-
-                    if (mysqli_num_rows($result) == 0) {
-                        // No results to display
-                    } else {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $username = ucwords(substr($row['PUBLISHER'], 0, 20));
-
-                            echo '<div class="item">
-                                <div class="strip">
-                                    <a href="book.php?q=' . strtolower($row['CONTENTID']) . '"><figure>
-                                        <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $row['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                                    </figure></a>
-                                    <div class="bottom-text">
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords($row['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                                        <a href="creator?q=' . strtolower($row['USERID']) . '" class="text-dark">' . ucwords(substr($row['AUTHORS'], '0', '20')) . '</a>
-                                    </div>
-                                </div>
-                            </div>';
-                        }
-                    }
-
-                    // Close the database connection
-                    mysqli_close($conn);
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Childrens Collection", 20);
+                    $book->renderBooks($books);
                     ?>
-
-
-
-
-
-
-
-
 
                 </div>
                 <!-- /carousel -->
@@ -491,42 +372,39 @@
         document.addEventListener('DOMContentLoaded', function() {
             const strips = document.querySelectorAll('.strip'); // Select all .strip elements
 
-    strips.forEach((strip, index) => {
-        setTimeout(() => {
-            strip.classList.add('visible'); // Add 'visible' class with delay
-        }, index * 500); // Each item appears 3 seconds apart
-    });
-});
+            strips.forEach((strip, index) => {
+                setTimeout(() => {
+                    strip.classList.add('visible'); // Add 'visible' class with delay
+                }, index * 500); // Each item appears 3 seconds apart
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.owl-carousel').owlCarousel({
+                loop: true,
+                margin: 10,
+                autoPlay: true,
+                nav: true,
+                rewindNav: false,
+                responsive: {
+                    0: {
+                        items: 1,
+                        loop: true
+                    },
+                    600: {
+                        items: 3,
+                        loop: true
 
-
-
-</script>
-<script>
-    $(document).ready(function() {
-         $('.owl-carousel').owlCarousel({
-loop:true,
-margin:10,
-autoPlay:true,
-nav:true,
-rewindNav:false,
-responsive:{
-    0:{
-        items:1,
-        loop: true
-    },
-    600:{
-        items:3,
-        loop: true
-        
-    },
-    1000:{
-        items:4,
-        loop: true
-    }
-}
-  })
-    });
-</script>
+                    },
+                    1000: {
+                        items: 4,
+                        loop: true
+                    }
+                }
+            })
+        });
+    </script>
     <script>
         $(document).ready(function() {
 
