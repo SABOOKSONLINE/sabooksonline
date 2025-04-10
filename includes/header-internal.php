@@ -1,9 +1,9 @@
 <?php
 
 // Start the session and set session configurations before any HTML output
-// if (session_status() === PHP_SESSION_NONE) {
-// session_start();
-// }
+if (session_status() === PHP_SESSION_NONE) {
+session_start();
+}
 ini_set('session.cookie_domain', '.sabooksonline.co.za');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -106,16 +106,16 @@ include 'includes/database_connections/sabooks.php';
         <?php   
                 
                 if(!isset($_SESSION['ADMIN_ID']) || !isset($_SESSION['ADMIN_PROFILE_IMAGE'])){
-                    echo ' <a href="https://sabooksonline.co.za/pricing-plans" target="_parent" class="register-header">Register</a>
+                    echo ' <a href="https://11-july-2023.sabooksonline.co.za/pricing-plans" target="_parent" class="register-header">Register</a>
         
-                    <a href="https://sabooksonline.co.za/dashboard" class="btn_1">Login <small class="icon_lock_alt"></small></a>';
+                    <a href="https://11-july-2023.sabooksonline.co.za/dashboard" class="btn_1">Login <small class="icon_lock_alt"></small></a>';
                 }else {
 
                     $color = 'red';
 
                     echo ' <a href="includes/logout" target="_parent" class="d- d-xl-block pr-1" style="font-size: .7rem !important;transform:translateX(-.5rem)">logout</a>
         
-                    <a href="https://sabooksonline.co.za/dashboard/" class="btn_1 btn-sm">Dashboard <small class="icon_lock_alt"></small></a>';
+                    <a href="https://11-july-2023.sabooksonline.co.za/dashboard/" class="btn_1 btn-sm">Dashboard <small class="icon_lock_alt"></small></a>';
                 }
                 
                 ?>
@@ -170,9 +170,9 @@ include 'includes/database_connections/sabooks.php';
                 <?php   
                  
                 if(!isset($_SESSION['ADMIN_ID']) || !isset($_SESSION['ADMIN_PROFILE_IMAGE'])){
-                    echo ' <a href="https://sabooksonline.co.za/pricing-plans" target="_parent" class="register-header">Register</a>
+                    echo ' <a href="https://11-july-2023.sabooksonline.co.za/pricing-plans" target="_parent" class="register-header">Register</a>
         
-                    <a href="https://sabooksonline.co.za/dashboard" class="btn_1">Login <small class="icon_lock_alt"></small></a>';
+                    <a href="https://11-july-2023.sabooksonline.co.za/dashboard" class="btn_1">Login <small class="icon_lock_alt"></small></a>';
                 }else {
 
                     $color = 'red';
