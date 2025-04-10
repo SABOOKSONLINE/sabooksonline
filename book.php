@@ -256,7 +256,7 @@ header input {
 	                </div>
 	                <!-- /detail_page_head -->
 	                <hr>
-					<h4>Book Description</h4>
+					<h4>book Synopsis</h4>
 					<br>
 	                <p><?php 
 						
@@ -325,6 +325,8 @@ header input {
 						</div>
 	    <!-- /secondary_nav -->
 
+
+		//to be reviewed shows no use - will be deleted - MK
         <div class="bg_gray">
 	        <div class="container margin_detail">
 	            <div class="row">
@@ -514,7 +516,7 @@ header input {
 		    <div class="row justify-content-center">
 		        <div class="col-lg-12">
 		            <form class="box_general write_review" id="membership">
-		                <h1 class="add_bottom_15">Write a review for "<?php echo $name;?>"</h1>
+		                <h1 class="add_bottom_15">Write a review for "<?php echo $author;?>"</h1>
 		                <label class="d-block add_bottom_15 d-none">Overall rating</label>
 		                <div class="row">
 		                    <div class="col-lg-12 add_bottom_25">
@@ -574,7 +576,6 @@ header input {
                                             echo ' <div class="item">
                                             <div class="strip">
                                                 <a href="book?q='.strtolower($row['CONTENTID']).'"><figure>
-                                                <span class="ribbon off">'.$row['CATEGORY'].'</span>
                                                     <img src="https://sabooksonline.co.za/cms-data/book-covers/'.$row['COVER'].'" class="owl-lazy" alt="" width="460" height="310">
                                                 </figure></a>
                                                 <div class="bottom-text">
@@ -586,12 +587,6 @@ header input {
                                         }
                                     }
                                 ?>
-
-
-                   
-                   
-                   
-                   
                    
                  
                 </div>
@@ -675,8 +670,9 @@ $(document).ready(function() {
     //$sql = "SELECT * FROM posts WHERE TYPE = '$name' AND CATEGORY LIKE '%$name%' OR DESCRIPTION LIKE '%$name%' ORDER BY ID DESC;";
     $result = mysqli_query($conn, $sql);
     $result = mysqli_query($conn, $sql);
-        if(mysqli_num_rows($result) == false){
-    }else{
+    if(mysqli_num_rows($result) == false){
+    }
+	else{
         while($row = mysqli_fetch_assoc($result)) {
 
         echo '"'.$row["TITLE"].'",';
