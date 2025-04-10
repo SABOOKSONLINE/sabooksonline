@@ -4,8 +4,8 @@ $servername = "localhost";
 $password = "";
 $dbh = "sabooksonline";*/
 
-$username = "sroot";
-$password = "root";
+$username = "sabooks_library";
+$password = "1m0g7mR3$";
 $dbh = "Sibusisomanqa_website_plesk";
 
 // Create connection
