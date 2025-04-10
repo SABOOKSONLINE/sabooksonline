@@ -90,6 +90,23 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .blurred {
+  color: #444;
+  filter: blur(5px);
+  cursor: pointer;
+  transition: 0.3s ease;
+  position: relative;
+}
+.blurred:hover {
+  filter: blur(3px);
+}
+.blurred::after {
+  content: " 🔒";
+  position: absolute;
+  right: -1.5em;
+  color: #ff6b6b;
+}
+
     </style>
 
 </head>
@@ -123,11 +140,11 @@
                 //DATABASE CONNECTIONS SCRIPT
                 include '../includes/database_connections/sabooks_user.php';
                     
-                    if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
+                    // if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
 
-                        echo "<script>window.location.replace('basic');</script>";
+                    //     echo "<script>window.location.replace('basic');</script>";
 
-                    } 
+                    // } 
             
                 ?>
 
@@ -322,13 +339,13 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
           <div class="row">
 
-          <?php
+          <!-- <?php
           if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Deluxe') {
               
           } else {
               echo '<style>.book-status{display:none !important;}</style>';
           }
-          ?>
+          ?> -->
 
 
             <div class="col-sm-6 col-xxl-3 book-status">
@@ -476,7 +493,11 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                               $stmt->close();
 
                               // Output the total number of unique users based on their IPs
-                              echo 'Based on ' . $unique_user_count;
+                              if ($_SESSION['PLAN'] === 'deluxe') {
+                                  echo 'Based on ' . $uniqueUsers;
+                              } else {
+                                  echo '<span class="blurred" title="Subscribe to unlock full stats">Based on ' . $uniqueUsers . '</span>';
+                              }
                           } else {
                               echo "0";
                           }
@@ -531,7 +552,13 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                   $services = $visit_count;
 
                   // Output the visit count
-                  echo $visit_count;
+                  // echo $visit_count;
+                  if ($_SESSION['PLAN'] === 'deluxe') {
+                    echo $visit_count;
+                } else {
+                    echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
+                }
+?>
 
                   // Close the prepared statement
                   $stmt->close();
@@ -647,7 +674,13 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                           $books = $combined_visit_count;
 
                           // Output the combined visit count
-                          echo $combined_visit_count;
+                          // echo $combined_visit_count;
+                          if ($_SESSION['PLAN'] === 'deluxe') {
+                            echo $combined_visit_count;
+                        } else {
+                            echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
+                        }
+
                       } else {
                           echo "0";
                       }
@@ -1520,7 +1553,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                                 // Prepare the SQL query to retrieve data from page_visits
                                 $query = "SELECT *
                                           FROM page_visits AS pv
-                                          INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%')
+                                          INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%') 
                                           WHERE pv.page_url LIKE ? AND p.ID = ?
                                           AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
 

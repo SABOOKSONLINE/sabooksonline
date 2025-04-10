@@ -4,7 +4,7 @@ $servername = "localhost";
 $password = "";
 $dbh = "sabooksonline";*/
 
-$username = "root";
+$username = "sroot";
 $password = "root";
 $dbh = "Sibusisomanqa_website_plesk";
 
