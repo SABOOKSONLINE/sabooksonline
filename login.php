@@ -8,12 +8,12 @@ use Google\Client as Google_Client;
 $client = new Google_Client();
 $client->setClientId('881101796322-kpqdbda7rse6thp07sfbd8fo1solaiij.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('https://sabooksonline.co.za/google/callback.php');
+$client->setRedirectUri('https://11-july-2023.sabooksonline.co.za/google/callback.php');
 $client->addScope('email');
 $client->addScope('profile');
 
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-    header('Location: https://sabooksonline.co.za/dashboard');
+    header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
 }
 
 $authUrl = $client->createAuthUrl();
@@ -118,7 +118,7 @@ $authUrl = $client->createAuthUrl();
 					<div class="float-end"><a id="forgot" href="forgot-password">Forgot Password?</a></div>
 				</div>
 				<button type="submit" class="btn_1 gradient full-width" id="reg_load">Login Now!</button>
-				<div class="text-center mt-2"><small>Don't have an acccount? <strong><a href="https://sabooksonline.co.za/register.php">Sign Up</a></strong></small></div>
+				<div class="text-center mt-2"><small>Don't have an acccount? <strong><a href="https://11-july-2023.sabooksonline.co.za/register.php">Sign Up</a></strong></small></div>
 			</form>
 			<div class="copy">© 2023 SA Books Online</div>
 		</aside>  
