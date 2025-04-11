@@ -13,7 +13,7 @@ $client->addScope('email');
 $client->addScope('profile');
 
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-    header('Location: https://sabooksonline.co.za/login');  
+    header('Location: https://11-july-2023.sabooksonline.co.za/https://11-july-2023.sabooksonline.co.za/login');  
 }
 
 $authUrl = $client->createAuthUrl();

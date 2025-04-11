@@ -15,7 +15,7 @@ class Book
      * @param int $limit
      * @return array
      */
-    public function getBooksByCategory($category, $limit)
+    public function getBooksByCategory($category, $limit = 6)
     {
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
@@ -42,28 +42,30 @@ class Book
         return $books;
     }
 
+    
+
     /**
      * Render/display books in HTML format
      * @param array $books
      */
-    public function renderBooks($books)
-    {
-        foreach ($books as $book) {
-            $username = ucwords(substr($book['PUBLISHER'], 0, 20));
+    // public function renderBooks($books)
+    // {
+    //     foreach ($books as $book) {
+    //         $username = ucwords(substr($book['PUBLISHER'], 0, 20));
 
-            echo '<div class="item">
-                    <div class="strip">
-                        <a href="book.php?q=' . strtolower($book['CONTENTID']) . '">
-                            <figure>
-                                <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                            </figure>
-                        </a>
-                        <div class="bottom-text">
-                            <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords($book['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                            <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords(substr($book['AUTHORS'], 0, 20)) . '</a>
-                        </div>
-                    </div>
-                </div>';
-        }
-    }
+    //         echo '<div class="item">
+    //                 <div class="strip">
+    //                     <a href="book.php?q=' . strtolower(string: $book['CONTENTID']) . '">
+    //                         <figure>
+    //                             <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
+    //                         </figure>
+    //                     </a>
+    //                     <div class="bottom-text">
+    //                         <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords($book['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
+    //                         <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords(substr($book['AUTHORS'], 0, 20)) . '</a>
+    //                     </div>
+    //                 </div>
+    //             </div>';
+    //     }
+    // }
 }

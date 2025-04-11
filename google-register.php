@@ -43,7 +43,7 @@
 
         //VERIFICATION LINK FOR USER
 
-        $veri_link = "https://sabooksonline.co.za/verify?verifyid=$combined";
+        $veri_link = "https://11-july-2023.sabooksonline.co.za/verify?verifyid=$combined";
 
         //INSERT REGISTRATION DATA INTO DATABASE
           //$reg_password = password_hash($reg_password, PASSWORD_DEFAULT);

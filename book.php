@@ -1,5 +1,6 @@
 <?php
                     //DATABASE CONNECTIONS SCRIPT
+					// important for viewing a book - rating 9/10 - mk
 
                     session_start();
 

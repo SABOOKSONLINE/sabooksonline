@@ -31,4 +31,6 @@ if ($conn->connect_error) {
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
   }
+
+  /// copied
 ?>
