@@ -42,30 +42,29 @@ class Book
         return $books;
     }
 
+
+    public function getBookById($contentId)
+    {
+
+    // $sql = "SELECT p.* FROM posts AS p
+    //         WHERE p.CONTENTID = ? AND p.STATUS = 'active'
+    //         LIMIT 1";
+
+
+	$sql = "SELECT * FROM posts WHERE TITLE = ? OR CONTENTID = ? LIMIT 1";
+
+
+    $stmt = mysqli_prepare($this->conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $contentId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     
+    if ($row = mysqli_fetch_assoc($result)) {
+        return $row;
+    }
 
-    /**
-     * Render/display books in HTML format
-     * @param array $books
-     */
-    // public function renderBooks($books)
-    // {
-    //     foreach ($books as $book) {
-    //         $username = ucwords(substr($book['PUBLISHER'], 0, 20));
+    return null;
+    }
 
-    //         echo '<div class="item">
-    //                 <div class="strip">
-    //                     <a href="book.php?q=' . strtolower(string: $book['CONTENTID']) . '">
-    //                         <figure>
-    //                             <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-    //                         </figure>
-    //                     </a>
-    //                     <div class="bottom-text">
-    //                         <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords($book['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-    //                         <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords(substr($book['AUTHORS'], 0, 20)) . '</a>
-    //                     </div>
-    //                 </div>
-    //             </div>';
-    //     }
-    // }
+
 }

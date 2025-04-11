@@ -65,15 +65,13 @@
     <meta name="keywords" content="<?php echo $name.','?> sa books online, sa books, sabo, south african author, south african publisher">
     <link rel="icon" href="<?php 
 								
-								if(empty($cover)){
-									$cover = 'https://sabooksonline.co.za/img/sabo-avatar-2.jpeg';
-								
-								}else if(strpos($cover, 'googleusercontent.com') !== false){
-								$cover = $cover;
-								} else { $cover = 'https://sabooksonline.co.za/cms-data/profile-images/'.$cover; } 
-								
-								echo $cover;?>" disabled media="all">
-
+	if(empty($cover)){
+		$cover = 'https://sabooksonline.co.za/img/sabo-avatar-2.jpeg';
+	
+	}else if(strpos($cover, 'googleusercontent.com') !== false){
+	$cover = $cover;
+	} else { $cover = 'https://sabooksonline.co.za/cms-data/profile-images/'.$cover; } 
+	echo $cover;?>" disabled media="all">
     <link rel="canonical" href="https://www.sabooksonline.co.za/creator?q=<?php echo $contentid;?>"/>
 
     <meta property="og:locale"         content="en_US" />
@@ -104,12 +102,6 @@
                     "sameAs": ["https://www.facebook.com/sabooksonline", "https://twitter.com/sabooksonline"]
                 } </script> 
 	
-	
-   <!-- <link rel="apple-touch-icon" type="image/x-icon" href="img/favicon.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/favicon.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/favicon.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/favicon.png">-->
-
     <!-- GOOGLE WEB FONT -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="anonymous">
@@ -135,20 +127,17 @@
 	<script>
 	  window.dataLayer = window.dataLayer || [];
 	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-
-	  gtag('config', 'G-V7MRDHEHSZ');
-		gtag('config', 'AW-11379832900');
+	gtag('js', new Date());
+	gtag('config', 'G-V7MRDHEHSZ');
+	gtag('config', 'AW-11379832900');
 	</script>
 	
 	 <style>
         .owl-item {
             width: fit-content !important;
         }
-		
-		
-    </style>
 
+    </style>
 </head>
 
 <body data-spy="scroll" data-bs-target="#secondary_nav" data-offset="75">
