@@ -153,177 +153,118 @@
 
 <body data-spy="scroll" data-bs-target="#secondary_nav" data-offset="75">
 	
-	<div id="fb-root"></div>
+<div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0&appId=685468028675340&autoLogAppEvents=1" nonce="8MpmhsYq"></script>			
-	<?php include 'includes/header-internal.php'?>
-	
-	<main class="breaker creator-mobile">
-		
-		<!-- /page_header -->
-	    <div class="container margin_detail_2 mt-3">
-	        <div class="row">
-	            <div class="col-lg-12">
-	                <div class="detail_page_head clearfix">
-					<div class="rating">
-						<div class="follow_us mt-0 pt-0">
-							
-							
-							<!--<div class="fb-share-button" data-href="https://www.sabooksonline.co.za/creator-2?q=<?php echo $name;?>" data-layout="" data-size=""><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>-->
-                        </div>
-	                    </div>
-	                    <div class="title d-flex justify-content-start">
-							
-							<div class="col-lg-4">
-								
-               
-								<img src="https://sabooksonline.co.za/img/sabo-png.jpeg" data-src="<?php echo $cover;?>" class="lazy" alt="<?php echo $name_right;?>" width="100px" height="100px" style="border-radius: 5px;margin-right:5%;object-fit: cover;"></div>
-	
-							<br>
+<?php include 'includes/header-internal.php'?>
 
-							<div class="col-lg-8" style="width:100% !important;">
-								<h1><?php echo $name_right;?> <small class="icon_check_alt text-success" style="font-size:20px"></small></h1>
-								<?php echo $type;?> Joined - <a href="" target="blank"><?php echo $date;?> </a>
-								<ul class="tags d-none">
-									<li><a href="#0">True Story</a></li>
-									<li><a href="#0">Non-Fiction</a></li>
-								</ul>
-							</div>
-	                       
-	                    </div>
-	                </div>
-	                <!-- /detail_page_head -->
-	                <hr>
-					<h4><?php echo $type;?> Information</h4>
-					<br>
-	                <p><?php 	
+<main class="breaker creator-mobile">
+	
+	<!-- /page_header -->
+<div class="container margin_detail_2 mt-3">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="detail_page_head clearfix">
+				<div class="rating">
+					<div class="follow_us mt-0 pt-0">
+						<!--<div class="fb-share-button" data-href="https://www.sabooksonline.co.za/creator-2?q=<?php echo $name;?>" data-layout="" data-size=""><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>-->
+					</div>
+					</div>
+					<div class="title d-flex justify-content-start">
 						
-						$desc = str_replace("'", "`", $desc);
-						
-						$desc = str_replace("rn", "\n", $desc);
-						
-						echo str_replace("rnrn", "\n\n", $desc);
-						?></p>
-	            </div>
-	            <!--<div class="col-lg-4">
-	                <div class="pictures magnific-gallery clearfix">
-	                   <figure>
-						    <a href="img/detail_gallery/detail_1.jpg" title="Photo title" data-effect="mfp-zoom-in">
-						        <img src="img/thumb_detail_1.jpg" data-src="img/thumb_detail_1.jpg" class="lazy" alt="">
-						    </a>
-						</figure>
-						<figure>
-							<a href="img/detail_gallery/detail_2.jpg" title="Photo title" data-effect="mfp-zoom-in">
-								<img src="img/thumb_detail_2.jpg" data-src="img/thumb_detail_2.jpg" class="lazy" alt="">
-							</a>
-						</figure>
-						<figure>
-							<a href="img/detail_gallery/detail_3.jpg" title="Photo title" data-effect="mfp-zoom-in">
-							<img src="img/thumb_detail_3.jpg" data-src="img/thumb_detail_3.jpg" class="lazy" alt="">
-						</a>
-						</figure>
-						<figure>
-							<a href="img/detail_gallery/detail_4.jpg" title="Photo title" data-effect="mfp-zoom-in">
-								<img src="img/thumb_detail_4.jpg" data-src="img/thumb_detail_4.jpg" class="lazy" alt="">
-							</a>
-						</figure>
-						<figure>
-							<a href="img/detail_gallery/detail_4.jpg" title="Photo title" data-effect="mfp-zoom-in">
-								<img src="img/thumb_detail_6.jpg" data-src="img/thumb_detail_6.jpg" class="lazy" alt="">
-							</a>
-						</figure>
-						<figure>
-							<a href="img/detail_gallery/detail_5.jpg" title="Photo title" data-effect="mfp-zoom-in">
-								<span class="d-flex align-items-center justify-content-center">+10</span>
-								<img src="img/thumb_detail_5.jpg" data-src="img/thumb_detail_5.jpg" class="lazy" alt="">
-							</a>
-						</figure>
-	                </div>
-	            </div>-->
-	        </div>
+						<div class="col-lg-4">
+							<img src="https://sabooksonline.co.za/img/sabo-png.jpeg" data-src="<?php echo $cover;?>" class="lazy" alt="<?php echo $name_right;?>" width="100px" height="100px" style="border-radius: 5px;margin-right:5%;object-fit: cover;"></div>
+						<br>
+
+						<div class="col-lg-8" style="width:100% !important;">
+							<h1><?php echo $name_right;?> <small class="icon_check_alt text-success" style="font-size:20px"></small></h1>
+							<?php echo $type;?> Joined - <a href="" target="blank"><?php echo $date;?> </a>
+							<ul class="tags d-none">
+								<li><a href="#0">True Story</a></li>
+								<li><a href="#0">Non-Fiction</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- /detail_page_head -->
+				<hr>
+				<h4><?php echo $type;?> Information</h4>
+				<br>
+				<p><?php 	
+					
+		$desc = str_replace("'", replace: "`", subject: $desc);
+		$desc = str_replace("rn", "\n", $desc);
+		echo str_replace("rnrn", "\n\n", $desc);
+?></p>
 	        <!-- /row -->
 	    </div>
 	    <!-- /container -->
 
-	    <nav class="secondary_nav">
-	        <div class="container">
-	            <ul id="secondary_nav">
-	                <li><a href="#section-0" class="btn_1 gradient text-white">Information</a></li>
-	                <li><a href="#section-1">Book Collections</a></li>
-	                <li><a href="<?php echo $website; ?>" target="_blank"><?php echo $type; ?> Website</a></li>
-	                <!--<li><a href="#"><i class="social_share"></i>Share</a></li>-->
-					<li><a href="mailto:<?php echo $email;?>"><i class="icon_mail_alt"></i><b>Email</b> <?php echo $email;?></a></li>
-	            </ul>
-	        </div>
-	        <span></span>
-	    </nav>
-	    <!-- /secondary_nav -->
+//circular columns - e.g info		
+<nav class="secondary_nav">
+	<div class="container">
+		<ul id="secondary_nav">
+			<li><a href="#section-0" class="btn_1 gradient text-white">Information</a></li>
+			<li><a href="#section-1">Book Collections</a></li>
+			<li><a href="<?php echo $website; ?>" target="_blank"><?php echo $type; ?> Website</a></li>
+			<!--<li><a href="#"><i class="social_share"></i>Share</a></li>-->
+			<li><a href="mailto:<?php echo $email;?>"><i class="icon_mail_alt"></i><b>Email</b> <?php echo $email;?></a></li>
+		</ul>
+	</div>
+	<span></span>
+</nav>
+<!-- /secondary_nav -->
 
 
 		
 
-	    <div class="bg_gray" id="creator">
-	        <div class="container margin_detail" id="section-1">
-	            <div class="row">
-	                <div class="col-lg-8 list_menu">
-
+<div class="bg_gray" id="creator">
+	<div class="container margin_detail" id="section-1">
+	        <div class="row">
+				<div class="col-lg-8 list_menu">
 					<section id="section-1">
 					<h4>Book Colletions by <b><?php echo str_replace('-', ' ',ucfirst($name)); ?></b></h4><hr>
-		                    <div class="row">
-		                        
+					<div class="row">
+					<?php
+						//DATABASE CONNECTIONS SCRIPT
+						include 'includes/database_connections/sabooks.php';
+						//no authors data found
+						if(!isset($_GET['q'])){
+							echo 'No Data Found';
+						} else {
 
-								<?php
-											//DATABASE CONNECTIONS SCRIPT
-											include 'includes/database_connections/sabooks.php';
-											
-											
+						$sql = "SELECT * FROM posts WHERE USERID= '$contentdata'";
+						$result = mysqli_query($conn, $sql);
 
-											if(!isset($_GET['q'])){
-												echo 'No Data Found';
-											} else {
+						if(!mysqli_num_rows($result)){
+							echo 'No Data Found';
+						} else {
+							while($row = mysqli_fetch_assoc($result)) {
+								echo '<div class="col-md-12"> 
+								<a class="menu_item d-flex justify-content-start" href="book?q='.strtolower($row['CONTENTID']).'" style="padding: 5px;">
+									<div class="">
+									<img src="img/place-holder.jpg" data-src="https://sabooksonline.co.za/cms-data/book-covers/'.$row['COVER'].'" alt="thumb" class="lazy" style="width: 6rem;height: 9rem;margin-right:3%;border-radius:5px;border: solid 3px #f3f3f3;">
+									</div>
 
-											$sql = "SELECT * FROM posts WHERE USERID= '$contentdata'";
-											$result = mysqli_query($conn, $sql);
+									<div class="p-2">
+									<h3>'.$row['TITLE'].'</h3>
+									<small class="badge bg-success text-white">'.$row['CATEGORY'].'</small>
+										<hr class="p-0 m-0 m-2">
+									<p>'.substr($row['DESCRIPTION'], offset: 0, 250).'...</p>
+									</div>
+								</a>
+							</div>';
+							}
+						}
 
-											if(!mysqli_num_rows($result)){
-												echo 'No Data Found';
-											} else {
-												while($row = mysqli_fetch_assoc($result)) {
-													echo '<div class="col-md-12"> 
-													<a class="menu_item d-flex justify-content-start" href="book?q='.strtolower($row['CONTENTID']).'" style="padding: 5px;">
-														<div class="">
-														<img src="img/place-holder.jpg" data-src="https://sabooksonline.co.za/cms-data/book-covers/'.$row['COVER'].'" alt="thumb" class="lazy" style="width: 6rem;height: 9rem;margin-right:3%;border-radius:5px;border: solid 3px #f3f3f3;">
-														</div>
-
-														<div class="p-2">
-														<h3>'.$row['TITLE'].'</h3>
-														<small class="badge bg-success text-white">'.$row['CATEGORY'].'</small>
-															<hr class="p-0 m-0 m-2">
-														<p>'.substr($row['DESCRIPTION'], 0, 250).'...</p>
-														</div>
-													</a>
-												</div>';
-												}
-											}
-											
-
-											}
-											
-										?>
-		                        
-		                    </div>
-		                    <!-- /row -->
-		                </section>
-
-	                </div>
-	                <!-- /col -->
-
-	                <div class="col-lg-4" id="sidebar_fixed">
-	                    <div class="box_order mobile_fixed">
-	                        <!--<div class="head">
-	                            <h3>Contact Information</h3>
-	                            <a href="#0" class="close_panel_mobile"><i class="icon_close"></i></a>
-	                        </div>-->
-	                        <!-- /head -->
+						}
+						
+					?>
+								
+		</div>
+	</section>
+</div>
+	<div class="col-lg-4" id="sidebar_fixed">
+	     <div class="box_order mobile_fixed">
 	                        <div class="main">
 	                            
 	                            <!-- /dropdown -->
