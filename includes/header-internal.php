@@ -4,7 +4,7 @@
 if (session_status() === PHP_SESSION_NONE) {
 session_start();
 }
-ini_set('session.cookie_domain', 'https://11-july-2023.sabooksonline.co.za');
+ini_set('session.cookie_domain', '.sabooksonline.co.za');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
