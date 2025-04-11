@@ -265,48 +265,45 @@
 </div>
 	<div class="col-lg-4" id="sidebar_fixed">
 	     <div class="box_order mobile_fixed">
-	                        <div class="main">
-	                            
-	                            <!-- /dropdown -->
-	                            <div class="btn_1_mobile">
-	                                <a href="<?php echo $facebook;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_facebook"></i> Follow On Facebook</a>
-	                                <a href="<?php echo $instagram;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_instagram"></i> Follow On Instagram</a>
-	                                <a href="<?php echo $twitter;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_twitter"></i> Follow  On Twitter</a>
-	                                <div class="text-center"><small>These links are external links</small></div>
-	                            </div>
-	                        </div>
-	                    </div>
-	                    <!-- /box_order -->
-	                    
-	                    <div class="btn_reserve_fixed"><a href="#0" class="btn_1 gradient full-width">View Contact Information</a></div>
-	                </div>
-	            </div>
-	            <!-- /row -->
-	        </div>
-	        <!-- /container -->
-	    </div>
-	    <!-- /bg_gray -->
-	</main>
+			<div class="main">
+				<!-- /dropdown -->
+				<div class="btn_1_mobile">
+					<a href="<?php echo $facebook;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_facebook"></i> Follow On Facebook</a>
+					<a href="<?php echo $instagram;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_instagram"></i> Follow On Instagram</a>
+					<a href="<?php echo $twitter;?>" class="btn_1 gradient full-width mb_5" target="_blank"><i class="social_twitter"></i> Follow  On Twitter</a>
+					<div class="text-center"><small>These links are external links</small></div>
+				</div>
+			</div>
+		</div>
+	                    <!-- /box_order -->					<div class="btn_reserve_fixed"><a href="#0" class="btn_1 gradient full-width">View Contact Information</a></div>
+				</div>
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /bg_gray -->
+</main>
 	<!-- /main -->
 	
 
 
-	<?php include 'includes/footer.php';?>
+<?php include 'includes/footer.php';?>
 
 	
 	<!-- COMMON SCRIPTS -->
-    <script src="js/common_scripts.min.js"></script>
+<script src="js/common_scripts.min.js"></script>
 <script src="js/custom.js"></script>
-    <script src="js/common_func.js"></script>
-    <script src="assets/validate.js"></script>
+<script src="js/common_func.js"></script>
+<script src="assets/validate.js"></script>
 
-    <!-- SPECIFIC SCRIPTS -->
-    <script src="js/sticky_sidebar.min.js"></script>
-    <script src="js/sticky-kit.min.js"></script>
-    <script src="js/specific_detail.js"></script>
+<!-- SPECIFIC SCRIPTS -->
+<script src="js/sticky_sidebar.min.js"></script>
+<script src="js/sticky-kit.min.js"></script>
+<script src="js/specific_detail.js"></script>
 	
 		
-    <script>
+<script>
 	var countries = [ <?php
                                     //DATABASE CONNECTIONS SCRIPT
     include 'includes/database_connections/sabooks.php';
@@ -322,9 +319,9 @@
         }
     }
     ?> " "];
-	</script>
+</script>
 
-	<script src="js/custom.js"></script>
+<script src="js/custom.js"></script>
 
 </body>
 
