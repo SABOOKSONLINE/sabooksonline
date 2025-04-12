@@ -14,6 +14,6 @@ if ($contentId) {
         echo "Book not found.";
     }
 } else {
-    echo "Invalid request.";
+    echo "Invalid request 404.";
 }
 ?>
