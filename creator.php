@@ -264,7 +264,7 @@
 				</div>
 			</div>
 		</div>
-	                    <!-- /box_order -->					<div class="btn_reserve_fixed"><a href="#0" class="btn_1 gradient full-width">View Contact Information</a></div>
+	                    <!-- /box_order -->		<div class="btn_reserve_fixed"><a href="#0" class="btn_1 gradient full-width">View Contact Information</a></div>
 				</div>
 			</div>
 			<!-- /row -->
