@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SA Books Online, South African Books, South African Literature, SA Literature">
+    <meta name="keywords" content="SA Books Online, South African Books, South African Literature, SA Literature">
+    <meta name="author" content="SA Books Online">
+
+    <title>SA Books Online, SA Books Online, South African Books, South African Literature, SA Literature - The Gateway To South African Literature</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="../../../public/images/sabo_favicon (144x144).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="../../../public/images/sabo_favicon (72x72).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="../../../public/images/sabo_favicon (114x114).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="../../../public/images/sabo_favicon (144x144).svg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="../../../public/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="../../../public/css/icons.css" rel="stylesheet" />
+    <link href="../../../public/css/all.css" rel="stylesheet" />
+    <link href="../../../public/css/all.min.css" rel="stylesheet" />
+
+    <!-- Custom Css -->
+    <link href="../../../public/css/custom/style.css" rel="stylesheet" />
+</head>
