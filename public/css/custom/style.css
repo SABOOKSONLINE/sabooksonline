@@ -208,9 +208,141 @@ body {
 }
 
 /* ===============================
+   BOOK OWL CARSOUL / STYLING
+================================= */
+
+.book-cards {
+    position: relative;
+}
+
+.book-card-slide {
+    position: relative;
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.book-card-slide:after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), var(--white));
+    width: 100px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.book-card {
+    position: relative;
+    width: 210px;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.book-card-cover {
+    width: 100%;
+    height: 297px;
+    overflow-y: hidden;
+}
+
+.book-card-cover img {
+    width: inherit;
+    height: inherit;
+    border-radius: 8px;
+
+    border: 1px solid var(--white);
+}
+
+.book-card-info {
+    display: grid;
+    gap: 5px;
+    margin-top: 14px;
+    width: inherit;
+}
+
+.book-card-little {
+    width: inherit;
+    color: var(--black);
+    font-weight: 700;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.book-card-pub {
+    color: var(--black);
+    font-size: 12px;
+}
+
+.book-card-pub a {
+    text-decoration: none;
+}
+
+.book-card-pub a:hover {
+    color: var(--red);
+    text-decoration: underline;
+    z-index: 2;
+}
+
+.book-card-btn {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+    background: var(--white);
+    color: var(--black);
+    font-size: 25px;
+    z-index: 2;
+    opacity: 0.75;
+
+    cursor: pointer;
+}
+
+.book-card-btn:hover {
+    opacity: 1;
+}
+
+.book-card-btn div {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.book-card-slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+/* ===============================
    SECTION / STYLING
 ================================= */
 
 .section {
+    position: relative;
     padding: 100px 0;
 }
+
+/* .children-section {
+    background: url("../../images/jumbo_img/children_collections.jpeg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    z-index: -1;
+}
+
+.children-section::before {
+    background: rgb(255, 255, 255, 0.9);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+} */
