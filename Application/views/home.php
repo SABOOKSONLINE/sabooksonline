@@ -1,9 +1,9 @@
 <?php
-require "includes/header.php";
+require_once "includes/header.php";
 ?>
 
 <body>
-    <?php require "includes/nav.php"; ?>
+    <?php require_once "includes/nav.php"; ?>
 
     <div class="jumbotron jumbotron-lg">
         <div class="container h-100 d-flex flex-column justify-content-end py-5">
@@ -21,34 +21,142 @@ require "includes/header.php";
     </div>
 
     <div class="container">
-        <?php require "includes/banner.php" ?>
+        <?php require_once "includes/banner.php" ?>
     </div>
 
     <section class="section">
         <div class="container">
-            <div>
-                <h1 class="fw-bold mb-0">Editor's Choice</h1>
-                <span class="text-muted">
-                    Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                </span>
+            <h1 class="fw-bold mb-0">Editor's Choice</h1>
+            <span class="text-muted">
+                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+            </span>
+
+            <div class="book-cards mt-4" id="editor_choice">
+                <div class="book-card-slide">
+                    <?php
+                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/models/Book.php";
+
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Editors Choice", 20);
+                    $book->renderBooks($books);
+                    ?>
+
+                </div>
+
+                <div class="book-card-btn btn-right">
+                    <div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
             </div>
 
-            <div class="owl-carousel owl-theme" id="choice">
-
-                <?php
-                include_once '../../database/connection.php';
-                include_once '../../database/models/Book.php';
-
-                $book = new Book($conn);
-                $books = $book->getBooksByCategory("Editors Choice", 20);
-                $book->renderBooks($books);
-                ?>
-
-            </div>
-            <!-- /carousel -->
+            <h1 class="mt-4">
+                <a href="" class="btn btn-red text-uppercase">View more books</a>
+            </h1>
         </div>
     </section>
 
-    <?php require "includes/scripts.php" ?>
+    <section class="section">
+        <div class="container">
+            <h1 class="fw-bold mb-0">Editor's Choice</h1>
+            <span class="text-muted">
+                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+            </span>
 
+            <div class="book-cards mt-4" id="latest_collections">
+                <div class="book-card-slide">
+                    <?php
+                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/models/Book.php";
+
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Latest Collections", 20);
+                    $book->renderBooks($books);
+                    ?>
+
+                </div>
+
+                <div class="book-card-btn btn-right">
+                    <div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="mt-4">
+                <a href="" class="btn btn-red text-uppercase">View more books</a>
+            </h1>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="fw-bold mb-0">Editor's Choice</h1>
+            <span class="text-muted">
+                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+            </span>
+
+            <div class="book-cards mt-4" id="fiction_collections">
+                <div class="book-card-slide">
+                    <?php
+                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/models/Book.php";
+
+                    $book = new Book($conn);
+                    $books = $book->getBooksByCategory("Fiction Collections", 20);
+                    $book->renderBooks($books);
+                    ?>
+
+                </div>
+
+                <div class="book-card-btn btn-right">
+                    <div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="mt-4">
+                <a href="" class="btn btn-red text-uppercase">View more books</a>
+            </h1>
+        </div>
+    </section>
+
+    <section class="section children-section">
+        <div class="container">
+            <div>
+                <h1 class="fw-bold mb-0">Children's Collections</h1>
+                <div class="text-muted">
+                    Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                </div>
+
+                <div class="book-cards mt-4" id="childrens_collections">
+                    <div class="book-card-slide">
+                        <?php
+                        require_once __DIR__ . "/../Config/connection.php";
+                        require_once __DIR__ . "/../../database/models/Book.php";
+
+                        $book = new Book($conn);
+                        $books = $book->getBooksByCategory("Childrens Collection", 20);
+                        $book->renderBooks($books);
+                        ?>
+
+                    </div>
+
+                    <div class="book-card-btn btn-right">
+                        <div>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="" class="btn btn-red text-uppercase">View more books</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php require_once "includes/scripts.php" ?>
 </body>
