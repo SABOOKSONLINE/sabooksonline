@@ -51,19 +51,21 @@ class Book
         foreach ($books as $book) {
             $username = ucwords(substr($book['PUBLISHER'], 0, 20));
 
-            echo '<div class="item">
-                    <div class="strip">
-                        <a href="book.php?q=' . strtolower($book['CONTENTID']) . '">
-                            <figure>
-                                <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="owl-lazy" alt="" width="460" height="310">
-                            </figure>
+            echo '
+                <div class="book-card">
+                        <a class="book-card-cover" href="book.php?q=' . strtolower($book['CONTENTID']) . '">
+                            <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" alt="">
                         </a>
-                        <div class="bottom-text">
-                            <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords($book['PUBLISHER']) . ' <small class="icon_check_alt text-success" style="font-size:12px"></small></a><br>
-                            <a href="creator?q=' . strtolower($book['USERID']) . '" class="text-dark">' . ucwords(substr($book['AUTHORS'], 0, 20)) . '</a>
+                        <div class="book-card-info">
+                            <a class="book-card-little" href="book.php?q=' . strtolower($book['CONTENTID']) . '">
+                            ' . (strlen($book['TITLE']) > 30 ? substr($book['TITLE'], 0, 30) . '...' : $book['TITLE']) . '
+                            </a>
+                            <span class="book-card-pub">
+                                Published by: <a class=" text-muted" href="creator?q=' . strtolower($book['USERID']) . '">' . ucwords($book['PUBLISHER']) . '</a>
+                            </span>
                         </div>
                     </div>
-                </div>';
+            ';
         }
     }
 }
