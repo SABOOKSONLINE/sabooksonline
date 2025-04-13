@@ -5,7 +5,7 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
-    # Send everything else to route.php
-    RewriteRule ^(.+)?$ route.php [QSA,L]
+    # Send everything else to index.php
+    RewriteRule ^.*$ index.php [QSA,L]
 
 </IfModule>
