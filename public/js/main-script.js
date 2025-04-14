@@ -14,3 +14,25 @@ bookCardsNextBtn.forEach((btn) => {
         // console.log(book_slider.firstElementChild.firstElementChild);
     });
 });
+
+// Contact form
+$(document).ready(function (e) {
+    $("#contactforms").on("submit", function (e) {
+        $("#status").html(
+            '<p class="alert alert-info">Processing your message...</p>'
+        );
+        e.preventDefault();
+        $.ajax({
+            url: "message.php",
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (data) {
+                $("#status").html(data);
+            },
+            error: function () {},
+        });
+    });
+});
