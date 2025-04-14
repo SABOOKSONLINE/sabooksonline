@@ -1,19 +1,31 @@
-<?php 
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-session_start();
+function bookViewRender($conn)
+{
 
-$contentId = $_GET['q'] ?? null;
+    $contentId = $_GET['q'] ?? null;
 
-if ($contentId) {
-    $bookModel = new Book($conn);
-    $book = $bookModel->getBookById($contentId);
+    $book = new Book($conn);
+    $book = $book->getBookById($contentId);
 
-    if ($book) {
-        include __DIR__ . '/views/books/book.php';
-    } else {
-        echo "Book not found.";
+    if ($contentId) {
+        if ($book) {
+            include __DIR__ . '/../views/books/book.php';
+        } else {
+            echo "Book not found.";
+        }
     }
-} else {
-    echo "Invalid request 404.";
 }
-?>
+
+function bookByCategory($conn, $category, $limit)
+{
+    $book = new Book($conn);
+    $books = $book->getBooksByCategory($category, $limit);
+
+    if ($books) {
+        include __DIR__ . '/../views/books/category.php';
+    }
+}
