@@ -4,10 +4,10 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $serverName = "localhost";
-// $username = "library";
-// $password = "1m0g7mR3$";
-$username = "root";
-$password = "root";
+$username = "library";
+$password = "1m0g7mR3$";
+// $username = "root";
+// $password = "root";
 
 $primaryDb = "Sibusisomanqa_update_3";
 $secondaryDb = "Sibusisomanqa_website_plesk";
