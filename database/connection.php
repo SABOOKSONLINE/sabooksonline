@@ -17,7 +17,6 @@ try {
     // Create connection to secondaryDB
     $mysqli = new mysqli($serverName, $username, $password, $secondaryDb);
     $mysqli->set_charset("utf8mb4");
-    echo "Connected Successful!";
 } catch (mysqli_sql_exception $e) {
 
     // Centralized error logging

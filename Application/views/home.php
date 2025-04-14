@@ -34,7 +34,7 @@ require_once "includes/header.php";
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/connection.php";
                     require_once __DIR__ . "/../../database/models/Book.php";
 
                     $book = new Book($conn);
@@ -67,7 +67,7 @@ require_once "includes/header.php";
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/connection.php";
                     require_once __DIR__ . "/../../database/models/Book.php";
 
                     $book = new Book($conn);
@@ -100,7 +100,7 @@ require_once "includes/header.php";
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../Config/connection.php";
+                    require_once __DIR__ . "/../../database/connection.php";
                     require_once __DIR__ . "/../../database/models/Book.php";
 
                     $book = new Book($conn);
@@ -134,7 +134,7 @@ require_once "includes/header.php";
                 <div class="book-cards mt-4" id="childrens_collections">
                     <div class="book-card-slide">
                         <?php
-                        require_once __DIR__ . "/../Config/connection.php";
+                        require_once __DIR__ . "/../../database/connection.php";
                         require_once __DIR__ . "/../../database/models/Book.php";
 
                         $book = new Book($conn);
