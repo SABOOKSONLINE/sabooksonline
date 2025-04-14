@@ -9,4 +9,4 @@ $providers = $serviceProviderModel->getServiceProviders($service);
 
 // Pass data to view
 include 'views/service_providers_view.php';
-?>
+
