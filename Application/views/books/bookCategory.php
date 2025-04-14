@@ -16,4 +16,3 @@ foreach ($books as $book) {
         </div>
     ';
 };
-?>
