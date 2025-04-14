@@ -1,9 +1,9 @@
 <?php
-require_once "includes/header.php";
+require_once __DIR__ . "/includes/header.php";
 ?>
 
 <body>
-    <?php require_once "includes/nav.php"; ?>
+    <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
     <div class="jumbotron jumbotron-lg">
         <div class="container h-100 d-flex flex-column justify-content-end py-5">
@@ -21,7 +21,7 @@ require_once "includes/header.php";
     </div>
 
     <div class="container">
-        <?php require_once "includes/banner.php" ?>
+        <?php require_once __DIR__ . "/includes/banner.php" ?>
     </div>
 
     <section class="section">
