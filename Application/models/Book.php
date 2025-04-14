@@ -46,9 +46,6 @@ class Book
     public function getBookById($contentId)
     {
 
-    // $sql = "SELECT p.* FROM posts AS p
-    //         WHERE p.CONTENTID = ? AND p.STATUS = 'active'
-    //         LIMIT 1";
 
 
 	$sql = "SELECT * FROM posts WHERE TITLE = ? OR CONTENTID = ? LIMIT 1";
