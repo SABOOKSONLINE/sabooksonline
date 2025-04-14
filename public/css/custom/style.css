@@ -10,6 +10,9 @@
     --off-white: #f3f3f3;
     --black: #000;
     --brown: #231f20;
+    --green: #2c8e43;
+    --blue: #2d3691;
+    --yellow: #f58234;
 }
 
 body {
@@ -44,6 +47,24 @@ body {
     border: 1px solid var(--red);
 }
 
+.btn-green {
+    background: var(--green);
+    color: var(--white);
+    border: 1px solid var(--green);
+}
+
+.btn-blue {
+    background: var(--blue);
+    color: var(--white);
+    border: 1px solid var(--blue);
+}
+
+.btn-yellow {
+    background: var(--yellow);
+    color: var(--black);
+    border: 1px solid var(--yellow);
+}
+
 .btn-outline-red:hover,
 .btn-red:hover {
     background: var(--deep-red);
@@ -65,6 +86,14 @@ body {
     color: var(--white);
     border: 1px solid var(--white);
     opacity: 1;
+}
+
+.btn-green:hover,
+.btn-blue:hover,
+.btn-yellow:hover {
+    color: var(--white);
+    background: var(--brown);
+    /* opacity: 0.7; */
 }
 
 /* ===============================

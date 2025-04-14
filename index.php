@@ -19,8 +19,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/about.php";
     });
 
-    // $r->addRoute('GET', '/books/{id:\d+}', function ($id) {
-    //     echo "User ID: $id";
+    $r->addRoute('GET', '/book/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Application/views/bookpage.php";
+    });
+
+    // $r->addRoute('GET', '/book/{id:\d+}', function ($id) {
+    //     require "Application/views/bookpage.php?q=$id";
     // });
 });
 
