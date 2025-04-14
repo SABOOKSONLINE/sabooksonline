@@ -35,11 +35,10 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="book-card-slide">
                     <?php
                     require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../../database/models/Book.php";
+                    require_once __DIR__ . "/../models/Book.php";
+                    require_once __DIR__ . "/../controllers/BookController.php";
 
-                    $book = new Book($conn);
-                    $books = $book->getBooksByCategory("Editors Choice", 20);
-                    $book->renderBooks($books);
+                    bookByCategory($conn, "editors choice", 20);
                     ?>
 
                 </div>
@@ -65,11 +64,10 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="book-card-slide">
                     <?php
                     require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../../database/models/Book.php";
+                    require_once __DIR__ . "/../models/Book.php";
+                    require_once __DIR__ . "/../controllers/BookController.php";
 
-                    $book = new Book($conn);
-                    $books = $book->getBooksByCategory("Latest Collections", 20);
-                    $book->renderBooks($books);
+                    bookByCategory($conn, "latest collections", 20);
                     ?>
 
                 </div>
@@ -95,11 +93,10 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="book-card-slide">
                     <?php
                     require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../../database/models/Book.php";
+                    require_once __DIR__ . "/../models/Book.php";
+                    require_once __DIR__ . "/../controllers/BookController.php";
 
-                    $book = new Book($conn);
-                    $books = $book->getBooksByCategory("Fiction Collections", 20);
-                    $book->renderBooks($books);
+                    bookByCategory($conn, "fiction collections", 20);
                     ?>
 
                 </div>
@@ -129,11 +126,10 @@ require_once __DIR__ . "/includes/header.php";
                     <div class="book-card-slide">
                         <?php
                         require_once __DIR__ . "/../../database/connection.php";
-                        require_once __DIR__ . "/../../database/models/Book.php";
+                        require_once __DIR__ . "/../models/Book.php";
+                        require_once __DIR__ . "/../controllers/BookController.php";
 
-                        $book = new Book($conn);
-                        $books = $book->getBooksByCategory("Childrens Collection", 20);
-                        $book->renderBooks($books);
+                        bookByCategory($conn, "childrens collection", 20);
                         ?>
 
                     </div>
