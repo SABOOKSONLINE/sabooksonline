@@ -59,10 +59,7 @@ require_once "includes/header.php";
 
     <section class="section">
         <div class="container">
-            <h1 class="fw-bold mb-0">Editor's Choice</h1>
-            <span class="text-muted">
-                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-            </span>
+            <h1 class="fw-bold mb-0">Latest Collections</h1>
 
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
@@ -92,10 +89,7 @@ require_once "includes/header.php";
 
     <section class="section">
         <div class="container">
-            <h1 class="fw-bold mb-0">Editor's Choice</h1>
-            <span class="text-muted">
-                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-            </span>
+            <h1 class="fw-bold mb-0">Fiction Collections</h1>
 
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
@@ -123,12 +117,12 @@ require_once "includes/header.php";
         </div>
     </section>
 
-    <section class="section children-section">
+    <section class="section bg-children">
         <div class="container">
             <div>
                 <h1 class="fw-bold mb-0">Children's Collections</h1>
                 <div class="text-muted">
-                    Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                    Rooted in Wisdom, Growing Through Stories — Empowering African Children to Read and Rise.
                 </div>
 
                 <div class="book-cards mt-4" id="childrens_collections">
