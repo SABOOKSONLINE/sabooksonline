@@ -327,7 +327,6 @@ header input {
 	    <!-- /secondary_nav -->
 
 
-		//to be reviewed shows no use - will be deleted - MK
         <div class="bg_gray">
 	        <div class="container margin_detail">
 	            <div class="row">
