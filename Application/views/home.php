@@ -38,7 +38,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../models/Book.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
-                    bookByCategory($conn, "editors choice", 20);
+                    bookByCategoryRender($conn, "editors choice", 20);
                     ?>
 
                 </div>
@@ -67,7 +67,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../models/Book.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
-                    bookByCategory($conn, "latest collections", 20);
+                    bookByCategoryRender($conn, "latest collections", 20);
                     ?>
 
                 </div>
@@ -96,7 +96,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../models/Book.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
-                    bookByCategory($conn, "fiction collections", 20);
+                    bookByCategoryRender($conn, "fiction collections", 20);
                     ?>
 
                 </div>
@@ -129,7 +129,7 @@ require_once __DIR__ . "/includes/header.php";
                         require_once __DIR__ . "/../models/Book.php";
                         require_once __DIR__ . "/../controllers/BookController.php";
 
-                        bookByCategory($conn, "childrens collection", 20);
+                        bookByCategoryRender($conn, "childrens collection", 20);
                         ?>
 
                     </div>

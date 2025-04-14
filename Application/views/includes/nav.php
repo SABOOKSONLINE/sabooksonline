@@ -14,7 +14,7 @@
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/sabooksonline/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
 
                 <!-- Books Dropdown -->
                 <li class="nav-item dropdown">
@@ -22,8 +22,8 @@
                         Books
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/sabooksonline/catalogue">Book Catalogue</a></li>
-                        <li><a class="dropdown-item" href="/sabooksonline/stores">Book Stores</a></li>
+                        <li><a class="dropdown-item" href="/library/catalogue">Book Catalogue</a></li>
+                        <li><a class="dropdown-item" href="/library/stores">Book Stores</a></li>
                     </ul>
                 </li>
 
@@ -33,20 +33,20 @@
                         Community
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/sabooksonline/events">Events</a></li>
-                        <li><a class="dropdown-item" href="/sabooksonline/services">Service Providers</a></li>
-                        <li><a class="dropdown-item" href="/sabooksonline/membership">Membership Pricing</a></li>
+                        <li><a class="dropdown-item" href="/events">Events</a></li>
+                        <li><a class="dropdown-item" href="/services">Service Providers</a></li>
+                        <li><a class="dropdown-item" href="/membership">Membership Pricing</a></li>
                     </ul>
                 </li>
 
-                <li class="nav-item"><a class="nav-link" href="/sabooksonline/about">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="/sabooksonline/contact">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
             </ul>
 
             <!-- Search and Auth Buttons -->
             <div class="d-flex">
                 <!-- Search Form -->
-                <form class="d-flex me-3" action="library.php" id="myForm">
+                <form class="d-flex me-3" action="library" id="myForm">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search by Title, Authors or Publisher"
                             name="k" value="<?= $_GET['k'] ?? '' ?>">
