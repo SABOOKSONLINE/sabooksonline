@@ -6,6 +6,19 @@ class EventModel {
         $this->conn = $conn;
     }
 
+     public function getEventByContentId($contentId)
+    {
+        $contentId = mysqli_real_escape_string($this->conn, $contentId);
+        $query = "SELECT * FROM events WHERE STATUS = 'Active' AND CONTENTID = '$contentId' LIMIT 1";
+        $result = mysqli_query($this->conn, $query);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+
+        return null;
+    }
+
     // Fetch filtered events based on services and provinces
     public function getFilteredEvents($selectedServices, $selectedProvinces) {
         // Default WHERE clause
