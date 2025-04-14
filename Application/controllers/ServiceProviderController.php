@@ -1,5 +1,5 @@
 <?php
-include_once 'models/ServiceProvider.php';
+include_once 'models/ServiceProviderModel.php';
 require_once __DIR__ . '/../config/connection.php';
 
 $service = $_GET['service'] ?? null;
