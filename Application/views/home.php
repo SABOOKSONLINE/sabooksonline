@@ -57,7 +57,7 @@ require_once "includes/header.php";
         </div>
     </section>
 
-    <section class="section">
+    <section class="section bg-off-white">
         <div class="container">
             <h1 class="fw-bold mb-0">Latest Collections</h1>
 
@@ -152,5 +152,7 @@ require_once "includes/header.php";
         </div>
     </section>
 
-    <?php require_once "includes/scripts.php" ?>
+    <?php require_once __DIR__ . "/includes/footer.php" ?>
+
+    <?php require_once __DIR__ .  "/includes/scripts.php" ?>
 </body>
