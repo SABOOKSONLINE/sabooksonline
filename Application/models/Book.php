@@ -15,7 +15,7 @@ class Book
      * @param int $limit
      * @return array
      */
-    public function getBooksByCategory($category, $limit = 6)
+    public function getBooksByCategory($category, $limit)
     {
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
@@ -43,25 +43,27 @@ class Book
     }
 
 
+    /**
+     * Fetch a single book by its CONTENTID
+     * @param string $contentId
+     * @return array|null
+     */
     public function getBookById($contentId)
     {
+        $sql = "SELECT p.* FROM posts AS p WHERE p.CONTENTID = ? AND p.STATUS = 'active'";
 
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $contentId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
+        if (mysqli_num_rows($result) == 0) {
+            return null;
+        }
 
-	$sql = "SELECT * FROM posts WHERE TITLE = ? OR CONTENTID = ? LIMIT 1";
+        $book = mysqli_fetch_assoc($result);
 
-
-    $stmt = mysqli_prepare($this->conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $contentId);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    
-    if ($row = mysqli_fetch_assoc($result)) {
-        return $row;
+        mysqli_stmt_close($stmt);
+        return $book;
     }
-
-    return null;
-    }
-
-
 }
