@@ -12,7 +12,6 @@ require_once __DIR__ . "/includes/header.php";
     bookViewRender($conn);
     ?>
 
-
     <?php require_once __DIR__ . "/includes/footer.php" ?>
 
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>

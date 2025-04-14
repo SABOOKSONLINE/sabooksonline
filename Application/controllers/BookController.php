@@ -13,19 +13,19 @@ function bookViewRender($conn)
 
     if ($contentId) {
         if ($book) {
-            include __DIR__ . '/../views/books/book.php';
+            include __DIR__ . '/../views/books/bookView.php';
         } else {
             echo "Book not found.";
         }
     }
 }
 
-function bookByCategory($conn, $category, $limit)
+function bookByCategoryRender($conn, $category, $limit)
 {
     $book = new Book($conn);
     $books = $book->getBooksByCategory($category, $limit);
 
     if ($books) {
-        include __DIR__ . '/../views/books/category.php';
+        include __DIR__ . '/../views/books/bookCategory.php';
     }
 }
