@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $serverName = "localhost";
-$username = "library";
+$username = "sabooks_library";
 $password = "1m0g7mR3$";
 // $username = "root";
 // $password = "root";
