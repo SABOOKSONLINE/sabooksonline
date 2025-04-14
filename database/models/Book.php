@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 class Book
 {
     private $conn;
@@ -49,8 +49,6 @@ class Book
     public function renderBooks($books)
     {
         foreach ($books as $book) {
-            $username = ucwords(substr($book['PUBLISHER'], 0, 20));
-
             echo '
                 <div class="book-card">
                     <a class="book-card-cover" href="/book/' . strtolower($book['CONTENTID']) . '">
@@ -101,8 +99,6 @@ class Book
     public function renderBook($book)
     {
         if ($book) {
-            $username = ucwords(substr($book['PUBLISHER'], 0, 20));
-
             echo '
                 <div class="container py-5">
   <div class="row align-items-center">
@@ -125,7 +121,10 @@ class Book
       <!-- Ratings -->
       <div class="mb-3">
         <span class="text-warning">
-          ★★★★★
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
         </span>
         <span class="ms-2 text-muted">4.0</span>
       </div>
@@ -153,4 +152,4 @@ class Book
             echo 'Book not found.';
         }
     }
-}
+} -->
