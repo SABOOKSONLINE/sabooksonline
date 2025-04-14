@@ -1,7 +1,7 @@
 <?php
 $serverName = "localhost";
-$username = "root";
-$password = "root";
+$username = "sabooks_library";
+$password = "1m0g7mR3$";
 
 $primaryDb = "Sibusisomanqa_update_3";
 $secondaryDb = "Sibusisomanqa_website_plesk";
