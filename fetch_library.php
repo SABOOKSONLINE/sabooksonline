@@ -33,7 +33,7 @@ if (isset($_GET['type']) && is_array($_GET['type']) && !empty($_GET['type'])) {
     $selectedProvinces = array_map(function ($province) use ($conn) {
         return mysqli_real_escape_string($conn, $province);
     }, $selectedProvinces);
-    $provinceWhereClause = "u.TYPE IN ('" . implode("', '", $selectedProvinces) . "')";
+    $provinceWhereClause = "u.TYPE IN ('" . implode(separator: "', '", $selectedProvinces) . "')";
 } else {
     $provinceWhereClause = "1=1"; // All provinces
 }
