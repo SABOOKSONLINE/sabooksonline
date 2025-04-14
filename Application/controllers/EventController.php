@@ -1,5 +1,5 @@
 <?php
-include 'includes/database_connections/sabooks.php';
+require_once __DIR__ . '/../config/connection.php';
 include_once 'models/EventModel.php';
 
 class EventController {

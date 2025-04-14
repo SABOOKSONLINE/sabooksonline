@@ -2,8 +2,8 @@
 // controllers/EventController.php
 
 session_start();
-include_once 'includes/database_connections/sabooks.php';
-include_once 'models/Event.php';
+require_once __DIR__ . '/../config/connection.php';
+include_once 'models/EventModel.php';
 
 class SingleEventController
 {
