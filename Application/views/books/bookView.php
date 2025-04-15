@@ -1,16 +1,16 @@
 <?php echo '
-<div class="container py-5">
-    <div class="row align-items-center">
+<div class="container pt-4 pb-5">
+    <div class="row">
         <!-- Book Cover -->
-        <div class="col-md-4 text-center mb-4 mb-md-0">
-            <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="img-fluid rounded shadow" alt="Book Cover" style="max-height: 400px;">
+        <div class="col-md-3 book-view-cover">
+            <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" class="img-fluid" alt="Book Cover">
         </div>
 
         <!-- Book Info -->
-        <div class="col-md-8">
+        <div class="col-md-9">
             <h2 class="fw-bold text-capitalize">' . $book['TITLE'] . '</h2>
-            <p class="mb-1 text-capitalize"><strong>Published by:</strong> <span class="fw-semibold">' . $book['PUBLISHER'] . '</span></p>
-            <p class="mb-3 text-capitalize"><strong>Author:</strong> <span class="fw-semibold">' . $book['PUBLISHER'] . '</span></p>
+            <p class="mb-1 text-capitalize"><span class="muted">Published by:</span> <a href="/creators/creator/' . strtolower($book['USERID']) . '" class="fw-semibold">' . $book['PUBLISHER'] . '</a></p>
+            <p class="mb-3 text-capitalize"><span class="muted">Author/s:</span> <span class="fw-semibold">' . $book['AUTHORS'] . '</span></p>
 
             <h6 class="mb-2">Book Synopsis:</h6>
             <p>
@@ -18,7 +18,8 @@
             </p>
 
             <!-- Ratings -->
-            <div class="mb-3">
+            <div class="mb-5">
+                Ratings:
                 <span class="text-warning">
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>

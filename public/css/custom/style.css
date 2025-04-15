@@ -62,7 +62,7 @@ body {
 
 .btn-yellow {
     background: var(--yellow);
-    color: var(--black);
+    color: var(--white);
     border: 1px solid var(--yellow);
 }
 
@@ -399,6 +399,16 @@ body {
     opacity: 0;
 }
 
+.book-view-cover {
+    margin-top: -100px;
+    z-index: 3;
+}
+
+.book-view-cover img {
+    border: 5px solid var(--white);
+    border-radius: 15px;
+}
+
 /* ===============================
    SECTION / STYLING
 ================================= */
@@ -450,4 +460,20 @@ footer {
 .footer-links a:hover {
     text-decoration: underline;
     opacity: 1;
+}
+
+/* ===============================
+   CREATOR / STYLING
+================================= */
+
+.creator-view-cover {
+    margin-top: -100px;
+    z-index: 3;
+}
+
+.creator-view-cover img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 5px solid var(--white);
+    border-radius: 15px;
 }
