@@ -15,7 +15,7 @@ class Book
      * @param int $limit
      * @return array
      */
-    public function getBooksByCategory($category, $limit)
+    public function getBooksByCategory($category, $limit =6)
     {
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
