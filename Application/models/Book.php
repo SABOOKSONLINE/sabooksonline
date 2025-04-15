@@ -66,4 +66,30 @@ class Book
         mysqli_stmt_close($stmt);
         return $book;
     }
+
+    /**
+     * Fetch All books
+     * @return array
+     */
+    public function getBooks($limit)
+    {
+        $sql = "SELECT * FROM posts LIMIT ?";
+
+        // prepared statements for executing the query
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $limit);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $books = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
+
+        return $books;
+    }
 }

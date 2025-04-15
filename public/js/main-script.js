@@ -6,13 +6,29 @@ bookCardsNextBtn.forEach((btn) => {
         let current_slider_id = btn.parentElement.id;
 
         const book_slider = document.querySelector("#" + current_slider_id);
+        book_slider.firstElementChild.firstElementChild.classList.add(
+            "book-slide"
+        );
+
         book_slider.firstElementChild.append(
             book_slider.firstElementChild.firstElementChild
         );
 
-        // console.log(book_slider.firstElementChild.childElementCount);
-        // console.log(book_slider.firstElementChild.firstElementChild);
+        book_slider.firstElementChild.lastElementChild.classList.remove(
+            "book-slide"
+        );
     });
+});
+
+const stylishBookNumber = document.querySelectorAll(
+    "#stylish-section .book-card-num"
+);
+
+counter = 1;
+
+stylishBookNumber.forEach((card) => {
+    card.innerHTML = counter;
+    counter++;
 });
 
 // Contact form

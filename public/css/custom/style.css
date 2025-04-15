@@ -309,7 +309,15 @@ body {
 .book-card {
     position: relative;
     width: 210px;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition: 0.3s ease;
+}
+
+.book-slide {
+    transform: scale(0);
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: 0.3s ease;
 }
 
 .book-card-cover {
@@ -409,6 +417,86 @@ body {
     border-radius: 15px;
 }
 
+.library-book-card {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 140px calc(100% - 140px - 20px);
+    gap: 14px;
+    transition: 0.3s ease;
+    border-radius: 14px;
+    padding: 15px;
+}
+
+.library-book-card a img {
+    position: relative;
+    width: 140px;
+    height: 198px;
+    overflow: hidden;
+}
+
+.library-book-card:hover {
+    background: var(--off-white);
+}
+
+.library-book-card img {
+    transition: 0.3s ease;
+}
+
+.library-book-card:hover img {
+    transform: scale(1.05);
+    border-radius: 8px;
+}
+
+.library-book-card .book-card-little {
+    font-size: 20px;
+}
+
+.library-book-card p {
+    font-size: 14px;
+    margin-top: 10px;
+    opacity: 0.75;
+}
+
+/* CUSTOM SECTION */
+
+#stylish-section .book-card {
+    margin: 14px 20px;
+    transition: 0.3s ease;
+}
+
+#stylish-section .book-card img {
+    z-index: 2;
+}
+
+#stylish-section .book-card:hover img {
+    transform: scale(1.075);
+    box-shadow: 0 15px 15px rgb(0, 0, 0, 0.2);
+    border-radius: 25px;
+}
+
+.book-card-num {
+    position: absolute;
+    top: 50%;
+    left: -50px;
+    transform: translateY(-50%);
+
+    color: var(--off-white);
+    font-size: 150px;
+    font-weight: 1000;
+    z-index: -1;
+}
+
+.book-card .book-card-num {
+    transition: 0.3s;
+}
+
+.book-card:hover .book-card-num {
+    top: 45%;
+    color: var(--yellow);
+    left: -75px;
+    transform: translateY(-50%) rotateZ(-20deg);
+}
+
 /* ===============================
    SECTION / STYLING
 ================================= */
@@ -476,4 +564,37 @@ footer {
     aspect-ratio: 1 / 1;
     border: 5px solid var(--white);
     border-radius: 15px;
+}
+
+/* ===============================
+   LIBRARY / STYLING
+================================= */
+
+.category-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.category-link {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: var(--off-white);
+    color: var(--brown);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border: 1px solid var(--off-white);
+}
+
+.category-link:hover {
+    background-color: var(--white);
+    transform: translateY(-2px);
+    color: var(--black);
+    text-decoration: none;
+}
+
+.tags {
+    border-bottom: 1px solid var(--off-white);
 }

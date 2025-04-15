@@ -29,3 +29,13 @@ function bookByCategoryRender($conn, $category, $limit)
         include __DIR__ . '/../views/books/bookCategory.php';
     }
 }
+
+function allBooks($conn, $limit)
+{
+    $book = new Book($conn);
+    $books = $book->getBooks($limit);
+
+    if ($books) {
+        include __DIR__ . '/../views/books/catalogueView.php';
+    }
+}

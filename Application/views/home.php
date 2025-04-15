@@ -24,7 +24,7 @@ require_once __DIR__ . "/includes/header.php";
         <?php require_once __DIR__ . "/includes/banner.php" ?>
     </div>
 
-    <section class="section">
+    <section class="section" id="stylish-section">
         <div class="container">
             <h1 class="fw-bold mb-0">Editor's Choice</h1>
             <span class="text-muted">
