@@ -44,16 +44,6 @@ require_once __DIR__ . "/includes/header.php";
 #book-hero-preview .btn:hover {
     background-color: #a30808;
 }
-#book-hero-preview {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-#book-hero-preview.show {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 </style>
 <body>
@@ -149,7 +139,7 @@ require_once __DIR__ . "/includes/header.php";
             heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
             heroLink.href = link;
 
-            hero.classList.remove('show');
+            hero.classList.remove('d-none');
         });
     });
 
