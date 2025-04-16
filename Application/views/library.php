@@ -77,27 +77,27 @@ require_once __DIR__ . "/includes/header.php";
 
 //to be removed - to its js file (do not delete)
 <script>
-    // const hero = document.getElementById('book-hero-preview');
-    // const heroImg = document.getElementById('hero-img');
-    // const heroTitle = document.getElementById('hero-title');
-    // const heroDesc = document.getElementById('hero-desc');
-    // const heroLink = document.getElementById('hero-link');
+    const hero = document.getElementById('book-hero-preview');
+    const heroImg = document.getElementById('hero-img');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDesc = document.getElementById('hero-desc');
+    const heroLink = document.getElementById('hero-link');
 
-    // document.querySelectorAll('.library-book-card').forEach(card => {
-    //     card.addEventListener('mouseenter', () => {
-    //         const title = card.dataset.title;
-    //         const desc = card.dataset.desc;
-    //         const cover = card.dataset.cover;
-    //         const link = card.dataset.link;
+    document.querySelectorAll('.library-book-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            const title = card.dataset.title;
+            const desc = card.dataset.desc;
+            const cover = card.dataset.cover;
+            const link = card.dataset.link;
 
-    //         heroImg.src = cover;
-    //         heroTitle.textContent = title;
-    //         heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
-    //         heroLink.href = link;
+            heroImg.src = cover;
+            heroTitle.textContent = title;
+            heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
+            heroLink.href = link;
 
-    //         hero.classList.remove('d-none');
-    //     });
-    // });
+            hero.classList.remove('d-none');
+        });
+    });
 
     #book-hero-preview img:hover {
     transform: scale(1.05);
