@@ -26,7 +26,7 @@ foreach ($books as $book) {
     $link = '/library/book/' . strtolower($book['CONTENTID']);
 
     echo '
-        <div class="library-book-card col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4 gap-3"
+        <div class="library-book-card col-xl-4 col-lg-6 col-sm-12 mb-4 gap-3"
              data-title="' . $title . '"
              data-desc="' . $desc . '"
              data-cover="' . $cover . '"
