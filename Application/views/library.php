@@ -74,26 +74,120 @@ require_once __DIR__ . "/includes/header.php";
 
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>
 </body>
+
+//to be removed - to its js file (do not delete)
 <script>
+    // const hero = document.getElementById('book-hero-preview');
+    // const heroImg = document.getElementById('hero-img');
+    // const heroTitle = document.getElementById('hero-title');
+    // const heroDesc = document.getElementById('hero-desc');
+    // const heroLink = document.getElementById('hero-link');
+
+    // document.querySelectorAll('.library-book-card').forEach(card => {
+    //     card.addEventListener('mouseenter', () => {
+    //         const title = card.dataset.title;
+    //         const desc = card.dataset.desc;
+    //         const cover = card.dataset.cover;
+    //         const link = card.dataset.link;
+
+    //         heroImg.src = cover;
+    //         heroTitle.textContent = title;
+    //         heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
+    //         heroLink.href = link;
+
+    //         hero.classList.remove('d-none');
+    //     });
+    // });
+
+    #book-hero-preview img:hover {
+    transform: scale(1.05);
+    }
+
     const hero = document.getElementById('book-hero-preview');
-    const heroImg = document.getElementById('hero-img');
-    const heroTitle = document.getElementById('hero-title');
-    const heroDesc = document.getElementById('hero-desc');
-    const heroLink = document.getElementById('hero-link');
+const heroImage = document.getElementById('hero-image');
+const heroTitle = document.getElementById('hero-title');
+const heroDescription = document.getElementById('hero-description');
+const heroPrice = document.getElementById('hero-price');
 
-    document.querySelectorAll('.library-book-card').forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            const title = card.dataset.title;
-            const desc = card.dataset.desc;
-            const cover = card.dataset.cover;
-            const link = card.dataset.link;
+const colorThief = new ColorThief();
 
-            heroImg.src = cover;
-            heroTitle.textContent = title;
-            heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
-            heroLink.href = link;
+document.querySelectorAll('.library-book-card').forEach(card => {
+    card.addEventListener('mouseover', () => {
+        const imageUrl = card.querySelector('img').src;
+        const title = card.querySelector('.book-card-little').innerText;
+        const description = card.querySelector('p').innerText;
+        const publisher = card.querySelector('.book-card-pub').innerText;
 
-            hero.classList.remove('d-none');
-        });
+        const tempImage = new Image();
+        tempImage.crossOrigin = 'Anonymous';
+        tempImage.src = imageUrl;
+
+        tempImage.onload = () => {
+            const dominantColor = colorThief.getColor(tempImage);
+            const gradient = `linear-gradient(135deg, rgb(${dominantColor.join(',')}), #ffffff)`;
+            hero.style.background = gradient;
+        };
+
+        heroImage.src = imageUrl;
+        heroTitle.innerText = title;
+        heroDescription.innerText = description;
+        heroPrice.innerText = publisher;
+
+        hero.classList.add('show');
     });
+});
+
+#book-hero-preview {
+    background: #fff6f6;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+}
+
+#book-hero-preview img {
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+#book-hero-preview h2 {
+    font-size: 1.75rem;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+#book-hero-preview p {
+    font-size: 0.95rem;
+    color: #555;
+    max-height: 110px;
+    overflow: hidden;
+}
+
+#book-hero-preview .btn {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    padding: 8px 20px;
+    background-color: #da0c0c;
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#book-hero-preview .btn:hover {
+    background-color: #a30808;
+}
+#book-hero-preview {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#book-hero-preview.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
 </script>
