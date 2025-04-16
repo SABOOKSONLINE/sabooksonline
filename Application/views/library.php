@@ -2,50 +2,6 @@
 require_once __DIR__ . "/includes/header.php";
 ?>
 
-<style>
-#book-hero-preview {
-    background: #fff6f6;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease-in-out;
-}
-
-#book-hero-preview img {
-    max-height: 250px;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-#book-hero-preview h2 {
-    font-size: 1.75rem;
-    margin-bottom: 10px;
-    color: #222;
-}
-
-#book-hero-preview p {
-    font-size: 0.95rem;
-    color: #555;
-    max-height: 110px;
-    overflow: hidden;
-}
-
-#book-hero-preview .btn {
-    margin-top: 15px;
-    font-size: 0.9rem;
-    padding: 8px 20px;
-    background-color: #da0c0c;
-    color: #fff;
-    border: none;
-    transition: background-color 0.2s ease-in-out;
-}
-
-#book-hero-preview .btn:hover {
-    background-color: #a30808;
-}
-
-</style>
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
