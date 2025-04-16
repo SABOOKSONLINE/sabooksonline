@@ -8,8 +8,8 @@ $contentId = $_GET['q'] ?? null;
 function creatorViewRender($conn, $contentId)
 {
 
-    $creatorModel = new CreatorModel($conn);
-    $creator = $creatorModel->getCreatorByContentId($contentId);
+    $creatorModel = new CreatorModel(connection: $conn);
+    $creator = $creatorModel->getCreatorByContentId(contentId: $contentId);
 
     if ($contentId) {
         if ($creator) {

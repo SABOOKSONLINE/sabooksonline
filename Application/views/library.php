@@ -31,12 +31,13 @@ require_once __DIR__ . "/includes/header.php";
             </div>
         </div>
 
+
         <div class="row">
             <?php
             require_once __DIR__ . "/../../database/connection.php";
             require_once __DIR__ . "/../models/Book.php";
             require_once __DIR__ . "/../controllers/BookController.php";
-            allBooks($conn, 20);
+            allBooks($conn, limit: 10);
             ?>
 
         </div>
@@ -53,3 +54,28 @@ require_once __DIR__ . "/includes/header.php";
 
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>
 </body>
+
+//to be removed - to its js file (do not delete)
+<script>
+    const hero = document.getElementById('book-hero-preview');
+    const heroImg = document.getElementById('hero-img');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDesc = document.getElementById('hero-desc');
+    const heroLink = document.getElementById('hero-link');
+
+    document.querySelectorAll('.library-book-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            const title = card.dataset.title;
+            const desc = card.dataset.desc;
+            const cover = card.dataset.cover;
+            const link = card.dataset.link;
+
+            heroImg.src = cover;
+            heroTitle.textContent = title;
+            heroDesc.textContent = desc.length > 180 ? desc.slice(0, 180) + "..." : desc;
+            heroLink.href = link;
+
+            hero.classList.remove('d-none');
+        });
+    });
+</script>

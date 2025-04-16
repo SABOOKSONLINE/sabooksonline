@@ -19,7 +19,7 @@ class LibraryModel {
         return $categories;
     }
 
-    private function getBookCountByCategory($category) {
+    private function getBookCountByCategory($category): mixed {
         $sql = "SELECT COUNT(*) as count FROM posts WHERE CATEGORY = ? AND STATUS = 'active'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $category);
