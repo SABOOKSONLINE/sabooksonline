@@ -31,6 +31,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
+     $r->addRoute('GET', '/dashboard', function () {
+        require "dashboard/index.php";
+    });
+
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/creatorpage.php";
