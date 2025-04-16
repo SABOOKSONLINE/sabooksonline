@@ -11,7 +11,7 @@ require_once __DIR__ . "/includes/header.php";
                 <h1 class="display-4">Welcome to <b>SABooksOnline</b></h1>
                 <p class="lead mb-4">The Gateway to South African Literature</p>
                 <div class="d-flex justify-content-start">
-                    <a class="btn btn-red me-2" href="#" role="button">
+                    <a class="btn btn-red me-2" href="/library" role="button">
                         EXPLORE LIBRARY
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -51,7 +51,7 @@ require_once __DIR__ . "/includes/header.php";
             </div>
 
             <h1 class="mt-4">
-                <a href="" class="btn btn-red text-uppercase">View more books</a>
+                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
             </h1>
         </div>
     </section>
@@ -80,7 +80,7 @@ require_once __DIR__ . "/includes/header.php";
             </div>
 
             <h1 class="mt-4">
-                <a href="" class="btn btn-red text-uppercase">View more books</a>
+                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
             </h1>
         </div>
     </section>
@@ -109,7 +109,7 @@ require_once __DIR__ . "/includes/header.php";
             </div>
 
             <h1 class="mt-4">
-                <a href="" class="btn btn-red text-uppercase">View more books</a>
+                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
             </h1>
         </div>
     </section>

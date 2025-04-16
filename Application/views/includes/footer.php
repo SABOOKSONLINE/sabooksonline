@@ -17,9 +17,9 @@
             <div class="col-md-2">
                 <h6 class="text-uppercase fw-bold mb-3">Site Navigation</h6>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="#" class="text-light">Home Page</a></li>
-                    <li><a href="#" class="text-light">About Us</a></li>
-                    <li><a href="#" class="text-light">Contact Us</a></li>
+                    <li><a href="/" class="text-light">Home Page</a></li>
+                    <li><a href="/about" class="text-light">About Us</a></li>
+                    <li><a href="/contact" class="text-light">Contact Us</a></li>
                     <li><a href="#" class="text-light">Register For Membership</a></li>
                     <li><a href="#" class="text-light">Create An Account</a></li>
                     <li><a href="#" class="text-light">Forgot My Password</a></li>

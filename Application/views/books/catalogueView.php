@@ -2,7 +2,7 @@
 // echo $_SERVER["REQUEST_URI"];
 foreach ($books as $book) {
     echo '
-        <div class="library-book-card col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4 gap-3">
+        <div class="library-book-card col-xl-4 col-lg-6 col-sm-12 mb-4 gap-3 py-3 px-3">
             <a href="/library/book/' . strtolower($book['CONTENTID']) . '">
                 <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" alt="' . strtolower($book['TITLE']) . '">
             </a>

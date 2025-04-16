@@ -5,7 +5,6 @@ require_once __DIR__ . "/includes/header.php";
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-
     <section class="tags">
         <div class="container py-5 category-container">
             <div class="d-flex flex-wrap justify-content-center">
@@ -32,7 +31,7 @@ require_once __DIR__ . "/includes/header.php";
         <div class="mb-5">
             <h1 class="fw-bold mb-0">Library</h1>
             <span class="text-muted">
-                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                The Never-Closing Library
             </span>
         </div>
 

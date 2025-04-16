@@ -16,16 +16,7 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
 
-                <!-- Books Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="booksDropdown" role="button" data-bs-toggle="dropdown">
-                        Books
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/library/catalogue">Book Catalogue</a></li>
-                        <li><a class="dropdown-item" href="/library/stores">Book Stores</a></li>
-                    </ul>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="/library">Library</a></li>
 
                 <!-- Community Dropdown -->
                 <li class="nav-item dropdown">
@@ -39,6 +30,7 @@
                     </ul>
                 </li>
 
+                <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
                 <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
                 <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
             </ul>
