@@ -1,6 +1,6 @@
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>
 
-<header class="navbar navbar-expand-md navbar-light bg-light">
+<header class="navbar navbar-expand-md navbar-light bg-light py-2">
     <div class="container-fluid">
         <a class="navbar-brand me-2" href="/" aria-label="sabooksonline">
             <img src="../../../public/images/sabo_logo.png" alt="sabooksonline logo" width="120">

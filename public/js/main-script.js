@@ -31,24 +31,36 @@ stylishBookNumber.forEach((card) => {
     counter++;
 });
 
-// Contact form
-$(document).ready(function (e) {
-    $("#contactforms").on("submit", function (e) {
-        $("#status").html(
-            '<p class="alert alert-info">Processing your message...</p>'
-        );
-        e.preventDefault();
-        $.ajax({
-            url: "message.php",
-            type: "POST",
-            data: new FormData(this),
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function (data) {
-                $("#status").html(data);
-            },
-            error: function () {},
-        });
-    });
+// // Contact form
+// $(document).ready(function (e) {
+//     $("#contactforms").on("submit", function (e) {
+//         $("#status").html(
+//             '<p class="alert alert-info">Processing your message...</p>'
+//         );
+//         e.preventDefault();
+//         $.ajax({
+//             url: "message.php",
+//             type: "POST",
+//             data: new FormData(this),
+//             contentType: false,
+//             cache: false,
+//             processData: false,
+//             success: function (data) {
+//                 $("#status").html(data);
+//             },
+//             error: function () {},
+//         });
+//     });
+// });
+
+// navbar
+
+const navbar = document.querySelector(".navbar");
+
+window.addEventListener("scroll", (e) => {
+    if (window.scrollY > 200) {
+        navbar.classList.add("fixed-top");
+    } else {
+        navbar.classList.remove("fixed-top");
+    }
 });

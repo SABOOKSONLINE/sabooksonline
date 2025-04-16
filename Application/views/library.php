@@ -5,9 +5,14 @@ require_once __DIR__ . "/includes/header.php";
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-    <section class="tags">
-        <div class="container py-5 category-container">
-            <div class="d-flex flex-wrap justify-content-center">
+    <div class="container py-4 ">
+        <h1 class="fw-bold mb-0">Library</h1>
+        <span class="text-muted">
+            The Never-Closing Library
+        </span>
+
+        <div class="category-container py-3">
+            <div class="">
                 <a href="#" class="category-link">Category</a>
                 <a href="#" class="category-link">Category</a>
                 <a href="#" class="category-link">Category</a>
@@ -24,15 +29,6 @@ require_once __DIR__ . "/includes/header.php";
                 <a href="#" class="category-link">Category</a>
                 <a href="#" class="category-link">Category</a>
             </div>
-        </div>
-    </section>
-
-    <div class="container py-4 ">
-        <div class="mb-5">
-            <h1 class="fw-bold mb-0">Library</h1>
-            <span class="text-muted">
-                The Never-Closing Library
-            </span>
         </div>
 
         <div class="row">

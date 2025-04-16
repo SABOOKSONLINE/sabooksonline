@@ -102,97 +102,25 @@ body {
 ================================= */
 
 .navbar {
-    height: 80px;
     padding: 0 50px;
     z-index: 10;
     width: 100%;
+    transition: 0.3s ease;
 }
 
 .nav-link {
-    font-size: 16px;
+    font-size: 14px;
     color: black;
 }
 
-.dropdown {
-    position: relative;
+.fixed-top {
+    transition: 0.3s ease;
+    z-index: 11;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    width: 225px;
-    padding: 16px 0;
-    background-color: white;
-    list-style: none;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-    border: 1px solid rgb(0, 0, 0, 0.1);
+.navbar-100 {
+    margin-top: 100px;
 }
-
-.dropdown-content::after {
-    content: "";
-    position: absolute;
-    background: white;
-    border-top: 1px solid rgb(0, 0, 0, 0.1);
-    border-left: 1px solid rgb(0, 0, 0, 0.1);
-    width: 10px;
-    height: 10px;
-    transform: rotate(45deg);
-    top: -6px;
-    left: 20px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown-content li {
-    position: relative;
-    text-align: left;
-    padding: 10px 15px;
-}
-
-.dropdown-content li a {
-    padding: 15px 20px;
-    color: rgb(0, 0, 0, 0.75);
-    transition: 0.2s;
-    text-decoration: none;
-}
-
-.dropdown-content li a:hover {
-    color: rgb(0, 0, 0, 0.75);
-    text-decoration: underline;
-    opacity: 0.75;
-}
-
-.search-pop {
-    position: relative;
-}
-
-.search-pop-content {
-    display: none;
-    position: absolute;
-    width: 300px;
-    top: 1px;
-    right: 0;
-}
-
-.search-pop-content button {
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    width: 37px;
-    padding: 8px 0 4px;
-    background: white;
-    border: none;
-    border-radius: 0 3px 3px 0;
-}
-
-.search-pop-content button:hover {
-    background: rgb(211, 211, 211);
-}
-
 /* ===============================
    JUMBOTRON / STYLING
 ================================= */
@@ -570,8 +498,9 @@ footer {
 ================================= */
 
 .category-container {
-    max-width: 800px;
-    margin: 0 auto;
+    position: relative;
+    background: var(--white);
+    border-bottom: 1px solid var(--off-white);
 }
 
 .category-link {
@@ -592,8 +521,4 @@ footer {
     transform: translateY(-2px);
     color: var(--black);
     text-decoration: none;
-}
-
-.tags {
-    border-bottom: 1px solid var(--off-white);
 }
