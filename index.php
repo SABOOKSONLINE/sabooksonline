@@ -22,7 +22,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/contact', function () {
         require "Application/views/contact.php";
     });
-    $r->addRoute('GET', '/library/catalogue', function () {
+    $r->addRoute('GET', '/library', function () {
         require "Application/views/library.php";
     });
 
