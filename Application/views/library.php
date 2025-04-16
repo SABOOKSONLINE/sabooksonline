@@ -75,6 +75,8 @@ require_once __DIR__ . "/includes/header.php";
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
+
 //to be removed - to its js file (do not delete)
 <script>
     const hero = document.getElementById('book-hero-preview');
