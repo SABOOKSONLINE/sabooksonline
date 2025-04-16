@@ -53,7 +53,9 @@ session_start();
 				
 				//echo $_SESSION['ADMIN_EMAIL'];
 				
-				echo '<script>window.location.href="https://sabooksonline.co.za/dashboard/";</script>';
+				echo '<script>window.location.href="https://11-july-2023.sabooksonline.co.za/
+dashboard/";</script>';
+        
 				
             }else {
               /*start the sessions*/
@@ -88,7 +90,8 @@ session_start();
   
                   //$name = $_SESSION['ADMIN_NAME'];
   
-                  echo '<script>window.location.href="https://sabooksonline.co.za/dashboard/";</script>';
+                  echo '<script>window.location.href="https://11-july-2023.sabooksonline.co.za/login
+/dashboard/";</script>';
   
               /*endd the sessions*/
   
