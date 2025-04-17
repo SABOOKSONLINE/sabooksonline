@@ -37,7 +37,7 @@ class AnalyticsModel {
             FROM page_visits
             WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?
         ";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->con->prepare($query);
         $like1 = "%provider%";
         $like2 = "%$provider_id%";
         $stmt->bind_param("ssss", $like1, $like2, $start_date, $end_date);
@@ -54,7 +54,7 @@ class AnalyticsModel {
             FROM page_visits
             WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?
         ";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->con->prepare($query);
         $like1 = "%provider%";
         $like2 = "%$provider_id%";
         $stmt->bind_param("ssss", $like1, $like2, $start_date, $end_date);
@@ -74,7 +74,7 @@ class AnalyticsModel {
         foreach ($book_ids as $book_id) {
             $like = "%book%";
             $content_like = "%$book_id%";
-            $stmt = $this->conn->prepare("
+            $stmt = $this->con->prepare("
                 SELECT COUNT(*) AS visit_count
                 FROM page_visits
                 WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?
@@ -96,7 +96,7 @@ class AnalyticsModel {
         foreach ($book_ids as $book_id) {
             $like = "%book%";
             $content_like = "%$book_id%";
-            $stmt = $this->conn->prepare("
+            $stmt = $this->con->prepare("
                 SELECT DISTINCT user_ip
                 FROM page_visits
                 WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?
@@ -112,9 +112,9 @@ class AnalyticsModel {
         return count(array_unique($all_ips));
     }
 
-    // === HELPER ===
+    // === HELPER === to get books using the users if - returns - books id's of that user
     private function getBookContentIDs($user_id) {
-        $stmt = $this->conn->prepare("SELECT CONTENTID FROM posts WHERE USERID = ?");
+        $stmt = $this->con->prepare("SELECT CONTENTID FROM posts WHERE USERID = ?");
         $stmt->bind_param("s", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -126,6 +126,9 @@ class AnalyticsModel {
         return $book_ids;
     }
 
+
+    // this for events 
+
     public function getEventViews($user_id, $start_date, $end_date) {
     $query = "
         SELECT COUNT(*) AS visit_count
@@ -135,7 +138,7 @@ class AnalyticsModel {
         AND e.USERID = ?
         AND DATE(pv.visit_time) BETWEEN ? AND ?
     ";
-    $stmt = $this->conn->prepare($query);
+    $stmt = $this->con->prepare($query);
     $stmt->bind_param("sss", $user_id, $start_date, $end_date);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -156,7 +159,7 @@ public function getUniqueEventUsers($user_id, $start_date, $end_date) {
         AND e.USERID = ?
         AND DATE(pv.visit_time) BETWEEN ? AND ?
     ";
-    $stmt = $this->conn->prepare($query);
+    $stmt = $this->con->prepare($query);
     $stmt->bind_param("sss", $user_id, $start_date, $end_date);
     $stmt->execute();
     $result = $stmt->get_result();
