@@ -22,8 +22,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/contact', function () {
         require "Application/views/contact.php";
     });
+
     $r->addRoute('GET', '/library', function () {
         require "Application/views/library.php";
+    });
+
+    $r->addRoute('GET', '/membership', function () {
+        require "Application/views/membership.php";
     });
 
     $r->addRoute('GET', '/library/book/{id}', function ($id) {
@@ -31,7 +36,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
-     $r->addRoute('GET', '/dashboard', function () {
+    $r->addRoute('GET', '/dashboard', function () {
         require "dashboard/index.php";
     });
 

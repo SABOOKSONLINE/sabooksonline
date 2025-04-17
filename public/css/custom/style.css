@@ -124,12 +124,13 @@ body {
 /* ===============================
    JUMBOTRON / STYLING
 ================================= */
-
 .jumbotron-lg {
+    background: url(../../images/jumbo_img/home.jpeg);
     height: 650px;
 }
 
 .jumbotron-md {
+    background: url(../../images/jumbo_img/jumbo_wallpaper_02.jpeg);
     height: 350px;
 }
 
@@ -138,7 +139,6 @@ body {
 }
 
 .jumbotron {
-    background: url(../../images/jumbo_img/home.jpeg);
     background-attachment: fixed;
     background-size: cover;
     background-position: center;
@@ -521,4 +521,93 @@ footer {
     transform: translateY(-2px);
     color: var(--black);
     text-decoration: none;
+}
+
+/* ===============================
+   PRICINGS PLANS / STYLING
+================================= */
+
+.priced-plans .col-md-4 {
+    background: var(--white);
+    padding: 50px 0;
+    border: 1px solid var(--off-white);
+    transition: 0.3s ease;
+    border-radius: 25px;
+}
+
+.priced-plans .col-md-4:hover {
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.priced-plans .col-md-4:hover .plan-price {
+    transform: scale(1.1);
+}
+
+.priced-plans .col-md-4 .btn {
+    border: 1px solid var(--white);
+}
+
+.priced-plans .col-md-4:hover {
+    color: var(--white);
+    background: var(--red);
+    border: 1px solid var(--red);
+    box-shadow: 0 10px 10px rgb(0, 0, 0, 0.1);
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.priced-plans .col-md-4:hover .plan-features {
+    color: var(--white);
+}
+
+.priced-plans > :nth-child(2) {
+    color: var(--white);
+    background: var(--red);
+    border: none;
+    box-shadow: 0 10px 10px rgb(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.priced-plans:hover > :nth-child(2) {
+    background: var(--white);
+    padding: 50px 0;
+    color: var(--black);
+    box-shadow: 0 0 0 rgb(0, 0, 0, 0);
+    transform: scale(1);
+}
+
+.priced-plans:hover > :nth-child(2) .plan-features {
+    color: var(--black);
+}
+
+.priced-plans:hover > :nth-child(2):hover {
+    color: var(--white);
+    background: var(--red);
+    box-shadow: 0 10px 10px rgb(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.priced-plans:hover > :nth-child(2):hover .plan-features {
+    color: var(--color);
+}
+
+.priced-plans > :nth-child(2) .plan-features {
+    color: var(--white);
+}
+
+.plan-title h3 {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.plan-price {
+    font-size: 50px;
+    font-weight: 800;
+}
+
+.plan-features {
+    font-size: 14px;
+    color: var(--black);
+    margin-bottom: 50px;
 }
