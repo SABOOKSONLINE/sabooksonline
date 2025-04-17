@@ -20,7 +20,7 @@
                     <li><a href="/" class="text-light">Home Page</a></li>
                     <li><a href="/about" class="text-light">About Us</a></li>
                     <li><a href="/contact" class="text-light">Contact Us</a></li>
-                    <li><a href="#" class="text-light">Register For Membership</a></li>
+                    <li><a href="/membership" class="text-light">Register For Membership</a></li>
                     <li><a href="#" class="text-light">Create An Account</a></li>
                     <li><a href="#" class="text-light">Forgot My Password</a></li>
                 </ul>
