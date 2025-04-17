@@ -31,6 +31,16 @@ require_once __DIR__ . "/includes/header.php";
             </div>
         </div>
 
+        <div id="book-hero-preview" class="row mb-5 align-items-center d-none my-4">
+            <div class="col-md-3">
+                <img id="hero-img" class="img-fluid rounded" src="" alt="Book Cover">
+            </div>
+            <div class="col-md-9">
+                <h2 id="hero-title" class="fw-bold"></h2>
+                <p id="hero-desc" class="text-muted mb-2"></p>
+                <a id="hero-link" href="#" class="btn btn-outline-primary">View Book</a>
+            </div>
+        </div>
 
         <div class="row">
             <?php
