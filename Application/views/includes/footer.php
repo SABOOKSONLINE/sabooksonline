@@ -5,12 +5,12 @@
             <div class="col-md-2">
                 <h6 class="text-uppercase fw-bold mb-3">Documentation</h6>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="#" class="text-light">Content Removals</a></li>
-                    <li><a href="#" class="text-light">POPIA Compliance</a></li>
-                    <li><a href="#" class="text-light">Privacy Policy</a></li>
-                    <li><a href="#" class="text-light">Terms & Conditions</a></li>
-                    <li><a href="#" class="text-light">Termination Policy</a></li>
-                    <li><a href="#" class="text-light">Refund Policy</a></li>
+                    <li><a href="/content-removal" class="text-light">Content Removals</a></li>
+                    <li><a href="/popia-compliance" class="text-light">POPIA Compliance</a></li>
+                    <li><a href="/privacy-policy" class="text-light">Privacy Policy</a></li>
+                    <li><a href="/terms-and-conditions" class="text-light">Terms & Conditions</a></li>
+                    <li><a href="/termination-policy" class="text-light">Termination Policy</a></li>
+                    <li><a href="refund-policy" class="text-light">Refund Policy</a></li>
                 </ul>
             </div>
 
