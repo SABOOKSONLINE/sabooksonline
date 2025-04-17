@@ -29,7 +29,7 @@
             <div class="col-md-2">
                 <h6 class="text-uppercase fw-bold mb-3">Useful Links</h6>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="#" class="text-light">Library Listings</a></li>
+                    <li><a href="/library" class="text-light">Library Listings</a></li>
                     <li><a href="#" class="text-light">How it works</a></li>
                     <li><a href="#" class="text-light">Member Dashboard</a></li>
                     <li><a href="#" class="text-light">My Account</a></li>
@@ -79,9 +79,9 @@
             </div>
             <div class="footer-links col-md-6 text-center text-md-end">
                 <small>
-                    <a href="">Terms and conditions</a>
+                    <a href="/terms-and-conditions">Terms and conditions</a>
                     |
-                    <a href="">Privacy</a>
+                    <a href="/privacy-policy">Privacy</a>
                     | &copy; SA Books Online</small>
             </div>
         </div>
