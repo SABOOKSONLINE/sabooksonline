@@ -140,11 +140,11 @@
                 //DATABASE CONNECTIONS SCRIPT
                 include '../includes/database_connections/sabooks_user.php';
                     
-                    // if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
+                    if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
 
-                    //     echo "<script>window.location.replace('basic');</script>";
+                        echo "<script>window.location.replace('basic');</script>";
 
-                    // } 
+                    } 
             
                 ?>
 
