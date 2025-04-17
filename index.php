@@ -44,6 +44,32 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['q'] = $id;
         require "Application/views/creatorpage.php";
     });
+
+    // documentation pages
+
+    $r->addRoute('GET', '/content-removal', function () {
+        require __DIR__ . "/Application/views/documentations/content-removal.php";
+    });
+
+    $r->addRoute('GET', '/popia-compliance', function () {
+        require __DIR__ . "/Application/views/documentations/popia-compliance.php";
+    });
+
+    $r->addRoute('GET', '/privacy-policy', function () {
+        require __DIR__ . "/Application/views/documentations/privacy-policy.php";
+    });
+
+    $r->addRoute('GET', '/termination-policy', function () {
+        require __DIR__ . "/Application/views/documentations/termination-policy.php";
+    });
+
+    $r->addRoute('GET', '/terms-and-conditions', function () {
+        require __DIR__ . "/Application/views/documentations/terms-and-conditions.php";
+    });
+
+    $r->addRoute('GET', '/refund-policy', function () {
+        require __DIR__ . "/Application/views/documentations/refund-policy.php";
+    });
 });
 
 // Fetch method and URI from server
