@@ -1,14 +1,34 @@
 <?php
 
+/**
+ * Class UserModel
+ * Handles user-related data operations.
+ */
 class UserModel {
+    /**
+     * @var mysqli The database connection object
+     */
     private $conn;
 
+    /**
+     * UserModel constructor.
+     *
+     * @param mysqli $dbConn An active MySQLi database connection
+     */
     public function __construct($dbConn) {
         $this->conn = $dbConn;
     }
 
+    /**
+     * Retrieves a user by either their admin name or admin user key.
+     * Converts dashes to spaces to allow for URL-friendly content IDs.
+     *
+     * @param string $contentid The admin name or user key, potentially URL slugged
+     * @return array|null Returns an associative array of user data if found, otherwise null
+     */
     public function getUserByNameOrKey($contentid) {
         $contentid = str_replace('-', ' ', $contentid);
+
         $sql = "SELECT * FROM users WHERE ADMIN_NAME = ? OR ADMIN_USERKEY = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ss", $contentid, $contentid);
@@ -22,6 +42,12 @@ class UserModel {
         return $result->fetch_assoc(); // Only using first match
     }
 
+    /**
+     * Fetches all posts associated with a specific user key.
+     *
+     * @param string $userKey The unique user ID (USERID) from the posts table
+     * @return array An array of associative arrays representing posts
+     */
     public function getPostsByUserKey($userKey) {
         $sql = "SELECT * FROM posts WHERE USERID = ?";
         $stmt = $this->conn->prepare($sql);
