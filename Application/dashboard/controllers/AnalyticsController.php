@@ -89,3 +89,15 @@ class AnalyticsController {
         return "~" . number_format($teased);
     }
 }
+
+// how to call it where the dashboard is viewed to render it
+// require_once '../controllers/AnalyticsController.php';
+
+// $controller = new AnalyticsController($con, $user);
+// ob_start();
+// $controller->getDashboardData($_GET['start'], $_GET['end']);
+// $json = ob_get_clean();
+// $analyticsData = json_decode($json, true);
+
+// include '../views/dashboard_view.php';
+
