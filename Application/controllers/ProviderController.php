@@ -3,26 +3,52 @@
 
 session_start();
 
-if (!isset($_GET['provider'])) {
-    echo 'Provider not specified';
-    exit;
-}
-
-// Normalize and sanitize the provider identifier
-$providerId = str_replace(['-', '_'], ' ', $_GET['provider']);
-
-// DB connection
 require_once __DIR__ . '/../config/connection.php';
 include_once 'models/ProviderModel.php';
 
-// Instantiate the model
-$providerModel = new ProviderModel($conn);
+/**
+ * Class ProviderProfileController
+ * Responsible for fetching and displaying a provider's profile.
+ */
+class ProviderProfileController
+{
+    private ProviderModel $providerModel;
 
-// Fetch data
-$providerData = $providerModel->getProviderById($providerId);
+    public function __construct(mysqli $conn)
+    {
+        $this->providerModel = new ProviderModel($conn);
+    }
+
+    /**
+     * Show a provider profile based on the URL slug (e.g., "city-plumbing").
+     *
+     * @param string|null $slug Provider slug from the URL
+     * @return void
+     */
+    public function showProfile(?string $slug): void
+    {
+        if (!$slug) {
+            echo 'Provider not specified';
+            exit;
+        }
+
+        // Convert slug to readable ID (e.g., "city-plumbing" → "city plumbing")
+        $providerId = str_replace(['-', '_'], ' ', $slug);
+        $providerData = $this->providerModel->getProviderById($providerId);
+
+        if (!$providerData) {
+            echo 'Provider not found';
+            exit;
+        }
+
+        // Include view (assumes $providerData will be available inside it)
+        include 'views/provider_profile_view.php';
+    }
+}
+
+// Instantiate controller and run
+$controller = new ProviderProfileController($conn);
+$controller->showProfile($_GET['provider'] ?? null);
 
 // Close DB
 $conn->close();
-
-// Include view
-include 'views/provider_profile_view.php';

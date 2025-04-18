@@ -252,7 +252,7 @@
                                     echo '<div class="alert alert-warning">There are Book Stores listed at the moment</div>';
                                   }else{
                                     echo '<hr>';
-                                    while($row = mysqli_fetch_assoc($result)) {
+                                    while($row = mysqli_fetch_assoc(result: $result)) {
                                       echo '<option  value="'.$row['STORE_NAME'].'">'.$row['STORE_NAME'].' - '.$row['STORE_ADDRESS'].'</option>';
                                     }
                                   }

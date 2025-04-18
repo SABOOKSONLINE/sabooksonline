@@ -7,22 +7,30 @@ class BookController
 {
     private $bookModel;
 
-    public function __construct($Conn)
+    public function __construct($conn)
     {
-        $this->bookModel = new Book($Conn);
+        $this->bookModel = new Book($conn);
     }
 
     public function showBooks()
     {
-        $data = [
-            'Editors Choice' => $this->bookModel->getBooksByCategory('Editors Choice'),
-            'latest' => $this->bookModel->getBooksByCategory('latest'),
-            'fiction' => $this->bookModel->getBooksByCategory("fiiction"),
-            'children' => $this->bookModel->getBooksByCategory('children'),
-        ];
+        // Define categories
+        $categories = ['Editors Choice', 'latest', 'fiction', 'children'];
+
+        // Prepare data for each category
+        $data = [];
+        foreach ($categories as $category) {
+            $books = $this->bookModel->getBooksByCategory($category);
+            // Check if books were returned
+            if ($books) {
+                $data[$category] = $books;
+            } else {
+                // Optionally, handle the case when no books are found for a category
+                $data[$category] = [];
+            }
+        }
 
         // Pass category => books to the view
         include __DIR__ . '/../views/books/category.php';
     }
 }
-
