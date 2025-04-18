@@ -17,8 +17,16 @@
                 ' . $book['DESCRIPTION'] . '
             </p>
 
+            <div class="category-container mb-3 py-3">
+                <div class="">
+                    <span class="category-link"><b>ISBN NUMBER:</b> ' . $book['ISBN'] . '</span>
+                    <a href="/creators/creator/' . strtolower($book['USERID']) . '" class="category-link"><b>About</b> ' . $book['PUBLISHER'] . '</a>
+                    <a href="' . $book['WEBSITE'] . '" class="category-link">Publish Website</a>
+                </div>
+            </div>
+
             <!-- Ratings -->
-            <div class="mb-5">
+            <div class="mb-3">
                 Ratings:
                 <span class="text-warning">
                     <i class="fas fa-star"></i>
@@ -30,7 +38,7 @@
             </div>
 
             <!-- Action Buttons & Price -->
-            <div class="row g-2">
+            <div class="row">
                 <div class="col-md-7 d-flex justify-content-between align-items-center p-2">
                     <a href="" class="btn btn-green">READ NOW</a>
                     <span class="ms-2 fw-bold">COMING SOON</span>

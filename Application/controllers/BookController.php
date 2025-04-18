@@ -12,6 +12,7 @@ class BookController
         $this->bookModel = new Book($conn);
     }
 
+
     /**
      * Render the view for a single book by its ID.
      */
@@ -20,8 +21,8 @@ class BookController
         $contentId = $_GET['q'] ?? null;
 
         if (!$contentId) {
-            echo "No book ID provided.";
-            return;
+            header("Location: /404"); // or a custom URL
+            exit;
         }
 
         // Sanitize the contentId (if used in the view)

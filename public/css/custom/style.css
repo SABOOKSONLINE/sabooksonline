@@ -124,16 +124,17 @@ body {
    JUMBOTRON / STYLING
 ================================= */
 .jumbotron-lg {
-    background: url(../../images/jumbo_img/home.jpeg);
+    background: url("../../images/jumbo_img/home.jpeg");
     height: 650px;
 }
 
 .jumbotron-md {
-    background: url(../../images/jumbo_img/jumbo_wallpaper_02.jpeg);
+    background: url("../../images/jumbo_img//jumbo_wallpaper_02.jpeg");
     height: 350px;
 }
 
 .jumbotron-sm {
+    background: url("../../images/jumbo_img//jumbo_wallpaper.jpeg");
     height: 150px;
 }
 
