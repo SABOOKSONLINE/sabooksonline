@@ -140,11 +140,11 @@
                 //DATABASE CONNECTIONS SCRIPT
                 include '../includes/database_connections/sabooks_user.php';
                     
-                    if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
+                    // if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Free') {
 
-                        echo "<script>window.location.replace('basic');</script>";
+                    //     echo "<script>window.location.replace('basic');</script>";
 
-                    } 
+                    // } 
             
                 ?>
 
@@ -233,26 +233,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
   <div class="d-flex align-items-center justify-content-between statistics_funfact">
     <div class="details">
       <div class="fz15">Net Income</div>
-      <div class="title">R
-        
-      <?php
-          
-
-            if($websitedata == false){
-                echo '0';
-            } else {
-                $result = mysqli_query($con, "SELECT SUM(product_total) AS value_sum FROM product_order WHERE product_current = 'completed'"); 
-                $row = mysqli_fetch_assoc($result); 
-                $sum = $row['value_sum'];
-
-                echo $sum;
-            }
-
-
-                                    
-            
-    ?>
-
+      <div class="title">R<?php echo 0?>
       </div>
     </div>
     <div class="icon text-center"><i class="flaticon-income"></i></div>
@@ -262,26 +243,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
   <div class="d-flex align-items-center justify-content-between statistics_funfact">
     <div class="details">
       <div class="fz15">Transactions</div>
-        <div class="title">
-        <?php
-
-        include '../includes/database_connections/sabooks_user.php';
-
-        if ($websitedata) {
-            $rows_query = mysqli_query($con, "SELECT COUNT(*) as number_rows FROM product_order WHERE product_current = 'COMPLETED';");
-
-            if ($rows_query) {
-                $rows = mysqli_fetch_assoc($rows_query);
-                echo $rows['number_rows'];
-            } else {
-                echo "Error fetching data: " . mysqli_error($con);
-            }
-        } else {
-            echo '0';
-        }
-
-        ?>
-
+        <div class="title"><?php echo 0?>
         </div>
     </div>
     <div class="icon text-center"><i class="flaticon-withdraw"></i></div>
@@ -291,22 +253,8 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
   <div class="d-flex align-items-center justify-content-between statistics_funfact">
     <div class="details">
       <div class="fz15">Total Customers</div>
-      <div class="title"><?php
-
-
-        if($websitedata == false){
-            echo '0';
-        } else if($websitedata == true){
-
-        $rows_query = mysqli_query($con, "SELECT COUNT(*) as number_rows FROM user_info;");
-
-        $rows = mysqli_fetch_assoc($rows_query);
-
-        echo $rows['number_rows'];
-
-        }
-
-        ?></div>
+      <div class="title"><?php echo 0?>
+        </div>
     </div>
     <div class="icon text-center"><i class="flaticon-review"></i></div>
   </div>
@@ -315,199 +263,23 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
   <div class="d-flex align-items-center justify-content-between statistics_funfact">
     <div class="details">
       <div class="fz15">Pending Orders</div>
-      <div class="title"><?php
-
-        if($websitedata == false){
-            echo '0';
-        } else if($websitedata == true){
-
-      $rows_query = mysqli_query($con, "SELECT COUNT(*) as number_rows FROM  product_order WHERE product_current = 'cart';");
-
-      $rows = mysqli_fetch_assoc($rows_query);
-
-      echo $rows['number_rows'];
-
-        }
-
-      ?></div>
+      <div class="title"><?php echo 0?>
+      </div>
     </div>
     <div class="icon text-center"><i class="flaticon-review-1"></i></div>
   </div>
 </div>
 </div>
-
-
           <div class="row">
-
-          <!-- <?php
-          if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Deluxe') {
-              
-          } else {
-              echo '<style>.book-status{display:none !important;}</style>';
-          }
-          ?> -->
-
-
             <div class="col-sm-6 col-xxl-3 book-status">
               <div class="d-flex align-items-center justify-content-between statistics_funfact">
                 <div class="details">
                   <div class="fz15">Book Store</div>
-                  <div class="title">
-                    
-                    <?php
-
-                    //DATABASE CONNECTIONS SCRIPT
-                    include '../includes/database_connections/sabooks.php';
-
-                  // Define the USERID you want to filter by
-                  $user_id = $_SESSION['ADMIN_USERKEY'];
-
-                  // Define the start and end date for your date range (replace with actual dates)
-                  // Calculate the start date (30 days ago from today)
-
-                  // Prepare the SQL query to select CONTENTID based on USERID
-                  $query = "SELECT ID FROM book_stores WHERE USERID = ?";
-                  $stmt = $conn->prepare($query);
-
-                  if ($stmt) {
-                      // Bind the USERID parameter and execute the query
-                      $stmt->bind_param("s", $user_id);
-                      $stmt->execute();
-
-                      // Get the results into an array
-                      $result = $stmt->get_result();
-                      $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                      // Close the prepared statement
-                      $stmt->close();
-
-                      // Extract CONTENTID values and format as an array
-                      $book_ids = array_column($book_ids, 'ID');
-
-                      // Prepare the SQL query to count page visits within the date range
-                      $query = "SELECT COUNT(*) AS visit_count
-                                FROM page_visits AS pv
-                                INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%')
-                                WHERE pv.page_url LIKE ? AND p.ID = ?
-                                AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                      $stmt = $conn->prepare($query);
-
-                      if ($stmt) {
-                          // Initialize a variable to store the combined visit count
-                          $combined_visit_count = 0;
-
-                          // Define the LIKE pattern
-                          $likePattern = "%store%";
-
-                          foreach ($book_ids as $book_id) {
-                              // Bind the parameters
-                              $stmt->bind_param("siss", $likePattern, $book_id, $start_date, $end_date);
-
-                              // Execute the query
-                              $stmt->execute();
-
-                              // Bind the result and fetch
-                              $stmt->bind_result($visit_count);
-                              $stmt->fetch();
-
-                              // Add the visit count to the combined total
-                              $combined_visit_count += $visit_count;
-                          }
-
-                          // Close the prepared statement
-                          $stmt->close();
-
-                          $store = $combined_visit_count;
-
-                          // Output the combined visit count
-                          echo $combined_visit_count;
-                      } else {
-                          echo "0";
-                      }
-                  } else {
-                      echo "0";
-                  }
-
-
-                  ?>
+                  <div class="title"><?php echo 0?>
 
                   </div>
-                  <div class="text fz14"><span class="text-thm"><?php
-
-                  // Define the USERID you want to filter by
-                  $user_id = $_SESSION['ADMIN_USERKEY'];
-
-                  // Prepare the SQL query to select CONTENTID based on USERID
-                  $query = "SELECT ID FROM book_stores WHERE USERID = ?";
-                  $stmt = $conn->prepare($query);
-
-                  if ($stmt) {
-                      // Bind the USERID parameter and execute the query
-                      $stmt->bind_param("s", $user_id);
-                      $stmt->execute();
-
-                      // Get the results into an array
-                      $result = $stmt->get_result();
-                      $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                      // Close the prepared statement
-                      $stmt->close();
-
-                      // Extract CONTENTID values and format as an array
-                      $book_ids = array_column($book_ids, 'ID');
-
-                      // Check if there are book IDs
-                      if (!empty($book_ids)) {
-                          // Prepare the SQL query to count unique users based on IPs within the date range
-                          $query = "SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-                                    FROM page_visits AS pv
-                                    INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%')
-                                    WHERE pv.page_url LIKE ? AND p.ID IN (" . implode(',', array_fill(0, count($book_ids), '?')) . ")
-                                    AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                          $stmt = $conn->prepare($query);
-
-                          if ($stmt) {
-                              // Initialize a variable to store the unique user count
-                              $unique_user_count = 0;
-
-                              // Define the LIKE pattern
-                              $likePattern = "%store%";
-
-                              // Bind parameters for IN clause (book IDs)
-                              $params = array_merge(array($likePattern), $book_ids, array($start_date, $end_date));
-                              $paramTypes = str_repeat("s", count($params));
-                              $stmt->bind_param($paramTypes, ...$params);
-
-                              // Execute the query
-                              $stmt->execute();
-
-                              // Bind the result to a variable
-                              $stmt->bind_result($unique_user_count);
-
-                              // Fetch the result
-                              $stmt->fetch();
-
-                              // Close the prepared statement
-                              $stmt->close();
-
-                              // Output the total number of unique users based on their IPs
-                              if ($_SESSION['PLAN'] === 'deluxe') {
-                                  echo 'Based on ' . $uniqueUsers;
-                              } else {
-                                  echo '<span class="blurred" title="Subscribe to unlock full stats">Based on ' . $uniqueUsers . '</span>';
-                              }
-                          } else {
-                              echo "0";
-                          }
-                      } else {
-                          echo "0";
-                      }
-                  } else {
-                      echo "0";
-                  }
-                  ?></span> Users</div>
+                  <div class="text fz14"><span class="text-thm"><?php echo 0?>
+                </span> Users</div>
                 </div>
                 <div class="icon text-center"><i class="flaticon-contract"></i></div>
               </div>
@@ -516,89 +288,9 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
               <div class="d-flex align-items-center justify-content-between statistics_funfact">
                 <div class="details">
                   <div class="fz15">Services Views</div>
-                  <div class="title"><?php
-
-                  session_start();
-                  ini_set('display_errors', 1);
-                  ini_set('display_startup_errors', 1);
-                  error_reporting(E_ALL);
-                  // Define the keyword to search for in the page_url
-                  $keyword = "provider";
-
-                  // Define the specific provider ID you want to filter by
-                  $provider_id = $_SESSION['ADMIN_ID']; // Replace with your provider ID
-
-                  // Define the start and end dates for your date range
-                 
-
-                  // Execute a SQL query to count page visits where page_url contains the keyword, the provider ID, and falls within the specified date range
-                  $stmt = $conn->prepare("SELECT COUNT(*) AS visit_count
-                                          FROM page_visits
-                                          WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?");
-                  $stmt->bind_param("ssss", $likePattern, $providerPattern, $start_date, $end_date);
-
-                  // Define the LIKE patterns for the keyword and provider ID
-                  $likePattern = "%$keyword%";
-                  $providerPattern = "%$provider_id%";
-
-                  $stmt->execute();
-
-                  // Bind the result to a variable
-                  $stmt->bind_result($visit_count);
-
-                  // Fetch the result
-                  $stmt->fetch();
-
-                  $services = $visit_count;
-
-                  // Output the visit count
-                  // echo $visit_count;
-                  if ($_SESSION['PLAN'] === 'deluxe') {
-                    echo $visit_count;
-                } else {
-                    echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
-                }
-?>
-
-                  // Close the prepared statement
-                  $stmt->close();
-                  ?>
-
-
+                  <div class="title"><?php echo "0" ?>
                   </div>
-                  <div class="text fz14"><span class="text-thm"><?php
-                  // Define the keyword to search for in the page_url
-                  $keyword = "provider";
-
-                  // Define the specific provider ID you want to filter by
-                  $provider_id = $_SESSION['ADMIN_ID']; // Replace with your provider ID
-
-                  // Execute a SQL query to count unique users (based on IP addresses) who visited pages with the keyword and the provider ID within the specified date range
-                  $stmt = $conn->prepare("SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-                                          FROM page_visits
-                                          WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?");
-                  $stmt->bind_param("ssss", $likePattern, $providerPattern, $start_date, $end_date);
-
-                  // Define the LIKE patterns for the keyword and provider ID
-                  $likePattern = "%$keyword%";
-                  $providerPattern = "%$provider_id%";
-
-                  $stmt->execute();
-
-                  // Bind the result to a variable
-                  $stmt->bind_result($unique_user_count);
-
-                  // Fetch the result
-                  $stmt->fetch();
-
-                  $uniqueUsers = $unique_user_count;
-
-                  // Output the total number of unique users
-                  echo 'Based on '.$uniqueUsers;
-
-                  // Close the prepared statement
-                  $stmt->close();
-                  ?>
+                  <div class="text fz14"><span class="text-thm"><?php echo "0"?>
                   </span> Users</div>
                 </div>
                 <div class="icon text-center"><i class="flaticon-contract"></i></div>
@@ -608,164 +300,9 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
               <div class="d-flex align-items-center justify-content-between statistics_funfact">
                 <div class="details">
                   <div class="fz15">Book Views</div>
-                  <div class="title"><?php
-                  // Include your database connection code here (e.g., using mysqli).
-                  
-
-                  // Define the USERID you want to filter by
-                  $user_id = $_SESSION['ADMIN_USERKEY'];
-
-                  // Define the start and end date for your date range (replace with actual dates)
-                  // Calculate the start date (30 days ago from today)
-
-                  // Prepare the SQL query to select CONTENTID based on USERID
-                  $query = "SELECT CONTENTID FROM posts WHERE USERID = ?";
-                  $stmt = $conn->prepare($query);
-
-                  if ($stmt) {
-                      // Bind the USERID parameter and execute the query
-                      $stmt->bind_param("s", $user_id);
-                      $stmt->execute();
-
-                      // Get the results into an array
-                      $result = $stmt->get_result();
-                      $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                      // Close the prepared statement
-                      $stmt->close();
-
-                      // Extract CONTENTID values and format as an array
-                      $book_ids = array_column($book_ids, 'CONTENTID');
-
-                      // Prepare the SQL query to count page visits within the date range
-                      $query = "SELECT COUNT(*) AS visit_count
-                                FROM page_visits AS pv
-                                INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                                WHERE pv.page_url LIKE ? AND p.CONTENTID = ?
-                                AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                      $stmt = $conn->prepare($query);
-
-                      if ($stmt) {
-                          // Initialize a variable to store the combined visit count
-                          $combined_visit_count = 0;
-
-                          // Define the LIKE pattern
-                          $likePattern = "%book%";
-
-                          foreach ($book_ids as $book_id) {
-                              // Bind the parameters
-                              $stmt->bind_param("ssss", $likePattern, $book_id, $start_date, $end_date);
-
-                              // Execute the query
-                              $stmt->execute();
-
-                              // Bind the result and fetch
-                              $stmt->bind_result($visit_count);
-                              $stmt->fetch();
-
-                              // Add the visit count to the combined total
-                              $combined_visit_count += $visit_count;
-                          }
-
-                          // Close the prepared statement
-                          $stmt->close();
-
-                          $books = $combined_visit_count;
-
-                          // Output the combined visit count
-                          // echo $combined_visit_count;
-                          if ($_SESSION['PLAN'] === 'deluxe') {
-                            echo $combined_visit_count;
-                        } else {
-                            echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
-                        }
-
-                      } else {
-                          echo "0";
-                      }
-                  } else {
-                      echo "0";
-                  }
-
-
-                  ?>
-
-
-
-
+                  <div class="title"><?php echo 0;?>
                   </div>
-                  <div class="text fz14"><span class="text-thm"><?php
-
-                    // Define the USERID you want to filter by
-                    $user_id = $_SESSION['ADMIN_USERKEY'];
-
-                    // Prepare the SQL query to select CONTENTID based on USERID
-                    $query = "SELECT CONTENTID FROM posts WHERE USERID = ?";
-                    $stmt = $conn->prepare($query);
-
-                    if ($stmt) {
-                        // Bind the USERID parameter and execute the query
-                        $stmt->bind_param("s", $user_id);
-                        $stmt->execute();
-
-                        // Get the results into an array
-                        $result = $stmt->get_result();
-                        $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                        // Close the prepared statement
-                        $stmt->close();
-
-                        // Extract CONTENTID values and format as an array
-                        $book_ids = array_column($book_ids, 'CONTENTID');
-
-                        // Check if there are book IDs
-                        if (!empty($book_ids)) {
-                            // Prepare the SQL query to count unique users based on IPs within the date range
-                            $query = "SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-                                      FROM page_visits AS pv
-                                      INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                                      WHERE pv.page_url LIKE ? AND p.CONTENTID IN (" . implode(',', array_fill(0, count($book_ids), '?')) . ")
-                                      AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                            $stmt = $conn->prepare($query);
-
-                            if ($stmt) {
-                                // Initialize a variable to store the unique user count
-                                $unique_user_count = 0;
-
-                                // Define the LIKE pattern
-                                $likePattern = "%book%";
-
-                                // Bind parameters for IN clause (book IDs)
-                                $params = array_merge(array($likePattern), $book_ids, array($start_date, $end_date));
-                                $paramTypes = str_repeat("s", count($params));
-                                $stmt->bind_param($paramTypes, ...$params);
-
-                                // Execute the query
-                                $stmt->execute();
-
-                                // Bind the result to a variable
-                                $stmt->bind_result($unique_user_count);
-
-                                // Fetch the result
-                                $stmt->fetch();
-
-                                // Close the prepared statement
-                                $stmt->close();
-
-                                // Output the total number of unique users based on their IPs
-                                echo 'Based on ' . $unique_user_count;
-                            } else {
-                                echo "0";
-                            }
-                        } else {
-                            echo "0";
-                        }
-                    } else {
-                        echo "0";
-                    }
-                    ?>
+                  <div class="text fz14"><span class="text-thm"><?php echo "0";?>
 
                   </span> Users</div>
                 </div>
@@ -776,150 +313,9 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
               <div class="d-flex align-items-center justify-content-between statistics_funfact">
                 <div class="details">
                   <div class="fz15">Events Views</div>
-                  <div class="title"><?php
-                  // Define the USERID you want to filter by
-                  $user_id = $_SESSION['ADMIN_USERKEY'];
-
-
-                  // Prepare the SQL query to select CONTENTID based on USERID
-                  $query = "SELECT CONTENTID FROM events WHERE USERID = ?";
-                  $stmt = $conn->prepare($query);
-
-                  if ($stmt) {
-                      // Bind the USERID parameter and execute the query
-                      $stmt->bind_param("s", $user_id);
-                      $stmt->execute();
-
-                      // Get the results into an array
-                      $result = $stmt->get_result();
-                      $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                      // Close the prepared statement
-                      $stmt->close();
-
-                      // Extract CONTENTID values and format as an array
-                      $book_ids = array_column($book_ids, 'CONTENTID');
-
-                      // Prepare the SQL query to count page visits within the date range
-                      $query = "SELECT COUNT(*) AS visit_count
-                                FROM page_visits AS pv
-                                INNER JOIN events AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                                WHERE pv.page_url LIKE ? AND p.CONTENTID = ?
-                                AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                      $stmt = $conn->prepare($query);
-
-                      if ($stmt) {
-                          // Initialize a variable to store the combined visit count
-                          $combined_visit_count = 0;
-
-                          // Define the LIKE pattern
-                          $likePattern = "%event-details%";
-
-                          foreach ($book_ids as $book_id) {
-                              // Bind the parameters
-                              $stmt->bind_param("ssss", $likePattern, $book_id, $start_date, $end_date);
-
-                              // Execute the query
-                              $stmt->execute();
-
-                              // Bind the result and fetch
-                              $stmt->bind_result($visit_count);
-                              $stmt->fetch();
-
-                              // Add the visit count to the combined total
-                              $combined_visit_count += $visit_count;
-                          }
-
-                          // Close the prepared statement
-                          $stmt->close();
-
-                          $events = $combined_visit_count;
-
-                          // Output the combined visit count
-                          echo $combined_visit_count;
-                      } else {
-                          echo "0";
-                      }
-                  } else {
-                      echo "0";
-                  }
-
-
-                  ?>
+                  <div class="title"><?php echo "0";?>
                 </div>
-                  <div class="text fz14"><span class="text-thm"><?php
-
-                    // Define the USERID you want to filter by
-                    $user_id = $_SESSION['ADMIN_USERKEY'];
-
-                    // Prepare the SQL query to select CONTENTID based on USERID
-                    $query = "SELECT CONTENTID FROM events WHERE USERID = ?";
-                    $stmt = $conn->prepare($query);
-
-                    if ($stmt) {
-                        // Bind the USERID parameter and execute the query
-                        $stmt->bind_param("s", $user_id);
-                        $stmt->execute();
-
-                        // Get the results into an array
-                        $result = $stmt->get_result();
-                        $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-
-                        // Close the prepared statement
-                        $stmt->close();
-
-                        // Extract CONTENTID values and format as an array
-                        $book_ids = array_column($book_ids, 'CONTENTID');
-
-                        // Check if there are book IDs
-                        if (!empty($book_ids)) {
-                            // Prepare the SQL query to count unique users based on IPs within the date range
-                            $query = "SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-                                    FROM page_visits AS pv
-                                    INNER JOIN events AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                                    WHERE pv.page_url LIKE ? AND p.CONTENTID IN (" . implode(',', array_fill(0, count($book_ids), '?')) . ")
-                                    AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
-
-                            $stmt = $conn->prepare($query);
-
-                            if ($stmt) {
-                                // Initialize a variable to store the unique user count
-                                $unique_user_count = 0;
-
-                                // Define the LIKE pattern
-                                $likePattern = "%event%";
-
-                                // Bind parameters for IN clause (book IDs)
-                                $params = array_merge(array($likePattern), $book_ids, array($start_date, $end_date));
-                                $paramTypes = str_repeat("s", count($params));
-                                $stmt->bind_param($paramTypes, ...$params);
-
-                                // Execute the query
-                                $stmt->execute();
-
-                                // Bind the result to a variable
-                                $stmt->bind_result($unique_user_count);
-
-                                // Fetch the result
-                                $stmt->fetch();
-
-                                // Close the prepared statement
-                                $stmt->close();
-
-                                // Output the total number of unique users based on their IPs
-                                echo 'Based on ' . $unique_user_count;
-                            } else {
-                                echo "0";
-                            }
-                        } else {
-                            echo "0";
-                        }
-                    } else {
-                        echo "0";
-                    }
-                    ?>
-
+                  <div class="text fz14"><span class="text-thm"><?php echo "0";?>
                   </span> Users</div>
                 </div>
                 <div class="icon text-center"><i class="flaticon-review"></i></div>
@@ -929,75 +325,9 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
               <div class="d-flex align-items-center justify-content-between statistics_funfact">
                 <div class="details">
                   <div class="fz15">Profile Views</div>
-                  <div class="title"><?php
-                    // Define the keyword to search for in the page_url
-                    $keyword = $_SESSION['ADMIN_USERKEY'];
-
-                    // Define the start and end dates for your date range
-
-                    // Execute a SQL query to count page visits where page_url contains the keyword and falls within the specified date range
-                    $stmt = $conn->prepare("SELECT COUNT(*) AS visit_count
-                                          FROM page_visits
-                                          WHERE page_url LIKE ? AND visit_time BETWEEN ? AND ?");
-                    $stmt->bind_param("sss", $likePattern, $start_date, $end_date);
-
-                    // Define the LIKE pattern to search for the keyword in page_url
-                    $likePattern = "%$keyword%";
-
-                    $stmt->execute();
-
-                    // Bind the result to a variable
-                    $stmt->bind_result($visit_count);
-
-                    // Fetch the result
-                    $stmt->fetch();
-
-                    $profile = $visit_count;
-
-                    // Output the visit count
-                    echo $visit_count;
-
-                    // Close the prepared statement
-                    $stmt->close();
-                    ?>
+                  <div class="title"><?php echo "0";?>
                     </div>
-                  <div class="text fz14"><span class="text-thm"><?php
-
-                    // Define the keyword to search for in the page_url
-                    $keyword = $_SESSION['ADMIN_USERKEY'];
-
-                    // Prepare the SQL query to count unique users based on IPs within the date range
-                    $query = "SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-                              FROM page_visits
-                              WHERE page_url LIKE ? AND DATE(visit_time) BETWEEN ? AND ?";
-                    $stmt = $conn->prepare($query);
-
-                    if ($stmt) {
-                        // Define the LIKE pattern to search for the keyword in page_url
-                        $likePattern = "%$keyword";
-
-                        // Bind the parameters
-                        $stmt->bind_param("sss", $likePattern, $start_date, $end_date);
-
-                        // Execute the query
-                        $stmt->execute();
-
-                        // Bind the result to a variable
-                        $stmt->bind_result($unique_user_count);
-
-                        // Fetch the result
-                        $stmt->fetch();
-
-                        // Output the total number of unique users based on their IPs for profile visits
-                        echo 'Based on ' . $unique_user_count;
-
-                        // Close the prepared statement
-                        $stmt->close();
-                    } else {
-                        echo "0";
-                    }
-                    ?>
-
+                  <div class="text fz14"><span class="text-thm"><?php echo "0";?>
                     </span> Users</div>
                 </div>
                 <div class="icon text-center"><i class="flaticon-review-1"></i></div>
@@ -1046,26 +376,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
           </div>
 
           <?php 
-          // Calculate the total sum of all variables
-          $total = $services + $events + $profile + $books + $store;
-
-          if($books == 0 && $profile == 0 && $events == 0 && $services == 0 ){
-            $services_percentage = 0;
-            $events_percentage = 0;
-            $profile_percentage = 0;
-            $books_percentage = 0;
-            $store_percentage = 0;
-          } else {
-
-              // Calculate the percentages and round them to two decimal places
-              $services_percentage = round(($services / $total) * 100, 0);
-              $events_percentage = round(($events / $total) * 100, 0);
-              $profile_percentage = round(($profile / $total) * 100, 0);
-              $books_percentage = round(($books / $total) * 100, 0);
-              $store_percentage = round(($store / $total) * 100, 0);
-
-
-          }
+        
 
         
           

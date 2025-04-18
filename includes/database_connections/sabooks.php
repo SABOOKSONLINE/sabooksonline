@@ -1,15 +1,21 @@
 <?php
 $servername = "localhost";
-/*$username = "root";
-$password = "";
-$dbh = "sabooksonline";*/
+$username = "root";
+// $password = "";
+// $dbh = "sabooksonline";*/
 
-$username = "sabooks_library";
-$password = "1m0g7mR3$";
+// $username = "sabooks_library";
+// $password = "1m0g7mR3$";
+
+$username = "root";
+
+// $password = "1m0g7mR3$";
+$password = "root";
 
 // $username = "root";
 // $password = "root";
 $dbh = "Sibusisomanqa_update_3";
+
 
 /*$username = "root";
 $password = "";
