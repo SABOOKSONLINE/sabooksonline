@@ -14,7 +14,6 @@ require_once __DIR__ . "/includes/header.php";
     require_once __DIR__ . "/../../database/connection.php";
     require_once __DIR__ . "/../models/Book.php";
     require_once __DIR__ . "/../controllers/BookController.php";
-    bookViewRender($conn);
     ?>
 
     <?php require_once __DIR__ . "/includes/footer.php" ?>

@@ -66,15 +66,15 @@ class BookController
     }
 }
 
-// Instantiate the controller
-$controller = new BookController($conn);
+// // Instantiate the controller
+// $controller = new BookController($conn);
 
-// Example usage:
-if (isset($_GET['q'])) {
-    $controller->renderBookView(); // Single book view
-} elseif (isset($_GET['cat'])) {
-    $category = $_GET['cat'];
-    $controller->renderBooksByCategory($category, 10); // Books by category
-} else {
-    $controller->renderAllBooks(20); // All books, limit 20
-}
+// // Example usage:
+// if (isset($_GET['q'])) {
+//     $controller->renderBookView(); // Single book view
+// } elseif (isset($_GET['cat'])) {
+//     $category = $_GET['cat'];
+//     $controller->renderBooksByCategory($category, 10); // Books by category
+// } else {
+//     $controller->renderAllBooks(20); // All books, limit 20
+// }
