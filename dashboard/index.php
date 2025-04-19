@@ -237,6 +237,7 @@
           <p>300</p>
         </div>
       </div>
+      
     </div>
 
     <div class="stats-cards">
@@ -249,6 +250,7 @@
         <i class="card-icon"></i>
         <div class="card-title">Revenue</div>
         <div class="card-value"><span class="count" data-target="15423">0</span></div>
+
       </div>
       <div class="stats-card">
         <i class="card-icon"></i>

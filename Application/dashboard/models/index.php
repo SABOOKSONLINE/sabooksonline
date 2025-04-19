@@ -248,7 +248,9 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
       </div>
     </div>
-    <div class="icon text-center"><i class="flaticon-income"></i></div>
+    <div class="icon text-center">
+      <i class="flaticon-income"></i>
+    </div>
   </div>
 </div>
 <div class="col-sm-6 col-xxl-3">
