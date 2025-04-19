@@ -202,12 +202,6 @@
     <div class="top-row">
       <div class="welcome-card">
         <h3>Welcome back, Kganya!</h3>
-        <p>Activity</p>
-        <p>8 people viewed your book</p>
-        <p>user clicked your book</p>
-        <p>your profile is being noticed</p>
-        <p>Subscribe to get full notifications</p>
-
       </div>
       <div class="chart-card">
         <canvas id="doughnutChart"></canvas>
