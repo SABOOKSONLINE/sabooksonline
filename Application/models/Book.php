@@ -15,7 +15,7 @@ class Book
      * @param int $limit
      * @return array
      */
-    public function getBooksByCategory($category, $limit =6)
+    public function getBooksByCategory($category, $limit = 6)
     {
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
@@ -90,6 +90,30 @@ class Book
             $books[] = $row;
         }
 
+        return $books;
+    }
+
+    public function getBooksByPublisher($userId)
+    {
+        $sql = "SELECT * FROM posts WHERE USERID = ?";
+
+        // prepared statements for executing the query
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $userId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $books = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
+
+        // closing the prepared statement
+        mysqli_stmt_close($stmt);
         return $books;
     }
 }
