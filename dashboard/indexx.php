@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
 </head>
 
 <style>
-
- /* Global Styles */
+/* Global Styles */
 body {
   background: linear-gradient(135deg, #f8f9fa, #ffffff);
   color: #212529;
@@ -27,16 +26,86 @@ body.dark-mode {
 
 .main-card {
   background: #fff;
-  border-radius: 20px;
-  padding: 30px;
+  border-radius: 1px;
+  padding: 20px;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-  max-width: 1100px;
-  margin: 40px auto;
+  max-width: 2000px;
+  margin: 10px auto;
   transition: all 0.3s ease;
 }
 
 .main-card:hover {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+}
+
+.top-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.welcome-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  max-width: 30%;
+}
+
+.welcome-card h3 {
+  font-size: 1.5rem;
+  color: #212529;
+}
+
+.welcome-card p {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.chart-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  max-width: 30%;
+}
+
+.doughnut-chart-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.book-cover-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  max-width: 20%;
+}
+
+.book-cover-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.book-info {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.book-info h4 {
+  font-size: 1.2rem;
+  color: #212529;
+}
+
+.book-info p {
+  font-size: 1rem;
+  color: #6c757d;
 }
 
 .stats-cards {
@@ -144,31 +213,43 @@ canvas {
   opacity: 1;
 }
 
-.dark-mode-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #28a745;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.dark-mode-toggle:hover {
-  background: #218838;
-}
-
-
-
 </style>
 <<body>
     <button id="toggleDark" class="dark-mode-toggle">Dark Mode</button>
 
     <div class="main-card">
-        <h2>Dashboard</h2>
+        <h2>Analytics Dashboard</h2>
+
+        <!-- Top Row: Welcome, Doughnut Chart, and Most Viewed Book -->
+
+         <div class="welcome-card">
+                <h3>Profile views</h3>
+                <p>24200</p>
+          </div>
+            
+            <br>
+        <div class="top-row">
+            <div class="welcome-card">
+                <h3>Welcome back, User!</h3>
+                <p>Here's a quick overview of your stats</p>
+            </div>
+            <div class="chart-card doughnut-chart-card">
+                <canvas id="doughnutChart"></canvas>
+            </div>
+            <div class="book-cover-card">
+                <img id="bookCover" src="Screenshot 2025-04-19 at 11.43.59.png" alt="Most Viewed Book Cover">
+               
+            </div>
+            <div class="welcome-card">
+                <h3>Profile views</h3>
+                <p>24200</p>
+            </div>
+             <div class="chart-card doughnut-chart-card">
+                <canvas id="doughnutChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
         <div class="stats-cards">
             <div class="stats-card" data-card="1">
                 <i class="card-icon">📈</i>
@@ -193,77 +274,64 @@ canvas {
         </div>
 
         <!-- Toast message -->
-        <div id="toast" class="toast">Someone just viewed your profile!</div>
-    </div>
-
-    <!-- Chart Area -->
-    <div class="chart-card">
-        <canvas id="myChart"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    <!-- <script src="script.js"></script> -->
 </body>
 
 
 <script>
-  // Dark mode toggle functionality
-document.getElementById("toggleDark").onclick = () => {
-  document.body.classList.toggle("dark-mode");
+// Toggle Dark Mode
+const toggleButton = document.getElementById('toggleDark');
+toggleButton.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+});
+
+// Doughnut Chart Data
+const doughnutChartData = {
+  labels: ['Views', 'Orders', 'Favorites', 'Shares'],
+  datasets: [{
+    label: 'Interaction Metrics',
+    data: [500, 200, 150, 50], // Example data
+    backgroundColor: ['#ff9e9e', '#ffcc00', '#2e8b57', '#4c99f9'],
+    borderWidth: 1
+  }]
 };
 
-// Simulate live number count-up animation
-function animateValue(el, start, end, duration) {
-  let range = end - start;
-  let startTime = null;
-
-  function step(timestamp) {
-    if (!startTime) startTime = timestamp;
-    let progress = timestamp - startTime;
-    let value = Math.min(start + Math.floor((progress / duration) * range), end);
-    el.textContent = value;
-    if (value < end) requestAnimationFrame(step);
-  }
-
-  requestAnimationFrame(step);
-}
-
-// Trigger toast message after page load
-setTimeout(() => {
-  document.getElementById("toast").classList.add("show");
-}, 2000);
-
-// Initialize the chart with random data
-const ctx = document.getElementById('myChart').getContext('2d');
-const myChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-    datasets: [{
-      label: 'Monthly Revenue',
-      data: [100, 150, 120, 180, 200],
-      borderColor: '#28a745',
-      backgroundColor: 'rgba(40, 167, 69, 0.2)',
-      borderWidth: 2,
-      tension: 0.4
-    }]
-  },
+const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+new Chart(doughnutCtx, {
+  type: 'doughnut',
+  data: doughnutChartData,
   options: {
     responsive: true,
     plugins: {
-      legend: {
-        display: true,
-        position: 'top'
-      }
+      legend: { position: 'top' },
+      tooltip: { enabled: true }
     }
   }
 });
 
-// Number animation on load
-animateValue(document.querySelector(".stats-card[data-card='1'] .card-value"), 0, 1524, 1000);
-animateValue(document.querySelector(".stats-card[data-card='2'] .card-value"), 0, 15423, 1000);
-animateValue(document.querySelector(".stats-card[data-card='3'] .card-value"), 0, 57, 1000);
-animateValue(document.querySelector(".stats-card[data-card='4'] .card-value"), 0, 98, 1000);
+// Display Book Cover & Stats
+const bookCover = document.getElementById('bookCover');
+const bookTitle = document.getElementById('bookTitle');
+const bookViews = document.getElementById('bookViews');
+
+// Sample book data
+const mostViewedBook = {
+  title: 'The Great Adventure',
+  coverUrl: 'Screenshot 2025-04-19 at 11.43.59.png',
+  views: 1245
+};
+
+bookCover.src = mostViewedBook.coverUrl;
+// bookTitle.textContent = mostViewedBook.title;
+// bookViews.textContent = `${mostViewedBook.views} Views`;
+
+// Toast message example
+const toast = document.getElementById('toast');
+setTimeout(() => toast.classList.add('show'), 1000);
+setTimeout(() => toast.classList.remove('show'), 5000);
 
 </script>
 </html>
