@@ -21,16 +21,16 @@
 <link rel="stylesheet" href="css/ud-custom-spacing.css">
 <link rel="stylesheet" href="css/dashbord_navitaion.css">
 <!-- Responsive stylesheet -->
-<link rel="stylesheet" href="css/responsive.css">
+<!-- <link rel="stylesheet" href="css/responsive.css"> -->
 <!-- Title -->       
 <!-- Favicon -->
-<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
-<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" />
+<!-- <link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
+<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" /> -->
 <!-- Apple Touch Icon -->
-<link href="images/apple-touch-icon-60x60.png" sizes="60x60" rel="apple-touch-icon">
+<!-- <link href="images/apple-touch-icon-60x60.png" sizes="60x60" rel="apple-touch-icon">
 <link href="images/apple-touch-icon-72x72.png" sizes="72x72" rel="apple-touch-icon">
 <link href="images/apple-touch-icon-114x114.png" sizes="114x114" rel="apple-touch-icon">
-<link href="images/apple-touch-icon-180x180.png" sizes="180x180" rel="apple-touch-icon">
+<link href="images/apple-touch-icon-180x180.png" sizes="180x180" rel="apple-touch-icon"> -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
@@ -142,7 +142,7 @@
     }
 
     .card-icon {
-      font-size: 30px;
+      font-size: 80px;
       margin-bottom: 10px;
     }
 
@@ -198,8 +198,13 @@
 
     <div class="top-row">
       <div class="welcome-card">
-        <h3>Welcome back, User!</h3>
-        <p>Here's a quick overview of your stats</p>
+        <h3>Welcome back, Kganya!</h3>
+        <p>Activity</p>
+        <p>8 people viewed your book</p>
+        <p>user clicked your book</p>
+        <p>your profile is being noticed</p>
+        <p>Subscribe to get full notifications</p>
+
       </div>
       <div class="chart-card">
         <canvas id="doughnutChart"></canvas>
@@ -213,23 +218,23 @@
           <p><span class="count" data-target="24200">0</span></p>
         </div>
         <div class="mini-card">
-          <h4>Downloads</h4>
+          <h4>Book views</h4>
           <p><span class="count" data-target="870">0</span></p>
         </div>
         <div class="mini-card">
-          <h4>Top Region</h4>
+          <h4>Pending Orders</h4>
           <p>Gauteng</p>
         </div>
         <div class="mini-card download-report-card">
           <button onclick="downloadReport()">⬇ Download Report</button>
         </div>
          <div class="mini-card">
-          <h4>Downloads</h4>
+          <h4>Transactions</h4>
           <p><span class="count" data-target="870">0</span></p>
         </div>
         <div class="mini-card">
-          <h4>Top Region</h4>
-          <p>Gauteng</p>
+          <h4>Total Customers</h4>
+          <p>300</p>
         </div>
       </div>
     </div>
@@ -247,7 +252,7 @@
       </div>
       <div class="stats-card">
         <i class="card-icon"></i>
-        <div class="card-title">Notifications</div>
+        <div class="card-title">Event views</div>
         <div class="card-value"><span class="count" data-target="57">0</span></div>
       </div>
       <div class="stats-card long-card">
@@ -299,7 +304,7 @@
     new Chart(doughnutCtx, {
       type: 'doughnut',
       data: {
-        labels: ['Views', 'Orders', 'Favorites', 'Shares'],
+        labels: ['Books', 'Profile', 'Services', 'Events'],
         datasets: [{
           label: 'Interaction Metrics',
           data: [500, 200, 150, 50],
