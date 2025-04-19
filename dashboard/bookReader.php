@@ -51,7 +51,7 @@ $filePath = "books/" . $book;
     }
 
     .container {
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 20px auto;
       padding: 20px;
       background: var(--card-bg-light);
@@ -171,6 +171,11 @@ $filePath = "books/" . $book;
         <button onclick="zoomOut()">➖ Zoom Out</button>
         <button onclick="zoomIn()">➕ Zoom In</button>
       </div>
+
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search Text" oninput="searchText()">
+        <button onclick="clearSearch()">Clear Search</button>
+      </div>
     <?php endif; ?>
   </div>
 
@@ -180,6 +185,8 @@ $filePath = "books/" . $book;
   let pdfDoc = null,
       pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
       zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
+      searchTextResults = [],
+      currentSearchIndex = -1,
       leftCanvas = document.getElementById("left-canvas"),
       rightCanvas = document.getElementById("right-canvas"),
       leftCtx = leftCanvas.getContext("2d"),
@@ -255,6 +262,91 @@ $filePath = "books/" . $book;
     if (localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark-mode');
     }
+  }
+
+  // Keyboard Navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "ArrowLeft" || e.key === "j") {
+      prevPage();
+    } else if (e.key === "ArrowRight" || e.key === "k") {
+      nextPage();
+    }
+  });
+
+  // Swipe Navigation
+  let startX = 0;
+  let endX = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].pageX;
+  });
+
+  document.addEventListener('touchend', (e) => {
+    endX = e.changedTouches[0].pageX;
+    if (endX - startX > 50) {
+      prevPage();
+    } else if (startX - endX > 50) {
+      nextPage();
+    }
+  });
+
+  // Text Search
+  function searchText() {
+    let query = document.getElementById("search-input").value;
+    if (query.trim() === "") {
+      searchTextResults = [];
+      currentSearchIndex = -1;
+      renderPages();
+      return;
+    }
+
+    pdfDoc.getPage(pageNum).then(page => {
+      page.getTextContent().then(textContent => {
+        let regex = new RegExp(query, "gi");
+        searchTextResults = [];
+        textContent.items.forEach(item => {
+          let match = item.str.match(regex);
+          if (match) {
+            searchTextResults.push({
+              text: item.str,
+              x: item.transform[4],
+              y: item.transform[5],
+              width: item.width,
+              height: item.height
+            });
+          }
+        });
+        highlightSearchResults();
+      });
+    });
+  }
+
+  function highlightSearchResults() {
+    // Redraw the page with highlights
+    renderPages();
+
+    if (searchTextResults.length > 0 && currentSearchIndex >= 0) {
+      let result = searchTextResults[currentSearchIndex];
+      leftCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
+      leftCtx.fillRect(result.x, result.y - result.height, result.width, result.height);
+
+      if (pageNum + 1 <= pdfDoc.numPages) {
+        pdfDoc.getPage(pageNum + 1).then(page => {
+          page.getTextContent().then(textContent => {
+            let result = searchTextResults[currentSearchIndex];
+            rightCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
+            rightCtx.fillRect(result.x, result.y - result.height, result.width, result.height);
+          });
+        });
+      }
+    }
+  }
+
+  function clearSearch() {
+    document.getElementById("search-input").value = "";
+    searchTextResults = [];
+    currentSearchIndex = -1;
+    renderPages();
   }
 </script>
 <?php endif; ?>
