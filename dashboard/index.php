@@ -21,16 +21,16 @@
 <link rel="stylesheet" href="css/ud-custom-spacing.css">
 <link rel="stylesheet" href="css/dashbord_navitaion.css">
 <!-- Responsive stylesheet -->
-<!-- <link rel="stylesheet" href="css/responsive.css"> -->
+<link rel="stylesheet" href="css/responsive.css">
 <!-- Title -->       
 <!-- Favicon -->
-<!-- <link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
-<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" /> -->
+<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" type="image/x-icon" /> 
+<link href="../img/favicon.png" sizes="128x128" rel="shortcut icon" /> 
 <!-- Apple Touch Icon -->
-<!-- <link href="images/apple-touch-icon-60x60.png" sizes="60x60" rel="apple-touch-icon">
+<link href="images/apple-touch-icon-60x60.png" sizes="60x60" rel="apple-touch-icon">
 <link href="images/apple-touch-icon-72x72.png" sizes="72x72" rel="apple-touch-icon">
 <link href="images/apple-touch-icon-114x114.png" sizes="114x114" rel="apple-touch-icon">
-<link href="images/apple-touch-icon-180x180.png" sizes="180x180" rel="apple-touch-icon"> -->
+<link href="images/apple-touch-icon-180x180.png" sizes="180x180" rel="apple-touch-icon">
 
 
 <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
@@ -184,15 +184,18 @@
 
 
 <body>
+    <?php include 'includes/header-dash.php';?>
+      <div class="dashboard__main pl0-md">
+        <div class="dashboard__content hover-bgc-color">
+          <div class="row pb40">
+            <div class="no-print">
+                <?php include 'includes/mobile-guide.php';?>
+            </div>
 
-
-  <br>
-    <br>
-  <br>
 
       <!-- <h2>Analytics Dashboard</h2> -->
 
-  <div class="main-card">
+  <!-- <div class="main-card"> -->
   <button id="toggleDark" class="dark-mode-toggle">Dark Mode</button>
 
 
@@ -261,12 +264,26 @@
         <canvas id="provinceTrafficChart"></canvas>
       </div>
     </div>
-  </div>
+      <a class="scrollToHome" href="#"><i class="fas fa-angle-up"></i></a>
+
 
   <?php include 'includes/footer.php';?>
 
 
+<script src="js/jquery-3.6.4.min.js"></script> 
+<script src="js/jquery-migrate-3.0.0.min.js"></script> 
+<script src="js/popper.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/bootstrap-select.min.js"></script> 
+<script src="js/jquery.mmenu.all.js"></script> 
+<script src="js/ace-responsive-menu.js"></script> 
+<script src="js/chart.min.js"></script>
+<script src="js/chart-custome.js"></script>
+<script src="js/jquery-scrolltofixed-min.js"></script>
+<script src="js/dashboard-script.js"></script>v
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  
   <script>
     // Dark Mode Toggle
     document.getElementById('toggleDark').addEventListener('click', () => {
