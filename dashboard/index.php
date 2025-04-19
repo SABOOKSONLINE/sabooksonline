@@ -12,80 +12,108 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    body {
-      background-color: #121212;
-      color: #fff;
+     body {
+      background: linear-gradient(135deg, #f8f9fa, #ffffff);
+      color: #212529;
       font-family: 'Poppins', sans-serif;
+      animation: pulseBg 8s infinite alternate;
+    }
+
+    @keyframes pulseBg {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     .main-card {
-      background: #1e1e1e;
+      background: #fff;
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 15px rgba(158, 255, 0, 0.1);
-    }
-
-    .main-card h2 {
-      font-size: 1.8rem;
-      color: #9eff00;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      transition: 0.3s ease-in-out;
     }
 
     .stats-card {
-      background: #1e1e1e;
+      background: linear-gradient(135deg, #ffffff, #f1f1f1);
       border-radius: 20px;
       padding: 25px;
       height: 180px;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+      transition: transform 0.3s ease, opacity 0.5s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: appear 0.8s forwards;
     }
 
-    .stats-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    .stats-card:nth-child(1) { animation-delay: 0.1s; }
+    .stats-card:nth-child(2) { animation-delay: 0.2s; }
+    .stats-card:nth-child(3) { animation-delay: 0.3s; }
+    .stats-card:nth-child(4) { animation-delay: 0.4s; }
+    .stats-card:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes appear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .card-icon {
       font-size: 1.5rem;
-      color: #9eff00;
+      color: #28a745;
     }
 
     .card-title {
       font-size: 1rem;
-      color: #ccc;
+      color: #6c757d;
       margin-top: 5px;
     }
 
     .card-value {
       font-size: 1.6rem;
       font-weight: 700;
-      color: #fff;
+      color: #212529;
     }
 
     .blurred {
-      filter: blur(6px);
+      filter: blur(5px);
       pointer-events: none;
     }
 
     .tooltip-msg {
       font-size: 0.9rem;
-      color: #9eff00;
+      color: #198754;
       margin-top: 8px;
     }
 
     .chart-card {
-      background: #1e1e1e;
+      background: #ffffff;
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       margin-top: 30px;
+      animation: fadeInUp 0.7s ease both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     canvas {
       max-height: 300px;
     }
+
+    .stats-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.stats-card {
+  background: #e0e0e0;
+  box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
   </style>
 </head>
 <body>
@@ -94,7 +122,7 @@
   <!-- Welcome Card -->
   <div class="main-card mb-4">
     <div class="d-flex justify-content-between align-items-center">
-      <h2>Welcome back, Kganya 👋</h2>
+      <h2>Dashboard</h2>
       <button class="btn btn-outline-light btn-sm" id="toggleUserType">Switch User Type</button>
     </div>
   </div>
@@ -128,6 +156,7 @@
   const userType = { premium: false };
 
   const dummyData = [
+    { title: "Welcome Back", value: "Kganya Maleka", icon: "fa-hand-wave", msg: "Upgrade for insights" },
     { title: "Net Income", value: "R 85,000", icon: "fa-money-bill", msg: "Unlock full income breakdown" },
     { title: "Transactions", value: "328", icon: "fa-arrows-rotate", msg: "View exact transaction count" },
     { title: "Total Customers", value: "420", icon: "fa-users", msg: "See your customer reach" },
