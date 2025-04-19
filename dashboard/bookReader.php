@@ -23,17 +23,18 @@ $filePath = "books/" . $book;
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📘 Book Reader</title>
+  <title>📖 Two-Page PDF Reader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root {
-      --bg-light: #f4f6f9;
+      --bg-light: #f2f2f2;
       --bg-dark: #1c1c1c;
       --text-light: #2c3e50;
       --text-dark: #ecf0f1;
       --accent: #3498db;
-      --card-bg: #ffffff;
+      --card-bg-light: #ffffff;
+      --card-bg-dark: #2b2b2b;
     }
 
     body {
@@ -50,23 +51,23 @@ $filePath = "books/" . $book;
     }
 
     .container {
-      max-width: 1400px;
-      margin: 30px auto;
-      padding: 30px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      max-width: 1600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: var(--card-bg-light);
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
     }
 
     body.dark-mode .container {
-      background: #2b2b2b;
+      background: var(--card-bg-dark);
     }
 
     h1 {
       text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1.2rem;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
     }
 
     form {
@@ -99,31 +100,12 @@ $filePath = "books/" . $book;
       margin-bottom: 15px;
     }
 
-    .chapters {
-      margin: 20px 0;
-      padding: 12px;
-      background: #eaf4fc;
-      border-radius: 6px;
+    .nav-buttons {
       display: flex;
-      gap: 10px;
+      justify-content: center;
+      gap: 15px;
       flex-wrap: wrap;
-    }
-
-    body.dark-mode .chapters {
-      background: #34495e;
-    }
-
-    .chapters span {
-      background: var(--accent);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .chapters span:hover {
-      transform: scale(1.05);
+      margin-top: 15px;
     }
 
     #pdf-viewer {
@@ -131,38 +113,29 @@ $filePath = "books/" . $book;
       justify-content: center;
       flex-wrap: wrap;
       gap: 20px;
-      text-align: center;
+      padding: 20px 0;
     }
 
     canvas {
+      border: 1px solid #ccc;
       border-radius: 10px;
-      background: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       max-width: 100%;
+      transition: transform 0.3s;
     }
 
-    .nav-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      align-items: center;
-      margin-top: 20px;
+    canvas:hover {
+      transform: scale(1.01);
     }
 
-    .nav-buttons span {
-      font-weight: bold;
+    .zoom-buttons {
+      text-align: center;
+      margin-top: 10px;
     }
 
-    .zoom-controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    @media print {
-      body {
-        display: none;
+    @media (max-width: 768px) {
+      #pdf-viewer {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
@@ -173,7 +146,7 @@ $filePath = "books/" . $book;
       <button onclick="toggleMode()">🌓 Toggle Theme</button>
     </div>
 
-    <h1>📚 PDF Book Reader</h1>
+    <h1>📖 Two-Page PDF Book Reader</h1>
 
     <form method="POST" enctype="multipart/form-data">
       <input type="file" name="pdf" accept="application/pdf" required>
@@ -183,24 +156,20 @@ $filePath = "books/" . $book;
     <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
 
     <?php if (!empty($book) && file_exists($filePath)): ?>
-      <div class="chapters" id="chapter-links">
-        <strong>Chapters:</strong>
-      </div>
-
-      <div class="zoom-controls">
-        <button onclick="zoomOut()">➖ Zoom Out</button>
-        <button onclick="zoomIn()">➕ Zoom In</button>
+      <div id="pdf-viewer">
+        <canvas id="left-canvas"></canvas>
+        <canvas id="right-canvas"></canvas>
       </div>
 
       <div class="nav-buttons">
         <button onclick="prevPage()">⬅ Prev</button>
-        <span>Page <span id="page-num">1</span> of <span id="page-count">--</span></span>
+        <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
         <button onclick="nextPage()">Next ➡</button>
       </div>
 
-      <div id="pdf-viewer">
-        <canvas id="pdf-canvas-left"></canvas>
-        <canvas id="pdf-canvas-right"></canvas>
+      <div class="zoom-buttons">
+        <button onclick="zoomOut()">➖ Zoom Out</button>
+        <button onclick="zoomIn()">➕ Zoom In</button>
       </div>
     <?php endif; ?>
   </div>
@@ -210,83 +179,69 @@ $filePath = "books/" . $book;
   const url = "<?= $filePath ?>";
   let pdfDoc = null,
       pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
-      scale = parseFloat(localStorage.getItem(url + '-scale')) || 1.6;
-
-  const canvasLeft = document.getElementById("pdf-canvas-left"),
-        canvasRight = document.getElementById("pdf-canvas-right"),
-        ctxLeft = canvasLeft.getContext("2d"),
-        ctxRight = canvasRight.getContext("2d");
+      zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
+      leftCanvas = document.getElementById("left-canvas"),
+      rightCanvas = document.getElementById("right-canvas"),
+      leftCtx = leftCanvas.getContext("2d"),
+      rightCtx = rightCanvas.getContext("2d");
 
   pdfjsLib.getDocument(url).promise.then(pdf => {
     pdfDoc = pdf;
     document.getElementById("page-count").textContent = pdf.numPages;
     renderPages();
-    renderChapters(pdf.numPages);
   });
 
   function renderPages() {
-    if (pageNum > pdfDoc.numPages) return;
+    if (pageNum < 1) pageNum = 1;
+    if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
 
-    renderPageToCanvas(pageNum, canvasLeft, ctxLeft);
+    // Left Page
+    pdfDoc.getPage(pageNum).then(page => {
+      let vp = page.getViewport({ scale: zoom });
+      leftCanvas.height = vp.height;
+      leftCanvas.width = vp.width;
+      page.render({ canvasContext: leftCtx, viewport: vp });
+    });
 
-    const nextPage = pageNum + 1;
-    if (nextPage <= pdfDoc.numPages) {
-      renderPageToCanvas(nextPage, canvasRight, ctxRight);
+    // Right Page (next one)
+    if (pageNum + 1 <= pdfDoc.numPages) {
+      pdfDoc.getPage(pageNum + 1).then(page => {
+        let vp = page.getViewport({ scale: zoom });
+        rightCanvas.height = vp.height;
+        rightCanvas.width = vp.width;
+        page.render({ canvasContext: rightCtx, viewport: vp });
+      });
     } else {
-      ctxRight.clearRect(0, 0, canvasRight.width, canvasRight.height);
+      rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
     }
 
     document.getElementById("page-num").textContent = pageNum;
     localStorage.setItem(url + '-last-page', pageNum);
   }
 
-  function renderPageToCanvas(num, canvas, ctx) {
-    pdfDoc.getPage(num).then(page => {
-      let viewport = page.getViewport({ scale: scale });
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-      page.render({ canvasContext: ctx, viewport: viewport });
-    });
-  }
-
   function prevPage() {
-    if (pageNum <= 2) return;
-    pageNum -= 2;
-    renderPages();
+    if (pageNum - 2 >= 1) {
+      pageNum -= 2;
+      renderPages();
+    }
   }
 
   function nextPage() {
-    if (pageNum + 1 >= pdfDoc.numPages) return;
-    pageNum += 2;
-    renderPages();
-  }
-
-  function renderChapters(totalPages) {
-    const chapters = 5;
-    const chapterSize = Math.floor(totalPages / chapters);
-    const container = document.getElementById('chapter-links');
-    for (let i = 0; i < chapters; i++) {
-      const startPage = i * chapterSize + 1;
-      const chapterEl = document.createElement("span");
-      chapterEl.textContent = `Chapter ${i + 1}`;
-      chapterEl.onclick = () => {
-        pageNum = startPage % 2 === 0 ? startPage - 1 : startPage;
-        renderPages();
-      };
-      container.appendChild(chapterEl);
+    if (pageNum + 2 <= pdfDoc.numPages) {
+      pageNum += 2;
+      renderPages();
     }
   }
 
   function zoomIn() {
-    scale += 0.2;
-    localStorage.setItem(url + '-scale', scale);
+    zoom += 0.2;
+    localStorage.setItem('zoom', zoom);
     renderPages();
   }
 
   function zoomOut() {
-    if (scale <= 0.4) return;
-    scale -= 0.2;
-    localStorage.setItem(url + '-scale', scale);
+    zoom = Math.max(0.5, zoom - 0.2);
+    localStorage.setItem('zoom', zoom);
     renderPages();
   }
 
@@ -295,6 +250,7 @@ $filePath = "books/" . $book;
     localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
   }
 
+  // Restore theme
   window.onload = () => {
     if (localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark-mode');
