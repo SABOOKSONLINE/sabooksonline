@@ -138,6 +138,15 @@ $filePath = "books/" . $book;
         align-items: center;
       }
     }
+
+    mark {
+  background-color: #ffeb3b;
+  color: black;
+  font-weight: bold;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
   </style>
 </head>
 <body class="prevent-select">
@@ -152,6 +161,11 @@ $filePath = "books/" . $book;
       <input type="file" name="pdf" accept="application/pdf" required>
       <button type="submit">Upload PDF</button>
     </form>
+
+    <div id="searchContainer" style="text-align:center; margin-top: 10px;">
+    <input type="text" id="pageSearch" placeholder="Search on this page..." style="padding: 5px; width: 60%;">
+    </div>
+
 
     <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
 
@@ -172,10 +186,6 @@ $filePath = "books/" . $book;
         <button onclick="zoomIn()">➕ Zoom In</button>
       </div>
 
-      <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search Text" oninput="searchText()">
-        <button onclick="clearSearch()">Clear Search</button>
-      </div>
     <?php endif; ?>
   </div>
 
@@ -321,26 +331,42 @@ $filePath = "books/" . $book;
     });
   }
 
-  function highlightSearchResults() {
-    // Redraw the page with highlights
-    renderPages();
+  function highlightInPageSearch(keyword) {
+  // Only search in the visible pages
+  const visiblePages = $('.page.visible');
 
-    if (searchTextResults.length > 0 && currentSearchIndex >= 0) {
-      let result = searchTextResults[currentSearchIndex];
-      leftCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
-      leftCtx.fillRect(result.x, result.y - result.height, result.width, result.height);
+  visiblePages.each(function () {
+    const page = $(this);
 
-      if (pageNum + 1 <= pdfDoc.numPages) {
-        pdfDoc.getPage(pageNum + 1).then(page => {
-          page.getTextContent().then(textContent => {
-            let result = searchTextResults[currentSearchIndex];
-            rightCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
-            rightCtx.fillRect(result.x, result.y - result.height, result.width, result.height);
-          });
-        });
+    // Remove old highlights
+    page.find('mark').each(function () {
+      $(this).replaceWith($(this).text());
+    });
+
+    if (keyword.trim() === '') return;
+
+    const regex = new RegExp(`(${keyword})`, 'gi');
+
+    page.contents().each(function recursiveSearch() {
+      if (this.nodeType === 3 && this.nodeValue.trim() !== '') {
+        const match = this.nodeValue.match(regex);
+        if (match) {
+          const newHtml = this.nodeValue.replace(regex, '<mark>$1</mark>');
+          $(this).replaceWith(newHtml);
+        }
+      } else if (this.nodeType === 1 && !['SCRIPT', 'STYLE'].includes(this.nodeName)) {
+        $(this).contents().each(recursiveSearch);
       }
-    }
-  }
+    });
+  });
+}
+
+$('#pageSearch').on('input', function () {
+  const query = $(this).val();
+  highlightInPageSearch(query);
+});
+
+
 
   function clearSearch() {
     document.getElementById("search-input").value = "";
@@ -348,6 +374,26 @@ $filePath = "books/" . $book;
     currentSearchIndex = -1;
     renderPages();
   }
+
+  $('#providerList').fadeOut(150, function () {
+  // update content
+  $(this).html(newContent).fadeIn(150);
+});
+
+// As user types: 
+if (searchValue.length > 2) {
+  const suggestions = providers.filter(p => p.name.toLowerCase().includes(searchValue));
+  showSuggestions(suggestions);
+}
+// Debounce search for better UX
+let debounceTimer;
+$('#searchInput').on('input', function () {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    applyFilters();
+  }, 300);
+});
+
 </script>
 <?php endif; ?>
 </body>
