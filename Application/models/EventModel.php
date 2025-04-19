@@ -1,11 +1,15 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 /**
  * Class EventModel
  *
  * Manages event-related data operations, including retrieval and filtering.
  */
-class EventModel {
+class EventModel
+{
     /**
      * @var mysqli Database connection
      */
@@ -16,9 +20,31 @@ class EventModel {
      *
      * @param mysqli $conn MySQLi database connection
      */
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->conn = $conn;
     }
+
+    public function getEvents()
+    {
+        $sql = "SELECT * FROM events ORDER BY EVENTDATE DESC";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $events = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $events[] = $row;
+        }
+
+        return $events;
+    }
+
 
     /**
      * Get a single active event by its content ID.
@@ -26,9 +52,10 @@ class EventModel {
      * @param string $contentId Unique content identifier
      * @return array|null Event details or null if not found
      */
-    public function getEventByContentId(string $contentId): ?array {
+    public function getEventByContentId($contentId)
+    {
         $contentId = mysqli_real_escape_string($this->conn, $contentId);
-        $query = "SELECT * FROM events WHERE STATUS = 'Active' AND CONTENTID = '$contentId' LIMIT 1";
+        $query = "SELECT * FROM events WHERE CONTENTID = '$contentId' LIMIT 1";
         $result = mysqli_query($this->conn, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
@@ -45,7 +72,8 @@ class EventModel {
      * @param array $selectedProvinces List of province filters
      * @return mysqli_result|false Result set on success or false on failure
      */
-    public function getFilteredEvents(array $selectedServices, array $selectedProvinces) {
+    public function getFilteredEvents(array $selectedServices, array $selectedProvinces)
+    {
         // Default filter clauses
         $serviceWhereClause = "1=1";
         $provinceWhereClause = "1=1";

@@ -1,22 +1,53 @@
 <?php
-// Include necessary files for database connection and Event model
-require_once __DIR__ . '/../config/connection.php';
-include_once 'models/EventModel.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// // Include necessary files for database connection and Event model
+// require_once __DIR__ . '/../config/connection.php';
+// include_once __DIR__ . '/../models/EventModel.php';
 
 // EventController class to handle event-related actions
-class EventController {
+class EventController
+{
     private $model;
 
     // Constructor to initialize the EventModel with the database connection
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->model = new EventModel($conn);
+    }
+
+    public function renderEvents()
+    {
+        $events = $this->model->getEvents();
+
+        if ($events) {
+            include __DIR__ . "/../views/layout/eventCardsView.php";
+        } else {
+            echo "No events found.";
+        }
+    }
+
+    public function renderEventByContentId()
+    {
+        $contentId = $_GET['q'] ?? null;
+
+        $event = $this->model->getEventByContentId($contentId);
+
+        if ($event) {
+            include __DIR__ . "/../views/layout/eventDetails.php";
+        } else {
+            echo "No event found.";
+        }
     }
 
     /**
      * Method to load and render filtered event cards
      * Filters events based on selected services and provinces, then displays the results
      */
-    public function showEvents() {
+    public function showEvents()
+    {
         // Get selected services and provinces from query parameters (defaults to empty arrays if not set)
         $selectedServices = $_GET['service'] ?? [];
         $selectedProvinces = $_GET['province'] ?? [];
@@ -60,9 +91,9 @@ class EventController {
     }
 }
 
-// Instantiate the EventController and call the showEvents method to display events
-$controller = new EventController($conn);
-$controller->showEvents();
+// // Instantiate the EventController and call the showEvents method to display events
+// $controller = new EventController($conn);
+// $controller->showEvents();
 
-// Close the database connection
-$conn->close();
+// // Close the database connection
+// $conn->close();

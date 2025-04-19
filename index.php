@@ -45,8 +45,17 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/creatorpage.php";
     });
 
-    // documentation pages
+    // event routes
+    $r->addRoute('GET', '/events', function () {
+        require "Application/views/events.php";
+    });
 
+    $r->addRoute('GET', '/events/event/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Application/views/eventpage.php";
+    });
+
+    // documentation pages
     $r->addRoute('GET', '/content-removal', function () {
         require __DIR__ . "/Application/views/documentations/content-removal.php";
     });
