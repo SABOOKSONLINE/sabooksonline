@@ -2,14 +2,14 @@
 <?php 
 
 // Set the cookie domain to ".sabooksonline.co.za" to make it available to all subdomains
-$cookieDomain = ".sabooksonline.co.za";
-session_set_cookie_params(0, '/', $cookieDomain);
+// $cookieDomain = ".sabooksonline.co.za";
+// session_set_cookie_params(0, '/', $cookieDomain);
 
-session_start();
+// session_start();
   
-if(!isset($_SESSION['ADMIN_USERKEY'])){
-header("Location: ../login?redirectlogs2");
-}
+// if(!isset($_SESSION['ADMIN_USERKEY'])){
+// header("Location: ../login?redirectlogs2");
+// }
 
 ?>
 
