@@ -50,12 +50,13 @@ $filePath = "books/" . $book;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1400px;
       margin: 30px auto;
-      padding: 20px;
+      padding: 30px;
       background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
     }
 
     body.dark-mode .container {
@@ -64,8 +65,8 @@ $filePath = "books/" . $book;
 
     h1 {
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
     }
 
     form {
@@ -118,51 +119,45 @@ $filePath = "books/" . $book;
       padding: 6px 12px;
       border-radius: 4px;
       cursor: pointer;
+      transition: transform 0.2s;
     }
 
     .chapters span:hover {
-      background: #2980b9;
+      transform: scale(1.05);
     }
 
     #pdf-viewer {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
       text-align: center;
     }
 
     canvas {
-      border-radius: 8px;
-      margin: 10px 0;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       max-width: 100%;
     }
 
     .nav-buttons {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 20px;
     }
 
-    .nav-buttons button,
-    .nav-buttons label {
-      background: var(--accent);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
+    .nav-buttons span {
+      font-weight: bold;
     }
 
-    .nav-buttons input[type="checkbox"] {
-      margin-right: 5px;
-      vertical-align: middle;
-    }
-
-    body.prevent-select, canvas {
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
+    .zoom-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
     }
 
     @media print {
@@ -188,19 +183,25 @@ $filePath = "books/" . $book;
     <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
 
     <?php if (!empty($book) && file_exists($filePath)): ?>
-      <div class="chapters" id="chapter-links"><strong>Chapters:</strong></div>
+      <div class="chapters" id="chapter-links">
+        <strong>Chapters:</strong>
+      </div>
+
+      <div class="zoom-controls">
+        <button onclick="zoomOut()">➖ Zoom Out</button>
+        <button onclick="zoomIn()">➕ Zoom In</button>
+      </div>
 
       <div class="nav-buttons">
         <button onclick="prevPage()">⬅ Prev</button>
-        <button onclick="nextPage()">Next ➡</button>
         <span>Page <span id="page-num">1</span> of <span id="page-count">--</span></span>
-        <button onclick="zoomIn()">🔍 Zoom In</button>
-        <button onclick="zoomOut()">🔎 Zoom Out</button>
-        <label><input type="checkbox" id="fitToggle" onchange="fitScreen()"> Fit to screen</label>
-        <label><input type="checkbox" id="scrollToggle" onchange="toggleAutoScroll()"> Auto-scroll</label>
+        <button onclick="nextPage()">Next ➡</button>
       </div>
 
-      <div id="pdf-viewer"><canvas id="pdf-canvas"></canvas></div>
+      <div id="pdf-viewer">
+        <canvas id="pdf-canvas-left"></canvas>
+        <canvas id="pdf-canvas-right"></canvas>
+      </div>
     <?php endif; ?>
   </div>
 
@@ -209,94 +210,84 @@ $filePath = "books/" . $book;
   const url = "<?= $filePath ?>";
   let pdfDoc = null,
       pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
-      canvas = document.getElementById("pdf-canvas"),
-      ctx = canvas.getContext("2d"),
-      scale = 1.4,
-      fitToScreen = false,
-      autoScroll = false;
+      scale = parseFloat(localStorage.getItem(url + '-scale')) || 1.6;
+
+  const canvasLeft = document.getElementById("pdf-canvas-left"),
+        canvasRight = document.getElementById("pdf-canvas-right"),
+        ctxLeft = canvasLeft.getContext("2d"),
+        ctxRight = canvasRight.getContext("2d");
 
   pdfjsLib.getDocument(url).promise.then(pdf => {
     pdfDoc = pdf;
     document.getElementById("page-count").textContent = pdf.numPages;
-    renderPage(pageNum);
+    renderPages();
     renderChapters(pdf.numPages);
   });
 
-  function renderPage(num) {
+  function renderPages() {
+    if (pageNum > pdfDoc.numPages) return;
+
+    renderPageToCanvas(pageNum, canvasLeft, ctxLeft);
+
+    const nextPage = pageNum + 1;
+    if (nextPage <= pdfDoc.numPages) {
+      renderPageToCanvas(nextPage, canvasRight, ctxRight);
+    } else {
+      ctxRight.clearRect(0, 0, canvasRight.width, canvasRight.height);
+    }
+
+    document.getElementById("page-num").textContent = pageNum;
+    localStorage.setItem(url + '-last-page', pageNum);
+  }
+
+  function renderPageToCanvas(num, canvas, ctx) {
     pdfDoc.getPage(num).then(page => {
-      let viewport = page.getViewport({ scale });
-
-      if (fitToScreen) {
-        const maxWidth = canvas.parentElement.offsetWidth - 20;
-        scale = maxWidth / viewport.width;
-        viewport = page.getViewport({ scale });
-      }
-
+      let viewport = page.getViewport({ scale: scale });
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      page.render({ canvasContext: ctx, viewport });
-
-      document.getElementById("page-num").textContent = num;
-      localStorage.setItem(url + '-last-page', num);
-
-      if (autoScroll && num < pdfDoc.numPages) {
-        setTimeout(() => {
-          pageNum++;
-          renderPage(pageNum);
-        }, 3500);
-      }
+      page.render({ canvasContext: ctx, viewport: viewport });
     });
   }
 
   function prevPage() {
-    if (pageNum <= 1) return;
-    pageNum--;
-    renderPage(pageNum);
+    if (pageNum <= 2) return;
+    pageNum -= 2;
+    renderPages();
   }
 
   function nextPage() {
-    if (pageNum >= pdfDoc.numPages) return;
-    pageNum++;
-    renderPage(pageNum);
-  }
-
-  function zoomIn() {
-    scale += 0.2;
-    renderPage(pageNum);
-  }
-
-  function zoomOut() {
-    if (scale > 0.6) {
-      scale -= 0.2;
-      renderPage(pageNum);
-    }
-  }
-
-  function fitScreen() {
-    fitToScreen = document.getElementById('fitToggle').checked;
-    renderPage(pageNum);
-  }
-
-  function toggleAutoScroll() {
-    autoScroll = document.getElementById('scrollToggle').checked;
-    if (autoScroll) renderPage(pageNum);
+    if (pageNum + 1 >= pdfDoc.numPages) return;
+    pageNum += 2;
+    renderPages();
   }
 
   function renderChapters(totalPages) {
     const chapters = 5;
     const chapterSize = Math.floor(totalPages / chapters);
     const container = document.getElementById('chapter-links');
-
     for (let i = 0; i < chapters; i++) {
       const startPage = i * chapterSize + 1;
       const chapterEl = document.createElement("span");
       chapterEl.textContent = `Chapter ${i + 1}`;
       chapterEl.onclick = () => {
-        pageNum = startPage;
-        renderPage(pageNum);
+        pageNum = startPage % 2 === 0 ? startPage - 1 : startPage;
+        renderPages();
       };
       container.appendChild(chapterEl);
     }
+  }
+
+  function zoomIn() {
+    scale += 0.2;
+    localStorage.setItem(url + '-scale', scale);
+    renderPages();
+  }
+
+  function zoomOut() {
+    if (scale <= 0.4) return;
+    scale -= 0.2;
+    localStorage.setItem(url + '-scale', scale);
+    renderPages();
   }
 
   function toggleMode() {
