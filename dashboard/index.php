@@ -1,3 +1,6 @@
+  <?php include 'includes/header-dash-main.php';?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,70 +179,12 @@
       cursor: pointer;
     }
 
-        .dashboard_sidebar_list .sidebar_list_item a:hover,
-.dashboard_sidebar_list .sidebar_list_item a:active,
-.dashboard_sidebar_list .sidebar_list_item a:focus,
-.dashboard_sidebar_list .sidebar_list_item a.dashboard{
-  background-color: #222222;
-  color: #ffffff;
-}
-
-        /* Define CSS styles for printing */
-        @media print {
-            /* Define styles for elements to be printed */
-            body {
-                font-size: 10pt;
-            }
-
-            /* Define styles for elements to be excluded */
-            .no-print {
-                display: none;
-            }
-        }
-
-        .welcome-message {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .next-button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .blurred {
-  color: #444;
-  filter: blur(5px);
-  cursor: pointer;
-  transition: 0.3s ease;
-  position: relative;
-}
-.blurred:hover {
-  filter: blur(3px);
-}
-.blurred::after {
-  content: " 🔒";
-  position: absolute;
-  right: -1.5em;
-  color: #ff6b6b;
-}
-
-    </style>
   </style>
 </head>
 
 
 <body>
 
-  <?php include 'includes/header-dash-main.php';?>
 
   <br>
     <br>
