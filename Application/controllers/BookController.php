@@ -53,6 +53,21 @@ class BookController
     }
 
     /**
+     * Render a list of books filtered by category.
+     */
+    public function renderLibraryByCategory($category, $limit)
+    {
+        $category = htmlspecialchars(trim($category)); // Sanitize category input
+        $books = $this->bookModel->getBooksByCategory($category, $limit);
+
+        if ($books) {
+            include __DIR__ . '/../views/books/catalogueView.php';
+        } else {
+            echo "No books found in this category.";
+        }
+    }
+
+    /**
      * Render a list of books filtered by userId.
      */
     public function renderBooksByPublisher($userId)
@@ -78,6 +93,17 @@ class BookController
             include __DIR__ . '/../views/books/catalogueView.php';
         } else {
             echo "No books found.";
+        }
+    }
+
+    public function renderCategories()
+    {
+        $categories = $this->bookModel->getBookCategories();
+
+        if ($categories) {
+            include __DIR__ . '/../views/books/categories.php';
+        } else {
+            echo "No categories found.";
         }
     }
 }

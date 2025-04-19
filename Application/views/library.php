@@ -11,27 +11,20 @@ require_once __DIR__ . "/includes/header.php";
             The Never-Closing Library
         </span>
 
-        <div class="category-container py-3">
+        <div class="category-container py-4">
             <div class="">
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
-                <a href="#" class="category-link">Category</a>
+                <?php
+                require __DIR__ . "/../../database/connection.php";
+                require_once __DIR__ . "/../models/Book.php";
+                require_once __DIR__ . "/../controllers/BookController.php";
+
+                $controller = new BookController($conn);
+                $controller->renderCategories();
+                ?>
             </div>
         </div>
 
-        <div id="book-hero-preview" class="row mb-5 align-items-center d-none my-4">
+        <!-- <div id="book-hero-preview" class="row mb-5 align-items-center d-none my-4">
             <div class="col-md-3">
                 <img id="hero-img" class="img-fluid rounded" src="" alt="Book Cover">
             </div>
@@ -40,17 +33,27 @@ require_once __DIR__ . "/includes/header.php";
                 <p id="hero-desc" class="text-muted mb-2"></p>
                 <a id="hero-link" href="#" class="btn btn-outline-primary">View Book</a>
             </div>
-        </div>
+        </div> -->
 
-        <div class="row">
+
+        <div class="row py-3">
             <?php
-            require_once __DIR__ . "/../../database/connection.php";
             require_once __DIR__ . "/../models/Book.php";
             require_once __DIR__ . "/../controllers/BookController.php";
-            allBooks($conn, limit: 12);
-            ?>
 
+            $controller = new BookController($conn);
+            $category = $_GET['category'] ?? null;
+
+            if (isset($category)) {
+                $controller->renderLibraryByCategory($category, 12);
+
+                // still working on the category detection
+            } else {
+                $controller->renderAllBooks(12);
+            }
+            ?>
         </div>
+
         <div class="py-3">
             <a href="" class="btn btn-red gap">
                 Show More
