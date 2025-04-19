@@ -116,4 +116,28 @@ class Book
         mysqli_stmt_close($stmt);
         return $books;
     }
+
+    public function getBookCategories()
+    {
+
+        $sql = "SELECT * FROM category";
+
+        // prepared statements for executing the query
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $categories = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $categories[] = $row;
+        }
+
+        // closing the prepared statement
+        mysqli_stmt_close($stmt);
+        return $categories;
+    }
 }
