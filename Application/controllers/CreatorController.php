@@ -3,28 +3,34 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-function creatorViewRender($conn)
+class CreatorController
 {
-    // Sanitize the contentId from the query parameter
-    $contentId = isset($_GET['q']) ? htmlspecialchars(trim($_GET['q'])) : null;
 
-    if (!$contentId) {
-        echo "Creator ID is required.";
-        return;
+    private $creatorModel;
+
+    public function __construct($conn)
+    {
+        $this->creatorModel = new CreatorModel($conn);
     }
 
-    // Instantiate the creator model
-    $creatorModel = new CreatorModel($conn);
-    
-    // Fetch the creator data
-    $creator = $creatorModel->getCreatorByContentId($contentId);
+    public function renderCreatorView()
+    {
 
-    if ($creator) {
-        // If creator found, include the view
-        include __DIR__ . '/../views/creatorpage.php';
-    } else {
-        // If creator not found, return a message
-        echo "Creator not found.";
+        $contentId = $_GET['q'] ?? null;
+
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
+
+        $contentId = htmlspecialchars(trim($contentId));
+
+        $creator = $this->creatorModel->getCreatorByContentId($contentId);
+
+        if ($creator) {
+            include __DIR__ . '/../views/layout/creatorView.php';
+        } else {
+            echo "Creator not found.";
+        }
     }
 }
-?>

@@ -55,12 +55,12 @@ stylishBookNumber.forEach((card) => {
 
 // navbar
 
-const navbar = document.querySelector(".navbar");
+// const navbar = document.querySelector(".navbar");
 
-window.addEventListener("scroll", (e) => {
-    if (window.scrollY > 200) {
-        navbar.classList.add("fixed-top");
-    } else {
-        navbar.classList.remove("fixed-top");
-    }
-});
+// window.addEventListener("scroll", (e) => {
+//     if (window.scrollY > 200) {
+//         navbar.classList.add("fixed-top");
+//     } else {
+//         navbar.classList.remove("fixed-top");
+//     }
+// });

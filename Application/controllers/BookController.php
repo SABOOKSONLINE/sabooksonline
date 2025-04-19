@@ -53,6 +53,21 @@ class BookController
     }
 
     /**
+     * Render a list of books filtered by userId.
+     */
+    public function renderBooksByPublisher($userId)
+    {
+        $userId = htmlspecialchars(trim($userId));
+        $books = $this->bookModel->getBooksByPublisher($userId);
+
+        if ($books) {
+            include __DIR__ . '/../views/books/catalogueView.php';
+        } else {
+            echo "No books found in this publisher.";
+        }
+    }
+
+    /**
      * Render a list of all books, optionally limited.
      */
     public function renderAllBooks($limit)
@@ -66,16 +81,3 @@ class BookController
         }
     }
 }
-
-// // Instantiate the controller
-// $controller = new BookController($conn);
-
-// // Example usage:
-// if (isset($_GET['q'])) {
-//     $controller->renderBookView(); // Single book view
-// } elseif (isset($_GET['cat'])) {
-//     $category = $_GET['cat'];
-//     $controller->renderBooksByCategory($category, 10); // Books by category
-// } else {
-//     $controller->renderAllBooks(20); // All books, limit 20
-// }
