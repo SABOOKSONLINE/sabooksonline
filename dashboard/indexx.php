@@ -212,6 +212,81 @@ canvas {
   visibility: visible;
   opacity: 1;
 }
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.long-card {
+  grid-column: span 2; /* Make it span 2 columns */
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 25px;
+  animation: appear 0.8s forwards;
+}
+
+.long-card canvas {
+  width: 100% !important;
+  height: 250px !important;
+}
+
+.mini-cards-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(8, 170px);
+  gap: 0; /* No space between cards */
+  width: 30%;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: #ffffff;
+}
+
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #f1f1f1;
+  transition: background 0.2s ease;
+}
+
+.mini-card:hover {
+  background: #f8f9fa;
+}
+
+.mini-card h4 {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #6c757d;
+}
+
+.mini-card p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 4px 0 0;
+  color: #212529;
+}
+
+.download-report-card button {
+  width: 80%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #198754, #28a745);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.download-report-card button:hover {
+  background: linear-gradient(135deg, #157347, #1e7e34);
+}
 
 </style>
 <<body>
@@ -222,12 +297,6 @@ canvas {
 
         <!-- Top Row: Welcome, Doughnut Chart, and Most Viewed Book -->
 
-         <div class="welcome-card">
-                <h3>Profile views</h3>
-                <p>24200</p>
-          </div>
-            
-            <br>
         <div class="top-row">
             <div class="welcome-card">
                 <h3>Welcome back, User!</h3>
@@ -240,13 +309,32 @@ canvas {
                 <img id="bookCover" src="Screenshot 2025-04-19 at 11.43.59.png" alt="Most Viewed Book Cover">
                
             </div>
-            <div class="welcome-card">
-                <h3>Profile views</h3>
-                <p>24200</p>
+            <div class="mini-cards-wrapper">
+            <div class="mini-card">
+              <h4>Profile Views</h4>
+              <p>24,200</p>
             </div>
-             <div class="chart-card doughnut-chart-card">
-                <canvas id="doughnutChart"></canvas>
+            <div class="mini-card">
+              <h4>Downloads</h4>
+              <p>870</p>
             </div>
+            <div class="mini-card">
+              <h4>Top Region</h4>
+              <p>Gauteng</p>
+            </div>
+            <div class="mini-card download-report-card">
+              <button onclick="downloadReport()">⬇ Download Report</button>
+            </div>
+            <div class="mini-card">
+              <h4>Downloads</h4>
+              <p>870</p>
+            </div>
+            <div class="mini-card">
+              <h4>Top Region</h4>
+              <p>Gauteng</p>
+            </div>
+          </div>
+
         </div>
 
         <!-- Stats Cards -->
@@ -266,11 +354,10 @@ canvas {
                 <div class="card-title">Notifications</div>
                 <div class="card-value">57</div>
             </div>
-            <div class="stats-card" data-card="4">
-                <i class="card-icon">💬</i>
-                <div class="card-title">Messages</div>
-                <div class="card-value">98</div>
+            <div class="stats-card long-card" data-card="5">
+            <canvas id="provinceTrafficChart"></canvas>
             </div>
+
         </div>
 
         <!-- Toast message -->
@@ -283,6 +370,30 @@ canvas {
 
 <script>
 // Toggle Dark Mode
+
+const ctx = document.getElementById('provinceTrafficChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Gauteng', 'KZN', 'Western Cape', 'Eastern Cape', 'Limpopo', 'Free State', 'Mpumalanga', 'North West', 'Northern Cape'],
+    datasets: [{
+      label: 'Traffic by Province',
+      data: [1800, 1200, 950, 750, 500, 430, 400, 380, 300],
+      fill: true,
+      borderColor: '#28a745',
+      backgroundColor: 'rgba(40, 167, 69, 0.1)',
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+}); 
 const toggleButton = document.getElementById('toggleDark');
 toggleButton.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
