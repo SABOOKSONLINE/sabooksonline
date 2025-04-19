@@ -27,7 +27,7 @@ $filePath = "books/" . $book;
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-    :root {
+  :root {
       --bg-light: #f2f2f2;
       --bg-dark: #1c1c1c;
       --text-light: #2c3e50;
@@ -140,14 +140,12 @@ $filePath = "books/" . $book;
     }
 
     mark {
-  background-color: #ffeb3b;
-  color: black;
-  font-weight: bold;
-  padding: 0 2px;
-  border-radius: 2px;
-}
-
-  </style>
+      background-color: #ffeb3b;
+      color: black;
+      font-weight: bold;
+      padding: 0 2px;
+      border-radius: 2px;
+    }  </style>
 </head>
 <body class="prevent-select">
   <div class="container">
@@ -162,10 +160,10 @@ $filePath = "books/" . $book;
       <button type="submit">Upload PDF</button>
     </form>
 
-    <div id="searchContainer" style="text-align:center; margin-top: 10px;">
-    <input type="text" id="pageSearch" placeholder="Search on this page..." style="padding: 5px; width: 60%;">
+    <div id="chapterNav" style="text-align:center; margin-top: 10px;">
+      <h3>Chapters</h3>
+      <ul id="chapters-list"></ul>
     </div>
-
 
     <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
 
@@ -185,7 +183,6 @@ $filePath = "books/" . $book;
         <button onclick="zoomOut()">➖ Zoom Out</button>
         <button onclick="zoomIn()">➕ Zoom In</button>
       </div>
-
     <?php endif; ?>
   </div>
 
@@ -195,18 +192,79 @@ $filePath = "books/" . $book;
   let pdfDoc = null,
       pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
       zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
-      searchTextResults = [],
-      currentSearchIndex = -1,
       leftCanvas = document.getElementById("left-canvas"),
       rightCanvas = document.getElementById("right-canvas"),
       leftCtx = leftCanvas.getContext("2d"),
-      rightCtx = rightCanvas.getContext("2d");
+      rightCtx = rightCanvas.getContext("2d"),
+      chapterTitles = [];
 
   pdfjsLib.getDocument(url).promise.then(pdf => {
     pdfDoc = pdf;
     document.getElementById("page-count").textContent = pdf.numPages;
+    extractTextFromPDF();
     renderPages();
   });
+
+  async function extractTextFromPDF() {
+    let fullText = "";
+    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+      const page = await pdfDoc.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+    }
+    
+    detectChapters(fullText);
+  }
+
+  async function detectChapters(text) {
+  try {
+    // Send the text to OpenAI's API to detect chapters
+    const response = await fetch('https://api.openai.com/v1/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `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`
+      },
+      body: JSON.stringify({
+        model: "text-davinci-003",
+        prompt: `Please detect chapter titles from the following text: ${text}`,
+        max_tokens: 1000
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API request failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Check if we received the expected response
+    if (data.choices && data.choices[0] && data.choices[0].text) {
+      const chapters = data.choices[0].text.split("\n").filter(chapter => chapter.trim() !== "");
+      
+      if (chapters.length > 0) {
+        chapters.forEach((chapter, index) => {
+          chapterTitles.push({ title: chapter, page: index + 1 });
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `<a href="javascript:void(0);" onclick="goToChapter(${index + 1})">${chapter}</a>`;
+          document.getElementById("chapters-list").appendChild(listItem);
+        });
+      } else {
+        console.error('No chapters detected in the response.');
+      }
+    } else {
+      throw new Error('Failed to extract chapters from the API response.');
+    }
+  } catch (error) {
+    console.error('Error detecting chapters:', error);
+  }
+}
+
+
+  function goToChapter(chapterNumber) {
+    pageNum = chapterTitles.find(chapter => chapter.page === chapterNumber).page;
+    renderPages();
+  }
 
   function renderPages() {
     if (pageNum < 1) pageNum = 1;
@@ -299,100 +357,6 @@ $filePath = "books/" . $book;
       nextPage();
     }
   });
-
-  // Text Search
-  function searchText() {
-    let query = document.getElementById("search-input").value;
-    if (query.trim() === "") {
-      searchTextResults = [];
-      currentSearchIndex = -1;
-      renderPages();
-      return;
-    }
-
-    pdfDoc.getPage(pageNum).then(page => {
-      page.getTextContent().then(textContent => {
-        let regex = new RegExp(query, "gi");
-        searchTextResults = [];
-        textContent.items.forEach(item => {
-          let match = item.str.match(regex);
-          if (match) {
-            searchTextResults.push({
-              text: item.str,
-              x: item.transform[4],
-              y: item.transform[5],
-              width: item.width,
-              height: item.height
-            });
-          }
-        });
-        highlightSearchResults();
-      });
-    });
-  }
-
-  function highlightInPageSearch(keyword) {
-  // Only search in the visible pages
-  const visiblePages = $('.page.visible');
-
-  visiblePages.each(function () {
-    const page = $(this);
-
-    // Remove old highlights
-    page.find('mark').each(function () {
-      $(this).replaceWith($(this).text());
-    });
-
-    if (keyword.trim() === '') return;
-
-    const regex = new RegExp(`(${keyword})`, 'gi');
-
-    page.contents().each(function recursiveSearch() {
-      if (this.nodeType === 3 && this.nodeValue.trim() !== '') {
-        const match = this.nodeValue.match(regex);
-        if (match) {
-          const newHtml = this.nodeValue.replace(regex, '<mark>$1</mark>');
-          $(this).replaceWith(newHtml);
-        }
-      } else if (this.nodeType === 1 && !['SCRIPT', 'STYLE'].includes(this.nodeName)) {
-        $(this).contents().each(recursiveSearch);
-      }
-    });
-  });
-}
-
-$('#pageSearch').on('input', function () {
-  const query = $(this).val();
-  highlightInPageSearch(query);
-});
-
-
-
-  function clearSearch() {
-    document.getElementById("search-input").value = "";
-    searchTextResults = [];
-    currentSearchIndex = -1;
-    renderPages();
-  }
-
-  $('#providerList').fadeOut(150, function () {
-  // update content
-  $(this).html(newContent).fadeIn(150);
-});
-
-// As user types: 
-if (searchValue.length > 2) {
-  const suggestions = providers.filter(p => p.name.toLowerCase().includes(searchValue));
-  showSuggestions(suggestions);
-}
-// Debounce search for better UX
-let debounceTimer;
-$('#searchInput').on('input', function () {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    applyFilters();
-  }, 300);
-});
 
 </script>
 <?php endif; ?>
