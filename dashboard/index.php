@@ -1,6 +1,4 @@
   <?php include 'includes/header-dash-main.php';?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,6 +182,10 @@
 
 
 <body>
+
+
+  <div class="dashboard_content_wrapper">
+    <div class="dashboard dashboard_wrapper pr30 pr0-xl">
     <?php include 'includes/header-dash.php';?>
       <div class="dashboard__main pl0-md">
         <div class="dashboard__content hover-bgc-color">
