@@ -422,6 +422,7 @@ body {
     color: var(--yellow);
     left: -75px;
     transform: translateY(-50%) rotateZ(-20deg);
+    z-index: 10;
 }
 
 /* ===============================
