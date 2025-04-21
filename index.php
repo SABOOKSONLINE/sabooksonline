@@ -45,6 +45,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/creatorpage.php";
     });
 
+    $r->addRoute('GET', '/services', function () {
+        require "Application/views/ourServices.php";
+    });
+
     // event routes
     $r->addRoute('GET', '/events', function () {
         require "Application/views/events.php";
