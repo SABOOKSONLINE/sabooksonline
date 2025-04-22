@@ -39,21 +39,13 @@
 <script src="https://jsuites.net/v4/jsuites.webcomponents.js"></script>
 <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
-
 
 <script src="https://jsuites.net/v4/jsuites.js"></script>
 <script src="https://jsuites.net/v4/jsuites.webcomponents.js"></script>
 <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
 
 <style>
     .dashboard_sidebar_list .sidebar_list_item a:hover,
@@ -63,37 +55,32 @@
   background-color: #222222;
   color: #ffffff;
 }
+/* Hide the actual file input */
+#image-upload {
+    display: none;
+}
+/* Style the custom file input label */
+.custom-file-label {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #5BBB7B;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+}
+/* Change styles when hovering over the label */
+.custom-file-label:hover {
+    background-color: #5BBB7C;
+}
 
+.upload-btn {
+    background-color: #5BBB7B !important;
+}
 
-
-   /* Hide the actual file input */
-   #image-upload {
-        display: none;
-    }
-
-    /* Style the custom file input label */
-    .custom-file-label {
-        display: inline-block;
-        padding: 8px 12px;
-        background-color: #5BBB7B;
-        color: #fff;
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-    }
-
-    /* Change styles when hovering over the label */
-    .custom-file-label:hover {
-        background-color: #5BBB7C;
-    }
-
-    .upload-btn {
-        background-color: #5BBB7B !important;
-    }
-
-    .project-attach {
-        background-color: #f3f3f3 !important;
-    }
+.project-attach {
+    background-color: #f3f3f3 !important;
+}
 </style>
 </head>
 <body>
@@ -115,12 +102,7 @@
                 <h2>Add Book Listing</h2>
                 <p class="text">You may add a new book and select the new options.</p>
               </div>
-            </div>
-            <!--<div class="col-lg-3">
-              <div class="text-lg-end">
-                <a href="#" class="ud-btn btn-dark">Save & Publish<i class="fal fa-arrow-right-long"></i></a>
-              </div>
-            </div>-->       
+            </div>  
           </div>
           <form class="form-style1" id="upload-book" enctype="multipart/form-data">
             <div class="row">
@@ -166,8 +148,6 @@
                             </div>
                           </div>
                         </div>
-
-
                         <div class="col-sm-6"> 
                           <div class="mb20">
                             <label class="heading-color ff-heading fw500 mb10">Purchase Link</label>
@@ -195,11 +175,6 @@
                             <textarea cols="30" rows="6" placeholder="Description" maxlength="600" name="book_desc"  required></textarea>
                           </div>
                         </div>
-                        <!--<div class="col-md-12">
-                          <div class="text-start">
-                            <a class="ud-btn btn-thm" href="page-contact.html">Save<i class="fal fa-arrow-right-long"></i></a>
-                          </div>
-                        </div>-->
                       </div>
                   </div>
                 </div>
@@ -210,9 +185,7 @@
                     <h5 class="list-title">Miscellaneous Information</h5>
                   </div>
                   <div class="col-xl-12">
-                    
                       <div class="row">
-                        
                         <div class="col-sm-12">
                           <div class="mb20">
                             <div class="form-style1">
@@ -236,43 +209,13 @@
                             </div>
                           </div>
                         </div>
-
-                        <div class="col-sm-12">
-                          <div class="mb20">
-                            <div class="form-style1">
-                              <label class="heading-color ff-heading fw500 mb10">Which Book-Store is your book available in?</label>
-                              <div class="bootselect-multiselect">
-                                <select class="selectpicker" name="book_stores[]"  multiple>
-
-                                <?php
-                                  $sql = "SELECT * FROM book_stores WHERE STATUS = 'Active'";
-                                  
-                                  $result = mysqli_query($conn, $sql);
-                                  if(mysqli_num_rows($result) == false){
-                                    echo '<div class="alert alert-warning">There are Book Stores listed at the moment</div>';
-                                  }else{
-                                    echo '<hr>';
-                                    while($row = mysqli_fetch_assoc(result: $result)) {
-                                      echo '<option  value="'.$row['STORE_NAME'].'">'.$row['STORE_NAME'].' - '.$row['STORE_ADDRESS'].'</option>';
-                                    }
-                                  }
-                                ?>
-                                          
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
- 
                         <div class="col-sm-12">
                           <div class="mb20">
                             <label class="heading-color ff-heading fw500 mb10">Original Author (Seperate by comas if multiple)</label>
                             <input type="text" class="form-control" name="author" required>
                           </div>
                         </div>
-                        
                       </div>
-                    
                   </div>
                 </div>
 
@@ -280,10 +223,7 @@
                   <div class="bdrb1 pb15 mb30">
                     <h5 class="list-title">Book Cover</h5>
                   </div>
-                  
-
                   <div class="row">
-                  
                 <div class="col-6 col-xl-2">
                     <div class="project-attach">
                     <img id="imagePreview" class="w-100 wa-xs" alt="" style="width: 200px !important;">
@@ -293,24 +233,19 @@
                          <div class="d-flex align-items-center my-3">
                             <!-- <a href="#" class="tag-delt text-thm2"><span class="flaticon-delete text-thm2"></span></a>-->
                             <a href="#" class="upload-btn ml10"> 
-                                    
                                 <input id="image-upload" type="file" name="book_cover" accept="image/*" required>
-                                
                                 <label for="image-upload" class="custom-file-label">Upload Book Cover <i class="fa fa-file-image"></i></label>
                             </a>
                         </div>
                         <p class="text mb-0 alert alert-danger w-50">Max file size is 1MB, 2 Dimensional cover only! And Suitable files are .jpg & .png</p>
                     </div>
-
                 </div>
                 </div>
-
                 <div class="ps-widget bgc-white bdrs4 p30 mb30 overflow-hidden position-relative">
                   <div class="bdrb1 pb15 mb25">
                     <h5 class="list-title">Stock availability  <i class="fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="The stock availability refers to the books that can be sold on your SA Books website, if In-stock the bookm can be purchased if not then it cannot be purchased."></i></h5>
                   </div>
                   <div class="col-xl-12">
-                  
                       <div class="row">
                         <div class="col-sm-12">
                             <div class="bootselect-multiselect">
@@ -335,7 +270,6 @@
                     <h5 class="list-title">Save listing as</h5>
                   </div>
                   <div class="col-xl-12">
-                  
                       <div class="row">
                         <div class="col-sm-12">
                         <div class="bootselect-multiselect">
@@ -345,23 +279,17 @@
                                   </select>
                                 </div>
                         </div>
-
                         <hr>
-                      
+
                         <div class="col-md-12">
                           <div class="text-start">
                             <button class="ud-btn btn-thm" type="submit" id="reg_load">List Your Book<i class="fal fa-arrow-right-long"></i></button>
                           </div>
                         </div>
                       </div>
-                    
                   </div>
                 </div>
-
-                
-
                 <div id="reg_status"></div>
-
               </div>
             </div>
           </form>
@@ -384,94 +312,71 @@
 <script src="js/dashboard-script.js"></script>
 <!-- Custom script for all pages --> 
 <script src="js/script.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 <script>
-
-		//$("#other").show();
-
-
 $(document).ready(function() {
-
 	$("#upload-book").on('submit',(function(e) {
 
-        // Create a FormData object and include the entire form data
-        var formData = new FormData($("#upload-book")[0]);
+      // Create a FormData object and include the entire form data
+  var formData = new FormData($("#upload-book")[0]);
+  e.preventDefault();
+  $("#reg_load").html('<div class="d-flex justify-content-center align-content-center align-items-centerc"><div class="spinner-border text-white" role="status"><span class="visually-hidden">Loading...</span></div></div>');
 
-		e.preventDefault();
-
-		$("#reg_load").html('<div class="d-flex justify-content-center align-content-center align-items-centerc"><div class="spinner-border text-white" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-		
-			//showSwal('success-message');
-		$.ajax({
-			url: "../includes/backend/upload-book.php",
-			type: "POST",
-			data: formData,
-			contentType: false,
-				cache: false,
-			processData:false,
-			success: function(data)
-		{
-			$("#reg_load").html('Publish Book');
-			$("#reg_status").html(data);
-			},
-		error: function(){}
-		});
-
-
+    //showSwal('success-message');
+  $.ajax({
+    url: "../includes/backend/upload-book.php",
+    type: "POST",
+    data: formData,
+    contentType: false,
+      cache: false,
+    processData:false,
+    success: function(data)
+  {
+    $("#reg_load").html('Publish Book');
+    $("#reg_status").html(data);
+    },
+  error: function(){}
+  });
 	}));
 });
 		//publiish story upload code
-
-        
-
 </script>
-
-
  <script>
-        $(document).ready(function() {
-            // Initialize Datepicker with custom date format
-            $('.datepicker').datepicker({
-                format: 'dd MM yyyy', // Use 'dd MM yyyy' for day, month name, and year
-                autoclose: true,
-                todayHighlight: true
-            });
-
-            // Initialize Timepicker
-            $('.timepicker').timepicker({
-                showMeridian: false
-            });
-        });
+$(document).ready(function() {
+    // Initialize Datepicker with custom date format
+  $('.datepicker').datepicker({
+      format: 'dd MM yyyy', // Use 'dd MM yyyy' for day, month name, and year
+      autoclose: true,
+      todayHighlight: true
+  });
+  // Initialize Timepicker
+  $('.timepicker').timepicker({
+      showMeridian: false
+  });
+});
 </script>
-
 <script>
-    const fileInput = document.getElementById('image-upload');
-    const imagePreview = document.getElementById('imagePreview');
+const fileInput = document.getElementById('image-upload');
+const imagePreview = document.getElementById('imagePreview');
 
-    fileInput.addEventListener('change', function() {
-        const selectedFile = fileInput.files[0];
+fileInput.addEventListener('change', function() {
+  const selectedFile = fileInput.files[0];
 
-        if (selectedFile) {
-            const reader = new FileReader();
+  if (selectedFile) {
+      const reader = new FileReader();
 
-            reader.onload = function(event) {
-                imagePreview.src = event.target.result;
-                imagePreview.style.display = 'block';
-            };
+      reader.onload = function(event) {
+          imagePreview.src = event.target.result;
+          imagePreview.style.display = 'block';
+      };
 
-            reader.readAsDataURL(selectedFile);
-        } else {
-            imagePreview.src = '#';
-            imagePreview.style.display = 'none';
-        }
-    });
+      reader.readAsDataURL(selectedFile);
+  } else {
+      imagePreview.src = '#';
+      imagePreview.style.display = 'none';
+  }
+});
 </script>
-
-
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-
 </body>
-
 </html>
