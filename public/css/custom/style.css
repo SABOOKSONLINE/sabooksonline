@@ -656,3 +656,70 @@ footer {
 .event-card-date {
     font-size: 18px;
 }
+
+/* ===============================
+   GALLERY / STYLING
+================================= */
+
+.gallery-div {
+    position: relative;
+    width: calc(33% - 20px);
+    padding: 10px;
+}
+
+.gallery-img {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+    transition: 0.3s ease;
+}
+
+.gallery-img img {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.gallery-img:hover {
+    transform: scale(1.05);
+}
+
+/* ===============================
+   SUBSCRIBE / STYLING
+================================= */
+
+.sub-layout {
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+    padding: 100px 0;
+}
+
+.sub-layout h2 {
+    color: var(--white);
+}
+
+.sub-layout p {
+    color: var(--off-white);
+}
+
+.sub-layout .form-control {
+    background: none;
+    color: var(--white);
+    padding: 15px;
+    border-radius: 30px;
+    border: 2px solid var(--white);
+}
+
+.btn-sub {
+    font-size: 14px;
+    background: none;
+    color: var(--white);
+    border: 2px solid var(--white);
+    border-radius: 30px 30px 30px 30px;
+}
+
+.btn-sub:hover {
+    background: var(--white);
+    color: var(--red);
+}

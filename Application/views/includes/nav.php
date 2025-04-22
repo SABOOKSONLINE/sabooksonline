@@ -25,12 +25,13 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/events">Events</a></li>
-                        <li><a class="dropdown-item" href="/services">Service Providers</a></li>
+                        <li><a class="dropdown-item" href="/providers">Service Providers</a></li>
                         <li><a class="dropdown-item" href="/membership">Membership Pricing</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item"><a class="nav-link" href="/services">Our Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="/gallery">Gallery</a></li>
                 <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
                 <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
             </ul>

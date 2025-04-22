@@ -152,6 +152,8 @@ require_once __DIR__ . "/includes/header.php";
         </div>
     </section>
 
+    <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
+
     <?php require_once __DIR__ . "/includes/footer.php" ?>
 
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>

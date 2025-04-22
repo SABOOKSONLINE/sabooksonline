@@ -45,6 +45,17 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/creatorpage.php";
     });
 
+    // gallery
+    $r->addRoute('GET', '/providers', function () {
+        require "Application/views/providers.php";
+    });
+
+    // gallery
+    $r->addRoute('GET', '/gallery', function () {
+        require "Application/views/gallery.php";
+    });
+
+    // services
     $r->addRoute('GET', '/services', function () {
         require "Application/views/ourServices.php";
     });
