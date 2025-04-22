@@ -1,0 +1,233 @@
+/* ===============================
+   AUDIOBOOK / STYLING
+================================= */
+
+.audio-book {
+    position: relative;
+    /* background: var(--white); */
+    height: calc(100vh - 70px);
+    display: flex;
+}
+
+.audio-cover {
+    position: relative;
+    width: 50%;
+    height: inherit;
+}
+
+.audio-cover::before {
+    content: "";
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    z-index: -1;
+}
+
+.audio-cover::after {
+    background: rgb(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px);
+    content: "";
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    z-index: -1;
+}
+
+.audio-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 475px;
+    overflow: hidden;
+    box-shadow: 10px 10px 10px rgb(0, 0, 0, 0.2);
+    border-radius: 14px;
+}
+
+.audio-img img {
+    width: 100%;
+    z-index: 3;
+}
+
+.audio-controllers {
+    position: absolute;
+    width: 100%;
+    height: 70px;
+
+    bottom: -70px;
+    color: var(--white);
+}
+
+.audio-controllers::before {
+    content: "";
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    z-index: -1;
+}
+
+.audio-controllers::after {
+    background: rgb(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    content: "";
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    z-index: -1;
+}
+
+.audio-ctrl-row {
+    height: 100%;
+
+    position: relative;
+    display: flex;
+
+    display: flex;
+    align-items: center;
+}
+
+.audio-ctrls {
+    display: flex;
+    gap: 14px;
+
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+
+    font-size: 20px;
+}
+
+.audio-ctrl {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: rgb(255, 255, 255, 0.1);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.audio-ctrl:hover {
+    background: rgb(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.audio-trackers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.audio-trackers {
+    position: absolute;
+    left: 220px;
+    width: calc(100% - 220px - 14px);
+}
+
+.audio-trackers .audio-ctrl {
+    height: 30px;
+    transition: 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#ctrl-tracker {
+    width: calc(100% - 14px);
+    margin-right: 14px;
+}
+
+#ctrl-volume {
+    width: calc(100px);
+}
+
+#ctrl-tracker:hover,
+#ctrl-volume:hover {
+    height: 50px;
+    transform: scale(1);
+}
+
+.tracker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10%;
+    height: 100%;
+
+    background: rgb(255, 255, 255, 0.25);
+}
+
+.audio-book-list {
+    position: relative;
+    background: var(--white);
+    width: 50%;
+    padding: 0 14px;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.audio-book-title {
+    font-weight: 500;
+    color: var(--black);
+    font-size: 20px;
+    padding: 15px;
+    border-bottom: 1px solid var(--off-white);
+    width: calc(100% - 30px);
+}
+
+.audio-chapters {
+    padding: 10px 0;
+}
+
+.audio-chapters .chapter {
+    position: relative;
+    height: 50px;
+    padding: 0 14px;
+    box-shadow: 0 5px 5px rgb(0, 0, 0, 0.1);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    border: 1px solid var(--white);
+    border-radius: 14px;
+
+    text-transform: capitalize;
+    transition: 0.3s ease;
+
+    cursor: pointer;
+}
+
+.audio-chapters .chapter .chapter-time {
+    font-size: 14px;
+    opacity: 0.5;
+}
+
+.audio-chapters .chapter:hover {
+    background: var(--off-white);
+    border: 1px solid var(--off-white);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgb(0, 0, 0, 0.1);
+}

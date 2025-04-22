@@ -36,6 +36,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
+    // audioBook
+    $r->addRoute('GET', '/library/audio-book', function () {
+        require "Application/views/audio/audioBookPage.php";
+    });
+
     $r->addRoute('GET', '/dashboard', function () {
         require "dashboard/index.php";
     });
@@ -45,7 +50,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/creatorpage.php";
     });
 
-    // gallery
+    // providers
     $r->addRoute('GET', '/providers', function () {
         require "Application/views/providers.php";
     });
