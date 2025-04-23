@@ -58,6 +58,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboard/reviews', function () {
         require "dashboard/reviews.php";
     });
+    $r->addRoute('GET', '/bookreader', function () {
+        require "dashboard/bookReader.php";
+    });
 
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;
