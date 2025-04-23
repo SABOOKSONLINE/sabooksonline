@@ -43,7 +43,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
+        require "dashboard/models/index.php";
     });
 
     $r->addRoute('GET', '/dashboard/listings', function () {
@@ -53,7 +53,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "dashboard/events.php";
     });
     $r->addRoute('GET', '/dashboard/services', function () {
-        require "dashboard/services.php";
+        require "dashboard/views/list/services.php";
     });
     $r->addRoute('GET', '/dashboard/reviews', function () {
         require "dashboard/reviews.php";
