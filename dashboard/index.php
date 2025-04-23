@@ -1,4 +1,3 @@
-  <?php include 'includes/header-dash-main.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -182,6 +181,9 @@
 
 
 <body>
+
+  <?php include 'includes/header-dash-main.php';?>
+
 
 
   <div class="dashboard_content_wrapper">
