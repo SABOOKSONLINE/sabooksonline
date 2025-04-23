@@ -46,25 +46,19 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "dashboard/index.php";
     });
 
-     $r->addRoute('GET', '/dashboard/listings', function () {
-        require "Application/dashboard/";
+    $r->addRoute('GET', '/dashboard/listings', function () {
+        require "dashboard/views/list/listings.php";
+    });
+    $r->addRoute('GET', '/dashboard/events', function () {
+        require "dashboard/views/list/events.php";
+    });
+    $r->addRoute('GET', '/dashboard/services', function () {
+        require "dashboard/views/list/services.php";
+    });
+    $r->addRoute('GET', '/dashboard/listings', function () {
+        require "dashboard/views/list/reviews.php";
     });
 
-     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
-    });
-
-     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
-    });
-
-     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
-    });
-
-     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
-    });
 
 
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
