@@ -1,448 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SA Books Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Segoe UI', sans-serif;
+      color: #2d2d2d;
+    }
+
+    .header-title {
+      font-weight: 600;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    .stat-card {
+      border-radius: 12px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+    }
+
+    .stat-card i {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .bg-books { background: linear-gradient(45deg, #1976d2, #2196f3); }
+    .bg-events { background: linear-gradient(45deg, #388e3c, #4caf50); }
+    .bg-services { background: linear-gradient(45deg, #fbc02d, #fdd835); color: #212121; }
+    .bg-total { background: linear-gradient(45deg, #8e24aa, #ab47bc); }
+    .bg-users { background: linear-gradient(45deg, #e53935, #ef5350); }
+    .bg-time { background: linear-gradient(45deg, #3949ab, #5c6bc0); }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .chart-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      margin-bottom: 20px;
+    }
+
+    .chart-box h5 {
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .list-group-item {
+      display: flex;
+      justify-content: space-between;
+      border: none;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .nav-tabs .nav-link.active {
+      font-weight: bold;
+      border-color: #dee2e6 #dee2e6 #fff;
+    }
+  </style>
 </head>
+<body>
+  <div class="container py-5">
+    <h2 class="header-title">📚 SA Books Online — Admin Dashboard</h2>
 
-<style>
-/* Global Styles */
-body {
-  background: linear-gradient(135deg, #f8f9fa, #ffffff);
-  color: #212529;
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-body.dark-mode {
-  background: linear-gradient(135deg, #1c1c1e, #2c2c2e);
-  color: #f1f1f1;
-}
-
-.main-card {
-  background: #fff;
-  border-radius: 1px;
-  padding: 20px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-  max-width: 2000px;
-  margin: 10px auto;
-  transition: all 0.3s ease;
-}
-
-.main-card:hover {
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
-}
-
-.top-row {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  margin-bottom: 40px;
-}
-
-.welcome-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  flex: 1;
-  max-width: 30%;
-}
-
-.welcome-card h3 {
-  font-size: 1.5rem;
-  color: #212529;
-}
-
-.welcome-card p {
-  font-size: 1rem;
-  color: #6c757d;
-}
-
-.chart-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  flex: 1;
-  max-width: 30%;
-}
-
-.doughnut-chart-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.book-cover-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  flex: 1;
-  max-width: 20%;
-}
-
-.book-cover-card img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-.book-info {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.book-info h4 {
-  font-size: 1.2rem;
-  color: #212529;
-}
-
-.book-info p {
-  font-size: 1rem;
-  color: #6c757d;
-}
-
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.stats-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 30px;
-  height: 200px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: appear 0.8s forwards;
-}
-
-.stats-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-}
-
-.stats-card:nth-child(1) { animation-delay: 0.1s; }
-.stats-card:nth-child(2) { animation-delay: 0.2s; }
-.stats-card:nth-child(3) { animation-delay: 0.3s; }
-.stats-card:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes appear {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.card-icon {
-  font-size: 2rem;
-  color: #28a745;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.card-icon:hover {
-  transform: scale(1.2);
-  color: #218838;
-}
-
-.card-title {
-  font-size: 1rem;
-  color: #6c757d;
-  margin-top: 5px;
-}
-
-.card-value {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #212529;
-  margin-top: 10px;
-  text-transform: uppercase;
-}
-
-.chart-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-top: 40px;
-  animation: fadeInUp 0.7s ease both;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-canvas {
-  max-height: 350px;
-  width: 100%;
-}
-
-.toast {
-  visibility: hidden;
-  max-width: 50px;
-  width: 250px;
-  background-color: #198754;
-  color: #fff;
-  text-align: center;
-  border-radius: 10px;
-  padding: 8px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  top: 20px;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.toast.show {
-  visibility: visible;
-  opacity: 1;
-}
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-.long-card {
-  grid-column: span 2; /* Make it span 2 columns */
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  padding: 25px;
-  animation: appear 0.8s forwards;
-}
-
-.long-card canvas {
-  width: 100% !important;
-  height: 250px !important;
-}
-
-.mini-cards-wrapper {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(8, 170px);
-  gap: 0; /* No space between cards */
-  width: 30%;
-  height: 500px;
-  overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  background: #ffffff;
-}
-
-.mini-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #f1f1f1;
-  transition: background 0.2s ease;
-}
-
-.mini-card:hover {
-  background: #f8f9fa;
-}
-
-.mini-card h4 {
-  font-size: 0.85rem;
-  margin: 0;
-  color: #6c757d;
-}
-
-.mini-card p {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 4px 0 0;
-  color: #212529;
-}
-
-.download-report-card button {
-  width: 80%;
-  padding: 8px 10px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #198754, #28a745);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.3s ease;
-}
-
-.download-report-card button:hover {
-  background: linear-gradient(135deg, #157347, #1e7e34);
-}
-
-</style>
-<<body>
-    <button id="toggleDark" class="dark-mode-toggle">Dark Mode</button>
-
-    <div class="main-card">
-        <h2>Analytics Dashboard</h2>
-
-        <!-- Top Row: Welcome, Doughnut Chart, and Most Viewed Book -->
-
-        <div class="top-row">
-            <div class="welcome-card">
-                <h3>Welcome back, User!</h3>
-                <p>Here's a quick overview of your stats</p>
-            </div>
-            <div class="chart-card doughnut-chart-card">
-                <canvas id="doughnutChart"></canvas>
-            </div>
-            <div class="book-cover-card">
-                <img id="bookCover" src="Screenshot 2025-04-19 at 11.43.59.png" alt="Most Viewed Book Cover">
-               
-            </div>
-            <div class="mini-cards-wrapper">
-            <div class="mini-card">
-              <h4>Profile Views</h4>
-              <p>24,200</p>
-            </div>
-            <div class="mini-card">
-              <h4>Downloads</h4>
-              <p>870</p>
-            </div>
-            <div class="mini-card">
-              <h4>Top Region</h4>
-              <p>Gauteng</p>
-            </div>
-            <div class="mini-card download-report-card">
-              <button onclick="downloadReport()">⬇ Download Report</button>
-            </div>
-            <div class="mini-card">
-              <h4>Downloads</h4>
-              <p>870</p>
-            </div>
-            <div class="mini-card">
-              <h4>Top Region</h4>
-              <p>Gauteng</p>
-            </div>
-          </div>
-
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-books">
+          <i class="fas fa-book"></i>
+          <span>Book Views</span>
+          <div class="stat-value">13,201</div>
         </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-cards">
-            <div class="stats-card" data-card="1">
-                <i class="card-icon">📈</i>
-                <div class="card-title">Active Users</div>
-                <div class="card-value">1,524</div>
-            </div>
-            <div class="stats-card" data-card="2">
-                <i class="card-icon">💵</i>
-                <div class="card-title">Revenue</div>
-                <div class="card-value">₤15,423</div>
-            </div>
-            <div class="stats-card" data-card="3">
-                <i class="card-icon">🔔</i>
-                <div class="card-title">Notifications</div>
-                <div class="card-value">57</div>
-            </div>
-            <div class="stats-card long-card" data-card="5">
-            <canvas id="provinceTrafficChart"></canvas>
-            </div>
-
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-events">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Event Views</span>
+          <div class="stat-value">3,288</div>
         </div>
-
-        <!-- Toast message -->
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-services">
+          <i class="fas fa-tools"></i>
+          <span>Service Views</span>
+          <div class="stat-value">2,145</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-total">
+          <i class="fas fa-chart-line"></i>
+          <span>Total Views</span>
+          <div class="stat-value">18,634</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-users">
+          <i class="fas fa-user-friends"></i>
+          <span>Unique Users</span>
+          <div class="stat-value">5,904</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="stat-card bg-time">
+          <i class="fas fa-clock"></i>
+          <span>Avg. Time</span>
+          <div class="stat-value">5m 12s</div>
+        </div>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- <script src="script.js"></script> -->
-</body>
+    <!-- Chart Row -->
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="chart-box">
+          <h5>Engagement Breakdown</h5>
+          <canvas id="engagementChart"></canvas>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="chart-box">
+          <h5>Popular Cities</h5>
+          <canvas id="cityChart"></canvas>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="chart-box">
+          <h5>Top Provinces</h5>
+          <canvas id="provinceChart"></canvas>
+        </div>
+      </div>
+    </div>
 
+    <!-- Tabs Row -->
+    <div class="row g-3 mt-2">
+      <div class="col-md-6">
+        <div class="chart-box">
+          <h5>Most Viewed Content</h5>
+          <ul class="nav nav-tabs" id="tabs" role="tablist">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#books">Books</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#events">Events</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#services">Services</a></li>
+          </ul>
+          <div class="tab-content pt-3">
+            <div class="tab-pane fade show active" id="books">
+              <ul class="list-group">
+                <li class="list-group-item">Bloodline of Kemet <span>465 views</span></li>
+                <li class="list-group-item">Mindful Hustle <span>379 views</span></li>
+                <li class="list-group-item">Cape Town Noir <span>352 views</span></li>
+              </ul>
+            </div>
+            <div class="tab-pane fade" id="events">
+              <ul class="list-group">
+                <li class="list-group-item">Poetry Night CT <span>120 views</span></li>
+                <li class="list-group-item">Author Talk SA <span>99 views</span></li>
+              </ul>
+            </div>
+            <div class="tab-pane fade" id="services">
+              <ul class="list-group">
+                <li class="list-group-item">Cover Design <span>89 views</span></li>
+                <li class="list-group-item">Editing Services <span>72 views</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<script>
-// Toggle Dark Mode
+      <div class="col-md-6">
+        <div class="chart-box">
+          <h5>Hourly User Activity</h5>
+          <canvas id="hourChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 
-const ctx = document.getElementById('provinceTrafficChart').getContext('2d');
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Gauteng', 'KZN', 'Western Cape', 'Eastern Cape', 'Limpopo', 'Free State', 'Mpumalanga', 'North West', 'Northern Cape'],
-    datasets: [{
-      label: 'Traffic by Province',
-      data: [1800, 1200, 950, 750, 500, 430, 400, 380, 300],
-      fill: true,
-      borderColor: '#28a745',
-      backgroundColor: 'rgba(40, 167, 69, 0.1)',
-      tension: 0.3
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true
+  <!-- Chart Scripts -->
+  <script>
+    new Chart(document.getElementById("engagementChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Books", "Events", "Services", "Profiles"],
+        datasets: [{
+          data: [13201, 3288, 2145, 3000],
+          backgroundColor: ["#1976d2", "#43a047", "#fbc02d", "#3949ab"]
+        }]
       }
-    }
-  }
-}); 
-const toggleButton = document.getElementById('toggleDark');
-toggleButton.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-});
+    });
 
-// Doughnut Chart Data
-const doughnutChartData = {
-  labels: ['Views', 'Orders', 'Favorites', 'Shares'],
-  datasets: [{
-    label: 'Interaction Metrics',
-    data: [500, 200, 150, 50], // Example data
-    backgroundColor: ['#ff9e9e', '#ffcc00', '#2e8b57', '#4c99f9'],
-    borderWidth: 1
-  }]
-};
+    new Chart(document.getElementById("cityChart"), {
+      type: "bar",
+      data: {
+        labels: ["New York", "London", "Nairobi", "Sydney", "Tokyo"],
+        datasets: [{
+          label: "Views",
+          data: [450, 410, 390, 355, 320],
+          backgroundColor: "#43a047"
+        }]
+      }
+    });
 
-const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
-new Chart(doughnutCtx, {
-  type: 'doughnut',
-  data: doughnutChartData,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      tooltip: { enabled: true }
-    }
-  }
-});
+    new Chart(document.getElementById("provinceChart"), {
+      type: "bar",
+      data: {
+        labels: ["Gauteng", "KZN", "Western Cape", "Eastern Cape", "Limpopo"],
+        datasets: [{
+          label: "Views",
+          data: [3200, 2750, 2540, 2100, 1600],
+          backgroundColor: "#1976d2"
+        }]
+      }
+    });
 
-// Display Book Cover & Stats
-const bookCover = document.getElementById('bookCover');
-const bookTitle = document.getElementById('bookTitle');
-const bookViews = document.getElementById('bookViews');
+    new Chart(document.getElementById("hourChart"), {
+      type: "line",
+      data: {
+        labels: ["00h", "03h", "06h", "09h", "12h", "15h", "18h", "21h"],
+        datasets: [{
+          label: "Active Users",
+          data: [120, 140, 230, 500, 900, 750, 600, 300],
+          fill: true,
+          backgroundColor: "rgba(25, 118, 210, 0.2)",
+          borderColor: "#1976d2",
+          tension: 0.4
+        }]
+      }
+    });
+  </script>
 
-// Sample book data
-const mostViewedBook = {
-  title: 'The Great Adventure',
-  coverUrl: 'Screenshot 2025-04-19 at 11.43.59.png',
-  views: 1245
-};
-
-bookCover.src = mostViewedBook.coverUrl;
-// bookTitle.textContent = mostViewedBook.title;
-// bookViews.textContent = `${mostViewedBook.views} Views`;
-
-// Toast message example
-const toast = document.getElementById('toast');
-setTimeout(() => toast.classList.add('show'), 1000);
-setTimeout(() => toast.classList.remove('show'), 5000);
-
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

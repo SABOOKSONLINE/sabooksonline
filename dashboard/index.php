@@ -209,7 +209,7 @@
         <canvas id="doughnutChart"></canvas>
       </div>
       <div class="book-cover-card">
-        <img id="bookCover" src="Screenshot 2025-04-19 at 11.43.59.png" alt="Most Viewed Book Cover">
+        <img id="bookCover" src="Screenshot 2025-04-22 at 22.13.40.png" alt="Most Viewed Book Cover">
       </div>
       <div class="mini-cards-wrapper">
         <div class="mini-card">
