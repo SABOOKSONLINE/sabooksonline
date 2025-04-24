@@ -3,6 +3,11 @@ require_once '../models/Listings.php';
 
 class ListingsController {
   private $model;
+  public $netIncome;
+  public $transactions;
+  public $totalCustomers;
+  public $pendingOrders;
+  public $invoices;
 
   public function __construct($conn) {
     $this->model = new Listing($conn);
@@ -28,4 +33,12 @@ class ListingsController {
   public function listCustomers() {
     return $this->model->getUserCustomers();
   }
+
+  private function initData() {
+        $this->netIncome = $this->model->getNetIncome();
+        $this->transactions = $this->model->getTransactionsCount();
+        $this->totalCustomers = $this->model->getTotalCustomers();
+        $this->pendingOrders = $this->model->getPendingOrders();
+        $this->invoices = $this->model->getAllInvoices();
+    }
 }

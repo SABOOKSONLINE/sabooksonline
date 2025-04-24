@@ -68,4 +68,53 @@ class Listing {
 
         return $users;
     }
+
+    // for user orders
+    public function getNetIncome() {
+        $result = mysqli_query($this->conn, "SELECT SUM(product_total) AS value_sum FROM product_order WHERE product_current = 'COMPLETED'");
+        $row = mysqli_fetch_assoc($result);
+        return $row['value_sum'] ?? 0;
+    }
+
+    public function getTransactionsCount() {
+        $result = mysqli_query($this->conn, "SELECT COUNT(*) as number_rows FROM product_order WHERE product_current = 'COMPLETED'");
+        $row = mysqli_fetch_assoc($result);
+        return $row['number_rows'] ?? 0;
+    }
+
+    public function getTotalCustomers() {
+        $result = mysqli_query($this->conn, "SELECT COUNT(*) as number_rows FROM user_info");
+        $row = mysqli_fetch_assoc($result);
+        return $row['number_rows'] ?? 0;
+    }
+
+    public function getPendingOrders() {
+        $result = mysqli_query($this->conn, "SELECT COUNT(*) as number_rows FROM product_order WHERE product_current = 'cart'");
+        $row = mysqli_fetch_assoc($result);
+        return $row['number_rows'] ?? 0;
+    }
+
+    public function getAllInvoices() {
+        $invoices = [];
+        $result = mysqli_query($this->conn, "SELECT * FROM invoices ORDER BY invoice_id DESC");
+        while ($row = mysqli_fetch_assoc($result)) {
+            $userId = $row['invoice_user'];
+            $userQuery = mysqli_query($this->conn, "SELECT * FROM user_info WHERE user_id = '$userId'");
+            $user = mysqli_fetch_assoc($userQuery);
+
+            $status = $row['invoice_status'] === 'COMPLETED' 
+                ? '<span class="pending-style style2">Completed</span>' 
+                : '<span class="pending-style style1">Pending</span>';
+
+            $invoices[] = [
+                'number' => $row['invoice_number'],
+                'date' => $row['invoice_date'],
+                'total' => $row['invoice_total'],
+                'status' => $status,
+                'user_fullname' => isset($user) ? ucwords($user['first_name'].' '.$user['last_name']) : 'N/A',
+                'user_id' => $userId
+            ];
+        }
+        return $invoices;
+    }
 }
