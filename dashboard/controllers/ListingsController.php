@@ -23,4 +23,9 @@ class ListingsController {
    public function listReviews($userkey) {
     return $this->model->getUserReviews($userkey);
   }
+
+  // for some reason i found - the query not taking a userkey/id parameter (very suss)
+  public function listCustomers() {
+    return $this->model->getUserCustomers();
+  }
 }

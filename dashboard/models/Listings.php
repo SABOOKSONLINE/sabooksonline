@@ -54,4 +54,18 @@ class Listing {
 
         return $reviews;
     }
+
+     public function getUserCustomers() {
+        $sql = "SELECT * FROM user_info ORDER BY user_id DESC";
+        $result = $this->conn->query($sql);
+
+        $users = [];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+
+        return $users;
+    }
 }
