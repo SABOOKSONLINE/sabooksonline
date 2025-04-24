@@ -1,16 +1,16 @@
 <?php
 $servername = "localhost";
-$username = "root";
+// $username = "root";
 // $password = "";
 // $dbh = "sabooksonline";*/
 
-// $username = "sabooks_library";
-// $password = "1m0g7mR3$";
+$username = "sabooks_library";
+$password = "1m0g7mR3$";
 
-$username = "root";
+// $username = "root";
 
 // $password = "1m0g7mR3$";
-$password = "root";
+// $password = "root";
 
 // $username = "root";
 // $password = "root";

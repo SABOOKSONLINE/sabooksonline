@@ -4,11 +4,11 @@ $servername = "localhost";
 $password = "";
 $dbh = "sabooksonline";*/
 
-// $username = "sabooks_library";
-$username = "root";
+$username = "sabooks_library";
+// $username = "root";
 
-// $password = "1m0g7mR3$";
-$password = "root";
+$password = "1m0g7mR3$";
+// $password = "root";
 
 $dbh = "Sibusisomanqa_website_plesk";
 
