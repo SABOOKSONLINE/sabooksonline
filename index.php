@@ -41,8 +41,25 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/audio/audioBookPage.php";
     });
 
+    // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
+        require "dashboard/models/index.php";
+    });
+
+    $r->addRoute('GET', '/dashboard/listings', function () {
+        require "dashboard/listings.php";
+    });
+    $r->addRoute('GET', '/dashboard/events', function () {
+        require "dashboard/events.php";
+    });
+    $r->addRoute('GET', '/dashboard/services', function () {
+        require "dashboard/views/list/services.php";
+    });
+    $r->addRoute('GET', '/dashboard/reviews', function () {
+        require "dashboard/reviews.php";
+    });
+    $r->addRoute('GET', '/bookreader', function () {
+        require "dashboard/bookReader.php";
     });
 
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {

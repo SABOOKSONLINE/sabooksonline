@@ -50,7 +50,7 @@
                 </form>
 
                 <!-- Auth Buttons -->
-                <a class="btn btn-outline-red me-2" href="/">REGISTER</a>
+                <a class="btn btn-outline-red me-2" href="../../../pricing-plans.php">REGISTER</a>
                 <a class="btn btn-red" href="https://11-july-2023.sabooksonline.co.za/dashboard">
                     <span class="me-2">LOGIN</span>
                     <i class="fas fa-sign-in-alt"></i>
