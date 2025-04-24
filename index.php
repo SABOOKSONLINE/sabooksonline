@@ -47,16 +47,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('GET', '/dashboard/listings', function () {
-        require "dashboard/listings.php";
+        require "dashboard/views/manage_books.php";
     });
     $r->addRoute('GET', '/dashboard/events', function () {
-        require "dashboard/events.php";
+        require "dashboard/views/manage_events.php";
     });
     $r->addRoute('GET', '/dashboard/services', function () {
-        require "dashboard/views/list/services.php";
+        require "dashboard/views/manage_services.php";
     });
     $r->addRoute('GET', '/dashboard/reviews', function () {
-        require "dashboard/reviews.php";
+        require "dashboard/views/manage_reviews.php";
     });
     $r->addRoute('GET', '/bookreader', function () {
         require "dashboard/bookReader.php";
