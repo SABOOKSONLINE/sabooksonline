@@ -1,7 +1,7 @@
 <?php
 require_once '../models/Listings.php';
 
-class BookController {
+class ListingsController {
   private $model;
 
   public function __construct($conn) {
@@ -10,5 +10,9 @@ class BookController {
 
   public function listBooks($userkey) {
     return $this->model->getUserBooks($userkey);
+  }
+
+  public function listEvents($userkey) {
+    return $this->model->fetchUserEvents($userkey);
   }
 }

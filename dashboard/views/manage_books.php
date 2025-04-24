@@ -1,9 +1,9 @@
 <?php
 require_once '../../includes/database_connections/sabooks.php';
-require_once '../../controllers/BookController.php';
+require_once '../../controllers/ListingsController.php';
 
 session_start();
-$bookController = new BookController($conn);
+$bookController = new ListingsController($conn);
 $userkey = $_SESSION['ADMIN_USERKEY'];
 $books = $bookController->listBooks($userkey);
 ?>
