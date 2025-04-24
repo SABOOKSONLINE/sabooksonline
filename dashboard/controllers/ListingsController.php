@@ -19,4 +19,8 @@ class ListingsController {
    public function listServices($userkey) {
     return $this->model->getUserServices($userkey);
   }
+
+   public function listReviews($userkey) {
+    return $this->model->getUserReviews($userkey);
+  }
 }

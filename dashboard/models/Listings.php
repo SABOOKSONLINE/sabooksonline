@@ -34,4 +34,24 @@ class Listing {
         $stmt->execute();
         return $stmt->get_result();
     }
+
+    public function getUserReviews($userKey) {
+        $stmt = $this->conn->prepare("
+            SELECT r.*
+            FROM reviews r
+            JOIN posts p ON r.CONTENTID = p.CONTENTID
+            WHERE p.USERID = ?
+            ORDER BY r.ID DESC
+        ");
+        $stmt->bind_param("s", $userKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $reviews = [];
+        while ($row = $result->fetch_assoc()) {
+            $reviews[] = $row;
+        }
+
+        return $reviews;
+    }
 }

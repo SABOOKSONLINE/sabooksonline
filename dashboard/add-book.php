@@ -116,11 +116,7 @@
                 <p class="text">You may add a new book and select the new options.</p>
               </div>
             </div>
-            <!--<div class="col-lg-3">
-              <div class="text-lg-end">
-                <a href="#" class="ud-btn btn-dark">Save & Publish<i class="fal fa-arrow-right-long"></i></a>
-              </div>
-            </div>-->       
+               
           </div>
           <form class="form-style1" id="upload-book" enctype="multipart/form-data">
             <div class="row">
