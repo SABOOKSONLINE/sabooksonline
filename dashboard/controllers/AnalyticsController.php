@@ -18,7 +18,7 @@ $end_date    = $_GET['end_date'] ?? date('Y-m-d');
 // Response placeholder
 $response = [];
 
-switch ($action) {
+switch ($action) { 
     case 'net_income':
         $response['net_income'] = $model->getNetIncome();
         break;
