@@ -33,12 +33,26 @@ class ListingsController {
   public function listCustomers() {
     return $this->model->getUserCustomers();
   }
+  public function getAccounts($userKey) {
+    return $this->model->getAccountsByUserKey($userKey);
+  }
 
-  private function initData() {
-        $this->netIncome = $this->model->getNetIncome();
-        $this->transactions = $this->model->getTransactionsCount();
-        $this->totalCustomers = $this->model->getTotalCustomers();
-        $this->pendingOrders = $this->model->getPendingOrders();
-        $this->invoices = $this->model->getAllInvoices();
+  public function getViewToInclude($userKey, $subscription) {
+    $accounts = $this->getAccounts($userKey);
+    $firstAccount = $accounts[0] ?? null;
+    $hasDomain = $firstAccount !== null;
+    $isSabooks = $hasDomain && strpos($firstAccount['DOMAIN'], 'sabooksonline.co.za') !== false;
+
+    if ($subscription === 'Free') {
+        return 'includes/backend/screens/subdomain-creation.php';
     }
+
+    if ($hasDomain) {
+        return $isSabooks
+            ? 'includes/backend/screens/register-domain.php'
+            : 'includes/backend/screens/email-creation.php';
+    }
+
+    return 'includes/backend/screens/register-domain.php';
+  }
 }

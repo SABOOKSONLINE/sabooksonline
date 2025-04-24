@@ -69,6 +69,17 @@ class Listing {
         return $users;
     }
 
+     public function getAccountsByUserKey($userKey) {
+        $query = "SELECT * FROM plesk_accounts WHERE USERKEY = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $userKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $accounts = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $accounts;
+    }
+
     // for user orders
     public function getNetIncome() {
         $result = mysqli_query($this->conn, "SELECT SUM(product_total) AS value_sum FROM product_order WHERE product_current = 'COMPLETED'");
