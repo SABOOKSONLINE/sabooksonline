@@ -13,6 +13,10 @@ class ListingsController {
   }
 
   public function listEvents($userkey) {
-    return $this->model->fetchUserEvents($userkey);
+    return $this->model->getUserEvents($userkey);
+  }
+
+   public function listServices($userkey) {
+    return $this->model->getUserServices($userkey);
   }
 }

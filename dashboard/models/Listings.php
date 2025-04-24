@@ -14,7 +14,7 @@ class Listing {
     return $stmt->get_result();
   }
 
-  public function fetchUserEvents($userKey) {
+  public function getUserEvents($userKey) {
         $sql = "SELECT * FROM events WHERE USERID = '$userKey' ORDER BY ID DESC";
         $result = mysqli_query($this->conn, $sql);
         $events = [];
@@ -26,5 +26,12 @@ class Listing {
         }
 
         return $events;
+    }
+
+    public function getUserServices($userId) {
+        $stmt = $this->conn->prepare("SELECT * FROM services WHERE USERID = ? ORDER BY ID DESC");
+        $stmt->bind_param("s", $userId);
+        $stmt->execute();
+        return $stmt->get_result();
     }
 }
