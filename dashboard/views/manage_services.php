@@ -6,10 +6,6 @@ require_once 'controllers/ServiceController.php';
 $controller = new ListingsController($conn);
 $userId = $_SESSION['ADMIN_USERKEY'];
 $services = $controller->listServices($userId);
-
-// Load the view
-include 'views/manage-services.php';
-
 ?>
 
 <?php include 'includes/header-dash-main.php'; ?>

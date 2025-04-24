@@ -91,7 +91,3 @@ $books = $bookController->listBooks($userkey);
 
 <?php include 'includes/footer-dash.php'; ?>
 
-//call it like this 
-<?php
-// Just include the actual view here
-include 'views/dashboard/manage_books.php';
