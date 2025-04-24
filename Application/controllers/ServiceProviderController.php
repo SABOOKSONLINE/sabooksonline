@@ -1,12 +1,25 @@
 <?php
-include_once 'models/ServiceProviderModel.php';
-require_once __DIR__ . '/../config/connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$service = $_GET['service'] ?? null;
+class ServiceProviderController
+{
+    private $model;
 
-$serviceProviderModel = new ServiceProviderModel($conn);
-$providers = $serviceProviderModel->getServiceProviders($service);
+    public function __construct($conn)
+    {
+        $this->model = new ServiceProviderModel($conn);
+    }
 
-// Pass data to view
-include 'views/service_providers_view.php';
+    public function renderServiceProvider($service)
+    {
+        $providers = $this->model->getServiceProviders($service);
 
+        if ($providers) {
+            include __DIR__ . "/../views/layout/serviceProviderCard.php";
+        } else {
+            echo "No services found.";
+        }
+    }
+}
