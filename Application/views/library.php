@@ -68,8 +68,8 @@ require_once __DIR__ . "/includes/header.php";
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>
 </body>
 
-//to be removed - to its js file (do not delete)
-<script>
+<!-- to be removed - to its js file (do not delete) -->
+<!-- <script>
     const hero = document.getElementById('book-hero-preview');
     const heroImg = document.getElementById('hero-img');
     const heroTitle = document.getElementById('hero-title');
@@ -91,4 +91,4 @@ require_once __DIR__ . "/includes/header.php";
             hero.classList.remove('d-none');
         });
     });
-</script>
+</script> -->
