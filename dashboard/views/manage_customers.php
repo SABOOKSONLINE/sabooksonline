@@ -1,6 +1,6 @@
 <?php
-include '../../includes/database_connections/sabooks_user.php';
-include '../controllers/ListingsController.php';
+require_once '../../includes/database_connections/sabooks_user.php';
+require_once '../controllers/ListingsController.php';
 
 $userController = new ListingsController($con);
 $users = $userController->listCustomers();

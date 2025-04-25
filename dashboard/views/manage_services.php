@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../includes/database_connections/sabooks.php';
+require_once '../../includes/database_connections/sabooks.php';
 require_once '../controllers/ServiceController.php';
 
 $controller = new ListingsController($conn);

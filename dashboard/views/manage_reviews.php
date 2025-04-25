@@ -1,7 +1,7 @@
 <?php
 session_start();
-include '../../includes/database_connections/sabooks.php';
-include '../controllers/ListingsController.php';
+require_once '../../includes/database_connections/sabooks.php';
+require_once '../controllers/ListingsController.php';
 
 $userkey = $_SESSION['ADMIN_USERKEY'];
 $reviewController = new ListingsController($conn);

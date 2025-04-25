@@ -1,5 +1,5 @@
 <?php
-include '../../includes/database_connections/sabooks_user.php';
+require_once '../../includes/database_connections/sabooks_user.php';
 require_once '../controllers/OrdersController.php';
 
 $controller = new OrdersController($con);
