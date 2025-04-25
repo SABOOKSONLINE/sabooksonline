@@ -39,6 +39,13 @@
 <link href="images/apple-touch-icon-114x114.png" sizes="114x114" rel="apple-touch-icon">
 <link href="images/apple-touch-icon-180x180.png" sizes="180x180" rel="apple-touch-icon">
 
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+
 
 <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
@@ -83,23 +90,6 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .blurred {
-  color: #444;
-  filter: blur(5px);
-  cursor: pointer;
-  transition: 0.3s ease;
-  position: relative;
-}
-.blurred:hover {
-  filter: blur(3px);
-}
-.blurred::after {
-  content: " 🔒";
-  position: absolute;
-  right: -1.5em;
-  color: #ff6b6b;
-}
-
     </style>
 
 </head>
@@ -248,9 +238,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
       </div>
     </div>
-    <div class="icon text-center">
-      <i class="flaticon-income"></i>
-    </div>
+    <div class="icon text-center"><i class="flaticon-income"></i></div>
   </div>
 </div>
 <div class="col-sm-6 col-xxl-3">
@@ -334,13 +322,13 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
           <div class="row">
 
-          <!-- <?php
+          <?php
           if ($_SESSION['ADMIN_SUBSCRIPTION'] == 'Deluxe') {
               
           } else {
               echo '<style>.book-status{display:none !important;}</style>';
           }
-          ?> -->
+          ?>
 
 
             <div class="col-sm-6 col-xxl-3 book-status">
@@ -488,11 +476,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                               $stmt->close();
 
                               // Output the total number of unique users based on their IPs
-                              if ($_SESSION['PLAN'] === 'deluxe') {
-                                  echo 'Based on ' . $uniqueUsers;
-                              } else {
-                                  echo '<span class="blurred" title="Subscribe to unlock full stats">Based on ' . $uniqueUsers . '</span>';
-                              }
+                              echo 'Based on ' . $unique_user_count;
                           } else {
                               echo "0";
                           }
@@ -547,13 +531,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                   $services = $visit_count;
 
                   // Output the visit count
-                  // echo $visit_count;
-                  if ($_SESSION['PLAN'] === 'deluxe') {
-                    echo $visit_count;
-                } else {
-                    echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
-                }
-?>
+                  echo $visit_count;
 
                   // Close the prepared statement
                   $stmt->close();
@@ -669,13 +647,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                           $books = $combined_visit_count;
 
                           // Output the combined visit count
-                          // echo $combined_visit_count;
-                          if ($_SESSION['PLAN'] === 'deluxe') {
-                            echo $combined_visit_count;
-                        } else {
-                            echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
-                        }
-
+                          echo $combined_visit_count;
                       } else {
                           echo "0";
                       }
@@ -1548,7 +1520,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                                 // Prepare the SQL query to retrieve data from page_visits
                                 $query = "SELECT *
                                           FROM page_visits AS pv
-                                          INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%') 
+                                          INNER JOIN book_stores AS p ON pv.page_url LIKE CONCAT('%', p.ID, '%')
                                           WHERE pv.page_url LIKE ? AND p.ID = ?
                                           AND DATE(pv.visit_time) BETWEEN ? AND ?"; // Adjust the date format if needed
 
