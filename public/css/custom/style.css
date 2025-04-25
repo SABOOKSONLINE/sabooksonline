@@ -23,6 +23,10 @@ body {
     background: var(--off-white);
 }
 
+.bg-red {
+    background: var(--red);
+}
+
 /* ===============================
    BUTTON / STYLING
 ================================= */
@@ -723,4 +727,39 @@ footer {
 .btn-sub:hover {
     background: var(--white);
     color: var(--red);
+}
+
+/* ===============================
+   PROFILE CARD / STYLING
+================================= */
+
+.profile-card {
+    background: var(--white);
+    padding: 14px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+
+    transition: 0.3s ease;
+}
+
+.profile-card:hover {
+    background: var(--off-white);
+    box-shadow: 0 5px 10px rgb(0, 0, 0, 0.1);
+}
+
+.profile-card img {
+    transition: 0.3s ease;
+}
+
+.profile-card:hover img {
+    border-radius: 8px;
+}
+
+.profile-card small {
+    font-size: 12px;
+}
+
+.profile-card p {
+    font-size: 14px;
+    margin: 8px 0 0;
 }

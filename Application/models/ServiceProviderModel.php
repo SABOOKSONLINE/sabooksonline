@@ -27,7 +27,7 @@ class ServiceProviderModel
     /**
      * Retrieves service providers along with their related service and location details.
      *
-     * @param string|null $service Optional filter by service type (e.g. "Plumbing", "Tutoring")
+     * @param string|null $service Optional filter by service type
      * @return array An array of associative arrays, each containing provider and service info
      */
     public function getServiceProviders($service)
@@ -35,8 +35,7 @@ class ServiceProviderModel
         $query = "SELECT * 
                     FROM users  
                     JOIN services ON users.ADMIN_USERKEY = services.USERID 
-                    WHERE users.ADMIN_TYPE = ? 
-                    AND users.USER_STATUS = 'Verified'";
+                    WHERE users.ADMIN_TYPE = ?";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $service);
