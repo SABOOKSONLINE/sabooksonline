@@ -5,7 +5,15 @@ $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
 session_start();
-  
+
+// for testung - using ujpress
+// $_SESSION['ADMIN_ID'] = $row['ADMIN_ID'];
+$_SESSION['ADMIN_SUBSCRIPTION'] = 'Deluxe';
+$_SESSION['ADMIN_NAME'] = 'UJ Press';
+$_SESSION['ADMIN_EMAIL'] = 'wikusvz@uj.ac.za';
+$_SESSION['ADMIN_PROFILE_IMAGE'] = '62309008e164734976862309008e.png';
+$_SESSION['ADMIN_USERKEY'] = '62309008e164734976862309008e';
+
 // if(!isset($_SESSION['ADMIN_USERKEY'])){
 // header("Location: ../login?redirectlogs2");
 // }

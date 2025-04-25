@@ -3,11 +3,7 @@ require_once '../models/Listings.php';
 
 class ListingsController {
   private $model;
-  public $netIncome;
-  public $transactions;
-  public $totalCustomers;
-  public $pendingOrders;
-  public $invoices;
+ 
 
   public function __construct($conn) {
     $this->model = new Listing($conn);
