@@ -11,7 +11,7 @@ require_once __DIR__ . "/includes/header.php";
             The Never-Closing Library
         </span>
 
-        <div class="category-container py-4">
+        <div class="category-container py-3">
             <div class="">
                 <?php
                 require __DIR__ . "/../../database/connection.php";
@@ -22,6 +22,10 @@ require_once __DIR__ . "/includes/header.php";
                 $controller->renderCategories();
                 ?>
             </div>
+
+            <span class="btn category-collapse-btn">
+                <i class="fas fa-angle-down"></i>
+            </span>
         </div>
 
         <!-- <div id="book-hero-preview" class="row mb-5 align-items-center d-none my-4">

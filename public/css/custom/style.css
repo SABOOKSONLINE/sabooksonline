@@ -507,6 +507,32 @@ footer {
     position: relative;
     background: var(--white);
     border-bottom: 1px solid var(--off-white);
+    height: 70px;
+    overflow-y: hidden;
+
+    transition: 0.3s ease;
+}
+
+.category-all {
+    height: 100%;
+    transition: 0.3s ease;
+}
+
+.category-collapse-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 0;
+
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: var(--off-white);
+    color: var(--brown);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border: 1px solid var(--off-white);
 }
 
 .category-link {
@@ -522,6 +548,7 @@ footer {
     border: 1px solid var(--off-white);
 }
 
+.category-collapse-btn:hover,
 .category-link:hover {
     background-color: var(--white);
     transform: translateY(-2px);

@@ -31,6 +31,14 @@ stylishBookNumber.forEach((card) => {
     counter++;
 });
 
+const categoryCollapseBtn = document.querySelector(".category-collapse-btn");
+const categoryContainer = document.querySelector(".category-container");
+
+categoryCollapseBtn.addEventListener("click", () => {
+    categoryContainer.classList.toggle("category-all");
+    categoryCollapseBtn.firstElementChild.classList.toggle("fa-angle-up");
+});
+
 // // Contact form
 // $(document).ready(function (e) {
 //     $("#contactforms").on("submit", function (e) {
