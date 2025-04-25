@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 
 session_start();
 
-require_once '../../includes/database_connections/sabooks.php';
-require_once '../controllers/ListingsController.php';
+require_once __DIR__ . '../../includes/database_connections/sabooks.php';
+require_once __DIR__ . '../controllers/ListingsController.php';
 
 $bookController = new ListingsController($conn);
 $userkey = $_SESSION['ADMIN_USERKEY'];
