@@ -4,6 +4,8 @@
 $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
+if(!isset($_SESSION['ADMIN_USERKEY'])){
+
 session_start();
 
 // for testung - using ujpress
@@ -32,9 +34,7 @@ $_SESSION['ADMIN_USERKEY'] = '62309008e164734976862309008e';
 // $_SESSION['ADMIN_IMAGE02'] = $row['ADMIN_IMAGE02'];
 // $_SESSION['ADMIN_IMAGE03'] = $row['ADMIN_IMAGE03'];
 // $_SESSION['ADMIN_IMAGE04'] = $row['ADMIN_IMAGE04'];
-// if(!isset($_SESSION['ADMIN_USERKEY'])){
-// header("Location: ../login?redirectlogs2");
-// }
+}
 
 ?>
 
