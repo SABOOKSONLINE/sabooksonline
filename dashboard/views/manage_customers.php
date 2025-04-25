@@ -1,5 +1,5 @@
 <?php
-include '../includes/database_connections/sabooks_user.php';
+include '../../includes/database_connections/sabooks_user.php';
 include '../controllers/ListingsController.php';
 
 $userController = new ListingsController($con);
@@ -9,16 +9,16 @@ $users = $userController->listCustomers();
 <div class="wrapper">
   <div class="preloader"></div>
 
-  <?php include 'includes/header-dash-main.php';?>
+  <?php include '../includes/header-dash-main.php';?>
 
   <div class="dashboard_content_wrapper">
     <div class="dashboard dashboard_wrapper pr30 pr0-xl">
-      <?php include 'includes/header-dash.php';?>
+      <?php include '../includes/header-dash.php';?>
 
       <div class="dashboard__main pl0-md">
         <div class="dashboard__content hover-bgc-color">
           <div class="row pb40">
-            <?php include 'includes/mobile-guide.php';?>
+            <?php include '../includes/mobile-guide.php';?>
             <div class="col-lg-12">
               <div class="dashboard_title_area">
                 <h2>Customers</h2>
@@ -63,7 +63,7 @@ $users = $userController->listCustomers();
           </div>
 
         </div>
-        <?php include 'includes/footer.php';?>
+        <?php include '../includes/footer.php';?>
       </div>
     </div>
   </div>

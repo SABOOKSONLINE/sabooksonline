@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'includes/database_connections/sabooks_plesk.php';
-require_once 'controllers/ListingsController.php';
+require_once '../../includes/database_connections/sabooks_plesk.php';
+require_once '../controllers/ListingsController.php';
 
 $userKey = $_SESSION['ADMIN_USERKEY'];
 $subscription = $_SESSION['ADMIN_SUBSCRIPTION'];

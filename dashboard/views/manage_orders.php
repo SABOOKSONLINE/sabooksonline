@@ -1,14 +1,14 @@
 <?php
-include '../includes/database_connections/sabooks_user.php';
+include '../../includes/database_connections/sabooks_user.php';
 require_once '../controllers/OrdersController.php';
 
 $controller = new OrdersController($con);
 ?>
 <div class="wrapper ovh">
-      <?php include 'includes/mobile-guide.php'; ?>
-      <?php include 'includes/sidebar.php'; ?>
+      <?php include '../includes/mobile-guide.php'; ?>
+      <?php include '../includes/sidebar.php'; ?>
       <div class="dashboard__content hover-bgc-color">
-        <?php include 'includes/topnav.php'; ?>
+        <?php include '../includes/topnav.php'; ?>
         <div class="row pb40">
           <div class="col-lg-12">
             <div class="dashboard_title_area">
@@ -92,6 +92,6 @@ $controller = new OrdersController($con);
             </div>
           </div>
         </div>
-        <?php include 'includes/footer.php'; ?>
+        <?php include '../includes/footer.php'; ?>
       </div>
     </div>

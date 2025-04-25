@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/database_connections/sabooks.php';
+include '../../includes/database_connections/sabooks.php';
 include '../controllers/ListingsController.php';
 
 $userkey = $_SESSION['ADMIN_USERKEY'];
@@ -11,16 +11,16 @@ $reviews = $reviewController->listReviews($userkey);
 <div class="wrapper">
   <div class="preloader"></div>
 
-  <?php include 'includes/header-dash-main.php';?>
+  <?php include '../includes/header-dash-main.php';?>
 
   <div class="dashboard_content_wrapper">
     <div class="dashboard dashboard_wrapper pr30 pr0-xl">
-      <?php include 'includes/header-dash.php';?>
+      <?php include '../includes/header-dash.php';?>
 
       <div class="dashboard__main pl0-md">
         <div class="dashboard__content hover-bgc-color">
           <div class="row pb40">
-            <?php include 'includes/mobile-guide.php';?>
+            <?php include '../includes/mobile-guide.php';?>
 
             <div class="col-lg-12">
               <div class="dashboard_title_area">

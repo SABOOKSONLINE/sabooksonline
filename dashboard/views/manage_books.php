@@ -1,6 +1,6 @@
 <?php
 require_once '../../includes/database_connections/sabooks.php';
-require_once '../../controllers/ListingsController.php';
+require_once '../controllers/ListingsController.php';
 
 session_start();
 $bookController = new ListingsController($conn);
@@ -8,8 +8,8 @@ $userkey = $_SESSION['ADMIN_USERKEY'];
 $books = $bookController->listBooks($userkey);
 ?>
 
-<?php include 'includes/header-dash-main.php'; ?>
-<?php include 'includes/header-dash.php'; ?>
+<?php include '../includes/header-dash-main.php'; ?>
+<?php include '../includes/header-dash.php'; ?>
 
 <div class="dashboard__content hover-bgc-color">
   <div class="row pb40">
