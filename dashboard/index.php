@@ -553,9 +553,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                 } else {
                     echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
                 }
-?>
 
-                  // Close the prepared statement
                   $stmt->close();
                   ?>
 
