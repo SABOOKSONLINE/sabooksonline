@@ -548,7 +548,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
                   // Output the visit count
                   // echo $visit_count;
-                  if ($_SESSION['PLAN'] === 'deluxe') {
+                  if ($_SESSION['ADMIN_SUBSCRIPTION'] === 'Deluxe') {
                     echo $visit_count;
                 } else {
                     echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
@@ -670,7 +670,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
                           // Output the combined visit count
                           // echo $combined_visit_count;
-                          if ($_SESSION['PLAN'] === 'deluxe') {
+                          if ($_SESSION['ADMIN_SUBSCRIPTION'] === 'Deluxe') {
                             echo $combined_visit_count;
                         } else {
                             echo '<span class="blurred" title="Subscribe to unlock full stats">' . $visit_count . '</span>';
