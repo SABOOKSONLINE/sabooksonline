@@ -34,7 +34,8 @@ class ServiceProviderModel
     {
         $query = "SELECT * 
                     FROM users  
-                    JOIN services ON users.ADMIN_USERKEY = services.USERID 
+                    JOIN services 
+                    ON users.ADMIN_USERKEY = services.USERID
                     WHERE users.ADMIN_TYPE = ?";
 
         $stmt = $this->conn->prepare($query);
@@ -43,8 +44,30 @@ class ServiceProviderModel
         $result = $stmt->get_result();
 
         $providers = [];
+        $providers = [];
+
         while ($row = $result->fetch_assoc()) {
-            $providers[] = $row;
+            $id = $row['ADMIN_ID'];
+
+            if (isset($providers[$id])) {
+                $current = array_filter(explode(',', $providers[$id]['ADMIN_SERVICES'] ?? ''));
+                $new = array_filter(explode(',', $row['ADMIN_SERVICES'] ?? ''));
+
+                $merged = array_unique(array_merge($current, $new));
+
+                $merged = array_filter(array_map('trim', $merged));
+
+                $providers[$id]['SERVICE'] = !empty($merged)
+                    ? implode(' | ', $merged)
+                    : '';
+            } else {
+                $services = array_filter(explode(',', $row['ADMIN_SERVICES'] ?? ''));
+                $services = array_filter(array_map('trim', $services));
+                $row['SERVICE'] = !empty($services)
+                    ? implode(' | ', array_unique($services))
+                    : '';
+                $providers[$id] = $row;
+            }
         }
 
         return $providers;

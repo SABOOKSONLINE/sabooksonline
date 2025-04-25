@@ -6,8 +6,10 @@ error_reporting(E_ALL);
 echo '
 <div class="row">
     <!-- Book Cover -->
-    <div class="col-md-3 book-view-cover profile-cover">
-        <img src="https://sabooksonline.co.za/cms-data/profile-images/' . $creator['ADMIN_PROFILE_IMAGE'] . '" class="img-fluid" alt="' . $creator['ADMIN_NAME'] . ' Profile image">
+    <div class="col-md-3">
+        <div class="book-view-cover">
+            <img src="https://sabooksonline.co.za/cms-data/profile-images/' . $creator['ADMIN_PROFILE_IMAGE'] . '" class="img-fluid  bg-white" alt="' . $creator['ADMIN_NAME'] . ' Profile image">
+        </div>
     </div>
 
     <!-- Book Info -->

@@ -12,7 +12,9 @@ foreach ($providers as $provider) {
                     </div>
                 </div>
                 <div class="col-8">
-                    <h5 class="fw-bold">' . (strlen($provider["ADMIN_NAME"]) > 30 ? substr($provider["ADMIN_NAME"], 0, 30) . "..." : $provider["ADMIN_NAME"]) . ' (' . $provider["SERVICE"] . ')</h5>
+                    <h5 class="fw-bold">' . (strlen($provider["ADMIN_NAME"]) > 30 ? substr($provider["ADMIN_NAME"], 0, 30) . "..." : $provider["ADMIN_NAME"]) . '</h5>
+                    <small>' . $provider["SERVICE"] . '</small>
+                    <hr />
                     <small class="text-muted mb-3">
                         <i class="fas fa-location-dot"></i> 
                         <em>' . $provider["ADMIN_GOOGLE"] . '</em>

@@ -27,6 +27,10 @@ body {
     background: var(--red);
 }
 
+.bg-white {
+    background: var(--white);
+}
+
 /* ===============================
    BUTTON / STYLING
 ================================= */
@@ -171,7 +175,6 @@ body {
 
 .display-4 {
     font-weight: 500;
-    height: 50px;
 }
 
 .lead {
@@ -341,13 +344,14 @@ body {
 }
 
 .book-view-cover {
+    position: relative;
     margin-top: -100px;
     z-index: 3;
 }
 
 .book-view-cover img {
-    border: 5px solid var(--white);
     border-radius: 15px;
+    border: 5px solid var(--white);
 }
 
 /* CUSTOM SECTION */
@@ -457,7 +461,6 @@ footer {
     width: 100%;
     aspect-ratio: 1 / 1;
     border: 5px solid var(--white);
-    border-radius: 15px;
 }
 
 /* ===============================
@@ -545,6 +548,7 @@ footer {
     position: relative;
     overflow: hidden;
     transition: 0.3s ease;
+    height: 198px;
 }
 
 .library-book-card:hover img {
