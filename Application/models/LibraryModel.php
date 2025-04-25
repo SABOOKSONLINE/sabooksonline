@@ -5,7 +5,8 @@
  *
  * Handles operations related to book categories and filtered book retrieval from the database.
  */
-class LibraryModel {
+class LibraryModel
+{
     /**
      * @var mysqli $conn MySQLi database connection instance
      */
@@ -16,7 +17,8 @@ class LibraryModel {
      *
      * @param mysqli $conn MySQLi connection
      */
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->conn = $conn;
     }
 
@@ -25,7 +27,8 @@ class LibraryModel {
      *
      * @return array An array of categories with book counts
      */
-    public function getCategoriesWithCounts(): array {
+    public function getCategoriesWithCounts(): array
+    {
         $sql = "SELECT * FROM category ORDER BY category";
         $result = mysqli_query($this->conn, $sql);
 
@@ -46,7 +49,8 @@ class LibraryModel {
      * @param string $category The name of the category
      * @return int Number of active books in the category
      */
-    private function getBookCountByCategory(string $category): int {
+    private function getBookCountByCategory(string $category): int
+    {
         $sql = "SELECT COUNT(*) as count FROM posts WHERE CATEGORY = ? AND STATUS = 'active'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $category);
@@ -63,7 +67,8 @@ class LibraryModel {
      * @param string|null $search Optional keyword search (title, publisher, author)
      * @return array List of matching books
      */
-    public function getFilteredBooks(?string $category = null, ?string $search = null): array {
+    public function getFilteredBooks(?string $category = null, ?string $search = null): array
+    {
         $sql = "SELECT * FROM posts WHERE STATUS = 'active'";
         $params = [];
         $types = "";

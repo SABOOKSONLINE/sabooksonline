@@ -17,10 +17,11 @@ class Book
      */
     public function getBooksByCategory($category, $limit = 6)
     {
-        $sql = "SELECT p.* FROM posts AS p
-                JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                WHERE l.CATEGORY = ? AND p.STATUS = 'active'
-                ORDER BY RAND() LIMIT ?";
+        // $sql = "SELECT p.* FROM posts AS p
+        //         JOIN listings AS l ON p.CONTENTID = l.CONTENTID
+        //         WHERE l.CATEGORY = ? AND p.STATUS = 'active'
+        //         ORDER BY RAND() LIMIT ?";
+        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active' LIMIT ?";
 
         // prepared statements for executing the quesry
         $stmt = mysqli_prepare($this->conn, $sql);
