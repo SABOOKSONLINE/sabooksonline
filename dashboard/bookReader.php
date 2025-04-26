@@ -1,23 +1,12 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
-    $file = $_FILES['pdf'];
-    $targetDir = __DIR__ . "/books/";
-    if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
-
-    $allowedTypes = ['application/pdf'];
-    if ($file['error'] === 0 && in_array($file['type'], $allowedTypes)) {
-        $filename = uniqid() . "-" . basename($file['name']);
-        $targetPath = $targetDir . $filename;
-        move_uploaded_file($file['tmp_name'], $targetPath);
-        header("Location: ?file=" . urlencode($filename));
-        exit;
-    } else {
-        $error = "Invalid PDF file.";
-    }
-}
-
-$book = isset($_GET['file']) ? basename($_GET['file']) : '';
+// Hardcode the PDF filename
+$book = 'depressed.pdf'; // Change this to your actual PDF
 $filePath = "books/" . $book;
+
+// Verify the file exists
+if (!file_exists($filePath)) {
+    die("PDF file not found!");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,338 +16,229 @@ $filePath = "books/" . $book;
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-  :root {
-      --bg-light: #f2f2f2;
-      --bg-dark: #1c1c1c;
-      --text-light: #2c3e50;
-      --text-dark: #ecf0f1;
-      --accent: #3498db;
-      --card-bg-light: #ffffff;
-      --card-bg-dark: #2b2b2b;
-    }
-
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-light);
-      transition: all 0.3s ease;
+      background-color: #f4f4f4;
+      color: #333;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
     }
-
-    body.dark-mode {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
     .container {
-      max-width: 1400px;
-      margin: 20px auto;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
-      background: var(--card-bg-light);
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    body.dark-mode .container {
-      background: var(--card-bg-dark);
-    }
-
-    h1 {
       text-align: center;
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
     }
-
-    form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input[type="file"] {
-      flex: 1;
-      padding: 10px;
-    }
-
-    button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #2980b9;
-    }
-
-    .toggle-mode {
-      text-align: right;
-      margin-bottom: 15px;
-    }
-
-    .nav-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
     #pdf-viewer {
       display: flex;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
-      padding: 20px 0;
+      margin-top: 20px;
     }
-
     canvas {
       border: 1px solid #ccc;
-      border-radius: 10px;
-      max-width: 100%;
-      transition: transform 0.3s;
+      margin: 5px;
+      max-width: 45%;
+      height: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: white;
     }
-
-    canvas:hover {
-      transform: scale(1.01);
+    .nav-buttons, .zoom-buttons {
+      margin: 15px;
     }
-
-    .zoom-buttons {
-      text-align: center;
-      margin-top: 10px;
+    button {
+      background-color: #008cba;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
     }
-
-    @media (max-width: 768px) {
-      #pdf-viewer {
-        flex-direction: column;
-        align-items: center;
-      }
+    button:hover {
+      background-color: #005f5f;
     }
-
-    mark {
-      background-color: #ffeb3b;
-      color: black;
-      font-weight: bold;
-      padding: 0 2px;
-      border-radius: 2px;
-    }  </style>
+    .dark-mode {
+      background-color: #121212;
+      color: #eee;
+    }
+    .dark-mode canvas {
+      background-color: #2c2c2c;
+    }
+    #chapterNav {
+      margin-top: 20px;
+    }
+    #chapters-list {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    #chapters-list li {
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+    }
+    #chapters-list li:hover {
+      background-color: #ddd;
+    }
+    .toggle-mode {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+  </style>
 </head>
 <body class="prevent-select">
-  <div class="container">
-    <div class="toggle-mode">
-      <button onclick="toggleMode()">🌓 Toggle Theme</button>
-    </div>
+  <div class="toggle-mode">
+    <button onclick="toggleMode()">🌓 Toggle Theme</button>
+  </div>
 
+  <div class="container">
     <h1>📖 Two-Page PDF Book Reader</h1>
 
-    <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="pdf" accept="application/pdf" required>
-      <button type="submit">Upload PDF</button>
-    </form>
-
-    <div id="chapterNav" style="text-align:center; margin-top: 10px;">
+    <div id="chapterNav">
       <h3>Chapters</h3>
       <ul id="chapters-list"></ul>
     </div>
 
-    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <div id="pdf-viewer">
+      <canvas id="left-canvas"></canvas>
+      <canvas id="right-canvas"></canvas>
+    </div>
 
-    <?php if (!empty($book) && file_exists($filePath)): ?>
-      <div id="pdf-viewer">
-        <canvas id="left-canvas"></canvas>
-        <canvas id="right-canvas"></canvas>
-      </div>
+    <div class="nav-buttons">
+      <button onclick="prevPage()">⬅ Prev</button>
+      <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
+      <button onclick="nextPage()">Next ➡</button>
+    </div>
 
-      <div class="nav-buttons">
-        <button onclick="prevPage()">⬅ Prev</button>
-        <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
-        <button onclick="nextPage()">Next ➡</button>
-      </div>
-
-      <div class="zoom-buttons">
-        <button onclick="zoomOut()">➖ Zoom Out</button>
-        <button onclick="zoomIn()">➕ Zoom In</button>
-      </div>
-    <?php endif; ?>
+    <div class="zoom-buttons">
+      <button onclick="zoomOut()">➖ Zoom Out</button>
+      <button onclick="zoomIn()">➕ Zoom In</button>
+    </div>
   </div>
 
-<?php if (!empty($book) && file_exists($filePath)): ?>
 <script>
-  const url = "<?= $filePath ?>";
-  let pdfDoc = null,
-      pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
-      zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
-      leftCanvas = document.getElementById("left-canvas"),
-      rightCanvas = document.getElementById("right-canvas"),
-      leftCtx = leftCanvas.getContext("2d"),
-      rightCtx = rightCanvas.getContext("2d"),
-      chapterTitles = [];
+const url = "<?= $filePath ?>";
+let pdfDoc = null,
+    pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
+    zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
+    leftCanvas = document.getElementById("left-canvas"),
+    rightCanvas = document.getElementById("right-canvas"),
+    leftCtx = leftCanvas.getContext("2d"),
+    rightCtx = rightCanvas.getContext("2d"),
+    chapterTitles = [];
 
-  pdfjsLib.getDocument(url).promise.then(pdf => {
-    pdfDoc = pdf;
-    document.getElementById("page-count").textContent = pdf.numPages;
-    extractTextFromPDF();
-    renderPages();
+pdfjsLib.getDocument(url).promise.then(pdf => {
+  pdfDoc = pdf;
+  document.getElementById("page-count").textContent = pdf.numPages;
+  extractTextFromPDF();
+  renderPages();
+});
+
+function renderPages() {
+  if (!pdfDoc) return;
+
+  // Save last page
+  localStorage.setItem(url + '-last-page', pageNum);
+
+  // Render left page
+  pdfDoc.getPage(pageNum).then(page => {
+    let viewport = page.getViewport({ scale: zoom });
+    leftCanvas.height = viewport.height;
+    leftCanvas.width = viewport.width;
+    page.render({ canvasContext: leftCtx, viewport: viewport });
   });
 
-  async function extractTextFromPDF() {
-    let fullText = "";
-    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-      const page = await pdfDoc.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      fullText += textContent.items.map(item => item.str).join(" ") + "\n";
-    }
-    
-    detectChapters(fullText);
+  // Render right page (next page)
+  if (pageNum + 1 <= pdfDoc.numPages) {
+    pdfDoc.getPage(pageNum + 1).then(page => {
+      let viewport = page.getViewport({ scale: zoom });
+      rightCanvas.height = viewport.height;
+      rightCanvas.width = viewport.width;
+      page.render({ canvasContext: rightCtx, viewport: viewport });
+    });
+  } else {
+    rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
   }
 
-  async function detectChapters(text) {
-  try {
-    // Send the text to OpenAI's API to detect chapters
-    const response = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `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`
-      },
-      body: JSON.stringify({
-        model: "text-davinci-003",
-        prompt: `Please detect chapter titles from the following text: ${text}`,
-        max_tokens: 1000
-      })
-    });
+  document.getElementById("page-num").textContent = pageNum;
+}
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API request failed with status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Check if we received the expected response
-    if (data.choices && data.choices[0] && data.choices[0].text) {
-      const chapters = data.choices[0].text.split("\n").filter(chapter => chapter.trim() !== "");
-      
-      if (chapters.length > 0) {
-        chapters.forEach((chapter, index) => {
-          chapterTitles.push({ title: chapter, page: index + 1 });
-          const listItem = document.createElement("li");
-          listItem.innerHTML = `<a href="javascript:void(0);" onclick="goToChapter(${index + 1})">${chapter}</a>`;
-          document.getElementById("chapters-list").appendChild(listItem);
-        });
-      } else {
-        console.error('No chapters detected in the response.');
-      }
-    } else {
-      throw new Error('Failed to extract chapters from the API response.');
-    }
-  } catch (error) {
-    console.error('Error detecting chapters:', error);
+function prevPage() {
+  if (pageNum > 1) {
+    pageNum -= 2;
+    if (pageNum < 1) pageNum = 1;
+    renderPages();
   }
 }
 
-
-  function goToChapter(chapterNumber) {
-    pageNum = chapterTitles.find(chapter => chapter.page === chapterNumber).page;
+function nextPage() {
+  if (pageNum + 1 < pdfDoc.numPages) {
+    pageNum += 2;
     renderPages();
   }
+}
 
-  function renderPages() {
-    if (pageNum < 1) pageNum = 1;
-    if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+function zoomIn() {
+  zoom += 0.2;
+  localStorage.setItem('zoom', zoom);
+  renderPages();
+}
 
-    // Left Page
-    pdfDoc.getPage(pageNum).then(page => {
-      let vp = page.getViewport({ scale: zoom });
-      leftCanvas.height = vp.height;
-      leftCanvas.width = vp.width;
-      page.render({ canvasContext: leftCtx, viewport: vp });
+function zoomOut() {
+  zoom = Math.max(0.5, zoom - 0.2);
+  localStorage.setItem('zoom', zoom);
+  renderPages();
+}
+
+function toggleMode() {
+  document.body.classList.toggle("dark-mode");
+}
+
+function extractTextFromPDF() {
+  let promises = [];
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    promises.push(pdfDoc.getPage(i).then(page => page.getTextContent()));
+  }
+
+  Promise.all(promises).then(pages => {
+    chapterTitles = [];
+    pages.forEach((pageText, index) => {
+      const pageNum = index + 1;
+      let textContent = pageText.items.map(item => item.str).join(' ');
+      // Detect chapter titles
+      let matches = textContent.match(/Chapter\s+\d+[^.]*/gi);
+      if (matches) {
+        matches.forEach(title => {
+          chapterTitles.push({ title, page: pageNum });
+        });
+      }
     });
 
-    // Right Page (next one)
-    if (pageNum + 1 <= pdfDoc.numPages) {
-      pdfDoc.getPage(pageNum + 1).then(page => {
-        let vp = page.getViewport({ scale: zoom });
-        rightCanvas.height = vp.height;
-        rightCanvas.width = vp.width;
-        page.render({ canvasContext: rightCtx, viewport: vp });
-      });
-    } else {
-      rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
-    }
+    renderChapters();
+  });
+}
 
-    document.getElementById("page-num").textContent = pageNum;
-    localStorage.setItem(url + '-last-page', pageNum);
-  }
-
-  function prevPage() {
-    if (pageNum - 2 >= 1) {
-      pageNum -= 2;
+function renderChapters() {
+  const chapterList = document.getElementById("chapters-list");
+  chapterList.innerHTML = "";
+  chapterTitles.forEach(chap => {
+    const li = document.createElement("li");
+    li.textContent = chap.title + " (p." + chap.page + ")";
+    li.onclick = () => {
+      pageNum = chap.page;
       renderPages();
-    }
-  }
-
-  function nextPage() {
-    if (pageNum + 2 <= pdfDoc.numPages) {
-      pageNum += 2;
-      renderPages();
-    }
-  }
-
-  function zoomIn() {
-    zoom += 0.2;
-    localStorage.setItem('zoom', zoom);
-    renderPages();
-  }
-
-  function zoomOut() {
-    zoom = Math.max(0.5, zoom - 0.2);
-    localStorage.setItem('zoom', zoom);
-    renderPages();
-  }
-
-  function toggleMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-  }
-
-  // Restore theme
-  window.onload = () => {
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-mode');
-    }
-  }
-
-  // Keyboard Navigation
-  document.addEventListener('keydown', (e) => {
-    if (e.key === "ArrowLeft" || e.key === "j") {
-      prevPage();
-    } else if (e.key === "ArrowRight" || e.key === "k") {
-      nextPage();
-    }
+    };
+    chapterList.appendChild(li);
   });
-
-  // Swipe Navigation
-  let startX = 0;
-  let endX = 0;
-
-  document.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].pageX;
-  });
-
-  document.addEventListener('touchend', (e) => {
-    endX = e.changedTouches[0].pageX;
-    if (endX - startX > 50) {
-      prevPage();
-    } else if (startX - endX > 50) {
-      nextPage();
-    }
-  });
-
+}
 </script>
-<?php endif; ?>
 </body>
 </html>
