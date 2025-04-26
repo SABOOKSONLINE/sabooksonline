@@ -15,17 +15,13 @@ class Book
      * @param int $limit
      * @return array
      */
-    public function getBooksByCategory($category, $limit = 6)
+    public function getBooksByCategory($category)
     {
-        // $sql = "SELECT p.* FROM posts AS p
-        //         JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-        //         WHERE l.CATEGORY = ? AND p.STATUS = 'active'
-        //         ORDER BY RAND() LIMIT ?";
-        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active' LIMIT ?";
+        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active'";
 
         // prepared statements for executing the quesry
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_bind_param($stmt, "si", $category, $limit);
+        mysqli_stmt_bind_param($stmt, "s", $category);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
@@ -38,7 +34,6 @@ class Book
             $books[] = $row;
         }
 
-        // closing the prepared statement
         mysqli_stmt_close($stmt);
         return $books;
     }
@@ -99,13 +94,12 @@ class Book
      * Fetch All books
      * @return array
      */
-    public function getBooks($limit)
+    public function getBooks()
     {
-        $sql = "SELECT * FROM posts LIMIT ?";
+        $sql = "SELECT * FROM posts";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $limit);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 

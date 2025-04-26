@@ -28,17 +28,6 @@ require_once __DIR__ . "/includes/header.php";
             </span>
         </div>
 
-        <!-- <div id="book-hero-preview" class="row mb-5 align-items-center d-none my-4">
-            <div class="col-md-3">
-                <img id="hero-img" class="img-fluid rounded" src="" alt="Book Cover">
-            </div>
-            <div class="col-md-9">
-                <h2 id="hero-title" class="fw-bold"></h2>
-                <p id="hero-desc" class="text-muted mb-2"></p>
-                <a id="hero-link" href="#" class="btn btn-outline-primary">View Book</a>
-            </div>
-        </div> -->
-
 
         <div class="row py-3">
             <?php
@@ -49,19 +38,23 @@ require_once __DIR__ . "/includes/header.php";
             $category = $_GET['category'] ?? null;
 
             if (isset($category)) {
-                $controller->renderLibraryByCategory($category, 12);
+                $controller->renderLibraryByCategory($category);
             } else {
-                $controller->renderAllBooks(12);
+                $controller->renderAllBooks();
             }
             ?>
         </div>
 
         <div class="py-3">
-            <a href="" class="btn btn-red gap">
-                Show More
-                <i class="fas fa-angle-down"></i>
-            </a>
-
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=4">Next</a></li>
+                </ul>
+            </nav>
         </div>
     </div>
 

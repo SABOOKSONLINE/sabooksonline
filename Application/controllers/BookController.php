@@ -12,7 +12,6 @@ class BookController
         $this->bookModel = new Book($conn);
     }
 
-
     /**
      * Render the view for a single book by its ID.
      */
@@ -21,7 +20,7 @@ class BookController
         $contentId = $_GET['q'] ?? null;
 
         if (!$contentId) {
-            header("Location: /404"); // or a custom URL
+            header("Location: /404");
             exit;
         }
 
@@ -67,10 +66,10 @@ class BookController
     /**
      * Render a list of books filtered by category.
      */
-    public function renderLibraryByCategory($category, $limit)
+    public function renderLibraryByCategory($category)
     {
         $category = htmlspecialchars(trim($category)); // Sanitize category input
-        $books = $this->bookModel->getBooksByCategory($category, $limit);
+        $books = $this->bookModel->getBooksByCategory($category);
 
         if ($books) {
             include __DIR__ . '/../views/books/catalogueView.php';
@@ -97,9 +96,9 @@ class BookController
     /**
      * Render a list of all books, optionally limited.
      */
-    public function renderAllBooks($limit)
+    public function renderAllBooks()
     {
-        $books = $this->bookModel->getBooks($limit);
+        $books = $this->bookModel->getBooks();
 
         if ($books) {
             include __DIR__ . '/../views/books/catalogueView.php';
