@@ -1,7 +1,7 @@
 <?php
 // Hardcode the PDF filename
 $book = 'depressed.pdf'; // Change this to your actual PDF
-$filePath = "books/" . $book;
+$filePath = "dashboard/books/" . $book;
 
 // Verify the file exists
 if (!file_exists($filePath)) {
