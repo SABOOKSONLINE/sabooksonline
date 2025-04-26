@@ -11,9 +11,9 @@ require_once __DIR__ . "/includes/header.php";
     </div>
 
     <?php
-    require_once __DIR__ . "/../../database/connection.php";
-    require_once __DIR__ . "/../models/Book.php";
-    require_once __DIR__ . "/../controllers/BookController.php";
+    require __DIR__ . "/../../database/connection.php";
+    require __DIR__ . "/../models/Book.php";
+    require __DIR__ . "/../controllers/BookController.php";
 
     $controller = new BookController($conn);
     $controller->renderBookView();
@@ -26,12 +26,21 @@ require_once __DIR__ . "/includes/header.php";
             <div class="book-cards mt-4" id="similar_book">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../models/Book.php";
-                    require_once __DIR__ . "/../controllers/BookController.php";
+                    $Book = new Book($conn);
+                    $bookData = $Book->getBookById($_GET['q']);
+
+                    if (!isset($bookData['category'])) {
+                        $category = $bookData['CATEGORY'] ?? null;
+
+                        if ($category === null) {
+                            die("Book exists but has no category assigned");
+                        }
+                    } else {
+                        $category = $bookData['category'];
+                    }
 
                     $controller = new BookController($conn);
-                    $controller->renderBooksByCategory("editors choice", 10);
+                    $controller->renderBooksByCategory($category, 10);
                     ?>
 
                 </div>

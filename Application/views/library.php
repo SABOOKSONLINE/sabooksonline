@@ -50,8 +50,6 @@ require_once __DIR__ . "/includes/header.php";
 
             if (isset($category)) {
                 $controller->renderLibraryByCategory($category, 12);
-
-                // still working on the category detection
             } else {
                 $controller->renderAllBooks(12);
             }
