@@ -39,7 +39,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
                     $controller = new BookController($conn);
-                    $controller->renderBooksByCategory("editors choice", 6);
+                    $controller->renderListingsByCategory("editors choice", 6);
                     ?>
 
                 </div>
@@ -69,7 +69,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
                     $controller = new BookController($conn);
-                    $controller->renderBooksByCategory("editors choice", 10);
+                    $controller->renderListingsByCategory("editors choice", 10);
                     ?>
 
                 </div>
@@ -99,7 +99,7 @@ require_once __DIR__ . "/includes/header.php";
                     require_once __DIR__ . "/../controllers/BookController.php";
 
                     $controller = new BookController($conn);
-                    $controller->renderBooksByCategory("fiction collections", 10);
+                    $controller->renderListingsByCategory("fiction collections", 10);
                     ?>
 
                 </div>
@@ -133,7 +133,7 @@ require_once __DIR__ . "/includes/header.php";
                         require_once __DIR__ . "/../controllers/BookController.php";
 
                         $controller = new BookController($conn);
-                        $controller->renderBooksByCategory("childrens collection", 10);
+                        $controller->renderListingsByCategory("childrens collection", 10);
                         ?>
 
                     </div>

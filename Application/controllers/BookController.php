@@ -52,6 +52,18 @@ class BookController
         }
     }
 
+    public function renderListingsByCategory($category, $limit)
+    {
+        $category = htmlspecialchars(trim($category)); // Sanitize category input
+        $books = $this->bookModel->getBookListingsByCategory($category, $limit);
+
+        if ($books) {
+            include __DIR__ . '/../views/books/bookCategory.php';
+        } else {
+            echo "No books found in this category.";
+        }
+    }
+
     /**
      * Render a list of books filtered by category.
      */
