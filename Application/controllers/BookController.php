@@ -107,6 +107,17 @@ class BookController
         }
     }
 
+    public function renderPagination()
+    {
+        $books = $this->bookModel->getBooks();
+
+        if ($books) {
+            include __DIR__ . '/../views/books/pagination.php';
+        } else {
+            echo "No books found.";
+        }
+    }
+
     public function renderCategories()
     {
         $categories = $this->bookModel->getBookCategories();

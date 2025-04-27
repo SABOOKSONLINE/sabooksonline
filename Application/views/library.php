@@ -48,11 +48,19 @@ require_once __DIR__ . "/includes/header.php";
         <div class="py-3">
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
-                    <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
-                    <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
-                    <li class="page-item"><a class="page-link" href="?page=4">Next</a></li>
+                    <?php
+                    require_once __DIR__ . "/../models/Book.php";
+                    require_once __DIR__ . "/../controllers/BookController.php";
+
+                    $controller = new BookController($conn);
+                    $category = $_GET['category'] ?? null;
+
+                    if (isset($category)) {
+                        $controller->renderLibraryByCategory($category);
+                    } else {
+                        $controller->renderPagination();
+                    }
+                    ?>
                 </ul>
             </nav>
         </div>
