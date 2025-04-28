@@ -1,75 +1,57 @@
 <?php
 require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/../../database/connection.php";
+require_once __DIR__ . "/../models/Book.php";
+require_once __DIR__ . "/../controllers/BookController.php";
+
+$controller = new BookController($conn);
+$category = $_GET['category'] ?? null;
+$page = $_GET['page'] ?? 1;
 ?>
 
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-    <div class="container py-4 ">
+    <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>
-        <span class="text-muted">
-            The Never-Closing Library
-        </span>
+        <span class="text-muted">The Never-Closing Library</span>
 
         <div class="category-container py-3">
             <div class="">
                 <?php
-                require __DIR__ . "/../../database/connection.php";
-                require_once __DIR__ . "/../models/Book.php";
-                require_once __DIR__ . "/../controllers/BookController.php";
-
-                $controller = new BookController($conn);
                 $controller->renderCategories();
                 ?>
             </div>
-
             <span class="btn category-collapse-btn">
                 <i class="fas fa-angle-down"></i>
             </span>
         </div>
 
-
         <div class="row py-3">
             <?php
-            require_once __DIR__ . "/../models/Book.php";
-            require_once __DIR__ . "/../controllers/BookController.php";
-
-            $controller = new BookController($conn);
-            $category = $_GET['category'] ?? null;
-
-            if (isset($category)) {
-                $controller->renderLibraryByCategory($category);
+            if ($category) {
+                $controller->renderLibraryByCategory($category, $page);
             } else {
-                $controller->renderAllBooks();
+                $controller->renderAllBooks($page);
             }
             ?>
         </div>
 
         <div class="py-3">
             <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <?php
-                    require_once __DIR__ . "/../models/Book.php";
-                    require_once __DIR__ . "/../controllers/BookController.php";
-
-                    $controller = new BookController($conn);
-                    $category = $_GET['category'] ?? null;
-
-                    if (isset($category)) {
-                        $controller->renderLibraryByCategory($category);
-                    } else {
-                        $controller->renderPagination();
-                    }
-                    ?>
-                </ul>
+                <?php
+                if (!$category) {
+                    $controller->renderPagination();
+                }
+                ?>
             </nav>
         </div>
     </div>
 
-    <?php require_once __DIR__ . "/includes/footer.php" ?>
-
-    <?php require_once __DIR__ .  "/includes/scripts.php" ?>
+    <?php require_once __DIR__ . "/includes/footer.php"; ?>
+    <?php require_once __DIR__ . "/includes/scripts.php"; ?>
 </body>
+
 
 <!-- to be removed - to its js file (do not delete) -->
 <!-- <script>

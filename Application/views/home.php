@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/../../database/connection.php";
+require_once __DIR__ . "/../models/Book.php";
+require_once __DIR__ . "/../controllers/BookController.php";
+
+$controller = new BookController($conn);
 ?>
 
 <body>
@@ -34,11 +39,6 @@ require_once __DIR__ . "/includes/header.php";
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../models/Book.php";
-                    require_once __DIR__ . "/../controllers/BookController.php";
-
-                    $controller = new BookController($conn);
                     $controller->renderListingsByCategory("editors choice", 6);
                     ?>
 
@@ -64,11 +64,6 @@ require_once __DIR__ . "/includes/header.php";
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../models/Book.php";
-                    require_once __DIR__ . "/../controllers/BookController.php";
-
-                    $controller = new BookController($conn);
                     $controller->renderListingsByCategory("editors choice", 10);
                     ?>
 
@@ -94,11 +89,6 @@ require_once __DIR__ . "/includes/header.php";
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
                     <?php
-                    require_once __DIR__ . "/../../database/connection.php";
-                    require_once __DIR__ . "/../models/Book.php";
-                    require_once __DIR__ . "/../controllers/BookController.php";
-
-                    $controller = new BookController($conn);
                     $controller->renderListingsByCategory("fiction collections", 10);
                     ?>
 
@@ -128,11 +118,6 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="book-cards mt-4" id="childrens_collections">
                     <div class="book-card-slide">
                         <?php
-                        require_once __DIR__ . "/../../database/connection.php";
-                        require_once __DIR__ . "/../models/Book.php";
-                        require_once __DIR__ . "/../controllers/BookController.php";
-
-                        $controller = new BookController($conn);
                         $controller->renderListingsByCategory("childrens collection", 10);
                         ?>
 

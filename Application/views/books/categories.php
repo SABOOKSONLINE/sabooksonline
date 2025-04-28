@@ -1,7 +1,5 @@
-<?php
-
-foreach ($categories as $category) {
-    echo '
-    <a href="?category=' . $category['CATEGORY'] . '" class="category-link">' . $category['CATEGORY'] . '</a>
-    ';
-}
+<?php foreach ($categories as $category): ?>
+    <a href="?category=<?= urlencode(htmlspecialchars($category['CATEGORY'])) ?>" class="category-link">
+        <?= htmlspecialchars($category['CATEGORY']) ?>
+    </a>
+<?php endforeach; ?>

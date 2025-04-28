@@ -4,15 +4,13 @@ function paginatedBooks($books)
 {
     $book_pages = [];
     $page = 1;
-
     $book_pages[$page] = [];
 
     foreach ($books as $book) {
         if (count($book_pages[$page]) === 18) {
-            $page += 1;
+            $page++;
             $book_pages[$page] = [];
         }
-
         $book_pages[$page][] = $book;
     }
 
@@ -21,34 +19,46 @@ function paginatedBooks($books)
 
 function booksByPage($books, $page)
 {
-    foreach (paginatedBooks($books)[$page] as $book) {
-        echo '
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                <div class="library-book-card">
-                    <div class="library-book-card-img">
-                        <a href="/library/book/' . strtolower($book['CONTENTID']) . '">
-                            <img src="https://sabooksonline.co.za/cms-data/book-covers/' . $book['COVER'] . '" alt="' . strtolower($book['TITLE']) . '">
-                        </a>
-                    </div>
-                    <div class="w-100">
-                        <a class="book-card-little text-capitalize" href="/library/book/' . strtolower($book['CONTENTID']) . '">
-                            ' . (strlen($book['TITLE']) > 30 ? substr($book['TITLE'], 0, 30) . '...' : $book['TITLE']) . '
-                        </a>
-                        <p>' . (strlen($book['DESCRIPTION']) > 125 ? substr($book['DESCRIPTION'], 0, 125) . '...' : $book['DESCRIPTION']) . '</p>
-                        <span class="book-card-pub">
-                            Published by: <a class="text-muted" href="/creators/creator/' . strtolower($book['USERID']) . '">' . ucwords($book['PUBLISHER']) . '</a>
-                        </span>
-                    </div>
+    $paginatedBooks = paginatedBooks($books);
+
+    if (!isset($paginatedBooks[$page])) {
+        echo "<p>No books found on this page.</p>";
+        return;
+    }
+
+    foreach ($paginatedBooks[$page] as $book) {
+        $contentId = strtolower(htmlspecialchars($book['CONTENTID']));
+        $cover = htmlspecialchars($book['COVER']);
+        $title = htmlspecialchars($book['TITLE']);
+        $description = htmlspecialchars($book['DESCRIPTION']);
+        $userId = strtolower(htmlspecialchars($book['USERID']));
+        $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
+
+?>
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="library-book-card">
+                <div class="library-book-card-img">
+                    <a href="/library/book/<?= $contentId ?>">
+                        <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= strtolower($title) ?>">
+                    </a>
+                </div>
+                <div class="w-100">
+                    <a class="book-card-little text-capitalize" href="/library/book/<?= $contentId ?>">
+                        <?= strlen($title) > 30 ? htmlspecialchars(substr($title, 0, 30)) . '...' : $title ?>
+                    </a>
+                    <p>
+                        <?= strlen($description) > 125 ? htmlspecialchars(substr($description, 0, 125)) . '...' : $description ?>
+                    </p>
+                    <span class="book-card-pub">
+                        Published by: <a class="text-muted" href="/creators/creator/<?= $userId ?>"><?= $publisher ?></a>
+                    </span>
                 </div>
             </div>
-        ';
+        </div>
+<?php
     }
 }
 
-$page = $_GET['page'] ?? null;
-
-if (!isset($_GET['page'])) {
-    $page = 1;
-}
-
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 booksByPage($books, $page);
+?>
