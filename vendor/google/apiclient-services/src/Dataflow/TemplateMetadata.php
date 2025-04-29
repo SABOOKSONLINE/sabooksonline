@@ -23,6 +23,10 @@ class TemplateMetadata extends \Google\Collection
   /**
    * @var string
    */
+  public $defaultStreamingMode;
+  /**
+   * @var string
+   */
   public $description;
   /**
    * @var string
@@ -42,7 +46,25 @@ class TemplateMetadata extends \Google\Collection
    * @var bool
    */
   public $supportsExactlyOnce;
+  /**
+   * @var string
+   */
+  public $yamlDefinition;
 
+  /**
+   * @param string
+   */
+  public function setDefaultStreamingMode($defaultStreamingMode)
+  {
+    $this->defaultStreamingMode = $defaultStreamingMode;
+  }
+  /**
+   * @return string
+   */
+  public function getDefaultStreamingMode()
+  {
+    return $this->defaultStreamingMode;
+  }
   /**
    * @param string
    */
@@ -126,6 +148,20 @@ class TemplateMetadata extends \Google\Collection
   public function getSupportsExactlyOnce()
   {
     return $this->supportsExactlyOnce;
+  }
+  /**
+   * @param string
+   */
+  public function setYamlDefinition($yamlDefinition)
+  {
+    $this->yamlDefinition = $yamlDefinition;
+  }
+  /**
+   * @return string
+   */
+  public function getYamlDefinition()
+  {
+    return $this->yamlDefinition;
   }
 }
 

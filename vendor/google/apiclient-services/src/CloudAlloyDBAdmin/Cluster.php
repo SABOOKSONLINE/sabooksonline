@@ -27,6 +27,8 @@ class Cluster extends \Google\Model
   protected $automatedBackupPolicyDataType = '';
   protected $backupSourceType = BackupSource::class;
   protected $backupSourceDataType = '';
+  protected $cloudsqlBackupRunSourceType = CloudSQLBackupRunSource::class;
+  protected $cloudsqlBackupRunSourceDataType = '';
   /**
    * @var string
    */
@@ -65,6 +67,10 @@ class Cluster extends \Google\Model
    * @var string[]
    */
   public $labels;
+  protected $maintenanceScheduleType = MaintenanceSchedule::class;
+  protected $maintenanceScheduleDataType = '';
+  protected $maintenanceUpdatePolicyType = MaintenanceUpdatePolicy::class;
+  protected $maintenanceUpdatePolicyDataType = '';
   protected $migrationSourceType = MigrationSource::class;
   protected $migrationSourceDataType = '';
   /**
@@ -79,6 +85,8 @@ class Cluster extends \Google\Model
   protected $networkConfigDataType = '';
   protected $primaryConfigType = PrimaryConfig::class;
   protected $primaryConfigDataType = '';
+  protected $pscConfigType = PscConfig::class;
+  protected $pscConfigDataType = '';
   /**
    * @var bool
    */
@@ -95,6 +103,16 @@ class Cluster extends \Google\Model
    * @var string
    */
   public $state;
+  /**
+   * @var string
+   */
+  public $subscriptionType;
+  /**
+   * @var string[]
+   */
+  public $tags;
+  protected $trialMetadataType = TrialMetadata::class;
+  protected $trialMetadataDataType = '';
   /**
    * @var string
    */
@@ -145,6 +163,20 @@ class Cluster extends \Google\Model
   public function getBackupSource()
   {
     return $this->backupSource;
+  }
+  /**
+   * @param CloudSQLBackupRunSource
+   */
+  public function setCloudsqlBackupRunSource(CloudSQLBackupRunSource $cloudsqlBackupRunSource)
+  {
+    $this->cloudsqlBackupRunSource = $cloudsqlBackupRunSource;
+  }
+  /**
+   * @return CloudSQLBackupRunSource
+   */
+  public function getCloudsqlBackupRunSource()
+  {
+    return $this->cloudsqlBackupRunSource;
   }
   /**
    * @param string
@@ -315,6 +347,34 @@ class Cluster extends \Google\Model
     return $this->labels;
   }
   /**
+   * @param MaintenanceSchedule
+   */
+  public function setMaintenanceSchedule(MaintenanceSchedule $maintenanceSchedule)
+  {
+    $this->maintenanceSchedule = $maintenanceSchedule;
+  }
+  /**
+   * @return MaintenanceSchedule
+   */
+  public function getMaintenanceSchedule()
+  {
+    return $this->maintenanceSchedule;
+  }
+  /**
+   * @param MaintenanceUpdatePolicy
+   */
+  public function setMaintenanceUpdatePolicy(MaintenanceUpdatePolicy $maintenanceUpdatePolicy)
+  {
+    $this->maintenanceUpdatePolicy = $maintenanceUpdatePolicy;
+  }
+  /**
+   * @return MaintenanceUpdatePolicy
+   */
+  public function getMaintenanceUpdatePolicy()
+  {
+    return $this->maintenanceUpdatePolicy;
+  }
+  /**
    * @param MigrationSource
    */
   public function setMigrationSource(MigrationSource $migrationSource)
@@ -385,6 +445,20 @@ class Cluster extends \Google\Model
     return $this->primaryConfig;
   }
   /**
+   * @param PscConfig
+   */
+  public function setPscConfig(PscConfig $pscConfig)
+  {
+    $this->pscConfig = $pscConfig;
+  }
+  /**
+   * @return PscConfig
+   */
+  public function getPscConfig()
+  {
+    return $this->pscConfig;
+  }
+  /**
    * @param bool
    */
   public function setReconciling($reconciling)
@@ -453,6 +527,48 @@ class Cluster extends \Google\Model
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string
+   */
+  public function setSubscriptionType($subscriptionType)
+  {
+    $this->subscriptionType = $subscriptionType;
+  }
+  /**
+   * @return string
+   */
+  public function getSubscriptionType()
+  {
+    return $this->subscriptionType;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
+  }
+  /**
+   * @param TrialMetadata
+   */
+  public function setTrialMetadata(TrialMetadata $trialMetadata)
+  {
+    $this->trialMetadata = $trialMetadata;
+  }
+  /**
+   * @return TrialMetadata
+   */
+  public function getTrialMetadata()
+  {
+    return $this->trialMetadata;
   }
   /**
    * @param string

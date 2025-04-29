@@ -43,8 +43,10 @@ class DatabaseMigrationService extends \Google\Service
   public $projects_locations_conversionWorkspaces;
   public $projects_locations_conversionWorkspaces_mappingRules;
   public $projects_locations_migrationJobs;
+  public $projects_locations_migrationJobs_objects;
   public $projects_locations_operations;
   public $projects_locations_privateConnections;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the DatabaseMigrationService
@@ -58,6 +60,7 @@ class DatabaseMigrationService extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://datamigration.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://datamigration.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
@@ -659,6 +662,16 @@ class DatabaseMigrationService extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'fetchSourceObjects' => [
+              'path' => 'v1/{+name}:fetchSourceObjects',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'generateSshScript' => [
               'path' => 'v1/{+migrationJob}:generateSshScript',
               'httpMethod' => 'POST',
@@ -822,6 +835,88 @@ class DatabaseMigrationService extends \Google\Service
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_migrationJobs_objects = new DatabaseMigrationService\Resource\ProjectsLocationsMigrationJobsObjects(
+        $this,
+        $this->serviceName,
+        'objects',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getIamPolicy' => [
+              'path' => 'v1/{+resource}:getIamPolicy',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'options.requestedPolicyVersion' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/objects',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'lookup' => [
+              'path' => 'v1/{+parent}/objects:lookup',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'setIamPolicy' => [
+              'path' => 'v1/{+resource}:setIamPolicy',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'testIamPermissions' => [
+              'path' => 'v1/{+resource}:testIamPermissions',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,

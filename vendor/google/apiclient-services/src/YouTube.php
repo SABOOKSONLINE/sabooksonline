@@ -85,9 +85,11 @@ class YouTube extends \Google\Service
   public $thumbnails;
   public $videoAbuseReportReasons;
   public $videoCategories;
+  public $videoTrainability;
   public $videos;
   public $watermarks;
   public $youtube_v3;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the YouTube service.
@@ -100,6 +102,7 @@ class YouTube extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://youtube.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://youtube.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v3';
@@ -1011,6 +1014,19 @@ class YouTube extends \Google\Service
                 'profileImageSize' => [
                   'location' => 'query',
                   'type' => 'integer',
+                ],
+              ],
+            ],'transition' => [
+              'path' => 'youtube/v3/liveChat/messages/transition',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'id' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'status' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],
@@ -1962,6 +1978,25 @@ class YouTube extends \Google\Service
                   'repeated' => true,
                 ],
                 'regionCode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->videoTrainability = new YouTube\Resource\VideoTrainability(
+        $this,
+        $this->serviceName,
+        'videoTrainability',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'youtube/v3/videoTrainability',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'id' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],

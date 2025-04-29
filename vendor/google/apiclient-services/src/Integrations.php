@@ -20,7 +20,7 @@ namespace Google\Service;
 use Google\Client;
 
 /**
- * Service definition for Integrations (v1alpha).
+ * Service definition for Integrations (v1).
  *
  * <p>
 </p>
@@ -40,9 +40,13 @@ class Integrations extends \Google\Service
 
   public $callback;
   public $connectorPlatformRegions;
+  public $projects;
+  public $projects_locations;
   public $projects_locations_appsScriptProjects;
   public $projects_locations_authConfigs;
   public $projects_locations_certificates;
+  public $projects_locations_clients;
+  public $projects_locations_cloudFunctions;
   public $projects_locations_connections;
   public $projects_locations_connections_runtimeActionSchemas;
   public $projects_locations_connections_runtimeEntitySchemas;
@@ -50,17 +54,20 @@ class Integrations extends \Google\Service
   public $projects_locations_integrations_executions;
   public $projects_locations_integrations_executions_suspensions;
   public $projects_locations_integrations_versions;
+  public $projects_locations_integrations_versions_testCases;
   public $projects_locations_products_authConfigs;
   public $projects_locations_products_certificates;
+  public $projects_locations_products_cloudFunctions;
   public $projects_locations_products_integrations;
   public $projects_locations_products_integrations_executions;
   public $projects_locations_products_integrations_executions_suspensions;
   public $projects_locations_products_integrations_versions;
-  public $projects_locations_products_integrationtemplates_versions;
   public $projects_locations_products_sfdcInstances;
   public $projects_locations_products_sfdcInstances_sfdcChannels;
   public $projects_locations_sfdcInstances;
   public $projects_locations_sfdcInstances_sfdcChannels;
+  public $projects_locations_templates;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the Integrations service.
@@ -73,9 +80,10 @@ class Integrations extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://integrations.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://integrations.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
-    $this->version = 'v1alpha';
+    $this->version = 'v1';
     $this->serviceName = 'integrations';
 
     $this->callback = new Integrations\Resource\Callback(
@@ -85,7 +93,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'generateToken' => [
-              'path' => 'v1alpha/callback:generateToken',
+              'path' => 'v1/callback:generateToken',
               'httpMethod' => 'GET',
               'parameters' => [
                 'code' => [
@@ -120,9 +128,59 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'enumerate' => [
-              'path' => 'v1alpha/connectorPlatformRegions:enumerate',
+              'path' => 'v1/connectorPlatformRegions:enumerate',
               'httpMethod' => 'GET',
               'parameters' => [],
+            ],
+          ]
+        ]
+    );
+    $this->projects = new Integrations\Resource\Projects(
+        $this,
+        $this->serviceName,
+        'projects',
+        [
+          'methods' => [
+            'getClientmetadata' => [
+              'path' => 'v1/{+parent}/clientmetadata',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations = new Integrations\Resource\ProjectsLocations(
+        $this,
+        $this->serviceName,
+        'locations',
+        [
+          'methods' => [
+            'generateOpenApiSpec' => [
+              'path' => 'v1/{+name}:generateOpenApiSpec',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getClients' => [
+              'path' => 'v1/{+parent}/clients',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],
           ]
         ]
@@ -134,7 +192,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/appsScriptProjects',
+              'path' => 'v1/{+parent}/appsScriptProjects',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -144,7 +202,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'link' => [
-              'path' => 'v1alpha/{+parent}/appsScriptProjects:link',
+              'path' => 'v1/{+parent}/appsScriptProjects:link',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -164,7 +222,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/authConfigs',
+              'path' => 'v1/{+parent}/authConfigs',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -186,7 +244,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -196,7 +254,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -206,7 +264,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/authConfigs',
+              'path' => 'v1/{+parent}/authConfigs',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -232,7 +290,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -267,11 +325,151 @@ class Integrations extends \Google\Service
         'certificates',
         [
           'methods' => [
-            'get' => [
-              'path' => 'v1alpha/{+name}',
+            'create' => [
+              'path' => 'v1/{+parent}/certificates',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/certificates',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'readMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'patch' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_clients = new Integrations\Resource\ProjectsLocationsClients(
+        $this,
+        $this->serviceName,
+        'clients',
+        [
+          'methods' => [
+            'deprovision' => [
+              'path' => 'v1/{+parent}/clients:deprovision',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'provision' => [
+              'path' => 'v1/{+parent}/clients:provision',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'replace' => [
+              'path' => 'v1/{+parent}/clients:replace',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'switch' => [
+              'path' => 'v1/{+parent}/clients:switch',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'switchVariableMasking' => [
+              'path' => 'v1/{+parent}/clients:switchVariableMasking',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_cloudFunctions = new Integrations\Resource\ProjectsLocationsCloudFunctions(
+        $this,
+        $this->serviceName,
+        'cloudFunctions',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/cloudFunctions',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
@@ -288,7 +486,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'getConnectionSchemaMetadata' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -298,7 +496,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/connections',
+              'path' => 'v1/{+parent}/connections',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -334,7 +532,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'list' => [
-              'path' => 'v1alpha/{+parent}/runtimeActionSchemas',
+              'path' => 'v1/{+parent}/runtimeActionSchemas',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -366,7 +564,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'list' => [
-              'path' => 'v1alpha/{+parent}/runtimeEntitySchemas',
+              'path' => 'v1/{+parent}/runtimeEntitySchemas',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -398,7 +596,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -408,7 +606,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'execute' => [
-              'path' => 'v1alpha/{+name}:execute',
+              'path' => 'v1/{+name}:execute',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -418,7 +616,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'executeEvent' => [
-              'path' => 'v1alpha/{+name}:executeEvent',
+              'path' => 'v1/{+name}:executeEvent',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -426,13 +624,17 @@ class Integrations extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
+                'GCPCloudEventsMode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
                 'triggerId' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/integrations',
+              'path' => 'v1/{+parent}/integrations',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -458,7 +660,17 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'schedule' => [
-              'path' => 'v1alpha/{+name}:schedule',
+              'path' => 'v1/{+name}:schedule',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'test' => [
+              'path' => 'v1/{+name}:test',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -477,8 +689,38 @@ class Integrations extends \Google\Service
         'executions',
         [
           'methods' => [
-            'list' => [
-              'path' => 'v1alpha/{+parent}/executions',
+            'cancel' => [
+              'path' => 'v1/{+name}:cancel',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'download' => [
+              'path' => 'v1/{+name}:download',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/executions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -569,6 +811,16 @@ class Integrations extends \Google\Service
                   'type' => 'boolean',
                 ],
               ],
+            ],'replay' => [
+              'path' => 'v1/{+name}:replay',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],
           ]
         ]
@@ -580,7 +832,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'lift' => [
-              'path' => 'v1alpha/{+name}:lift',
+              'path' => 'v1/{+name}:lift',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -590,7 +842,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/suspensions',
+              'path' => 'v1/{+parent}/suspensions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -616,7 +868,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'resolve' => [
-              'path' => 'v1alpha/{+name}:resolve',
+              'path' => 'v1/{+name}:resolve',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -636,7 +888,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/versions',
+              'path' => 'v1/{+parent}/versions',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -654,7 +906,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -664,7 +916,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'download' => [
-              'path' => 'v1alpha/{+name}:download',
+              'path' => 'v1/{+name}:download',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -682,8 +934,23 @@ class Integrations extends \Google\Service
                   'repeated' => true,
                 ],
               ],
+            ],'downloadJsonPackage' => [
+              'path' => 'v1/{+name}:downloadJsonPackage',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'files' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ],
+              ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -693,7 +960,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/versions',
+              'path' => 'v1/{+parent}/versions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -723,7 +990,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -737,7 +1004,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'publish' => [
-              'path' => 'v1alpha/{+name}:publish',
+              'path' => 'v1/{+name}:publish',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -746,18 +1013,8 @@ class Integrations extends \Google\Service
                   'required' => true,
                 ],
               ],
-            ],'takeoverEditLock' => [
-              'path' => 'v1alpha/{+integrationVersion}:takeoverEditLock',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'integrationVersion' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
             ],'unpublish' => [
-              'path' => 'v1alpha/{+name}:unpublish',
+              'path' => 'v1/{+name}:unpublish',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -767,7 +1024,183 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'upload' => [
-              'path' => 'v1alpha/{+parent}/versions:upload',
+              'path' => 'v1/{+parent}/versions:upload',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_integrations_versions_testCases = new Integrations\Resource\ProjectsLocationsIntegrationsVersionsTestCases(
+        $this,
+        $this->serviceName,
+        'testCases',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/testCases',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'testCaseId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'download' => [
+              'path' => 'v1/{+name}:download',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'fileFormat' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'execute' => [
+              'path' => 'v1/{+parent}/testCases:execute',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'executeTest' => [
+              'path' => 'v1/{+testCaseName}:executeTest',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'testCaseName' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/testCases',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'readMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'listExecutions' => [
+              'path' => 'v1/{+parent}:executions',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'readMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'truncateParams' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
+              ],
+            ],'patch' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'takeoverEditLock' => [
+              'path' => 'v1/{+name}:takeoverEditLock',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'upload' => [
+              'path' => 'v1/{+parent}/testCases:upload',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -787,7 +1220,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/authConfigs',
+              'path' => 'v1/{+parent}/authConfigs',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -809,7 +1242,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -819,7 +1252,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -829,7 +1262,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/authConfigs',
+              'path' => 'v1/{+parent}/authConfigs',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -855,7 +1288,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -891,7 +1324,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/certificates',
+              'path' => 'v1/{+parent}/certificates',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -901,7 +1334,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -911,7 +1344,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -921,7 +1354,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/certificates',
+              'path' => 'v1/{+parent}/certificates',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -947,7 +1380,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -964,24 +1397,34 @@ class Integrations extends \Google\Service
           ]
         ]
     );
+    $this->projects_locations_products_cloudFunctions = new Integrations\Resource\ProjectsLocationsProductsCloudFunctions(
+        $this,
+        $this->serviceName,
+        'cloudFunctions',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/cloudFunctions',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->projects_locations_products_integrations = new Integrations\Resource\ProjectsLocationsProductsIntegrations(
         $this,
         $this->serviceName,
         'integrations',
         [
           'methods' => [
-            'delete' => [
-              'path' => 'v1alpha/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'execute' => [
-              'path' => 'v1alpha/{+name}:execute',
+            'execute' => [
+              'path' => 'v1/{+name}:execute',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -991,7 +1434,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/integrations',
+              'path' => 'v1/{+parent}/integrations',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1017,7 +1460,17 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'schedule' => [
-              'path' => 'v1alpha/{+name}:schedule',
+              'path' => 'v1/{+name}:schedule',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'test' => [
+              'path' => 'v1/{+name}:test',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -1036,9 +1489,9 @@ class Integrations extends \Google\Service
         'executions',
         [
           'methods' => [
-            'cancel' => [
-              'path' => 'v1alpha/{+name}:cancel',
-              'httpMethod' => 'POST',
+            'download' => [
+              'path' => 'v1/{+name}:download',
+              'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
                   'location' => 'path',
@@ -1047,7 +1500,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1057,7 +1510,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/executions',
+              'path' => 'v1/{+parent}/executions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1159,7 +1612,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'lift' => [
-              'path' => 'v1alpha/{+name}:lift',
+              'path' => 'v1/{+name}:lift',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -1169,7 +1622,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/suspensions',
+              'path' => 'v1/{+parent}/suspensions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1195,7 +1648,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'resolve' => [
-              'path' => 'v1alpha/{+name}:resolve',
+              'path' => 'v1/{+name}:resolve',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -1215,7 +1668,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/versions',
+              'path' => 'v1/{+parent}/versions',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -1233,7 +1686,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -1243,7 +1696,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'download' => [
-              'path' => 'v1alpha/{+name}:download',
+              'path' => 'v1/{+name}:download',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1262,7 +1715,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1272,7 +1725,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/versions',
+              'path' => 'v1/{+parent}/versions',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1302,7 +1755,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -1316,7 +1769,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'publish' => [
-              'path' => 'v1alpha/{+name}:publish',
+              'path' => 'v1/{+name}:publish',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -1326,7 +1779,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'takeoverEditLock' => [
-              'path' => 'v1alpha/{+integrationVersion}:takeoverEditLock',
+              'path' => 'v1/{+integrationVersion}:takeoverEditLock',
               'httpMethod' => 'POST',
               'parameters' => [
                 'integrationVersion' => [
@@ -1336,7 +1789,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'unpublish' => [
-              'path' => 'v1alpha/{+name}:unpublish',
+              'path' => 'v1/{+name}:unpublish',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -1346,65 +1799,13 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'upload' => [
-              'path' => 'v1alpha/{+parent}/versions:upload',
+              'path' => 'v1/{+parent}/versions:upload',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_products_integrationtemplates_versions = new Integrations\Resource\ProjectsLocationsProductsIntegrationtemplatesVersions(
-        $this,
-        $this->serviceName,
-        'versions',
-        [
-          'methods' => [
-            'create' => [
-              'path' => 'v1alpha/{+parent}/versions',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'get' => [
-              'path' => 'v1alpha/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1alpha/{+parent}/versions',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],
@@ -1418,7 +1819,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/sfdcInstances',
+              'path' => 'v1/{+parent}/sfdcInstances',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -1428,7 +1829,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -1438,7 +1839,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1448,7 +1849,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/sfdcInstances',
+              'path' => 'v1/{+parent}/sfdcInstances',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1474,7 +1875,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -1498,7 +1899,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/sfdcChannels',
+              'path' => 'v1/{+parent}/sfdcChannels',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -1508,7 +1909,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -1518,7 +1919,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1528,7 +1929,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/sfdcChannels',
+              'path' => 'v1/{+parent}/sfdcChannels',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1554,7 +1955,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -1578,7 +1979,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/sfdcInstances',
+              'path' => 'v1/{+parent}/sfdcInstances',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -1588,7 +1989,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -1598,7 +1999,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1608,7 +2009,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/sfdcInstances',
+              'path' => 'v1/{+parent}/sfdcInstances',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1634,7 +2035,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -1658,7 +2059,7 @@ class Integrations extends \Google\Service
         [
           'methods' => [
             'create' => [
-              'path' => 'v1alpha/{+parent}/sfdcChannels',
+              'path' => 'v1/{+parent}/sfdcChannels',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -1668,7 +2069,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -1678,7 +2079,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1688,7 +2089,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v1alpha/{+parent}/sfdcChannels',
+              'path' => 'v1/{+parent}/sfdcChannels',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -1714,7 +2115,7 @@ class Integrations extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -1725,6 +2126,184 @@ class Integrations extends \Google\Service
                 'updateMask' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_templates = new Integrations\Resource\ProjectsLocationsTemplates(
+        $this,
+        $this->serviceName,
+        'templates',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/templates',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'download' => [
+              'path' => 'v1/{+name}:download',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'fileFormat' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'import' => [
+              'path' => 'v1/{+name}:import',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/templates',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'readMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'patch' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'search' => [
+              'path' => 'v1/{+parent}/templates:search',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'readMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'share' => [
+              'path' => 'v1/{+name}:share',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'unshare' => [
+              'path' => 'v1/{+name}:unshare',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'upload' => [
+              'path' => 'v1/{+parent}/templates:upload',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'use' => [
+              'path' => 'v1/{+name}:use',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],
