@@ -64,7 +64,7 @@ $controller = new BookController($conn);
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
                     <?php
-                    $controller->renderListingsByCategory("editors choice", 10);
+                    $controller->renderListingsByCategory("Latest Collections", 10);
                     ?>
 
                 </div>
