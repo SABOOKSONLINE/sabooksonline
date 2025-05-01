@@ -122,7 +122,8 @@ class BookModel
         $sql = "SELECT * FROM posts 
                 WHERE title LIKE '%$safe_keyword%' 
                    OR publisher LIKE '%$safe_keyword%' 
-                   OR description LIKE '%$safe_keyword%'";
+                   OR description LIKE '%$safe_keyword%'
+                   LIMIT 3";
 
         $result = $this->conn->query($sql);
         $books = [];
