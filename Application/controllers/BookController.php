@@ -59,7 +59,7 @@ class BookController
         $books = $this->bookModel->searchBooks($keyword);
 
         if ($books) {
-            include __DIR__ . '/../views/books/bookCategory.php';
+            include __DIR__ . '/../views/books/searchBooks.php';
 
         } else {
             echo "No books found in this category.";
