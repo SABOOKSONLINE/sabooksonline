@@ -51,6 +51,15 @@ class BookController
         }
     }
 
+    public function handleSearch($keyword)
+    {
+        if (empty($keyword)) {
+            return [];
+        }
+
+        return $this->bookModel->searchBooks($keyword);
+    }
+
     public function renderListingsByCategory($category, $limit)
     {
         $category = htmlspecialchars(trim($category)); // Sanitize category input
