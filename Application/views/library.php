@@ -15,17 +15,17 @@ $keyword = $_GET['k'] ?? null;
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-    <?php 
-    if($keyword != null) {
-        $controller->RenderSearchedBooks($keyword); 
-    }
-    ?>
+    
 
     <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>
         <span class="text-muted">The Never-Closing Library</span>
 
-        
+        <?php 
+        if($keyword != null) {
+            $controller->RenderSearchedBooks($keyword); 
+        }
+        ?>
 
         <div class="category-container py-3">
             <div class="">
