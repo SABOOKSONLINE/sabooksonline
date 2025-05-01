@@ -32,11 +32,11 @@ use Google\Service\HangoutsChat\Reaction;
 class SpacesMessagesReactions extends \Google\Service\Resource
 {
   /**
-   * Creates a reaction and adds it to a message. For an example, see [Create a
-   * reaction](https://developers.google.com/chat/api/guides/v1/reactions/create).
-   * Requires [user
-   * authentication](https://developers.google.com/chat/api/guides/auth/users).
-   * Only unicode emoji are supported. (reactions.create)
+   * Creates a reaction and adds it to a message. For an example, see [Add a
+   * reaction to a message](https://developers.google.com/workspace/chat/create-
+   * reactions). Requires [user
+   * authentication](https://developers.google.com/workspace/chat/authenticate-
+   * authorize-chat-user). (reactions.create)
    *
    * @param string $parent Required. The message where the reaction is created.
    * Format: `spaces/{space}/messages/{message}`
@@ -53,10 +53,10 @@ class SpacesMessagesReactions extends \Google\Service\Resource
   }
   /**
    * Deletes a reaction to a message. For an example, see [Delete a
-   * reaction](https://developers.google.com/chat/api/guides/v1/reactions/delete).
+   * reaction](https://developers.google.com/workspace/chat/delete-reactions).
    * Requires [user
-   * authentication](https://developers.google.com/chat/api/guides/auth/users).
-   * (reactions.delete)
+   * authentication](https://developers.google.com/workspace/chat/authenticate-
+   * authorize-chat-user). (reactions.delete)
    *
    * @param string $name Required. Name of the reaction to delete. Format:
    * `spaces/{space}/messages/{message}/reactions/{reaction}`
@@ -71,20 +71,20 @@ class SpacesMessagesReactions extends \Google\Service\Resource
     return $this->call('delete', [$params], ChatEmpty::class);
   }
   /**
-   * Lists reactions to a message. For an example, see [List
-   * reactions](https://developers.google.com/chat/api/guides/v1/reactions/list).
+   * Lists reactions to a message. For an example, see [List reactions for a
+   * message](https://developers.google.com/workspace/chat/list-reactions).
    * Requires [user
-   * authentication](https://developers.google.com/chat/api/guides/auth/users).
-   * (reactions.listSpacesMessagesReactions)
+   * authentication](https://developers.google.com/workspace/chat/authenticate-
+   * authorize-chat-user). (reactions.listSpacesMessagesReactions)
    *
    * @param string $parent Required. The message users reacted to. Format:
    * `spaces/{space}/messages/{message}`
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. A query filter. You can filter reactions
-   * by [emoji](https://developers.google.com/chat/api/reference/rest/v1/Emoji)
-   * (either `emoji.unicode` or `emoji.custom_emoji.uid`) and
-   * [user](https://developers.google.com/chat/api/reference/rest/v1/User)
+   * by [emoji](https://developers.google.com/workspace/chat/api/reference/rest/v1
+   * /Emoji) (either `emoji.unicode` or `emoji.custom_emoji.uid`) and [user](https
+   * ://developers.google.com/workspace/chat/api/reference/rest/v1/User)
    * (`user.name`). To filter reactions for multiple emojis or users, join similar
    * fields with the `OR` operator, such as `emoji.unicode = "🙂" OR emoji.unicode
    * = "👍"` and `user.name = "users/AAAAAA" OR user.name = "users/BBBBBB"`. To

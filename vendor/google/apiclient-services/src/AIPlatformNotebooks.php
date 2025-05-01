@@ -41,6 +41,7 @@ class AIPlatformNotebooks extends \Google\Service
   public $projects_locations;
   public $projects_locations_instances;
   public $projects_locations_operations;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the AIPlatformNotebooks service.
@@ -53,6 +54,7 @@ class AIPlatformNotebooks extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://notebooks.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://notebooks.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v2';
@@ -261,6 +263,16 @@ class AIPlatformNotebooks extends \Google\Service
               'httpMethod' => 'POST',
               'parameters' => [
                 'notebookInstance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'restore' => [
+              'path' => 'v2/{+name}:restore',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,

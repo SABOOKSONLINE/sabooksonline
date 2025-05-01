@@ -57,6 +57,8 @@ class Walletobjects extends \Google\Service
   public $smarttap;
   public $transitclass;
   public $transitobject;
+  public $walletobjects_v1_privateContent;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the Walletobjects service.
@@ -69,6 +71,7 @@ class Walletobjects extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://walletobjects.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://walletobjects.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
@@ -1220,6 +1223,20 @@ class Walletobjects extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],
+          ]
+        ]
+    );
+    $this->walletobjects_v1_privateContent = new Walletobjects\Resource\WalletobjectsV1PrivateContent(
+        $this,
+        $this->serviceName,
+        'privateContent',
+        [
+          'methods' => [
+            'setPassUpdateNotice' => [
+              'path' => 'walletobjects/v1/privateContent/setPassUpdateNotice',
+              'httpMethod' => 'POST',
+              'parameters' => [],
             ],
           ]
         ]

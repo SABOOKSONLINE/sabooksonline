@@ -46,6 +46,9 @@ class MapsPlaces extends \Google\Service
   /** Private Service: https://www.googleapis.com/auth/maps-platform.places.details. */
   const MAPS_PLATFORM_PLACES_DETAILS =
       "https://www.googleapis.com/auth/maps-platform.places.details";
+  /** Private Service: https://www.googleapis.com/auth/maps-platform.places.getphotomedia. */
+  const MAPS_PLATFORM_PLACES_GETPHOTOMEDIA =
+      "https://www.googleapis.com/auth/maps-platform.places.getphotomedia";
   /** Private Service: https://www.googleapis.com/auth/maps-platform.places.nearbysearch. */
   const MAPS_PLATFORM_PLACES_NEARBYSEARCH =
       "https://www.googleapis.com/auth/maps-platform.places.nearbysearch";
@@ -55,6 +58,7 @@ class MapsPlaces extends \Google\Service
 
   public $places;
   public $places_photos;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the MapsPlaces service.
@@ -67,6 +71,7 @@ class MapsPlaces extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://places.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://places.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';

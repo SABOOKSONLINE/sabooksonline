@@ -48,6 +48,8 @@ class WorkloadManager extends \Google\Service
   public $projects_locations_insights;
   public $projects_locations_operations;
   public $projects_locations_rules;
+  public $projects_locations_sapSystems;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the WorkloadManager service.
@@ -60,6 +62,7 @@ class WorkloadManager extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://workloadmanager.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://workloadmanager.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
@@ -441,6 +444,30 @@ class WorkloadManager extends \Google\Service
                   'type' => 'integer',
                 ],
                 'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_sapSystems = new WorkloadManager\Resource\ProjectsLocationsSapSystems(
+        $this,
+        $this->serviceName,
+        'sapSystems',
+        [
+          'methods' => [
+            'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'requestId' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],

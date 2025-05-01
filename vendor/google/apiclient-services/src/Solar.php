@@ -41,6 +41,7 @@ class Solar extends \Google\Service
   public $buildingInsights;
   public $dataLayers;
   public $geoTiff;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the Solar service.
@@ -53,6 +54,7 @@ class Solar extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://solar.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://solar.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
@@ -68,6 +70,11 @@ class Solar extends \Google\Service
               'path' => 'v1/buildingInsights:findClosest',
               'httpMethod' => 'GET',
               'parameters' => [
+                'experiments' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ],
                 'location.latitude' => [
                   'location' => 'query',
                   'type' => 'number',
@@ -95,6 +102,15 @@ class Solar extends \Google\Service
               'path' => 'v1/dataLayers:get',
               'httpMethod' => 'GET',
               'parameters' => [
+                'exactQualityRequired' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
+                'experiments' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ],
                 'location.latitude' => [
                   'location' => 'query',
                   'type' => 'number',
