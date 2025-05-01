@@ -117,6 +117,7 @@ class BookModel
 
     public function searchBooks($keyword)
     {
+        if ($keyword === '') return [];
         $safe_keyword = $this->conn->real_escape_string($keyword);
         $sql = "SELECT * FROM posts 
                 WHERE title LIKE '%$safe_keyword%' 
