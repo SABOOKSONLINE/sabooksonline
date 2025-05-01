@@ -9,7 +9,7 @@ class BookController
 
     public function __construct($conn)
     {
-        $this->bookModel = new Book($conn);
+        $this->bookModel = new BookModel($conn);
     }
 
     public function showBooks()
