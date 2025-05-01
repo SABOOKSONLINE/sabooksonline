@@ -51,13 +51,20 @@ class BookController
         }
     }
 
-    public function handleSearch($keyword)
+    /**
+     * Render a list of books searched.
+     */
+    public function RenderSearchedBooks($keyword)
     {
-        if (empty($keyword)) {
-            return [];
-        }
+        $books = $this->bookModel->searchBooks($keyword);
 
-        return $this->bookModel->searchBooks($keyword);
+        if ($books) {
+            include __DIR__ . '/..views/books/bookCategory.php';
+
+        } else {
+            echo "No books found in this category.";
+
+        }
     }
 
     public function renderListingsByCategory($category, $limit)

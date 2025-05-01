@@ -1,13 +1,3 @@
-<form class="d-flex me-3" action="library.php" method="GET" id="myForm">
-    <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search by Title, Authors or Publisher"
-            name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
-        <button class="btn btn-outline-secondary" type="submit">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
-</form>
-
 <?php if (isset($keyword)): ?>
     <h5 class="mt-3">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
     <?php if (empty($books)): ?>
