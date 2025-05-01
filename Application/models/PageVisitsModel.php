@@ -13,9 +13,9 @@ class PageVisitsModel
         $this->conn = $conn;
     }
 
-    public function getVisiters()
+    public function getVisitors()
     {
-        $sql = "SELECT * FROM 'page_visits' ORDER BY 'visit_time' DESC";
+        $sql = "SELECT * FROM page_visits ORDER BY visit_time DESC";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -49,8 +49,10 @@ class PageVisitsModel
             user_ip
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssssssss",
             $data['user_agent'],
             $data['page_url'],
             $data['referer'],
@@ -60,17 +62,32 @@ class PageVisitsModel
             $data['user_city'],
             $data['user_province'],
             $data['user_ip']
-        ]);
+        );
+
+        return mysqli_stmt_execute($stmt);
     }
 
-    public function getVisitersByCountry($country)
+    public function updateDuration($pageUrl, $duration)
     {
-        $sql = "SELECT * FROM 'page_visits' WHERE user_country = ? ORDER BY 'visit_time' DESC";
+        $sql = "UPDATE page_visits 
+                SET duration = ? 
+                WHERE page_url = ? 
+                ORDER BY visit_time DESC 
+                LIMIT 1";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "ss", $duration, $pageUrl);
+        return mysqli_stmt_execute($stmt);
+    }
+
+    public function getVisitorsByCountry($country)
+    {
+        $sql = "SELECT * FROM page_visits WHERE user_country = ? ORDER BY visit_time DESC";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_execute($stmt);
         mysqli_stmt_bind_param($stmt, "s", $country);
+        mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) == 0) {
@@ -86,14 +103,14 @@ class PageVisitsModel
         return $visiters;
     }
 
-    public function getVisitersByProvince($province)
+    public function getVisitorsByProvince($province)
     {
-        $sql = "SELECT * FROM 'page_visits' WHERE user_province = ? ORDER BY 'visit_time' DESC";
+        $sql = "SELECT * FROM page_visits WHERE user_province = ? ORDER BY visit_time DESC";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_execute($stmt);
         mysqli_stmt_bind_param($stmt, "s", $province);
+        mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) == 0) {
@@ -109,14 +126,14 @@ class PageVisitsModel
         return $visiters;
     }
 
-    public function getVisitersByCity($city)
+    public function getVisitorsByCity($city)
     {
-        $sql = "SELECT * FROM 'page_visits' WHERE user_city = ? ORDER BY 'visit_time' DESC";
+        $sql = "SELECT * FROM page_visits WHERE user_city = ? ORDER BY visit_time DESC";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_execute($stmt);
         mysqli_stmt_bind_param($stmt, "s", $city);
+        mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) == 0) {
