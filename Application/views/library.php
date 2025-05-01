@@ -9,7 +9,7 @@ $category = $_GET['category'] ?? null;
 $page = $_GET['page'] ?? 1;
 
 // Get keyword and fetch books
-$keyword = $_GET['k'] ?? null;
+$keyword = $_GET['k'] ?? "";
 ?>
 
 <body>
