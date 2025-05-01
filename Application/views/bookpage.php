@@ -12,7 +12,7 @@ require_once __DIR__ . "/includes/header.php";
 
     <?php
     require __DIR__ . "/../../database/connection.php";
-    require __DIR__ . "/../models/Book.php";
+    require __DIR__ . "/../models/BookModel.php";
     require __DIR__ . "/../controllers/BookController.php";
 
     $controller = new BookController($conn);
@@ -26,7 +26,7 @@ require_once __DIR__ . "/includes/header.php";
             <div class="book-cards mt-4" id="similar_book">
                 <div class="book-card-slide">
                     <?php
-                    $Book = new Book($conn);
+                    $Book = new BookModel($conn);
                     $bookData = $Book->getBookById($_GET['q']);
 
                     if (!isset($bookData['category'])) {
