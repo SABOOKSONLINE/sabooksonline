@@ -17,7 +17,7 @@ class BookModel
      */
     public function getBooksByCategory($category)
     {
-        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active'";
+        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active' ORDER BY TITLE";
 
         // prepared statements for executing the quesry
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -73,7 +73,7 @@ class BookModel
      */
     public function getBookById($contentId)
     {
-        $sql = "SELECT p.* FROM posts AS p WHERE p.CONTENTID = ? AND p.STATUS = 'active'";
+        $sql = "SELECT p.* FROM posts AS p WHERE p.CONTENTID = ? AND p.STATUS = 'active' ORDER BY TITLE";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $contentId);
@@ -96,7 +96,7 @@ class BookModel
      */
     public function getBooks()
     {
-        $sql = "SELECT * FROM posts";
+        $sql = "SELECT * FROM posts ORDER BY TITLE";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -119,10 +119,11 @@ class BookModel
     {
         if ($keyword === '') return [];
         $safe_keyword = $this->conn->real_escape_string($keyword);
-        $sql = "SELECT * FROM posts 
+        $sql = "SELECT * FROM posts
                 WHERE title LIKE '%$safe_keyword%' 
                    OR publisher LIKE '%$safe_keyword%' 
-                   OR description LIKE '%$safe_keyword%'";
+                   OR description LIKE '%$safe_keyword%' 
+                ORDER BY TITLE";
 
         $result = $this->conn->query($sql);
         $books = [];
@@ -138,7 +139,7 @@ class BookModel
 
     public function getBooksByPublisher($userId)
     {
-        $sql = "SELECT * FROM posts WHERE USERID = ?";
+        $sql = "SELECT * FROM posts WHERE USERID = ? ORDER BY TITLE";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -163,7 +164,7 @@ class BookModel
     public function getBookCategories()
     {
 
-        $sql = "SELECT * FROM category";
+        $sql = "SELECT * FROM category ORDER BY CATEGORY";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
