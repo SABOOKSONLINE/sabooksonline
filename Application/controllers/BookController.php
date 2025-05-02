@@ -59,11 +59,9 @@ class BookController
         $books = $this->bookModel->searchBooks($keyword);
 
         if ($books) {
-            include __DIR__ . '/../views/books/searchBooks.php';
-
+            include __DIR__ . '/../views/books/catalogueView.php';
         } else {
             echo "No books found in this category.";
-
         }
     }
 
@@ -125,7 +123,17 @@ class BookController
 
     public function renderPagination()
     {
-        $books = $this->bookModel->getBooks();
+        // this code will be changed later does follow MVC
+        $category = $_GET['category'] ?? null;
+        $keyword = $_GET['k'] ?? null;
+
+        if ($category) {
+            $books = $this->bookModel->getBooksByCategory($category);
+        } else if ($keyword) {
+            $books = $this->bookModel->searchBooks($keyword);
+        } else {
+            $books = $this->bookModel->getBooks();
+        }
 
         if ($books) {
             include __DIR__ . '/../views/books/pagination.php';

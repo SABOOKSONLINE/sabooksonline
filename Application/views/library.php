@@ -15,17 +15,11 @@ $keyword = $_GET['k'] ?? null;
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-    
+
 
     <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>
         <span class="text-muted">The Never-Closing Library</span>
-
-        <?php 
-        if($keyword != null) {
-            $controller->RenderSearchedBooks($keyword); 
-        }
-        ?>
 
         <div class="category-container py-3">
             <div class="">
@@ -38,10 +32,20 @@ $keyword = $_GET['k'] ?? null;
             </span>
         </div>
 
+        <?php if (!$category && $keyword): ?>
+            <h5 class="mt-3">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
+        <?php endif; ?>
+
+        <?php if ($category && !$keyword): ?>
+            <h5 class="mt-3">Category selected: <strong><?= htmlspecialchars($category) ?></strong></h5>
+        <?php endif; ?>
+
         <div class="row py-3">
             <?php
-            if ($category) {
+            if ($category && !$keyword) {
                 $controller->renderLibraryByCategory($category, $page);
+            } else if (!$category && $keyword) {
+                $controller->RenderSearchedBooks($keyword);
             } else {
                 $controller->renderAllBooks($page);
             }
@@ -51,9 +55,7 @@ $keyword = $_GET['k'] ?? null;
         <div class="py-3">
             <nav aria-label="Page navigation">
                 <?php
-                // if (!$category) {
                 $controller->renderPagination();
-                // }
                 ?>
             </nav>
         </div>
