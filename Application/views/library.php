@@ -40,9 +40,9 @@ $page = $_GET['page'] ?? 1;
         <div class="py-3">
             <nav aria-label="Page navigation">
                 <?php
-                if (!$category) {
-                    $controller->renderPagination();
-                }
+                // if (!$category) {
+                $controller->renderPagination();
+                // }
                 ?>
             </nav>
         </div>
