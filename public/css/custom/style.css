@@ -512,6 +512,21 @@ footer {
     border: 1px solid var(--off-white);
 }
 
+.book-tag {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: var(--off-white);
+    color: var(--brown);
+    text-decoration: none;
+    font-size: 10px;
+    transition: all 0.2s;
+    border: 1px solid var(--off-white);
+}
+
+.book-tag:hover,
 .category-collapse-btn:hover,
 .category-link:hover {
     background-color: var(--white);

@@ -30,6 +30,7 @@ function booksByPage($books, $page)
         $contentId = strtolower(htmlspecialchars($book['CONTENTID']));
         $cover = htmlspecialchars($book['COVER']);
         $title = htmlspecialchars($book['TITLE']);
+        $category = htmlspecialchars($book['CATEGORY']);
         $description = htmlspecialchars($book['DESCRIPTION']);
         $userId = strtolower(htmlspecialchars($book['USERID']));
         $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
@@ -44,14 +45,17 @@ function booksByPage($books, $page)
                 </div>
                 <div class="w-100">
                     <a class="book-card-little text-capitalize" href="/library/book/<?= $contentId ?>">
-                        <?= strlen($title) > 30 ? htmlspecialchars(substr($title, 0, 30)) . '...' : $title ?>
+                        <?= strlen($title) > 15 ? htmlspecialchars(substr($title, 0, 15)) . '...' : $title ?>
                     </a>
                     <p>
-                        <?= strlen($description) > 125 ? htmlspecialchars(substr($description, 0, 125)) . '...' : $description ?>
+                        <?= strlen($description) > 85 ? htmlspecialchars(substr($description, 0, 85)) . '...' : $description ?>
                     </p>
                     <span class="book-card-pub">
                         Published by: <a class="text-muted" href="/creators/creator/<?= $userId ?>"><?= $publisher ?></a>
                     </span>
+                    <a href="?category=<?= urlencode($category) ?>" class="book-tag">
+                        <?= $category ?>
+                    </a>
                 </div>
             </div>
         </div>
