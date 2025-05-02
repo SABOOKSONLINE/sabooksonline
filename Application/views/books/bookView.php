@@ -75,7 +75,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
 
                 <!-- BUY COPY -->
                 <div class="col-12 d-flex justify-content-between align-items-center pe-2 py-2 rounded bg-light">
-                    <a href="#" class="btn btn-blue me-2">BUY COPY</a>
+                    <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
                     <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
                 </div>
             </div>
