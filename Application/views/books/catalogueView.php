@@ -53,7 +53,7 @@ function booksByPage($books, $page)
                     <span class="book-card-pub">
                         Published by: <a class="text-muted" href="/creators/creator/<?= $userId ?>"><?= $publisher ?></a>
                     </span>
-                    <a href="?category=<?= urlencode($category) ?>" class="book-tag">
+                    <a href="?category=<?= urlencode($category) ?>" class="category-link book-tag">
                         <?= $category ?>
                     </a>
                 </div>
