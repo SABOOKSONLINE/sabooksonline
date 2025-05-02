@@ -2,6 +2,7 @@
 $contentId = strtolower($book['USERID']);
 $cover = htmlspecialchars($book['COVER']);
 $title = htmlspecialchars($book['TITLE']);
+$category = htmlspecialchars($book['CATEGORY']);
 $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
 $authors = htmlspecialchars($book['AUTHORS']);
 $description = htmlspecialchars($book['DESCRIPTION']);
@@ -24,9 +25,13 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 <span class="muted">Published by:</span>
                 <a href="/creators/creator/<?= $contentId ?>" class="fw-semibold"><?= $publisher ?></a>
             </p>
-            <p class="mb-3 text-capitalize">
+            <p class="mb-1 text-capitalize">
                 <span class="muted">Author/s:</span>
                 <span class="fw-semibold"><?= $authors ?></span>
+            </p>
+            <p class="mb-3 text-capitalize">
+                <span class="muted">Category:</span>
+                <a href="/library?category=<?= $category ?>" class="fw-semibold"><?= $category ?></a>
             </p>
 
             <h6 class="mb-2">Book Synopsis:</h6>
@@ -36,12 +41,12 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 <div class="">
                     <span class="category-link"><b>ISBN NUMBER:</b> <?= $isbn ?></span>
                     <a href="/creators/creator/<?= $contentId ?>" class="category-link"><b>About</b> <?= $publisher ?></a>
-                    <a href="<?= $website ?>" class="category-link">Publish Website</a>
+                    <!-- <a href="<?= $website ?>" class="category-link">Publish Website</a> -->
                 </div>
             </div>
 
-            <!-- Ratings -->
-            <div class="mb-3">
+            <!-- Ratings Comming soon -->
+            <!-- <div class="mb-3">
                 Ratings:
                 <span class="text-warning">
                     <i class="fas fa-star"></i>
@@ -50,23 +55,32 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                     <i class="fas fa-star"></i>
                 </span>
                 <span class="ms-2 text-muted">4.0</span>
-            </div>
+            </div> -->
 
             <!-- Action Buttons & Price -->
-            <div class="row">
-                <div class="col-md-7 d-flex justify-content-between align-items-center p-2">
-                    <a href="#" class="btn btn-green">READ NOW</a>
-                    <span class="ms-2 fw-bold">COMING SOON</span>
+            <div class="row gy-3">
+                <!-- READ NOW -->
+                <div class="col-12 d-flex flex-wrap align-items-center">
+                    <span class="btn btn-green me-2">READ NOW</span>
+                    <span class="text-muted mb-2">COMING SOON</span>
                 </div>
-                <div class="col-md-7 d-flex justify-content-between align-items-center p-2">
-                    <a href="#" class="btn btn-yellow"><i class="bi bi-headphones"></i> LISTEN TO AUDIOBOOK</a>
-                    <span class="ms-2 fw-bold">COMING SOON</span>
+
+                <!-- LISTEN TO AUDIOBOOK -->
+                <div class="col-12 d-flex flex-wrap align-items-center">
+                    <span class="btn btn-yellow me-2">
+                        <i class="bi bi-headphones"></i> LISTEN TO AUDIOBOOK
+                    </span>
+                    <span class="text-muted mb-2">COMING SOON</span>
                 </div>
-                <div class="col-md-7 d-flex justify-content-between align-items-center p-2">
-                    <a href="#" class="btn btn-blue">BUY COPY</a>
-                    <span class="ms-2 fw-bold">R<?= $retailPrice ?>.00</span>
+
+                <!-- BUY COPY -->
+                <div class="col-12 d-flex justify-content-between align-items-center pe-2 py-2 rounded bg-light">
+                    <a href="#" class="btn btn-blue me-2">BUY COPY</a>
+                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>
