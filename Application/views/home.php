@@ -41,7 +41,6 @@ $controller = new BookController($conn);
                     <?php
                     $controller->renderListingsByCategory("editors choice", 6);
                     ?>
-
                 </div>
 
                 <div class="book-card-btn btn-right">

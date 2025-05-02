@@ -5,17 +5,14 @@ require_once __DIR__ . "/../models/BookModel.php";
 require_once __DIR__ . "/../controllers/BookController.php";
 
 $controller = new BookController($conn);
+
 $category = $_GET['category'] ?? null;
 $page = $_GET['page'] ?? 1;
-
-// Get keyword and fetch books
 $keyword = $_GET['k'] ?? null;
 ?>
 
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
-
-
 
     <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>
