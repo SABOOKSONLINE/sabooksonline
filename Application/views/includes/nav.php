@@ -39,15 +39,16 @@
             <!-- Search and Auth Buttons -->
             <div class="d-flex">
                 <!-- Search Form -->
-                <form class="d-flex me-3" action="library" id="myForm">
+                <form class="d-flex me-3" action="library" method="GET" id="myForm">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search by Title, Authors or Publisher"
-                            name="k" value="<?= $_GET['k'] ?? '' ?>">
+                            name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
                         <button class="btn btn-outline-secondary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </form>
+
 
                 <!-- Auth Buttons -->
                 <a class="btn btn-outline-red me-2" href="../../../pricing-plans.php">REGISTER</a>

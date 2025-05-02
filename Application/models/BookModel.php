@@ -115,6 +115,28 @@ class BookModel
         return $books;
     }
 
+    public function searchBooks($keyword)
+    {
+        if ($keyword === '') return [];
+        $safe_keyword = $this->conn->real_escape_string($keyword);
+        $sql = "SELECT * FROM posts 
+                WHERE title LIKE '%$safe_keyword%' 
+                   OR publisher LIKE '%$safe_keyword%' 
+                   OR description LIKE '%$safe_keyword%'
+                   LIMIT 3";
+
+        $result = $this->conn->query($sql);
+        $books = [];
+
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $books[] = $row;
+            }
+        }
+
+        return $books;
+    }
+
     public function getBooksByPublisher($userId)
     {
         $sql = "SELECT * FROM posts WHERE USERID = ?";
