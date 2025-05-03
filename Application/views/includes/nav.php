@@ -39,7 +39,7 @@
             <!-- Search and Auth Buttons -->
             <div class="d-flex">
                 <!-- Search Form -->
-                <form class="d-flex me-3" action="library" method="GET" id="myForm">
+                <form class="d-flex me-3" action="/library" method="GET" id="myForm">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search by Title, Authors or Publisher"
                             name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">

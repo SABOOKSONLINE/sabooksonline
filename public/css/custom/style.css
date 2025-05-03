@@ -133,17 +133,17 @@ body {
    JUMBOTRON / STYLING
 ================================= */
 .jumbotron-lg {
-    background: url("../../images/jumbo_img/home.jpeg");
+    background: url("../../images/jumbo_img/jumbo_woman_reading.jpeg");
     height: 650px;
 }
 
 .jumbotron-md {
-    background: url("../../images/jumbo_img//jumbo_wallpaper_02.jpeg");
+    background: url("../../images/jumbo_img/jumbo_women_reading_colorful.jpeg");
     height: 350px;
 }
 
 .jumbotron-sm {
-    background: url("../../images/jumbo_img//jumbo_wallpaper.jpeg");
+    background: url("../../images/jumbo_img/jumbo_african_elephant_reading.jpeg");
     height: 150px;
 }
 
@@ -405,8 +405,8 @@ body {
 }
 
 .bg-children {
-    background: url("../../images/jumbo_img/children_collections.jpeg") center /
-        cover fixed;
+    background: url("../../images/jumbo_img/jumb0_african_child_reading.jpeg")
+        center / cover fixed;
     position: relative;
 }
 

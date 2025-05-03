@@ -32,9 +32,9 @@ require_once __DIR__ . "/includes/header.php";
             ?>
         </div>
 
-    </div>
-
-
+        <h1 class="mt-4">
+            <a href="/library" class="btn btn-red text-uppercase">View more books</a>
+        </h1>
     </div>
 
     <?php require_once __DIR__ . "/includes/footer.php" ?>
