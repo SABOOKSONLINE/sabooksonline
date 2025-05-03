@@ -47,9 +47,9 @@
             </ul>
 
             <div class="d-none d-xl-flex">
-                <form class="d-flex me-3" action="/library">
+                <form class="d-flex me-3" action="/library" method="GET">
                     <div class="input-group">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
                     </div>
                 </form>
 
