@@ -1,18 +1,15 @@
 <div id="myCarousel" class="carousel slide banner" data-bs-ride="carousel">
-    <!-- <ol class="carousel-indicators">
-    <li data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></li>
-    <li data-bs-target="#myCarousel" data-bs-slide-to="1"></li>
-    </ol> -->
-
     <div class="carousel-inner" style="border-radius: 25px;">
-        <div class="carousel-item active">
-            <a href="">
-                <img src="https://admin-dashboard.sabooksonline.co.za/banners/../../../banners/2.jpg" class="d-block w-100" alt="Home Page Banner" style="border-radius: 25px">
-            </a>
-        </div>
-        <div class="carousel-item">
-            <img src="https://admin-dashboard.sabooksonline.co.za/banners/../../../banners/4.jpg" class="d-block w-100" alt="Home Page Banner" style="border-radius: 25px">
-        </div>
+        <?php foreach ($banners as $index => $banner): ?>
+            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                <a href="<?= $banner['UPLOADED'] ?>">
+                    <img src="https://admin-dashboard.sabooksonline.co.za/banners/<?= $banner['IMAGE'] ?>"
+                        class="d-block w-100"
+                        alt="<?= $banner['SLIDE'] ?>"
+                        style="border-radius: 25px">
+                </a>
+            </div>
+        <?php endforeach; ?>
     </div>
 
     <!-- Controls -->

@@ -1,10 +1,13 @@
 <?php
 require_once __DIR__ . "/includes/header.php";
+
 require_once __DIR__ . "/../../database/connection.php";
 require_once __DIR__ . "/../models/BookModel.php";
 require_once __DIR__ . "/../controllers/BookController.php";
+require_once __DIR__ . "/../models/BannerModel.php";
+require_once __DIR__ . "/../controllers/BannerController.php";
 
-$controller = new BookController($conn);
+$bookController = new BookController($conn);
 ?>
 
 <body>
@@ -26,7 +29,10 @@ $controller = new BookController($conn);
     </div>
 
     <div class="container">
-        <?php require_once __DIR__ . "/includes/banner.php" ?>
+        <?php
+        $bannerController = new BannerController($conn);
+        $bannerController->renderBanner("home");
+        ?>
     </div>
 
     <section class="section" id="stylish-section">
@@ -39,7 +45,7 @@ $controller = new BookController($conn);
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    $controller->renderListingsByCategory("editors choice", 6);
+                    $bookController->renderListingsByCategory("editors choice", 6);
                     ?>
                 </div>
 
@@ -63,7 +69,7 @@ $controller = new BookController($conn);
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
                     <?php
-                    $controller->renderListingsByCategory("Latest Collections", 10);
+                    $bookController->renderListingsByCategory("Latest Collections", 10);
                     ?>
 
                 </div>
@@ -88,7 +94,7 @@ $controller = new BookController($conn);
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
                     <?php
-                    $controller->renderListingsByCategory("fiction collections", 10);
+                    $bookController->renderListingsByCategory("fiction collections", 10);
                     ?>
 
                 </div>
@@ -117,7 +123,7 @@ $controller = new BookController($conn);
                 <div class="book-cards mt-4" id="childrens_collections">
                     <div class="book-card-slide">
                         <?php
-                        $controller->renderListingsByCategory("childrens collection", 10);
+                        $bookController->renderListingsByCategory("childrens collection", 10);
                         ?>
 
                     </div>

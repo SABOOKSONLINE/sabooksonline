@@ -1,8 +1,7 @@
 <?php
-// controllers/BannerController.php
-
-require_once __DIR__ . '/../config/connection.php';
-include_once 'models/BannerModel.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 class BannerController
 {
@@ -13,22 +12,22 @@ class BannerController
         $this->bannerModel = new BannerModel($conn);
     }
 
-    public function loadBannersForPage($pageType)
+    public function renderBanner($pageType)
     {
-        $firstBanner = $this->bannerModel->getFirstBannerByType($pageType);
-        $otherBanners = $this->bannerModel->getRemainingBannersByType($pageType);
+        $banners = $this->bannerModel->getBannersByType($pageType);
 
-        return [
-            'first' => $firstBanner,
-            'others' => $otherBanners
-        ];
+        if ($banners) {
+            include __DIR__ . "/../views/includes/banner.php";
+        } else {
+            echo "No banner found.";
+        }
     }
 }
 ?>
 
-php code on how to display the banners
-<!-- 
-include_once 'controllers/BannerController.php';
+<!-- php code on how to display the banners -->
+
+<!-- include_once 'controllers/BannerController.php';
 
 $bannerController = new BannerController($conn);
 $bannerData = $bannerController->loadBannersForPage('Home');
