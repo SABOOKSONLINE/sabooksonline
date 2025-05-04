@@ -24,12 +24,3 @@ class BannerController
     }
 }
 ?>
-
-<!-- php code on how to display the banners -->
-
-<!-- include_once 'controllers/BannerController.php';
-
-$bannerController = new BannerController($conn);
-$bannerData = $bannerController->loadBannersForPage('Home');
-
-include 'partials/banner-carousel.php'; -->
