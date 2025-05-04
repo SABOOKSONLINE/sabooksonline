@@ -52,14 +52,10 @@ require_once __DIR__ . "/includes/header.php";
                     <a href="register/?plan=Standard" class="btn btn-red mb-4">Try free 30 day trial</a>
 
                     <ul class="plan-features list-unstyled">
-                        <li>Unlimited Free Book Listings</li>
-                        <li><strong>10 Priced</strong> Books</li>
-                        <li><strong>3 Service</strong> Listing</li>
+                        <li>5 Free Book Listings</li>
+                        <li><strong>5 Priced</strong> Books</li>
+                        <li><strong>5 Service</strong> Listing</li>
                         <li><strong>AD 10 events</strong> per month</li>
-                        <li><strong>1 Email</strong> addresses</li>
-                        <li>Website With payment gateway</li>
-                        <li>Analytics</li>
-                        <li>Analytics</li>
                     </ul>
                 </div>
 
@@ -80,13 +76,12 @@ require_once __DIR__ . "/includes/header.php";
                     <a href="register/?plan=Premium" class="btn btn-red mb-4">Try free 30 day trial</a>
 
                     <ul class="plan-features list-unstyled">
-                        <li>Unlimited Free Book Listings</li>
+                        <li>20 Free Book Listings</li>
+                        <li>1 Audio Book Listings</li>
                         <li><strong>10 Priced</strong> Books</li>
-                        <li><strong>3 Service</strong> Listing</li>
-                        <li><strong>AD 10 events</strong> per month</li>
-                        <li><strong>1 Email</strong> addresses</li>
-                        <li>Website With payment gateway</li>
-                        <li>Analytics</li>
+                        <li><strong>5 Service</strong> Listing</li>
+                        <li><strong>10 events</strong> per month</li>
+                        <li><strong>Limited</strong> Traffic Analytics</li>
                     </ul>
                 </div>
 
@@ -107,13 +102,11 @@ require_once __DIR__ . "/includes/header.php";
                     <a href="register/?plan=Deluxe" class="btn btn-red mb-4">Try free 30 day trial</a>
 
                     <ul class="plan-features list-unstyled">
-                        <li>Unlimited Free Book Listings</li>
-                        <li><strong>10 Priced</strong> Books</li>
-                        <li><strong>3 Service</strong> Listing</li>
-                        <li><strong>AD 10 events</strong> per month</li>
-                        <li><strong>1 Email</strong> addresses</li>
-                        <li>Website With payment gateway</li>
-                        <li>Analytics</li>
+                        <li>Unlimited Book Listings</li>
+                        <li><strong>Unlimited Priced</strong> Books</li>
+                        <li><strong>Unlimited Service</strong> Listing</li>
+                        <li><strong>10 events</strong> per month + Custom Event Page</li>
+                        <li><strong>Unlimited</strong> Traffic Analytics</li>
                     </ul>
                 </div>
             </div>
