@@ -7,9 +7,9 @@ session_set_cookie_params(0, '/', $cookieDomain);
 
 session_start();
 
-if(!isset($_SESSION['ADMIN_USERKEY'])){
-header("Location: https://11-july-2023.sabooksonline.co.za/login?redirectlog2");
-}
+// if(!isset($_SESSION['ADMIN_USERKEY'])){
+// header("Location: https://11-july-2023.sabooksonline.co.za/login?redirectlog2");
+// }
 
 // // for testung - using ujpress
 // $_SESSION['ADMIN_ID'] = '388';
