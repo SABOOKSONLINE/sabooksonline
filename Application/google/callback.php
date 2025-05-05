@@ -5,9 +5,9 @@ error_reporting(E_ALL);
 ini_set('session.save_path', '/tmp'); // 👈 Set this before session_start()
 session_start();
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../../google/vendor/autoload.php'; // Adjust based on vendor location
 require_once __DIR__ . '/../../includes/database_connections/sabooks.php';
-require_once __DIR__ . "../controllers/AuthController.php";
+require_once __DIR__ . '/../controllers/AuthController.php';
 
 use Google\Client as Google_Client;
 use Google\Service\Oauth2;
@@ -38,7 +38,7 @@ if (isset($_GET['code'])) {
 
     if ($loginResult === true) {
         // ✅ Proper session is set, now redirect
-        header('https://11-july-2023.sabooksonline.co.za/dashboard');
+        header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
         // ❌ Login failed, show the error

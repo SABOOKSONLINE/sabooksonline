@@ -1,5 +1,4 @@
 <?php
-// require_once __DIR__ . '/../../google/vendor/autoload.php';
 
 use Google\Client as Google_Client;
 
