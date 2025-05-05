@@ -125,6 +125,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/signup', function () {
         require __DIR__ . "/Application/views/auth/signup.php";
     });
+
+    $r->addRoute('GET', '/forgot-password', function () {
+        require __DIR__ . "/Application/views/auth/forgot_password.php";
+    });
+
+    $r->addRoute('GET', '/reset-password', function () {
+        require __DIR__ . "/Application/views/auth/reset_password.php";
+    });
 });
 
 // Fetch method and URI from server
