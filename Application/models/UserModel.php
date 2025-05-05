@@ -19,6 +19,13 @@ class UserModel {
         $this->conn = $dbConn;
     }
 
+     public function findByEmail($email) {
+        $email = mysqli_real_escape_string($this->conn, $email);
+        $sql = "SELECT * FROM users WHERE ADMIN_EMAIL = '$email' LIMIT 1;";
+        $result = mysqli_query($this->conn, $sql);
+        return mysqli_fetch_assoc($result);
+    }
+
     /**
      * Retrieves a user by either their admin name or admin user key.
      * Converts dashes to spaces to allow for URL-friendly content IDs.
