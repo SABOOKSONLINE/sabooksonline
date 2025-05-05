@@ -1,7 +1,4 @@
 <?php
-
-
-
 require 'vendor/autoload.php';
 
 use FastRoute\RouteCollector;
@@ -36,6 +33,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
+
+    $r->addRoute('GET', '/login', function () {
+        require "login.php";
+    });
+
+    $r->addRoute('GET', '/google/callback', function () {
+        require  "Application/google/callback.php";
+    });
+
     // audioBook
     $r->addRoute('GET', '/library/audio-book', function () {
         require "Application/views/audio/audioBookPage.php";
@@ -43,7 +49,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/models/index.php";
+        require "dashboard/index.php";
     });
 
     $r->addRoute('GET', '/dashboard/listings', function () {

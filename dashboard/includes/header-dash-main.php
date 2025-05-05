@@ -4,9 +4,12 @@
 $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
-// if(!isset($_SESSION['ADMIN_USERKEY'])){
 
 session_start();
+
+// if(!isset($_SESSION['ADMIN_USERKEY'])){
+// header("Location: https://11-july-2023.sabooksonline.co.za/login?redirectlog2");
+// }
 
 // // for testung - using ujpress
 // $_SESSION['ADMIN_ID'] = '388';
@@ -66,7 +69,6 @@ session_start();
 }
 
 </style>
-
 <a href="#logout" class="text-center text-white move-down" style="position: fixed !important;background-color: #222;width:30px;height:30px;border-radius:50%;box-shadow: rgba(0,0,0,.5);z-index: 1000;bottom:10%;left:15%;"><i class="fa fa-arrow-down"></i></a>
 
 
