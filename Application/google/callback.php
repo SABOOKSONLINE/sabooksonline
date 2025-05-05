@@ -1,4 +1,5 @@
 <?php
+ini_set('session.save_path', '/tmp'); // 👈 Set this before session_start()
 session_start();
 
 require_once 'vendor/autoload.php';
