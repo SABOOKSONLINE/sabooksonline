@@ -66,7 +66,6 @@ session_start();
 }
 
 </style>
-
 <a href="#logout" class="text-center text-white move-down" style="position: fixed !important;background-color: #222;width:30px;height:30px;border-radius:50%;box-shadow: rgba(0,0,0,.5);z-index: 1000;bottom:10%;left:15%;"><i class="fa fa-arrow-down"></i></a>
 
 
