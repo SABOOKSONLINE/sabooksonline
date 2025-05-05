@@ -2,7 +2,7 @@
 session_start();
 
 require_once 'vendor/autoload.php';
-require_once '../includes/database_connections/sabooks.php';
+require_once '../../includes/database_connections/sabooks.php';
 require_once __DIR__ . "../controllers/AuthController.php";
 
 use Google\Client as Google_Client;
@@ -34,7 +34,7 @@ if (isset($_GET['code'])) {
 
     if ($loginResult === true) {
         // ✅ Proper session is set, now redirect
-        header('Location: ../dashboard.php');
+        header('ttps://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
         // ❌ Login failed, show the error

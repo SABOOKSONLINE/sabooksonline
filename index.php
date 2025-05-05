@@ -33,9 +33,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
-    $r->addRoute('GET', '/login?redirectlogs2', function () {
-        require "Application/views/login.php";
-    });
 
     $r->addRoute('GET', '/login', function () {
         require "Application/views/login.php";
