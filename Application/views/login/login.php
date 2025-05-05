@@ -60,7 +60,7 @@ e.preventDefault();
     $("#reg_load").html('<div class="d-flex justify-content-center align-content-center align-items-center" style="width: 100%;height:100%;position:relative;"><div class="spinner-border text-white" role="status"><span class="visually-hidden">Loading...</span></div></div>');
     
     $.ajax({
-        url: "includes/backend/login.php",
+        url: "../login.php",
         type: "POST",
         data:  new FormData(this),
         contentType: false,

@@ -4,9 +4,12 @@
 $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
-// if(!isset($_SESSION['ADMIN_USERKEY'])){
 
 session_start();
+
+if(!isset($_SESSION['ADMIN_USERKEY'])){
+header("Location: ../application/views/login?redirectlogs2");
+}
 
 // // for testung - using ujpress
 // $_SESSION['ADMIN_ID'] = '388';
