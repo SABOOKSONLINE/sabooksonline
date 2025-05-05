@@ -66,18 +66,13 @@ if (isset($_GET['code'])) {
 
 
 
-    if ($loginResult === true) {
-
-        if (!isset($_SESSION['ADMIN_ID'])) {
-            echo "<div class='alert alert-danger'>Login session could not be established. Please try again.</div>";
-            exit;
-        }
-
+    if ($loginResult === true && isset($_SESSION['ADMIN_ID'])) {
         // ✅ Proper session is set, now redirect
         header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
-        // header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
+
+        echo "<div class='alert alert-danger'>Login session could not be established. Please try again.</div>";
         // ❌ Login failed, show the error
         echo $loginResult;
         exit;
