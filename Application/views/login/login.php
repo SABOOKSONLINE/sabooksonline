@@ -1,5 +1,5 @@
 <?php 
-require_once 'vendor/autoload.php';
+require_once '../../google/vendor/autoload.php';
 use Google\Client as Google_Client;
 
 $client = new Google_Client();

@@ -1,10 +1,8 @@
 <?php
-// index.php (Routing logic)
 session_start();
 
-// Database connection
-include '../database_connections/sabooks.php';
-require_once 'vendor/autoload.php';
+include '../includes/database_connections/sabooks.php';
+require_once '../google/vendor/autoload.php';
 
 use App\Controllers\AuthController;
 
@@ -17,7 +15,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     echo $authController->loginWithForm($email, $password);
 } else {
     // Render login view
-    include 'views/loginView.php';
+    include 'views/login/login.php';
 }
 
 ?>

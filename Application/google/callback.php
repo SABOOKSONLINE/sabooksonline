@@ -16,6 +16,6 @@ $client->addScope('profile');
 if (isset($_GET['code'])) {
     $client->authenticate($_GET['code']);
     $_SESSION['access_token'] = $client->getAccessToken();
-    header('Location: dashboard.php');
+    header('https://11-july-2023.sabooksonline.co.za/dashboard');
     exit;
 }
