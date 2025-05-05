@@ -7,6 +7,11 @@ require_once __DIR__ . "../controllers/AuthController.php";
 
 $authController = new AuthController($conn);
 
+
+if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+    header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
+}
+
 // Check if the form is submitted
 if (isset($_POST['log_email']) && isset($_POST['log_pwd2'])) {
     $email = $_POST['log_email'];
