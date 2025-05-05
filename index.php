@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require 'vendor/autoload.php';
 
 use FastRoute\RouteCollector;
@@ -31,15 +35,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/library/book/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/bookpage.php";
-    });
-
-
-    $r->addRoute('GET', '/login', function () {
-        require "login.php";
-    });
-
-    $r->addRoute('GET', '/google/callback', function () {
-        require  "Application/google/callback.php";
     });
 
     // audioBook
@@ -124,6 +119,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // sign-in & up pages
+    $r->addRoute('GET', '/google/callback', function () {
+        require  "Application/google/callback.php";
+    });
+
     $r->addRoute('GET', '/login', function () {
         require __DIR__ . "/Application/views/auth/login.php";
     });
