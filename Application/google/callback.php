@@ -27,19 +27,24 @@ if (isset($_GET['code'])) {
     $client->authenticate($_GET['code']);
     $_SESSION['access_token'] = $client->getAccessToken();
 
+    $client->setAccessToken($_SESSION['access_token']);
 
-    $oauth = new Oauth2($client);
-    $google_user = $oauth->userinfo->get();
+    $service = new Google_Service_Oauth2($client);
+    $user = $service->userinfo->get();
+
 
     $authController = new AuthController($conn);
 
-    $email = $google_user->email;
+    $reg_name = $user->getName() ;
+    $reg_email = $user->getEmail();
+    $profileimage = $user->getPicture();
 
-    $loginResult = $authController->loginWithGoogle($email);
+    $loginResult = $authController->loginWithGoogle($reg_email);
 
     if ($loginResult === true) {
         // ✅ Proper session is set, now redirect
-        header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
+        echo '<script>window.location.href="https://11-july-2023.sabooksonline.co.za/dashboard";</script>';
+        // header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
         // ❌ Login failed, show the error

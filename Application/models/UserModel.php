@@ -20,7 +20,7 @@ class UserModel {
     }
 
     public function findUserByEmail($email) {
-        $email = mysqli_real_escape_string($this->conn, $email);
+        // $email = mysqli_real_escape_string($this->conn, $email);
         $sql = "SELECT * FROM users WHERE ADMIN_EMAIL = '$email' LIMIT 1;";
         return mysqli_query($this->conn, $sql);
     }
@@ -54,6 +54,8 @@ class UserModel {
         $_SESSION['ADMIN_SERVICES'] = $userData['ADMIN_SERVICES'];
     
     }
+
+
     
 
     /**
