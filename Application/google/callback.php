@@ -63,7 +63,7 @@ if (isset($_GET['code'])) {
 
     if ($loginResult === true) {
         // ✅ Proper session is set, now redirect
-        header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
+        header('Location: https://11-july-2023.sabooksonline.co.za/dashboardd');
         // header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
