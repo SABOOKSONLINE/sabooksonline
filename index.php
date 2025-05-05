@@ -116,6 +116,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/refund-policy', function () {
         require __DIR__ . "/Application/views/documentations/refund-policy.php";
     });
+
+    // sign-in & up pages
+    $r->addRoute('GET', '/login', function () {
+        require __DIR__ . "/Application/views/auth/login.php";
+    });
+
+    $r->addRoute('GET', '/signup', function () {
+        require __DIR__ . "/Application/views/auth/signup.php";
+    });
 });
 
 // Fetch method and URI from server
