@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/../../vendor/autoload.php'; // Adjust path to where your real vendor folder is
+// require_once __DIR__ . '/vendor/autoload.php';
+
+
 use Google\Client as Google_Client;
 
 $client = new Google_Client();
