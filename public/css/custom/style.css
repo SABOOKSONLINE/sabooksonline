@@ -804,3 +804,37 @@ footer {
     font-size: 14px;
     margin: 8px 0 0;
 }
+
+/* ===============================
+   LOGIN / STYLING
+================================= */
+
+.login-page {
+    background: url("/public/images/jumbo_img/jumbo_african_elephant_reading.jpeg");
+    background-position: center;
+    background-size: cover;
+}
+
+.login-page:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+
+    z-index: 1;
+}
+
+.login-page .card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+
+    border: 1px solid var(--white);
+
+    z-index: 2;
+}
