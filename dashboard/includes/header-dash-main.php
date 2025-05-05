@@ -8,7 +8,7 @@ session_set_cookie_params(0, '/', $cookieDomain);
 session_start();
 
 if(!isset($_SESSION['ADMIN_USERKEY'])){
-header("Location: https://11-july-2023.sabooksonline.co.za/login.php");
+header("Location: https://11-july-2023.sabooksonline.co.za/login");
 }
 
 // // for testung - using ujpress
