@@ -30,7 +30,6 @@ class UserModel {
     }
 
     public function startSession($userData) {
-        session_start();
         $_SESSION['ADMIN_ID'] = $userData['ADMIN_ID'];
         $_SESSION['ADMIN_SUBSCRIPTION'] = $userData['ADMIN_SUBSCRIPTION'];
         $_SESSION['ADMIN_NAME'] = $userData['ADMIN_NAME'];
