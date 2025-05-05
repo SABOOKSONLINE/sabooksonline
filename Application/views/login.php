@@ -50,6 +50,8 @@ $authUrl = $client->createAuthUrl();
         </aside>  
     </div>
 
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+
 <script>
 $("#login").on('submit',(function(e) {
 e.preventDefault();
