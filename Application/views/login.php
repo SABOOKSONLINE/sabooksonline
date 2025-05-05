@@ -1,9 +1,13 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 
 include '../includes/database_connections/sabooks.php';
-require_once __DIR__ . "../controllers/AuthController.php";
-require_once '../google/vendor/autoload.php';
+require_once __DIR__ . "/../controllers/AuthController.php";
+require_once '../../google/vendor/autoload.php';
 use Google\Client as Google_Client;
 
 $client = new Google_Client();
