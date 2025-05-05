@@ -33,9 +33,6 @@ if (isset($_GET['code'])) {
     $name = $google_user->name;
     $google_id = $google_user->id;
 
-    echo $authController->loginWithGoogle($email);
-
-    header('Location: ../dashboard.php');
-    
+    echo $authController->loginWithGoogle($email);    
     exit;
 }
