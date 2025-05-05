@@ -35,7 +35,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
 
     $r->addRoute('GET', '/login', function () {
-        require "Application/views/login.php";
+        require "/login.php";
     });
 
     $r->addRoute('GET', '/google/callback', function () {
