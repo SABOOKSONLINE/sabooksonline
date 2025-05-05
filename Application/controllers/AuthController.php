@@ -11,7 +11,7 @@ class AuthController {
     }
 
     public function loginWithGoogle($email) {
-        
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return "<div class='alert alert-warning'>Your email is invalid!</div>";
     }
