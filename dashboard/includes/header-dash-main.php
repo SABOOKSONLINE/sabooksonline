@@ -8,7 +8,7 @@ session_set_cookie_params(0, '/', $cookieDomain);
 session_start();
 
 if(!isset($_SESSION['ADMIN_USERKEY'])){
-header("Location: ../Application/views/login?redirectlogs2");
+header("Location: /login");
 }
 
 // // for testung - using ujpress
