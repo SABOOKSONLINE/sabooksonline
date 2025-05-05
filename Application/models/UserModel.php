@@ -26,6 +26,8 @@ class UserModel {
         return mysqli_fetch_assoc($result);
     }
 
+    
+
     /**
      * Retrieves a user by either their admin name or admin user key.
      * Converts dashes to spaces to allow for URL-friendly content IDs.
