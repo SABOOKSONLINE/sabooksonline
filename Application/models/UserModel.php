@@ -15,8 +15,8 @@ class UserModel {
      *
      * @param mysqli $dbConn An active MySQLi database connection
      */
-    public function __construct($dbConn) {
-        $this->conn = $dbConn;
+    public function __construct($conn) {
+        $this->conn = $conn;
     }
 
      public function findByEmail($email) {

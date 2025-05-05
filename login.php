@@ -136,7 +136,7 @@ $authUrl = $client->createAuthUrl();
 	
 	<!-- COMMON SCRIPTS -->
     <script src="js/common_scripts.min.js"></script>
-<script src="js/custom.js"></script>
+	<script src="js/custom.js"></script>
     <script src="js/common_func.js"></script>
     <script src="assets/validate.js"></script>
 
