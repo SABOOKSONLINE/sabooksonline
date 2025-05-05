@@ -3,8 +3,8 @@ session_start();
 
 include '../includes/database_connections/sabooks.php';
 require_once '../google/vendor/autoload.php';
+require_once __DIR__ . "/../controllers/AuthController.php";
 
-use App\Controllers\AuthController;
 
 $authController = new AuthController($conn);
 
@@ -12,7 +12,7 @@ $authController = new AuthController($conn);
 if (isset($_POST['log_email']) && isset($_POST['log_pwd2'])) {
     $email = $_POST['log_email'];
     $password = $_POST['log_pwd2'];
-    
+
     echo $authController->loginWithForm($email, $password);
 } else {
     // Render login view
