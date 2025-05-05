@@ -39,7 +39,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('GET', '/google/callback', function () {
-        require "Application/google/callback.php";
+        require __DIR__ . "/Application/google/callback.php";
     });
 
     // audioBook
