@@ -56,15 +56,15 @@
                 </form>
 
                 <div class="btn-group">
-                    <a href="#" class="btn btn-outline-danger btn-outline-red">REGISTER</a>
+                    <a href="https://11-july-2023.sabooksonline.co.za/membership" class="btn btn-outline-danger btn-outline-red">REGISTER</a>
                     <a href="https://11-july-2023.sabooksonline.co.za/dashboard" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>
 
             <div class="d-xl-none bg-light p-3">
                 <div class="d-grid gap-2">
-                    <a href="#" class="btn btn-outline-danger btn-outline-red">REGISTER</a>
-                    <a href="#" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
+                    <a href="https://11-july-2023.sabooksonline.co.za/membership" class="btn btn-outline-danger btn-outline-red">REGISTER</a>
+                    <a href="https://11-july-2023.sabooksonline.co.za/dashboard" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>
         </div>
