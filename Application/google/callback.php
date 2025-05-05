@@ -19,20 +19,27 @@ $client->addScope('profile');
 
 
 
-$authController = new AuthController($conn);
-
 if (isset($_GET['code'])) {
     $client->authenticate($_GET['code']);
     $_SESSION['access_token'] = $client->getAccessToken();
 
-    // Get user info
     $oauth = new Oauth2($client);
     $google_user = $oauth->userinfo->get();
 
-    $email = $google_user->email;
-    $name = $google_user->name;
-    $google_id = $google_user->id;
+    $authController = new AuthController($conn);
 
-    echo $authController->loginWithGoogle($email);    
-    exit;
+    $email = $google_user->email;
+
+    $loginResult = $authController->loginWithGoogle($email);
+
+    if ($loginResult === true) {
+        // ✅ Proper session is set, now redirect
+        header('Location: ../dashboard.php');
+        exit;
+    } else {
+        // ❌ Login failed, show the error
+        echo $loginResult;
+        exit;
+    }
 }
+
