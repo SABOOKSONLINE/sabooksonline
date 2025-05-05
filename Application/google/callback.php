@@ -27,6 +27,7 @@ if (isset($_GET['code'])) {
     $client->authenticate($_GET['code']);
     $_SESSION['access_token'] = $client->getAccessToken();
 
+
     $oauth = new Oauth2($client);
     $google_user = $oauth->userinfo->get();
 

@@ -49,7 +49,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/models/index.php";
+        require "dashboard/index.php";
     });
 
     $r->addRoute('GET', '/dashboard/listings', function () {
