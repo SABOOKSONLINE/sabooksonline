@@ -1,9 +1,6 @@
 <?php
-// controllers/AuthController.php
-namespace App\Controllers;
-
-require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/../models/userModel.php';
+
 
 class AuthController {
 

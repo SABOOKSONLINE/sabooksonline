@@ -19,11 +19,10 @@ class UserModel {
         $this->conn = $conn;
     }
 
-     public function findByEmail($email) {
+    public function findUserByEmail($email) {
         $email = mysqli_real_escape_string($this->conn, $email);
         $sql = "SELECT * FROM users WHERE ADMIN_EMAIL = '$email' LIMIT 1;";
-        $result = mysqli_query($this->conn, $sql);
-        return mysqli_fetch_assoc($result);
+        return mysqli_query($this->conn, $sql);
     }
 
     public function verifyPassword($password, $hash) {
@@ -53,10 +52,7 @@ class UserModel {
         $_SESSION['ADMIN_USERKEY'] = $userData['ADMIN_USERKEY'];
         $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
         $_SESSION['ADMIN_SERVICES'] = $userData['ADMIN_SERVICES'];
-        $_SESSION['ADMIN_IMAGE01'] = $userData['ADMIN_IMAGE01'];
-        $_SESSION['ADMIN_IMAGE02'] = $userData['ADMIN_IMAGE02'];
-        $_SESSION['ADMIN_IMAGE03'] = $userData['ADMIN_IMAGE03'];
-        $_SESSION['ADMIN_IMAGE04'] = $userData['ADMIN_IMAGE04'];
+    
     }
     
 
