@@ -35,7 +35,7 @@ if (isset($_GET['code'])) {
 
     if ($loginResult === true) {
         // ✅ Proper session is set, now redirect
-        header('ttps://11-july-2023.sabooksonline.co.za/dashboard');
+        header('https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
         // ❌ Login failed, show the error

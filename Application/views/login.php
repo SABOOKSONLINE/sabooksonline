@@ -1,17 +1,6 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-ini_set(option: 'session.save_path', value: '/tmp'); // 👈 Set this before session_start()
-error_reporting(E_ALL);
-
-session_start();
-
-
-require_once __DIR__ . "/../controllers/AuthController.php";
-require_once __DIR__ . '/../../includes/database_connections/sabooks.php';
-
 require_once __DIR__ . '/../../google/vendor/autoload.php';
+
 use Google\Client as Google_Client;
 
 $client = new Google_Client();
@@ -21,19 +10,9 @@ $client->setRedirectUri('https://11-july-2023.sabooksonline.co.za/google/callbac
 $client->addScope('email');
 $client->addScope('profile');
 
-// Generate the Google login URL
 $authUrl = $client->createAuthUrl();
-
-
-$authController = new AuthController($conn);
-
-// Check if the form is submitted
-if (isset($_POST['log_email']) && isset($_POST['log_pwd2'])) {
-    $email = $_POST['log_email'];
-    $password = $_POST['log_pwd2'];
-    echo $authController->loginWithForm($email, $password);
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
