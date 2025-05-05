@@ -55,15 +55,26 @@ if (isset($_GET['code'])) {
 
 
     $loginResult = $authController->loginWithGoogle($reg_email);
+
+        error_log("Session Contents: " . print_r($_SESSION, true));
+
     if (isset($_SESSION['ADMIN_ID'])) {
     error_log("✅ Session set for: " . $_SESSION['ADMIN_EMAIL']);
     } else {
         error_log("❌ Session NOT set");
     }
 
+
+
     if ($loginResult === true) {
+
+        if (!isset($_SESSION['ADMIN_ID'])) {
+            echo "<div class='alert alert-danger'>Login session could not be established. Please try again.</div>";
+            exit;
+        }
+
         // ✅ Proper session is set, now redirect
-        header('Location: https://11-july-2023.sabooksonline.co.za/dashboardd');
+        header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         // header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
         exit;
     } else {
