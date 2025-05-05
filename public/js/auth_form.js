@@ -47,6 +47,10 @@ const forceFocusInput = (input) => {
 };
 
 const validateInput = (input) => {
+    if (!input || input.value.trim() === "") {
+        return true;
+    }
+
     if (input.type === "text" && !isAlphaOnly(input.value)) {
         inValidInputPop(input);
         return false;
