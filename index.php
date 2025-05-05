@@ -41,6 +41,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/login.php";
     });
 
+    $r->addRoute('GET', '/google/callback', function () {
+        require "Application/google/callback.php";
+    });
+
     // audioBook
     $r->addRoute('GET', '/library/audio-book', function () {
         require "Application/views/audio/audioBookPage.php";

@@ -22,8 +22,7 @@ $authUrl = $client->createAuthUrl();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+
 </head>
 <body>
     <div id="register">
@@ -50,8 +49,6 @@ $authUrl = $client->createAuthUrl();
             </form>
         </aside>  
     </div>
-    <script src="js/common_scripts.min.js"></script>
-    <script src="js/custom.js"></script>
 
 <script>
 $("#login").on('submit',(function(e) {

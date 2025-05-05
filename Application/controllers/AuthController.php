@@ -30,7 +30,7 @@ class AuthController {
                     return "<center class='alert alert-warning'>Password Incorrect!</center>";
                 } else {
                     $this->userModel->startSession($userData);
-                    return '<script>window.location.href="../../dashboard/";</script>';
+                    return '<script>window.location.href="https://11-july-2023.sabooksonline.co.za/dashboard";</script>';
                 }
             }
         }
