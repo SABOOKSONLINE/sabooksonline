@@ -2,15 +2,16 @@
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+ini_set(option: 'session.save_path', value: '/tmp'); // 👈 Set this before session_start()
 error_reporting(E_ALL);
 
-ini_set('session.save_path', '/tmp'); // 👈 Set this before session_start()
 session_start();
 
-require_once __DIR__ . "/../controllers/AuthController.php";
-include __DIR__ . '/../../../includes/database_connections/sabooks.php';
 
-require_once '../../google/vendor/autoload.php';
+require_once __DIR__ . "/../controllers/AuthController.php";
+require_once __DIR__ . '/../../includes/database_connections/sabooks.php';
+
+require_once __DIR__ . '/../../google/vendor/autoload.php';
 use Google\Client as Google_Client;
 
 $client = new Google_Client();
