@@ -15,8 +15,9 @@ $client->setRedirectUri('https://11-july-2023.sabooksonline.co.za/google/callbac
 $client->addScope('email');
 $client->addScope('profile');
 
-if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-    header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
+if (isset($_SESSION['ADMIN_ID'])) {
+        // ✅ Proper session is set, now redirect
+ header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
 }
 
 $authUrl = $client->createAuthUrl();
