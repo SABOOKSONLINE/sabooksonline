@@ -134,7 +134,9 @@
 <?php
 
  //DATABASE CONNECTIONS SCRIPT
- include '../includes/database_connections/sabooks_user.php';
+//  include '../includes/database_connections/sabooks_user.php';
+ require_once __DIR__ . '/../includes/database_connections/sabooks_user.php';
+
 
 // Initialize default monthly sums to 0
 $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'], 0);
