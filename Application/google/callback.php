@@ -48,11 +48,6 @@ if (isset($_GET['code'])) {
     $reg_email = $user->getEmail();
     $profileimage = $user->getPicture();
 
-    print_r(value: $user);
-    print_r(value: $reg_name);
-    print_r(value: $reg_email);
-
-
 
     $loginResult = $authController->loginWithGoogle($reg_email);
 
