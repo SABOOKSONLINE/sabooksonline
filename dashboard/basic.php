@@ -279,7 +279,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                     <?php
 
                     //DATABASE CONNECTIONS SCRIPT
-                    include '../includes/database_connections/sabooks.php';
+                require_once __DIR__ . '/../includes/database_connections/sabooks.php';
 
                   // Define the USERID you want to filter by
                   $user_id = $_SESSION['ADMIN_USERKEY'];
