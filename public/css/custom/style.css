@@ -815,13 +815,12 @@ footer {
     background-size: cover;
 }
 
-.login-page:after {
-    content: "";
-    position: absolute;
-    top: 0;
+.login-page section {
+    position: relative;
+    /* top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100%; */
 
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);

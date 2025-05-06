@@ -37,10 +37,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
+
+
+
     // audioBook
-    $r->addRoute('GET', '/library/audio-book', function () {
-        require "Application/views/audio/audioBookPage.php";
-    });
+    // $r->addRoute('GET', '/library/audio-book', function () {
+    //     require "Application/views/audio/audioBookPage.php";
+    // });
 
     // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
