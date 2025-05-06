@@ -51,7 +51,7 @@ if (isset($_GET['code'])) {
 
     $loginResult = $authController->loginWithGoogle($reg_email);
 
-        error_log("Session Contents: " . print_r($_SESSION, true));
+    error_log("Session Contents: " . print_r($_SESSION, true));
 
     if (isset($_SESSION['ADMIN_ID'])) {
     error_log("✅ Session set for: " . $_SESSION['ADMIN_EMAIL']);

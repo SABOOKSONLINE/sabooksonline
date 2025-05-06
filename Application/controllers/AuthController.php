@@ -29,6 +29,8 @@ class AuthController {
         return "<center class='alert alert-warning'>Your account needs to be confirmed. Please check your email.</center>";
     }
 
+    $this->userModel->startSession($userData);
+
     // 👇 Confirm session is properly set
     if (!isset($_SESSION['ADMIN_ID'])) {
         return "<div class='alert alert-danger'>Failed to set session. Please try again.</div>";
