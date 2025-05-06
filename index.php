@@ -121,14 +121,18 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require __DIR__ . "/Application/views/documentations/refund-policy.php";
     });
 
-    // sign-in & up pages
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
     });
 
-    $r->addRoute('GET', '/login', function () {
-        require __DIR__ . "/Application/views/auth/login.php";
-    });
+     $r->addRoute('GET', '/login', function () {
+         require "login.php";
+     });
+ 
+
+    // $r->addRoute('GET', '/login', function () {
+    //     require __DIR__ . "/Application/views/auth/login.php";
+    // });
 
     $r->addRoute('GET', '/signup', function () {
         require __DIR__ . "/Application/views/auth/signup.php";
