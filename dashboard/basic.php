@@ -436,10 +436,10 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
                   <div class="fz15">Services Views</div>
                   <div class="title"><?php
 
-                  session_start();
-                  ini_set('display_errors', 1);
-                  ini_set('display_startup_errors', 1);
-                  error_reporting(E_ALL);
+                  // session_start();
+                  // ini_set('display_errors', 1);
+                  // ini_set('display_startup_errors', 1);
+                  // error_reporting(E_ALL);
                   // Define the keyword to search for in the page_url
                   $keyword = "provider";
 
