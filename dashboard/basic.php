@@ -978,7 +978,7 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
           ?>
 
         </div>
-        <?php include 'includes/footer.php';?>
+       // include 'includes/footer.php'
       </div>
     </div>
   </div>
