@@ -126,14 +126,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Application/google/callback.php";
     });
 
-     $r->addRoute('GET', '/login', function () {
+     $r->addRoute('GET', '/login1', function () {
          require "login.php";
      });
  
 
-    // $r->addRoute('GET', '/login', function () {
-    //     require __DIR__ . "/Application/views/auth/login.php";
-    // });
+    $r->addRoute('GET', '/login', function () {
+        require __DIR__ . "/Application/views/auth/login.php";
+    });
 
     $r->addRoute('GET', '/signup', function () {
         require __DIR__ . "/Application/views/auth/signup.php";

@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/../includes/header.php";
 
+require_once __DIR__ . "/../includes/google_authUrl.php";
+
 require_once __DIR__ . "/../../Config/connection.php";
 ?>
 
@@ -20,12 +22,13 @@ require_once __DIR__ . "/../../Config/connection.php";
                         <div class="alert alert-danger d-none" role="alert" id="form-alert">
                         </div>
 
-                        <form method="POST" action="">
+                        <form method="POST" action="" id="login">
+                            <div id="reg_status"></div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input
                                     type="email"
-                                    name="email"
+                                    name="log_email"
                                     placeholder="example@mail.com"
                                     class="form-control"
                                     required
@@ -45,7 +48,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                                 </div>
                                 <small><a href="/forgot-password" class="text-decoration-none text-muted">Forgot Password?</a></small>
                             </div>
-                            <button type="submit" class="btn btn-warning w-100">Login</button>
+                            <button type="submit" id="reg_load" class="btn btn-warning w-100">Login</button>
                         </form>
 
                         <div class="text-center mb-3 mt-3">
@@ -54,7 +57,7 @@ require_once __DIR__ . "/../../Config/connection.php";
 
                         <!-- Google Login Button -->
                         <div class="text-center mb-4">
-                            <a href="" class="btn btn-outline-dark">
+                            <a href="<?php echo $authUrl; ?>" class="btn btn-outline-dark">
                                 Login with <i class="fab fa-google"></i> Google
                             </a>
                         </div>
