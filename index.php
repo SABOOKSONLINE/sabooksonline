@@ -51,6 +51,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "dashboard/basic.php";
     });
 
+    $r->addRoute('GET', '/dashboard/upload', function () {
+        require "dashboard/uploadbookContent.php";
+    });
+
     $r->addRoute('GET', '/dashboard/listings', function () {
         require "dashboard/views/manage_books.php";
     });

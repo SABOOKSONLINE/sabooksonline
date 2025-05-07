@@ -154,7 +154,7 @@
                                 $sql = "SELECT * FROM posts WHERE USERID = '$userkey' ORDER BY ID DESC;";
                                 
 
-								if(!$result = mysqli_query($conn, $sql)){
+								if(!$result = mysqli_query($conn, $sql)){ 
 
 									echo "<div class='alert alert-info border-none'>You currently have no content uploaded.<a href='dashboard-add-book'> Add New Book</a>.</div";
 
