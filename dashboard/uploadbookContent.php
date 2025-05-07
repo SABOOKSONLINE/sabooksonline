@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../includes/database_connections/sabooks.php';
 
+include 'includes/header-dash-main.php';
+
 if (!isset($_SESSION['ADMIN_USERKEY'])) {
     echo "Login required."; exit;
 }
@@ -18,7 +20,6 @@ $result = mysqli_query($conn, $sql);
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
 <body>
-<?php include 'includes/header-dash-main.php';?>
 <h2>Your Books</h2>
 
 <?php if (mysqli_num_rows($result) === 0): ?>
