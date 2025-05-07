@@ -49,6 +49,9 @@
 <![endif]-->  
 <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
+
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
 <style>
     .dashboard_sidebar_list .sidebar_list_item a:hover,
 .dashboard_sidebar_list .sidebar_list_item a:active,
@@ -159,7 +162,31 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 
 ?>
 
+h2>Your Books</h2>
 
+<?php if (mysqli_num_rows($result) === 0): ?>
+    <div>No books found. <a href="dashboard-add-book">Add one</a></div>
+<?php else: ?>
+    <table border="1" cellpadding="10">
+        <tr><th>Title</th><th>Status</th><th>PDF</th><th>Upload</th></tr>
+        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['TITLE']) ?></td>
+                <td><?= htmlspecialchars($row['STATUS']) ?></td>
+                <td>
+                    <?php if (!empty($row['PDFURL'])): ?>
+                        <a href="<?= $row['PDFURL'] ?>" target="_blank">View PDF</a>
+                    <?php else: ?>
+                        <span>No PDF</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <button onclick="uploadPdf('<?= $row['CONTENTID'] ?>')">Upload PDF</button>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+    </table>
+<?php endif; ?>
        
           <div class="row">
             <div class="col-sm-6 col-xxl-3">
@@ -999,6 +1026,36 @@ $monthly_sums = array_fill_keys(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul'
 <!-- Custom script for all pages --> 
 <script src="js/script.js"></script>
 
+<script>
+function uploadPdf(contentId) {
+  const widget = cloudinary.createUploadWidget({
+    cloudName: 'dapufnac8',
+    uploadPreset: 'bookContent',
+    resourceType: 'raw',
+    clientAllowedFormats: ['pdf'],
+    folder: 'books'
+  }, (error, result) => {
+    if (!error && result && result.event === "success") {
+      const pdfUrl = result.info.secure_url;
+
+      // Send to PHP to save
+      fetch('includes/save-pdf-url.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
+      })
+      .then(res => res.text())
+      .then(response => {
+        alert(response);
+        location.reload();
+      })
+      .catch(err => alert("Failed to save PDF URL"));
+    }
+  });
+
+  widget.open();
+}
+</script>
 
 <script>
         function printPage() {
