@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../includes/database_connections/sabooks_user.php';
+require_once __DIR__ . '/../../includes/database_connections/sabooks.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contentId = mysqli_real_escape_string($conn, $_POST['contentid']);
