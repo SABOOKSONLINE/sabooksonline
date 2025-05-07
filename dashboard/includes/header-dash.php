@@ -13,7 +13,7 @@
             <a href="index" class="items-center dashboard"><i class="flaticon-home mr15"></i>Dashboard</a>
           </div>
           <div class="sidebar_list_item">
-            <a href="uploadbookContent" class="items-center dashboard"><i class="flaticon-home mr15"></i>uploadBook</a>
+            <a href="../uploadbookContent" class="items-center dashboard"><i class="flaticon-home mr15"></i>uploadBook</a>
           </div>
           <div class="sidebar_list_item">
             <a href="listings" class="items-center listings booklistings" id="element1"><i class="flaticon-document mr15"></i>Book Listings</a>
