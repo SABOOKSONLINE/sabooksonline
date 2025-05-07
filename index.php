@@ -125,10 +125,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
     });
-
-     $r->addRoute('GET', '/login1', function () {
-         require "login.php";
-     });
  
 
     $r->addRoute('GET', '/login', function () {

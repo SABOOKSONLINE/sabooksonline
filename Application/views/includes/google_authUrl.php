@@ -19,7 +19,7 @@ $client->addScope('profile');
 
 if (isset($_SESSION['ADMIN_ID'])) {
         // ✅ Proper session is set, now redirect
- header('Location: https://11-july-2023.sabooksonline.co.za/dashboard');
+ header('Location: /dashboard');
 }
 
 $authUrl = $client->createAuthUrl();
