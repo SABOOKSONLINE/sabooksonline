@@ -1,5 +1,5 @@
 <?php
-include '../includes/database_connections/sabooks.php';
+require_once __DIR__ . '/../includes/database_connections/sabooks_user.php';
 session_start();
 
 if (!isset($_SESSION['ADMIN_USERKEY'])) {
