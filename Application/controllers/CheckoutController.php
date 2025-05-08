@@ -8,7 +8,15 @@ use Stripe\Checkout\Session;
 class CheckoutController {
     public function buy($bookId) {
         $bookModel = new Book();
-        $book = $bookModel->findById($bookId);
+        $book = $this->bookModel->getBookById($contentId);
+
+        $contentId = strtolower($book['USERID']);
+        $cover = htmlspecialchars($book['COVER']);
+        $title = htmlspecialchars($book['TITLE']);
+        $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
+        $description = htmlspecialchars($book['DESCRIPTION']);
+        $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+
 
         Stripe::setApiKey('sk_test_YourSecretKey');
 
@@ -18,10 +26,10 @@ class CheckoutController {
                 'price_data' => [
                     'currency' => 'zar',
                     'product_data' => [
-                        'name' => $book['title'],
-                        'description' => $book['description'],
+                        'name' => $title,
+                        'description' => $description,
                     ],
-                    'unit_amount' => $book['retail_price'] * 100,
+                    'unit_amount' => $retailPrice * 100,
                 ],
                 'quantity' => 1,
             ]],
