@@ -38,9 +38,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // audioBook
-    // $r->addRoute('GET', '/library/audio-book', function () {
-    //     require "Application/views/audio/audioBookPage.php";
-    // });
+    $r->addRoute('GET', '/library/audiobook/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Application/views/books/audio/audio_book_view.php";
+    });
 
     // user dasboard/analytics
     $r->addRoute('GET', '/dashboard', function () {
@@ -129,7 +130,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
     });
- 
+
 
     $r->addRoute('GET', '/login', function () {
         require __DIR__ . "/Application/views/auth/login.php";

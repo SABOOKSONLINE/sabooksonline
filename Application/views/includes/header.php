@@ -32,4 +32,6 @@
 
     <!-- Custom Css -->
     <link href="../../../public/css/custom/style.css" rel="stylesheet" />
+    <link href="/public/css/custom/audioBook.css" rel="stylesheet" />
+
 </head>

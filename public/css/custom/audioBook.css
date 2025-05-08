@@ -231,3 +231,7 @@
     transform: translateY(-2px);
     box-shadow: 0 5px 10px rgb(0, 0, 0, 0.1);
 }
+
+.active-chapter {
+    background: var(--off-white);
+}
