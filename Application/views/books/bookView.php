@@ -80,7 +80,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div> -->
 
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                <form method="POST" action="checkout.php">
+                <form method="POST" action="/checkout">
                     <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
                     <input type="hidden" name="cover" value="<?= htmlspecialchars($book['COVER']) ?>">
                     <input type="hidden" name="title" value="<?= htmlspecialchars($book['TITLE']) ?>">

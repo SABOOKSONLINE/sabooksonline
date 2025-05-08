@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/Book.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../config/connection.php';
 
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
