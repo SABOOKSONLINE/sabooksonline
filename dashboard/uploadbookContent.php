@@ -1,11 +1,17 @@
 <?php
 require_once __DIR__ . '/../includes/database_connections/sabooks.php';
-include 'includes/header-dash-main.php';
 
-if (!isset($_SESSION['ADMIN_USERKEY'])) {
-    echo "Login required.";
-    exit;
+//Set the cookie domain to ".sabooksonline.co.za" to make it available to all subdomains
+$cookieDomain = ".sabooksonline.co.za";
+session_set_cookie_params(0, '/', $cookieDomain);
+
+
+session_start();
+
+if(!isset($_SESSION['ADMIN_USERKEY'])){
+header("Location: /login?redirectlog2");
 }
+
 
 $userkey = $_SESSION['ADMIN_USERKEY'];
 $sql = "SELECT * FROM posts WHERE USERID = '$userkey' ORDER BY ID DESC;";
