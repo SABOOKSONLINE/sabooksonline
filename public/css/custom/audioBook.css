@@ -191,12 +191,20 @@
 }
 
 .audio-book-title {
-    font-weight: 500;
     color: var(--black);
     font-size: 20px;
     padding: 15px;
     border-bottom: 1px solid var(--off-white);
     width: calc(100% - 30px);
+}
+
+.audio-book-title .title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.audio-book-title p {
+    font-size: 14px;
 }
 
 .audio-chapters {

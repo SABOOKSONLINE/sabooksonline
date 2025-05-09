@@ -17,21 +17,12 @@ jQuery(document).ready(function () {
     let selectAudio = audio_list.eq(0);
 
     const initializeAudio = (audioUrl = "") => {
-        updateTitle();
         if (!audioUrl) {
             audioUrl = selectAudio.attr("audio_url");
         }
 
         audio = new Audio("/public/audio/" + audioUrl);
         selectChapterByUrl(audioUrl);
-    };
-
-    const updateTitle = (chapter = "") => {
-        if (!chapter) {
-            bookTitle.text(selectAudio.attr("audio_url"));
-        } else {
-            bookTitle.text(chapter);
-        }
     };
 
     const continuePlaying = () => {
@@ -133,12 +124,10 @@ jQuery(document).ready(function () {
 
     forward.on("click", function () {
         forwardPlay();
-        updateTitle();
     });
 
     bacward.on("click", function () {
         backwardPlay();
-        updateTitle();
     });
 
     chapters.forEach((chapter) => {

@@ -73,7 +73,18 @@ class BookModel
      */
     public function getBookById($contentId)
     {
-        $sql = "SELECT p.* FROM posts AS p WHERE p.CONTENTID = ? AND p.STATUS = 'active' ORDER BY TITLE";
+        $sql = "SELECT 
+                    p.*, 
+                    a.id AS a_id,
+                    a.book_id AS a_book_id,
+                    a.narrator AS a_narrator,
+                    a.duration_minutes AS a_duration_minutes,
+                    a.release_date AS a_release_date,
+                    a.created_at AS a_created_at
+                FROM posts AS p
+                LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+                WHERE p.CONTENTID = ?
+                AND p.STATUS = 'active'";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $contentId);
@@ -88,6 +99,30 @@ class BookModel
 
         mysqli_stmt_close($stmt);
         return $book;
+    }
+
+    public function getChaptersByAudiobookId($audiobookId)
+    {
+        $sql = "SELECT 
+                    a.*,
+                    ac.*
+                FROM audiobooks AS a
+                LEFT JOIN audiobook_chapters AS ac ON a.id = ac.audiobook_id
+                WHERE audiobook_id = ?
+                ORDER BY chapter_number ASC";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $audiobookId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        $chapters = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $chapters[] = $row;
+        }
+
+        mysqli_stmt_close($stmt);
+        return $chapters;
     }
 
     /**
