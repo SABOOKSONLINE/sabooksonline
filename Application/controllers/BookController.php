@@ -37,6 +37,30 @@ class BookController
     }
 
     /**
+     * Render the view for a single book by its ID.
+     */
+    public function renderAudioBookView()
+    {
+        $contentId = $_GET['q'] ?? null;
+
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
+
+        // Sanitize the contentId (if used in the view)
+        $contentId = htmlspecialchars(trim($contentId));
+
+        $book = $this->bookModel->getBookById($contentId);
+
+        if ($book) {
+            include __DIR__ . '/../views/books/audio/audio_book_details.php';
+        } else {
+            echo "Book not found.";
+        }
+    }
+
+    /**
      * Render a list of books filtered by category.
      */
     public function renderBooksByCategory($category, $limit)

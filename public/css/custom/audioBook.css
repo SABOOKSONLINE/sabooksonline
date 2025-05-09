@@ -55,6 +55,7 @@
 
 .audio-img img {
     width: 100%;
+    height: 100%;
     z-index: 3;
 }
 
@@ -173,10 +174,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 10%;
+    width: 0;
     height: 100%;
 
     background: rgb(255, 255, 255, 0.25);
+    transition: 0.25s linear;
 }
 
 .audio-book-list {
@@ -230,4 +232,8 @@
     border: 1px solid var(--off-white);
     transform: translateY(-2px);
     box-shadow: 0 5px 10px rgb(0, 0, 0, 0.1);
+}
+
+.active-chapter {
+    background: var(--off-white);
 }
