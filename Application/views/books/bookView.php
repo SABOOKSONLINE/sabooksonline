@@ -67,7 +67,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div> -->
 
                 <div class="col-12 d-flex flex-wrap align-items-center">
-                    <a href="/readBook/<?= $contentId ?>" class="btn btn-green me-2">READ NOW</a>
+                    <a href="/readBook/<?= $bookId ?>" class="btn btn-green me-2">READ NOW</a>
                 </div>
 
 
