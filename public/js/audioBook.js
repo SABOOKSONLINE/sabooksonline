@@ -4,6 +4,8 @@ jQuery(document).ready(function () {
     const bacward = $("#ctrl-backward");
     const play = document.querySelector("#ctrl-play");
     const forward = $("#ctrl-forward");
+    const time = $("#tracker-time");
+    const tracker = $("#ctrl-tracker .tracker");
 
     const chapters = document.querySelectorAll(".chapter");
 
@@ -56,6 +58,27 @@ jQuery(document).ready(function () {
         });
     };
 
+    function formatTime(seconds) {
+        seconds = Math.round(seconds);
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    const updatetracker = () => {
+        const duration = audio.duration;
+        const currentTime = audio.currentTime;
+
+        const currentPosition = (currentTime / duration) * 100;
+        tracker.css("width", currentPosition + "%");
+    };
+
+    const updateTimer = () => {
+        const currentTime = audio.currentTime;
+        time.text(formatTime(currentTime));
+        updatetracker();
+    };
+
     initializeAudio();
 
     const playAudio = () => {
@@ -63,6 +86,8 @@ jQuery(document).ready(function () {
         play.firstElementChild.classList.remove("fa-play");
         play.firstElementChild.classList.add("fa-pause");
         playing = true;
+
+        audio.addEventListener("timeupdate", updateTimer);
     };
 
     const pauseAudio = () => {

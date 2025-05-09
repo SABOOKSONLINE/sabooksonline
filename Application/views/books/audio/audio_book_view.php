@@ -27,7 +27,7 @@
                 </div>
                 <div class="audio-trackers">
                     <div class="audio-ctrl" id="ctrl-tracker">
-                        <span></span>
+                        <span id="tracker-time"></span>
                         <div class="tracker"></div>
                     </div>
                     <div class="audio-ctrl" id="ctrl-volume">
