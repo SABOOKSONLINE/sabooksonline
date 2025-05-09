@@ -39,7 +39,7 @@ class CheckoutController {
             'tx_ref' => $tx_ref,
             'amount' => $retailPrice,
             'currency' => $currency,
-            'redirect_url' => BASE_URL . "/success.php",
+            'redirect_url' => BASE_URL . "/success",
             'customer' => [
                 'email' => $email,
             ],
