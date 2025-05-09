@@ -68,7 +68,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 <div class="col-12 d-flex flex-wrap align-items-center">
                 <form method="POST" action="/readBook">
                     <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
-                    <button type="submit" class="btn btn-black me-2">READ NOW</button>
+                    <button type="submit" class="btn btn-green me-2">READ NOW</button>
                 </form>
                 </div>
 
@@ -82,7 +82,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
 
                 <!-- BUY COPY -->
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= $website ?>" target="_blank" class="btn btn-black me-2">BUY COPY</a>
+                    <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
                     <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
                 </div>
 
