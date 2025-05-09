@@ -1,5 +1,6 @@
 <?php
 $contentId = strtolower($book['USERID']);
+$bookId = strtolower($book['CONTENTID']);
 $cover = htmlspecialchars($book['COVER']);
 $title = htmlspecialchars($book['TITLE']);
 $category = htmlspecialchars($book['CATEGORY']);
@@ -67,7 +68,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
 
                 <div class="col-12 d-flex flex-wrap align-items-center">
                 <form method="POST" action="/readBook">
-                    <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
+                    <input type="hidden" name="bookId" value="<?= $bookId ?>">
                     <button type="submit" class="btn btn-green me-2">READ NOW</button>
                 </form>
                 </div>
