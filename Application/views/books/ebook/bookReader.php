@@ -91,7 +91,7 @@
   </div>
 
   <div class="container">
-  <h2><?= htmlspecialchars($book['title']) ?></h2>
+  <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
 
     <div id="chapterNav">
       <h3>Chapters</h3>
