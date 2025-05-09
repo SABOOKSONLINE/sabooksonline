@@ -36,6 +36,26 @@ class BookController
         }
     }
 
+    public function readBook($contentId)
+    {
+
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
+
+        // Sanitize the contentId (if used in the view)
+        $contentId = htmlspecialchars(trim($contentId));
+
+        $book = $this->bookModel->getBookById($contentId);
+
+        if ($book) {
+            include __DIR__ . '/../views/books/Ebook/bookReader.php';
+        } else {
+            echo "Book not found.";
+        }
+    }
+
     /**
      * Render the view for a single book by its ID.
      */

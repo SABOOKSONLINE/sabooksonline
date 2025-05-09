@@ -174,14 +174,13 @@ const widget = cloudinary.createUploadWidget({
 
 function uploadPdf(contentId) {
     const widget = cloudinary.createUploadWidget({
-        
+
         cloudName: 'dapufnac8',
         uploadPreset: 'bookContent',
         resourceType: 'raw',
         clientAllowedFormats: ['pdf'],
         folder: 'books',
-        context: {access: "public"},         // 👈 Add this if your preset supports it
-        public_id: `book_${contentId}`       // Optional: set filename
+    
 
     }, (error, result) => {
         if (!error && result && result.event === "success") {

@@ -38,24 +38,16 @@ class UserModel {
         $_SESSION['ADMIN_WEBSITE'] = $userData['ADMIN_WEBSITE'];
         $_SESSION['ADMIN_BIO'] = $userData['ADMIN_BIO'];
         $_SESSION['ADMIN_TYPE'] = $userData['ADMIN_TYPE'];
-        $_SESSION['ADMIN_FACEBOOK'] = $userData['ADMIN_FACEBOOK'];
-        $_SESSION['ADMIN_TWITTER'] = $userData['ADMIN_TWITTER'];
-        $_SESSION['ADMIN_LINKEDIN'] = $userData['ADMIN_LINKEDIN'];
         $_SESSION['ADMIN_GOOGLE'] = $userData['ADMIN_GOOGLE'];
         $_SESSION['ADMIN_INSTAGRAM'] = $userData['ADMIN_INSTAGRAM'];
-        $_SESSION['ADMIN_CUSTOMER_PLESK'] = $userData['ADMIN_PINTEREST'];
         $_SESSION['ADMIN_PASSWORD'] = $userData['ADMIN_PASSWORD'];
-        $_SESSION['ADMIN_DATE'] = $userData['ADMIN_DATE'];
         $_SESSION['ADMIN_VERIFICATION_LINK'] = $userData['ADMIN_VERIFICATION_LINK'];
         $_SESSION['ADMIN_PROFILE_IMAGE'] = $userData['ADMIN_PROFILE_IMAGE'];
         $_SESSION['ADMIN_USERKEY'] = $userData['ADMIN_USERKEY'];
         $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
-        $_SESSION['ADMIN_SERVICES'] = $userData['ADMIN_SERVICES'];
     
     }
 
-
-    
 
     /**
      * Retrieves a user by either their admin name or admin user key.
