@@ -1,5 +1,6 @@
 <?php
 $contentId = strtolower($book['USERID']);
+$bookId = strtolower($book['CONTENTID']);
 $cover = htmlspecialchars($book['COVER']);
 $title = htmlspecialchars($book['TITLE']);
 $category = htmlspecialchars($book['CATEGORY']);
@@ -77,11 +78,9 @@ $audiobookId = $book['a_id'] ?? null;
                 </div> -->
 
                 <div class="col-12 d-flex flex-wrap align-items-center">
-                    <form method="POST" action="/readBook">
-                        <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
-                        <button type="submit" class="btn btn-black me-2">READ NOW</button>
-                    </form>
+                    <a href="/readBook/<?= $bookId ?>" class="btn btn-green me-2">READ NOW</a>
                 </div>
+
 
                 <!-- LISTEN TO AUDIOBOOK -->
                 <!-- <?php // if ($audiobookId): 
@@ -101,8 +100,8 @@ $audiobookId = $book['a_id'] ?? null;
 
                 <!-- BUY COPY -->
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= $website ?>" target="_blank" class="btn btn-dark me-2">BUY COPY</a>
-                    <span class="fw-bold align-content-end text-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
+                    <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
+                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
                 </div>
 
                 <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">

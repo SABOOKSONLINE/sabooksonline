@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title><?= htmlspecialchars($book['title']) ?> - Reader</title>
+  <title><?= htmlspecialchars($book['TITLE']) ?> - Reader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
@@ -91,7 +91,7 @@
   </div>
 
   <div class="container">
-  <h2><?= htmlspecialchars($book['title']) ?></h2>
+  <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
 
     <div id="chapterNav">
       <h3>Chapters</h3>

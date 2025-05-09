@@ -16,10 +16,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/home.php";
     });
 
-    $r->addRoute('GET', '/readBook', function () {
-        require "Application/views/readBook.php";
+    $r->addRoute('GET', '/readBook/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Application/views/readBook.php"; 
     });
-
+    
     $r->addRoute('GET', '/about', function () {
         require "Application/views/about.php";
     });
