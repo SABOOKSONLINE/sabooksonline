@@ -60,9 +60,16 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
             <!-- Action Buttons & Price -->
             <div class="row gy-3">
                 <!-- READ NOW -->
-                <div class="col-12 d-flex flex-wrap align-items-center">
+                <!-- <div class="col-12 d-flex flex-wrap align-items-center">
                     <span class="btn btn-green me-2">READ NOW</span>
                     <span class="text-muted mb-2">COMING SOON</span>
+                </div> -->
+
+                <div class="col-12 d-flex flex-wrap align-items-center">
+                <form method="POST" action="/readBook">
+                    <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
+                    <button type="submit" class="btn btn-black me-2">READ NOW</button>
+                </form>
                 </div>
 
                 <!-- LISTEN TO AUDIOBOOK -->
@@ -74,12 +81,12 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div>
 
                 <!-- BUY COPY -->
-                <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
-                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
-                </div> -->
-
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                    <a href="<?= $website ?>" target="_blank" class="btn btn-black me-2">BUY COPY</a>
+                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
+                </div>
+
+                <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
                 <form method="POST" action="/checkout">
                     <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
                     <input type="hidden" name="cover" value="<?= htmlspecialchars($book['COVER']) ?>">
@@ -92,8 +99,7 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 <span class="fw-bold align-content-end">
                     <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
                 </span>
-            </div>
-
+                </div> -->
             </div>
         </div>
     </div>

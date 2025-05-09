@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📖 Two-Page PDF Reader</title>
+  <title><?= htmlspecialchars($book['title']) ?> - Reader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
@@ -91,7 +91,7 @@
   </div>
 
   <div class="container">
-    <h1>📖 Two-Page PDF Book Reader</h1>
+  <h2><?= htmlspecialchars($book['title']) ?></h2>
 
     <div id="chapterNav">
       <h3>Chapters</h3>
@@ -116,7 +116,8 @@
   </div>
 
 <script>
-const url = "<?= $filePath ?>";
+
+const url = "<?= htmlspecialchars($book['PDFURL'], ENT_QUOTES, 'UTF-8') ?>";
 let pdfDoc = null,
     pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
     zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
