@@ -55,10 +55,34 @@
                     </div>
                 </form>
 
-                <div class="btn-group">
+                <!-- <div class="btn-group">
                     <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
                     <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
+                </div> -->
+                <div class="btn-group">
+                <?php
+                if (isset($_SESSION['ADMIN_USERKEY'])) {
+                    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+
+                    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+                        $profile = $adminProfileImage;
+                    } else {
+                        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+                    }
+                    ?>
+                    <a href="/admin/profile" class="btn btn-outline-secondary rounded-circle p-0" style="width: 40px; height: 40px;">
+                        <img src="<?= htmlspecialchars($profile) ?>" alt="Admin Profile" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                    </a>
+                <?php
+                } else {
+                    ?>
+                    <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
+                    <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
+                <?php
+                }
+                ?>
                 </div>
+
             </div>
 
             <div class="d-xl-none bg-light p-3">
