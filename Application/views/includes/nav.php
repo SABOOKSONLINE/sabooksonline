@@ -79,16 +79,22 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                 </div> -->
                 <div class="btn-group">
                 <?php
-                if ($profile != null){             
+
+                if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])) {
+                    ?>
                     <a href="/dashboard" class="btn btn-outline-secondary rounded-circle p-0" style="width: 40px; height: 40px;">
                         <img src="<?= htmlspecialchars($profile) ?>" alt="Admin Profile" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
                     </a>
+                    <?php
                 } else {
+                    ?>
                     <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
                     <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
+                    <?php
                 }
                 ?>
-                </div>
+            </div>
+
 
             </div>
 
