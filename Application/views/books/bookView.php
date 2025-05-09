@@ -74,14 +74,27 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div>
 
                 <!-- BUY COPY -->
-                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
                     <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
                     <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
-                </div>
+                </div> -->
 
+                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                <form method="POST" action="/checkout">
+                    <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
+                    <input type="hidden" name="cover" value="<?= htmlspecialchars($book['COVER']) ?>">
+                    <input type="hidden" name="title" value="<?= htmlspecialchars($book['TITLE']) ?>">
+                    <input type="hidden" name="publisher" value="<?= ucwords(htmlspecialchars($book['PUBLISHER'])) ?>">
+                    <input type="hidden" name="retailPrice" value="<?= htmlspecialchars($book['RETAILPRICE']) ?>">
+
+                    <button type="submit" class="btn btn-blue me-2">BUY COPY</button>
+                </form>
+                <span class="fw-bold align-content-end">
+                    <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
+                </span>
             </div>
 
-
+            </div>
         </div>
     </div>
 </div>

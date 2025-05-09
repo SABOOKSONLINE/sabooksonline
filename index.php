@@ -28,6 +28,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/library.php";
     });
 
+    $r->addRoute('GET', '/flutterwave-webhook', function () {
+        require "Application/webhook/flutterwave-webhook.php";
+    });
+
     $r->addRoute('GET', '/membership', function () {
         require "Application/views/membership.php";
     });
@@ -47,6 +51,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboard', function () {
         require "dashboard/index.php";
     });
+
+
 
     $r->addRoute('GET', '/dashboard/basic', function () {
         require "dashboard/basic.php";
