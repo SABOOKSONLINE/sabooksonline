@@ -16,6 +16,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/home.php";
     });
 
+    $r->addRoute('GET', '/readBook', function () {
+        require "Application/views/readBook.php";
+    });
+
     $r->addRoute('GET', '/about', function () {
         require "Application/views/about.php";
     });
@@ -74,9 +78,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboard/reviews', function () {
         require "dashboard/views/manage_reviews.php";
     });
-    $r->addRoute('GET', '/bookreader', function () {
-        require "dashboard/bookReader.php";
-    });
+    
 
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;
