@@ -65,6 +65,358 @@ header("Location: /login?redirectlog2");
               </div>
             </div>
           </div>
+          <div class="col-6 col-lg-auto">
+
+
+
+<div class="text-center text-lg-end header_right_widgets">
+
+
+  <ul class="dashboard_dd_menu_list d-flex align-items-center justify-content-center justify-content-sm-end mb-0 p-0">
+
+
+    <li class="d-none d-sm-block d-none">
+
+
+      <a class="text-center mr5 text-thm2 dropdown-toggle fz20" type="button" data-bs-toggle="dropdown" href="#"><span class="flaticon-notification"></span></a>
+
+
+      <div class="dropdown-menu d-none">
+
+
+        <div class="dboard_notific_dd px30 pt10 pb15">
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-1.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your resume</p>
+
+
+              <p class="text mb-0">updated!</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-2.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">You changed</p>
+
+
+              <p class="text mb-0">password</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-3.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your account has been</p>
+
+
+              <p class="text mb-0">created successfully</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-4.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">You applied for a job </p>
+
+
+              <p class="text mb-0">Front-end Developer</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center">
+
+
+            <img src="images/resource/notif-5.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your course uploaded</p>
+
+
+              <p class="text mb-0">successfully</p>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </li>
+
+
+
+
+
+
+
+
+    <li class="d-none d-sm-bloc">
+
+
+      <a class="text-center mr5 text-thm2 dropdown-toggle fz20" type="button" data-bs-toggle="dropdown" href="#"><span class="flaticon-mail"></span></a>
+
+
+      <div class="dropdown-menu">
+
+
+        <div class="dboard_notific_dd px30 pt20 pb15">
+
+
+          <div class="notif_list d-flex align-items-start bdrb1 pb25 mb10">
+
+
+            <img class="img-2" src="images/testimonials/testi-1.png" alt="">
+
+
+            <div class="details ml15">
+
+
+              <p class="dark-color fw500 mb-2">Ali Tufan</p>
+
+
+              <p class="text mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+
+
+              <p class="mb-0 text-thm">4 hours ago</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-start mb25">
+
+
+            <img class="img-2" src="images/testimonials/testi-2.png" alt="">
+
+
+            <div class="details ml15">
+
+
+              <p class="dark-color fw500 mb-2">Ali Tufan</p>
+
+
+              <p class="text mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+
+
+              <p class="mb-0 text-thm">4 hours ago</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="d-grid">
+
+
+            <a href="message.html" class="ud-btn btn-thm w-100">View All Messages<i class="fal fa-arrow-right-long"></i></a>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </li>
+
+
+
+
+
+
+
+
+    <li class="d-none d-sm-bloc d-none">
+
+
+      <a class="text-center mr5 text-thm2 dropdown-toggle fz20" type="button" data-bs-toggle="dropdown" href="#"><span class="flaticon-like"></span></a>
+
+
+      <div class="dropdown-menu">
+
+
+        <div class="dboard_notific_dd px30 pt10 pb15">
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-1.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your resume</p>
+
+
+              <p class="text mb-0">updated!</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-2.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">You changed</p>
+
+
+              <p class="text mb-0">password</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-3.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your account has been</p>
+
+
+              <p class="text mb-0">created successfully</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center bdrb1 pb15 mb10">
+
+
+            <img src="images/resource/notif-4.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">You applied for a job </p>
+
+
+              <p class="text mb-0">Front-end Developer</p>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div class="notif_list d-flex align-items-center">
+
+
+            <img src="images/resource/notif-5.png" alt="">
+
+
+            <div class="details ml10">
+
+
+              <p class="text mb-0">Your course uploaded</p>
+
+
+              <p class="text mb-0">successfully</p>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </li>
+
+
 
                 <li class="user_setting">
                   <div class="dropdown">
