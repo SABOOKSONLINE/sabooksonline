@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../config/connection.php';
 
 
-class PaymentController {
+class CheckoutController {
 
     private $bookModel;
     private $userModel;
@@ -34,9 +34,9 @@ class PaymentController {
 
     // Display Book Purchase Page
     public function purchaseBook($bookId) {
-        $book = $this->bookModel->getBookById($bookId); // Get book details
+        $book = $this->bookModel->getBookById($bookId);
         if ($book) {
-            $user = $this->userModel->getUserById($userId); // Get user details
+            $user = $this->userModel->getUserById($userId); 
             include __DIR__ . '/../views/payment/purchaseForm.php';
         } else {
             echo "Book not found.";
@@ -44,17 +44,16 @@ class PaymentController {
     }
 
     public function generatePaymentForm($book, $user) {
-        // Set up necessary data for PayFast
         $data = [
-            'merchant_id' => '18172469', // Merchant ID
-            'merchant_key' => 'gwkk16pbxdd8m', // Merchant Key
+            'merchant_id' => '18172469', 
+            'merchant_key' => 'gwkk16pbxdd8m',
             'return_url' => 'https://yourwebsite.com/payment/thank-you',
             'cancel_url' => 'https://yourwebsite.com/payment/cancel',
             'notify_url' => 'https://yourwebsite.com/payment/notify',
             'name_first' => $userName,
             'name_last' => $user['last_name'],
             'email_address' => $userEmail,
-            'm_payment_id' => uniqid(), // Unique payment ID for transaction
+            'm_payment_id' => uniqid(),
             'amount' => number_format($retailPrice, 2, '.', ''),
             'item_name' => $bookId,
             'subscription_type' => '2', // Subscription type (1=recurring, 2=once-off)
@@ -93,7 +92,6 @@ class PaymentController {
         return $htmlForm;
     }
 
-    // Generate signature for PayFast
     private function generateSignature($data, $passPhrase = null) {
         $pfOutput = '';
         foreach ($data as $key => $val) {
@@ -101,7 +99,7 @@ class PaymentController {
                 $pfOutput .= $key . '=' . urlencode(trim($val)) . '&';
             }
         }
-        // Remove last ampersand
+
         $getString = substr($pfOutput, 0, -1);
         if ($passPhrase !== null) {
             $getString .= '&passphrase=' . urlencode(trim($passPhrase));
@@ -109,22 +107,19 @@ class PaymentController {
         return md5($getString);
     }
 
-    // Payment notification handler (webhook)
     public function paymentNotify() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $postData = $_POST;
-            // Verify the PayFast signature
+
             $signature = $this->generateSignature($postData, 'SABooksOnline2021');
             if ($signature !== $postData['signature']) {
                 die("Invalid signature");
             }
 
-            // Handle payment status (e.g., mark the book as purchased)
             if ($postData['payment_status'] == 'COMPLETE') {
                 $paymentId = $postData['m_payment_id'];
                 $amount = $postData['amount_gross'];
 
-                // Update the database to mark the book as purchased
                 $this->bookModel->markBookAsPurchased($paymentId, $amount);
 
                 echo "Payment successful!";
@@ -136,13 +131,11 @@ class PaymentController {
         }
     }
 
-    // Thank you page after successful payment
     public function thankYou() {
         echo "<h2>Thank you for your purchase!</h2>";
         echo "<p>Your payment was successful, and the book is now available for download.</p>";
     }
 
-    // Cancellation page
     public function cancel() {
         echo "<h2>Payment Cancelled</h2>";
         echo "<p>Your payment was not completed. Please try again later.</p>";
