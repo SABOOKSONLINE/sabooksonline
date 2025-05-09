@@ -56,8 +56,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "dashboard/index.php";
     });
 
-
-
     $r->addRoute('GET', '/dashboard/basic', function () {
         require "dashboard/basic.php";
     });

@@ -22,8 +22,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                         <div class="alert alert-danger d-none" role="alert" id="form-alert">
                         </div>
 
-                        <form method="POST" action="" id="login">
-                            <div id="reg_status"></div>
+                        <form method="POST" action="../includes/loginForm.php" id="login">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input
@@ -48,7 +47,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                                 </div>
                                 <small><a href="/forgot-password" class="text-decoration-none text-muted">Forgot Password?</a></small>
                             </div>
-                            <button type="submit" id="reg_load" class="btn btn-warning w-100">Login</button>
+                            <button type="submit" class="btn btn-warning w-100">Login</button>
                         </form>
 
                         <div class="text-center mb-3 mt-3">
