@@ -2,12 +2,14 @@
 require_once __DIR__ . '/../models/Book.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../config/connection.php';
+require_once __DIR__ . '/../config/config.php';
+
 
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 
 class CheckoutController {
-    public function buy($bookId) {
+    public function buy($bookId, $email) {
         $bookModel = new Book();
         $book = $this->bookModel->getBookById($contentId);
 
@@ -17,29 +19,61 @@ class CheckoutController {
         $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
         $description = htmlspecialchars($book['DESCRIPTION']);
         $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+        $bookCover = "https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>";
+        $logo = 'https://sabooksonline.co.za/img/social.png';
+        $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+
+        if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } else {
+            $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+        }
 
 
-        Stripe::setApiKey('sk_test_YourSecretKey');
+        $currency = 'ZAR';
+        $tx_ref = uniqid("sabooks_");
 
-        $session = Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'zar',
-                    'product_data' => [
-                        'name' => $title,
-                        'description' => $description,
-                    ],
-                    'unit_amount' => $retailPrice * 100,
-                ],
-                'quantity' => 1,
-            ]],
-            'mode' => 'payment',
-            'success_url' => 'https://11-july-2023.sabooksonline.co.za/success',
-            'cancel_url' => 'https://11-july-2023.sabooksonline.co.za/cancel',
+        $callback_url = BASE_URL . "/webhook/flutterwave-webhook.php";
+
+        $data = [
+            'tx_ref' => $tx_ref,
+            'amount' => $retailPrice,
+            'currency' => $currency,
+            'redirect_url' => BASE_URL . "/success.php",
+            'customer' => [
+                'email' => $email,
+            ],
+            'customizations' => [
+                'publisher' => $publisher,
+                'title' => $title,
+                'description' => 'Book Purchase',
+                'logo' => $logo,
+                'image' => $bookCover,
+                'profile' => $rofile,
+                'contentID' => $contentId,
+            ]
+        ];
+
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "https://api.flutterwave.com/v3/payments",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer " . FLW_SECRET_KEY,
+                "Content-Type: application/json"
+            ],
         ]);
 
-        header("Location: " . $session->url);
-        exit;
+        $response = curl_exec($curl);
+        $res = json_decode($response);
+
+        if ($res->status === 'success') {
+            header("Location: " . $res->data->link);
+        } else {
+            echo "Payment failed. Try again.";
+        }
     }
 }
