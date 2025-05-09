@@ -15,7 +15,11 @@ $data = json_decode($rawData, true);
 if ($data['status'] === 'successful') {
     $txRef = $data['tx_ref'];
     $email = $data['customer']['email'];
-    $amount = $data['amount'];
+    $amount = $data['retailPrice'];
+    $publisher = $data['publisher'];
+    $title = $data['title'];
+    $bookCover = $data['bookCover'];
+    $rofile = $data['profile'];
 
     // ✅ Mark book as paid in your DB using tx_ref or email
     // ✅ Send confirmation email, etc.
