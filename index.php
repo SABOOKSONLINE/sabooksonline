@@ -18,7 +18,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('GET', '/readBook/{id}', function ($id) {
         $_GET['q'] = $id;
-        require "Application/views/readbook.php"; 
+        require "Application/views/readBook.php"; 
     });
     
     $r->addRoute('GET', '/about', function () {
