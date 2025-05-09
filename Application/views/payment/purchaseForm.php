@@ -34,7 +34,7 @@
       <div class="book-card">
 
         <div class="text-center mb-4">
-          <img src="<?= $bookCover ?>" alt="Book Cover" class="img-fluid" style="max-height: 300px;">
+          <img src="<?= $cver ?>" alt="Book Cover" class="img-fluid" style="max-height: 300px;">
         </div>
 
         <h3><?= $title ?></h3>
@@ -48,8 +48,8 @@
           <div class="d-flex align-items-center">
             <img src="<?= $profile ?>" alt="Profile Image" width="50" height="50" class="rounded-circle me-2">
             <div>
-              <strong><?= $_SESSION['ADMIN_NAME'] ?></strong><br>
-              <small><?= $_SESSION['ADMIN_EMAIL'] ?></small>
+              <strong><?= $userName ?></strong><br>
+              <small><?= $userEmail ?></small>
             </div>
           </div>
         </div>
@@ -66,7 +66,7 @@
           <span>Secure payment powered by PayFast</span>
         </div>
 
-        <?= $this->generatePaymentForm($book, $user) ?>
+        <?= $this->generatePaymentForm($user) ?>
 
         <div class="text-center mt-3">
           <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="180" alt="PayFast">
