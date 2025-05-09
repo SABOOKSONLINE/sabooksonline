@@ -50,7 +50,7 @@ class BookController
         $book = $this->bookModel->getBookById($contentId);
 
         if ($book) {
-            include __DIR__ . '/../views/books/bookReader.php';
+            include __DIR__ . '/../views/books/Ebook/bookReader.php';
         } else {
             echo "Book not found.";
         }
