@@ -9,7 +9,12 @@ $description = htmlspecialchars($book['DESCRIPTION']);
 $isbn = htmlspecialchars($book['ISBN']);
 $website = htmlspecialchars($book['WEBSITE']);
 $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+
+$bookId = $_GET['q'] ?? null;
+
+$audiobookId = $book['a_id'] ?? null;
 ?>
+
 
 <div class="container pt-4 pb-5">
     <div class="row">
@@ -21,14 +26,20 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
         <!-- Book Info -->
         <div class="col-md-9">
             <h2 class="fw-bold text-capitalize"><?= $title ?></h2>
-            <p class="mb-1 text-capitalize">
-                <span class="muted">Published by:</span>
-                <a href="/creators/creator/<?= $contentId ?>" class="fw-semibold"><?= $publisher ?></a>
-            </p>
-            <p class="mb-1 text-capitalize">
-                <span class="muted">Author/s:</span>
-                <span class="fw-semibold"><?= $authors ?></span>
-            </p>
+            <?php if ($publisher): ?>
+                <p class="mb-1 text-capitalize">
+                    <span class="muted">Published by:</span>
+                    <a href="/creators/creator/<?= $contentId ?>" class="fw-semibold"><?= $publisher ?></a>
+                </p>
+            <?php endif; ?>
+
+            <?php if ($authors): ?>
+                <p class="mb-1 text-capitalize">
+                    <span class="muted">Author/s:</span>
+                    <span class="fw-semibold"><?= $authors ?></span>
+                </p>
+            <?php endif; ?>
+
             <p class="mb-3 text-capitalize">
                 <span class="muted">Category:</span>
                 <a href="/library?category=<?= $category ?>" class="fw-semibold"><?= $category ?></a>
@@ -66,24 +77,32 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div> -->
 
                 <div class="col-12 d-flex flex-wrap align-items-center">
-                <form method="POST" action="/readBook">
-                    <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
-                    <button type="submit" class="btn btn-black me-2">READ NOW</button>
-                </form>
+                    <form method="POST" action="/readBook">
+                        <input type="hidden" name="contentId" value="<?= strtolower($book['USERID']) ?>">
+                        <button type="submit" class="btn btn-black me-2">READ NOW</button>
+                    </form>
                 </div>
 
                 <!-- LISTEN TO AUDIOBOOK -->
-                <div class="col-12 d-flex flex-wrap align-items-center">
-                    <span class="btn btn-yellow me-2">
-                        <i class="bi bi-headphones"></i> LISTEN TO AUDIOBOOK
+                <!-- <?php // if ($audiobookId): 
+                        ?> -->
+                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                    <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
+                        <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
+                    </a>
+                    <span class="fw-bold align-content-end text-end">
+                        <small class="text-muted fw-normal">
+                            FREE
+                        </small>
                     </span>
-                    <span class="text-muted mb-2">COMING SOON</span>
                 </div>
+                <!-- <?php // endif; 
+                        ?> -->
 
                 <!-- BUY COPY -->
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= $website ?>" target="_blank" class="btn btn-black me-2">BUY COPY</a>
-                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
+                    <a href="<?= $website ?>" target="_blank" class="btn btn-dark me-2">BUY COPY</a>
+                    <span class="fw-bold align-content-end text-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
                 </div>
 
                 <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">

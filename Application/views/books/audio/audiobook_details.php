@@ -9,6 +9,19 @@ $description = htmlspecialchars($book['DESCRIPTION']);
 $isbn = htmlspecialchars($book['ISBN']);
 $website = htmlspecialchars($book['WEBSITE']);
 $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+
+$bookId = $_GET['q'] ?? null;
+
+// AUDIOBOOK SECTION
+$releaseDate = !empty($book['a_release_date']) ? htmlspecialchars($book['a_release_date']) : 'N/A';
+$narrator = !empty($book['a_narrator']) ? htmlspecialchars($book['a_narrator']) : 'N/A';
+$audioDuration = !empty($book['a_duration_minutes']) ? (int)$book['a_duration_minutes'] . ' mins' : 'N/A';
+$audiobookId = $book['a_id'] ?? null;
+
+$chapterNumber = $book['ac_chapter_number'] ?? null;
+$chapterTitle = !empty($book['ac_chapter_title']) ? htmlspecialchars($book['ac_chapter_title']) : null;
+$chapterAudioUrl = !empty($book['ac_audio_url']) ? htmlspecialchars($book['ac_audio_url']) : null;
+$chapterDuration = $book['ac_duration_minutes'] ?? null;
 ?>
 
 <style>
@@ -33,36 +46,26 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
 </div>
 <div class="audio-book-list">
     <div class="audio-book-title">
-        <h2 class="title"><?= $title ?></h2>
+        <h3 class="title"><?= $title ?></h3>
+        <?php if ($authors): ?>
+            <p class="mb-1 text-capitalize">
+                <span class="text-muted">Author/s:</span>
+                <span class="fw-semibold"><?= $authors ?></span>
+            </p>
+        <?php endif; ?>
+
         <p class="mb-1 text-capitalize">
-            <span class="muted">Author/s:</span>
-            <span class="fw-semibold"><?= $authors ?></span>
+            <span class="text-muted">Narrator:</span>
+            <span class="fw-semibold"><?= $narrator ?></span>
         </p>
-        <p class="mb-3 text-capitalize">
-            <span class="muted">Category:</span>
+
+        <p class="mb-2 text-capitalize">
+            <span class="text-muted">Genre:</span>
             <a href="/library?category=<?= $category ?>" class="fw-semibold"><?= $category ?></a>
         </p>
+
     </div>
     <div class="audio-chapters">
-        <div class="chapter" audio_url="Gijima.mp3">
-            <span>chapter 01</span>
-            <!-- <div class="chapter-time">20:00</div> -->
-        </div>
-        <div class="chapter" audio_url="Inganono.mp3">
-            <span>chapter 01</span>
-            <!-- <div class="chapter-time">20:00</div> -->
-        </div>
-        <div class="chapter" audio_url="LUZUKO.mp3">
-            <span>chapter 01</span>
-            <!-- <div class="chapter-time">20:00</div> -->
-        </div>
-        <div class="chapter" audio_url="Nguwe.mp3">
-            <span>chapter 01</span>
-            <!-- <div class="chapter-time">20:00</div> -->
-        </div>
-        <div class="chapter" audio_url="Sabelo.mp3">
-            <span>chapter 01</span>
-            <!-- <div class="chapter-time">20:00</div> -->
-        </div>
+        <?php include __DIR__ . "/audiobook_chapters.php" ?>
     </div>
 </div>

@@ -74,7 +74,31 @@ class BookController
         $book = $this->bookModel->getBookById($contentId);
 
         if ($book) {
-            include __DIR__ . '/../views/books/audio/audio_book_details.php';
+            include __DIR__ . '/../views/books/audio/audiobook_details.php';
+        } else {
+            echo "Book not found.";
+        }
+    }
+
+    /**
+     * Render the view for a single book by its ID.
+     */
+    public function renderAudioBookChapters($audiobook_id)
+    {
+        $contentId = $_GET['q'] ?? null;
+
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
+
+        // Sanitize the contentId (if used in the view)
+        $contentId = htmlspecialchars(trim($contentId));
+
+        $book = $this->bookModel->getBookById($contentId);
+
+        if ($book) {
+            include __DIR__ . '/../views/books/audio/audiobook_details.php';
         } else {
             echo "Book not found.";
         }
