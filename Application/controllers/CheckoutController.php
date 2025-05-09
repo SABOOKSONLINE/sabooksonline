@@ -33,7 +33,7 @@ class CheckoutController {
         $currency = 'ZAR';
         $tx_ref = uniqid("sabooks_");
 
-        $callback_url = BASE_URL . "/webhook/flutterwave-webhook.php";
+        $callback_url = BASE_URL . "/flutterwave-webhook";
 
         $data = [
             'tx_ref' => $tx_ref,
