@@ -3,8 +3,10 @@ require_once __DIR__ . '/../controllers/BookController.php';
 
 $controller = new BookController();
 
-if (isset($_GET['ContentID'])) {
-  $controller->readBook( $_GET['contentID']);
+if (isset($_POST['contentID']) ) {
+    $contentID = $_POST['contentID'];
+    $controller->readBook($contentID);
 } else {
-  echo "No book ID specified.";
+    http_response_code(400);    
+    echo "No book ID specified.";
 }
