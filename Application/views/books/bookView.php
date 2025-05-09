@@ -67,11 +67,9 @@ $retailPrice = htmlspecialchars($book['RETAILPRICE']);
                 </div> -->
 
                 <div class="col-12 d-flex flex-wrap align-items-center">
-                <form method="POST" action="/readBook">
-                    <input type="hidden" name="bookId" value="<?= $bookId ?>">
-                    <button type="submit" class="btn btn-green me-2">READ NOW</button>
-                </form>
+                    <a href="/readBook/<?= $contentId ?>" class="btn btn-green me-2">READ NOW</a>
                 </div>
+
 
                 <!-- LISTEN TO AUDIOBOOK -->
                 <div class="col-12 d-flex flex-wrap align-items-center">
