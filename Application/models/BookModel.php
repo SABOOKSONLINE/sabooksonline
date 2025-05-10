@@ -17,7 +17,7 @@ class BookModel
      */
     public function getBooksByCategory($category)
     {
-        $sql = "SELECT * FROM posts WHERE category = ? AND STATUS = 'active' ORDER BY TITLE";
+        $sql = "SELECT * FROM posts WHERE LOWER(category) = LOWER(?) AND STATUS = 'active' ORDER BY TITLE";
 
         // prepared statements for executing the quesry
         $stmt = mysqli_prepare($this->conn, $sql);

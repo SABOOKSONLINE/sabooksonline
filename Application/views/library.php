@@ -30,11 +30,11 @@ $keyword = $_GET['k'] ?? null;
         </div>
 
         <?php if (!$category && $keyword): ?>
-            <h5 class="mt-3">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
+            <h5 class="mt-3 text-capitalize">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
         <?php endif; ?>
 
         <?php if ($category && !$keyword): ?>
-            <h5 class="mt-3">Category selected: <strong><?= htmlspecialchars($category) ?></strong></h5>
+            <h5 class="mt-3 text-capitalize">Category selected: <strong><?= htmlspecialchars($category) ?></strong></h5>
         <?php endif; ?>
 
         <div class="row py-3">

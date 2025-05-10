@@ -141,7 +141,7 @@ class BookController
         if ($books) {
             include __DIR__ . '/../views/books/bookCategory.php';
         } else {
-            echo "No books found in this category.";
+            echo "<div class='container'>No books found in this category.</div>";
         }
     }
 
@@ -150,13 +150,12 @@ class BookController
      */
     public function renderLibraryByCategory($category)
     {
-        $category = htmlspecialchars(trim($category)); // Sanitize category input
         $books = $this->bookModel->getBooksByCategory($category);
 
         if ($books) {
             include __DIR__ . '/../views/books/catalogueView.php';
         } else {
-            echo "No books found in this category.";
+            echo "<div class='container'>No books found in this category.</div>";
         }
     }
 
@@ -165,13 +164,12 @@ class BookController
      */
     public function renderBooksByPublisher($userId)
     {
-        $userId = htmlspecialchars(trim($userId));
         $books = $this->bookModel->getBooksByPublisher($userId);
 
         if ($books) {
             include __DIR__ . '/../views/books/catalogueView.php';
         } else {
-            echo "No books found in this publisher.";
+            echo "<div class='container'>No books found in this publisher.</div>";
         }
     }
 
@@ -185,7 +183,7 @@ class BookController
         if ($books) {
             include __DIR__ . '/../views/books/catalogueView.php';
         } else {
-            echo "No books found.";
+            echo "<div class='container'>No books found.</div>";
         }
     }
 
@@ -206,7 +204,7 @@ class BookController
         if ($books) {
             include __DIR__ . '/../views/books/pagination.php';
         } else {
-            echo "No books found.";
+            echo "<div class='container'>No books found.</div>";
         }
     }
 
