@@ -1,22 +1,17 @@
 <?php
+// Application/api.php
 
-// Show errors for development (remove in production)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+header('Content-Type: application/json');
 
-// 1. Load required files (adjust paths if needed)
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/models/BookModel.php';
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../models/BookModel.php';
 require_once __DIR__ . '/controllers/BookController.php';
 
-// 2. Instantiate the controller
 $controller = new BookController($conn);
 
-// 3. Get API action from query string (e.g., ?action=getBook&id=1)
-$action = $_GET['action'] ?? null;
+// Support both direct call (?action=...) and routed call via FastRoute
+$action = $_GET['action'] ?? 'getAllBooks'; // Default to all books
 
-// 4. Call methods based on the action
 switch ($action) {
     case 'getBook':
         $id = $_GET['id'] ?? null;
@@ -39,6 +34,6 @@ switch ($action) {
 
     default:
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid or missing action']);
+        echo json_encode(['error' => 'Unknown action']);
         break;
 }
