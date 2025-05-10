@@ -218,4 +218,49 @@ class BookController
             echo "No categories found.";
         }
     }
+
+        //  JSON version: Get single book by ID
+    public function getBookJson($id)
+    {
+        $book = $this->bookModel->getBookById($id);
+
+        header('Content-Type: application/json');
+
+        if ($book) {
+            echo json_encode($book);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Book not found']);
+        }
+    }
+
+    // JSON version: Get all books
+    public function getAllBooksJson()
+    {
+        $books = $this->bookModel->getBooks();
+
+        header('Content-Type: application/json');
+        echo json_encode($books);
+    }
+
+    // JSON version: Get books by category
+    public function getBooksByCategoryJson($category)
+    {
+        $category = htmlspecialchars(trim($category));
+        $books = $this->bookModel->getBooksByCategory($category);
+
+        header('Content-Type: application/json');
+        echo json_encode($books);
+    }
+
+    // JSON version: Search books
+    public function searchBooksJson($keyword)
+    {
+        $keyword = htmlspecialchars(trim($keyword));
+        $books = $this->bookModel->searchBooks($keyword);
+
+        header('Content-Type: application/json');
+        echo json_encode($books);
+    }
+
 }
