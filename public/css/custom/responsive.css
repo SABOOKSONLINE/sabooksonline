@@ -1,8 +1,136 @@
-@media (max-width: 1200px) {
+@media (min-width: 0) {
+    .jumbo-details .display-4 {
+        font-size: 36px;
+    }
+
+    .lead {
+        font-size: 16px;
+        opacity: 0.75;
+    }
+
+    .section {
+        padding: 50px 0;
+    }
+
+    .book-card {
+        width: 140px;
+    }
+
+    .book-card-cover {
+        height: 212px;
+    }
+
+    .book-card-little {
+        font-size: 14px;
+    }
+
+    #stylish-section .book-card {
+        margin: 0 10px;
+    }
+
+    #stylish-section .book-card:hover img {
+        transform: none;
+    }
+
+    .book-card-num {
+        top: 35%;
+        left: -35px;
+
+        font-size: 100px;
+    }
+
+    .book-card:hover .book-card-num {
+        top: 30%;
+        left: -45px;
+        z-index: 10;
+    }
+
+    .library-book-card {
+        grid-template-columns: 130px calc(100% - 130px - 20px);
+    }
+
+    .library-book-card-img {
+        height: 184px;
+    }
+
+    .library-book-card .book-card-little {
+        font-size: 16px;
+    }
+
+    .library-book-card p {
+        font-size: 12px;
+        margin-top: 8px;
+    }
 }
-@media (max-width: 1200px) {
+@media (min-width: 768px) {
+    .section {
+        padding: 75px 0;
+    }
+
+    .book-card-little {
+        font-size: 18px;
+    }
 }
-@media (max-width: 1200px) {
-}
-@media (max-width: 1200px) {
+@media (min-width: 992px) {
+    .section {
+        padding: 100px 0;
+    }
+
+    .lead {
+        font-size: 24px;
+        opacity: 0.5;
+    }
+
+    .jumbo-details .display-4 {
+        font-size: 60px;
+    }
+
+    .book-card {
+        width: 210px;
+    }
+
+    .book-card-cover {
+        height: 297px;
+    }
+
+    .book-card-little {
+        font-size: 20px;
+    }
+
+    #stylish-section .book-card {
+        margin: 14px 20px;
+    }
+
+    #stylish-section .book-card:hover img {
+        transform: scale(1.075);
+    }
+
+    .book-card-num {
+        top: 50%;
+        left: -50px;
+
+        font-size: 150px;
+    }
+
+    .book-card:hover .book-card-num {
+        top: 45%;
+        left: -75px;
+    }
+
+    .library-book-card {
+        grid-template-columns: 140px calc(100% - 140px - 20px);
+    }
+
+    .library-book-card-img {
+        height: 198px;
+    }
+
+    .library-book-card .book-card-little {
+        font-size: 20px;
+    }
+
+    .library-book-card p {
+        font-size: 14px;
+        margin-top: 10px;
+    }
 }
