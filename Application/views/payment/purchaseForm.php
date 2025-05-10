@@ -66,7 +66,7 @@
           <span>Secure payment powered by PayFast</span>
         </div>
 
-        <?= $this->generatePaymentForm($user) ?>
+        <?= $paymentForm ?>
 
         <div class="text-center mt-3">
           <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="180" alt="PayFast">
