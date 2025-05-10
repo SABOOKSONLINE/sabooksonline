@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Purchase Book - <?= $title ?></title>
+  <title>Purchase Book - <?= htmlspecialchars($title) ?></title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <style>
     .book-card {
@@ -34,22 +34,22 @@
       <div class="book-card">
 
         <div class="text-center mb-4">
-          <img src="<?= $cver ?>" alt="Book Cover" class="img-fluid" style="max-height: 300px;">
+          <img src="<?= htmlspecialchars($cover) ?>" alt="Book Cover" class="img-fluid" style="max-height: 300px;">
         </div>
 
-        <h3><?= $title ?></h3>
-        <p><strong>Publisher:</strong> <?= $publisher ?></p>
-        <p><?= nl2br($description) ?></p>
+        <h3><?= htmlspecialchars($title) ?></h3>
+        <p><strong>Publisher:</strong> <?= htmlspecialchars($publisher) ?></p>
+        <p><?= nl2br(htmlspecialchars($description)) ?></p>
 
         <hr>
 
         <div class="mb-3">
           <h5>Your Details</h5>
           <div class="d-flex align-items-center">
-            <img src="<?= $profile ?>" alt="Profile Image" width="50" height="50" class="rounded-circle me-2">
+            <img src="<?= htmlspecialchars($profile) ?>" alt="Profile Image" width="50" height="50" class="rounded-circle me-2">
             <div>
-              <strong><?= $userName ?></strong><br>
-              <small><?= $userEmail ?></small>
+              <strong><?= htmlspecialchars($userName) ?></strong><br>
+              <small><?= htmlspecialchars($userEmail) ?></small>
             </div>
           </div>
         </div>
