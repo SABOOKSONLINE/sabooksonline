@@ -1,21 +1,6 @@
 <?php
 
-function paginatedBooks($books)
-{
-    $book_pages = [];
-    $page = 1;
-    $book_pages[$page] = [];
-
-    foreach ($books as $book) {
-        if (count($book_pages[$page]) === 18) {
-            $page++;
-            $book_pages[$page] = [];
-        }
-        $book_pages[$page][] = $book;
-    }
-
-    return $book_pages;
-}
+require_once __DIR__ . "/../util/helpers.php";
 
 function booksByPage($books, $page)
 {
