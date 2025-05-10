@@ -1,5 +1,4 @@
 <?php
-// api.php
 
 // Show errors for development (remove in production)
 ini_set('display_errors', 1);
