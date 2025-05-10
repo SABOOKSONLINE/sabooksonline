@@ -1,62 +1,62 @@
 <?php
-require_once __DIR__ . '/../models/Book.php';
+require_once __DIR__ . '/../models/BookModel.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../config/connection.php';
 
-
 class CheckoutController {
-
     private $bookModel;
     private $userModel;
 
-    public function __construct($userModel) {
-        $this->userModel = $userModel;
+    public function __construct() {
+        $this->userModel = new userModel($conn);
+        $this->bookModel = new BookModel($conn);
     }
 
-    $bookModel = new Book();
-    $book = $this->bookModel->getBookById($contentId);
-
-    $bookId = strtolower($book['CONTENTID']);
-    $cover = htmlspecialchars($book['COVER']);
-    $title = htmlspecialchars($book['TITLE']);
-    $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
-    $description = htmlspecialchars($book['DESCRIPTION']);
-    $retailPrice = htmlspecialchars($book['RETAILPRICE']);
-    $logo = 'https://sabooksonline.co.za/img/social.png';
-
-    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
-
-    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
-        $profile = $adminProfileImage;
-    } else {
-        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
-    }
-
-    // Display Book Purchase Page
-    public function purchaseBook($bookId) {
+    // Show purchase form for a specific book
+    public function purchaseBook($bookId, $userId) {
         $book = $this->bookModel->getBookById($bookId);
-        if ($book) {
-            $user = $this->userModel->getUserById($userId); 
+        $user = $this->userModel->getUserByNameOrKey($userId);
+
+        if ($book && $user) {
             include __DIR__ . '/../views/payment/purchaseForm.php';
         } else {
-            echo "Book not found.";
+            echo "Book or user not found.";
         }
     }
 
+    // Generate PayFast Payment Form HTML
     public function generatePaymentForm($book, $user) {
+        $bookId = strtolower($book['CONTENTID']);
+        $cover = htmlspecialchars($book['COVER']);
+        $title = htmlspecialchars($book['TITLE']);
+        $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
+        $description = htmlspecialchars($book['DESCRIPTION']);
+        $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+        $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
+
+        $userName = htmlspecialchars($user['ADMIN_NAME']);
+        $userEmail = htmlspecialchars($user['ADMIN_EMAIL']);
+        $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
+
+        if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } else {
+            $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+        }
+
         $data = [
-            'merchant_id' => '18172469', 
+            'merchant_id' => '18172469',
             'merchant_key' => 'gwkk16pbxdd8m',
             'return_url' => 'https://yourwebsite.com/payment/thank-you',
             'cancel_url' => 'https://yourwebsite.com/payment/cancel',
             'notify_url' => 'https://yourwebsite.com/payment/notify',
             'name_first' => $userName,
-            'name_last' => $user['last_name'],
+            'user_id' => $user['last_name'],
             'email_address' => $userEmail,
             'm_payment_id' => uniqid(),
             'amount' => number_format($retailPrice, 2, '.', ''),
-            'item_name' => $bookId,
-            'subscription_type' => '2', // Subscription type (1=recurring, 2=once-off)
+            'item_id' => $bookId,
+            'subscription_type' => '2',
         ];
 
         $signature = $this->generateSignature($data, 'SABooksOnline2021');
@@ -66,11 +66,11 @@ class CheckoutController {
         <div style="border:1px solid #ccc; padding:20px; border-radius:10px; max-width:500px; margin:auto; font-family:sans-serif;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                 <img src="' . $profile . '" alt="User" style="width:50px;height:50px;border-radius:50%;border:2px solid #eee;" />
-                <strong>' . htmlspecialchars($userName) . '</strong>
+                <strong>' . $userName . '</strong>
             </div>
 
             <div style="text-align:center;">
-                <img src="' . $cover . '" alt="Book Cover" style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 0 5px rgba(0,0,0,0.2);" />
+                <img src="' . $coverUrl . '" alt="Book Cover" style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 0 5px rgba(0,0,0,0.2);" />
             </div>
 
             <h3 style="margin-top:15px;">' . $title . '</h3>
@@ -104,6 +104,7 @@ class CheckoutController {
         if ($passPhrase !== null) {
             $getString .= '&passphrase=' . urlencode(trim($passPhrase));
         }
+
         return md5($getString);
     }
 
@@ -121,12 +122,9 @@ class CheckoutController {
                 $amount = $postData['amount_gross'];
 
                 $this->bookModel->markBookAsPurchased($paymentId, $amount);
-
-                echo "Payment successful!";
-                thankYou();
+                $this->thankYou();
             } else {
-                echo "Payment failed or incomplete!";
-                cancel();
+                $this->cancel();
             }
         }
     }
