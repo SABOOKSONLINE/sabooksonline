@@ -49,10 +49,10 @@ class BookController
 
         $book = $this->bookModel->getBookById($contentId);
 
-        if ($book) {
+        if ($book && $book['PDFURL'] != null) {
             include __DIR__ . '/../views/books/ebook/bookReader.php';
         } else {
-            echo "Book not found.";
+            echo "Book Content unavailble";
         }
     }
 
