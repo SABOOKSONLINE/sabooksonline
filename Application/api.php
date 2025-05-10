@@ -3,8 +3,8 @@
 
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../models/BookModel.php';
+require_once __DIR__ . '/config/connection.php';
+require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/controllers/BookController.php';
 
 $controller = new BookController($conn);
