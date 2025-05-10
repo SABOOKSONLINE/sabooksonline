@@ -18,6 +18,7 @@ class CheckoutController {
         $user = $this->userModel->getUserByNameOrKey($userId);
 
         if ($book && $user) {
+            $paymentForm = $this->generatePaymentForm($book, $user);
             include __DIR__ . '/../views/payment/purchaseForm.php';
         } else {
             echo "Book or user not found.";
