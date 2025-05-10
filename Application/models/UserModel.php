@@ -32,20 +32,9 @@ class UserModel {
     public function startSession($userData) {
         $_SESSION['ADMIN_ID'] = $userData['ADMIN_ID'];
         $_SESSION['ADMIN_SUBSCRIPTION'] = $userData['ADMIN_SUBSCRIPTION'];
-        $_SESSION['ADMIN_NAME'] = $userData['ADMIN_NAME'];
-        $_SESSION['ADMIN_EMAIL'] = $userData['ADMIN_EMAIL'];
-        $_SESSION['ADMIN_NUMBER'] = $userData['ADMIN_NUMBER'];
-        $_SESSION['ADMIN_WEBSITE'] = $userData['ADMIN_WEBSITE'];
-        $_SESSION['ADMIN_BIO'] = $userData['ADMIN_BIO'];
-        $_SESSION['ADMIN_TYPE'] = $userData['ADMIN_TYPE'];
-        $_SESSION['ADMIN_GOOGLE'] = $userData['ADMIN_GOOGLE'];
-        $_SESSION['ADMIN_INSTAGRAM'] = $userData['ADMIN_INSTAGRAM'];
-        $_SESSION['ADMIN_PASSWORD'] = $userData['ADMIN_PASSWORD'];
-        $_SESSION['ADMIN_VERIFICATION_LINK'] = $userData['ADMIN_VERIFICATION_LINK'];
         $_SESSION['ADMIN_PROFILE_IMAGE'] = $userData['ADMIN_PROFILE_IMAGE'];
         $_SESSION['ADMIN_USERKEY'] = $userData['ADMIN_USERKEY'];
         $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
-    
     }
 
 
