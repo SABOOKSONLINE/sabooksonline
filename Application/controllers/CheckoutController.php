@@ -35,6 +35,7 @@ class CheckoutController {
         $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
 
         $userName = htmlspecialchars($user['ADMIN_NAME']);
+        $userName = htmlspecialchars($user['ADMIN_USERKEY']);
         $userEmail = htmlspecialchars($user['ADMIN_EMAIL']);
         $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
 
