@@ -3,7 +3,7 @@
 
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/config/connection.php';
+require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/controllers/BookController.php';
 
