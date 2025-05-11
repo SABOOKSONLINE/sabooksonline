@@ -234,6 +234,19 @@ class BookController
         }
     }
 
+    public function renderListingsByCategoryJson($category, $limit)
+    {
+        $category = htmlspecialchars(trim($category)); // Sanitize category input
+        $books = $this->bookModel->getBookListingsByCategory($category, $limit);
+
+        if ($books) {
+            echo json_encode($book);
+
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Book not found']);        }
+    }
+
     // JSON version: Get all books
     public function getAllBooksJson()
     {

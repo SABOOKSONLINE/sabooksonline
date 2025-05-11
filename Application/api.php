@@ -25,6 +25,11 @@ switch ($action) {
         $controller->getBookJson($id);
         break;
 
+        case 'home':
+        $category = $_GET['category'] ?? null;
+        $controller->renderListingsByCategoryJson($category);
+        break;
+
     case 'getAllBooks':
         $controller->getAllBooksJson();
         break;
