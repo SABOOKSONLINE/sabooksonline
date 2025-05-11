@@ -18,40 +18,40 @@ require_once __DIR__ . "/includes/header.php";
         <div class="row">
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 01
+                    Subscrption Plans
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Access a digital toolkit to list books, events & services, RSVP tools, customer management & analysis. Tiered <a href="/membership">plans</a> available based on your needs.</p>
             </div>
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 02
+                    Digital Marketing
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Promote your books, library events, or author brand through tailored online marketing campaigns across web and social media platforms.</p>
             </div>
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 03
+                    Consultations
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Get expert advice on publishing, branding, digital tools, and how to effectively reach and grow your library audience.</p>
             </div>
 
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 04
+                    eBook Conversion
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Convert your manuscript into professional formatted eBooks comptible with various reading devices and platforms.</p>
             </div>
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 05
+                    Audiobook Cnnversion
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Bring your stories to life with high quality audiobook production, including narration, editing and mastering.</p>
             </div>
             <div class="col-md-4 mb-4">
                 <h3 class="">
-                    Service 06
+                    Event Planning
                 </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero dolorem porro, molestiae deserunt laboriosam eius. Ratione rem hic impedit praesentium magni expedita quia ipsam ducimus nihil. Iure earum laborum harum?</p>
+                <p>Let us help you plan, promote, and manage literary events, from book launches to virtual discussions.</p>
             </div>
         </div>
     </div>
