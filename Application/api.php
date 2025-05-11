@@ -1,6 +1,14 @@
 <?php
-// Application/api.php
+// CORS headers - Allow cross-origin requests
+header('Access-Control-Allow-Origin: *'); // Allows requests from any domain. Change this to a specific domain if needed
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'); // Allowed HTTP methods
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); // Allowed headers
 
+// Handle OPTIONS request (for preflight)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200); // Respond with status 200 for preflight requests
+    exit;
+}
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/Config/connection.php';
@@ -9,8 +17,7 @@ require_once __DIR__ . '/controllers/BookController.php';
 
 $controller = new BookController($conn);
 
-// Support both direct call (?action=...) and routed call via FastRoute
-$action = $_GET['action'] ?? 'getAllBooks'; // Default to all books
+$action = $_GET['action'] ?? 'getAllBooks';
 
 switch ($action) {
     case 'getBook':
