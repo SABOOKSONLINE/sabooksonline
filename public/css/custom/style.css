@@ -30,6 +30,18 @@ body {
     background: var(--white, #fff);
 }
 
+.text-off-white {
+    color: var(--off-white, #f3f3f3);
+}
+
+.text-red {
+    color: var(--red, #ff0051);
+}
+
+.text-white {
+    color: var(--white, #fff);
+}
+
 /* ===============================
    BUTTON / STYLING
 ================================= */
@@ -780,6 +792,39 @@ footer {
 .btn-sub:hover {
     background: var(--white);
     color: var(--red);
+}
+
+.newsletter-form input[type="email"] {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    outline: none;
+}
+
+.newsletter-form input::placeholder {
+    color: #fff;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.newsletter-form button {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: background 0.3s ease;
+}
+
+.newsletter-form button:hover {
+    background: #fff;
+    color: #ff2a68; /* or any strong color matching your gradient */
 }
 
 /* ===============================

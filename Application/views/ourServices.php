@@ -16,42 +16,94 @@ require_once __DIR__ . "/includes/header.php";
 
     <div class="container py-5">
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    Subscrption Plans
-                </h3>
-                <p>Access a digital toolkit to list books, events & services, RSVP tools, customer management & analysis. Tiered <a href="/membership">plans</a> available based on your needs.</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    Digital Marketing
-                </h3>
-                <p>Promote your books, library events, or author brand through tailored online marketing campaigns across web and social media platforms.</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    Consultations
-                </h3>
-                <p>Get expert advice on publishing, branding, digital tools, and how to effectively reach and grow your library audience.</p>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Subscription Plans
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Access a digital toolkit to list books, events & services, RSVP tools, customer management &
+                            analytics. Tiered plans available based on your needs.
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    eBook Conversion
-                </h3>
-                <p>Convert your manuscript into professional formatted eBooks comptible with various reading devices and platforms.</p>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Digital Marketing
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Promote your books, literary events, or author brand through tailored online marketing
+                            campaigns across web and social media platforms.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    Audiobook Cnnversion
-                </h3>
-                <p>Bring your stories to life with high quality audiobook production, including narration, editing and mastering.</p>
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Consultations
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Get expert advice on publishing, branding, digital tools, and how to effectively reach and grow
+                            your literary audience.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <h3 class="">
-                    Event Planning
-                </h3>
-                <p>Let us help you plan, promote, and manage literary events, from book launches to virtual discussions.</p>
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            eBook Conversion
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Convert your manuscript into professionally formatted eBooks compatible with various reading
+                            devices and platforms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Audiobook Conversion
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Bring your stories to life with high-quality audiobook production, including narration, editing, and
+                            mastering.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="">
+                            Event Planning
+                        </h4>
+                        <hr />
+                        <p class="card-text">
+                            Let us help you plan, promote, and manage literary events, from book launches to virtual
+                            discussions.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
