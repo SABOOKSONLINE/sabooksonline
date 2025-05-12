@@ -234,11 +234,11 @@ class BookController
         }
     }
 
-    public function renderListingsByCategoryJson($category, $limit)
+    public function renderListingsByCategoryJson($category)
     {
         $category = htmlspecialchars(urldecode(trim($category))); // Sanitize category input
 
-        $books = $this->bookModel->getBookListingsByCategory($category, $limit);
+        $books = $this->bookModel->getBookListingsByCategory($category);
 
         header('Content-Type: application/json');
 
