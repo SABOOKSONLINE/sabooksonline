@@ -242,7 +242,7 @@ class BookController
         header('Content-Type: application/json');
 
         if ($books) {
-            echo json_encode($book);
+            echo json_encode($books);
 
         } else {
             http_response_code(404);
