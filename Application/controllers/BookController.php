@@ -236,7 +236,8 @@ class BookController
 
     public function renderListingsByCategoryJson($category, $limit)
     {
-        $category = htmlspecialchars(trim($category)); // Sanitize category input
+        $category = htmlspecialchars(urldecode(trim($category))); // Sanitize category input
+
         $books = $this->bookModel->getBookListingsByCategory($category, $limit);
 
         header('Content-Type: application/json');
@@ -246,7 +247,7 @@ class BookController
 
         } else {
             http_response_code(404);
-            echo json_encode(['error' => 'Home categories not found not found']);        }
+            echo json_encode(['error' => 'Home categories not found']);        }
     }
 
     // JSON version: Get all books
