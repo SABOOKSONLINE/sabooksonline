@@ -51,7 +51,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/home/{category}', function () {
+     $r->addRoute('GET', '/api/home/{category}', function ($category) {
         $_GET['action'] = 'home';
         $_GET['category'] = $category;
         require "Application/api.php";
