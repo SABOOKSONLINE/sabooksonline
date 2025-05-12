@@ -21,20 +21,38 @@ require_once __DIR__ . "/includes/header.php";
 	</div>
 
 	<div class="container py-5">
-		<div class="mb-4">
-			<h1 class="section-title">The Gateway to South African Literature</h1>
-		</div>
+		<h2 class="section-title">The Gateway to South African Literature</h2>
 
 		<p>
-			SA Books Online is South Africa's first book repository that is positioning itself as the primary platform for everything that is and connects to South African literature. Founded in 2021, South African Books Online Pty Ltd offers marketing services to all South African literature products in all various formats. We are a 100% black youth–owned organization. (B–BBEE level 1).
+			At SA Books Online, we bridge the gap between authors and readers, creating a space where
+			diverse voices can thrive. Our platform offers authors a chance to showcase their work while
+			providing readers with a user-friendly app to explore literature.
+		</p>
+
+		<h3 class="section-title">SA Books Online Culture</h3>
+
+		<p>
+			The culture of SA Books Online is vibrant, inclusive, and driven by a commitment to authenticity
+			and empowerment. We celebrate our rich Afrocentric heritage and prioritise diversity, fostering a
+			safe space for authors and readers to connect and share their stories. Our community values
+			collaboration, creativity, and innovation, encouraging individuals to take risks and explore new
+			ideas.
 		</p>
 
 		<p>
-			The agenda around the documentation of South African literature contributes to the global library that fills particular gaps in history’s timeline whether fact or fiction which is significantly crucial, that SA Books Online has stepped up and taken responsibility as the go-to platform for everything that is South African literature. SA Books Online’s purpose is to give easy access to South African literature and content directly to the consumers of South African literature onto one platform and redirect specifically to the owners of the literary content. The intention behind this is to make the South African literature industry more lucrative for all the parties involved.
+			We believe in the transformative power of literature to drive social change and amplify
+			marginalised voices. With a focus on excellence, support, and mentorship, we strive to nurture
+			talent and create opportunities for growth. Our culture is characterised by passion, resilience,
+			and a shared commitment to making a meaningful impact in the literary landscape.
 		</p>
 
+		<h3 class="section-title">Vision & Mission</h3>
+
 		<p>
-			The rich history of this country before colonization, during the invasion, in the dark times of apartheid right to the current rainbow years of a worldly admired democracy, and whenever the future may place this country, it is an important study to the understanding of human behaviour by both its citizens and the global community. As such, it is vital to make access to its literary works in all formats from political, and socio-economic activities right up to the different facets of culture lifestyle, architectural and educational developments as well as the fictional works that vividly demonstrate the evolving imaginations of the minds that are being groomed by this land. The historic footprint of SA Books Online is not only exclusive to present times, but will be enjoyed and appreciated by forthcoming generations.
+			An Ecosystem that preserves & promotes Afrocentric stories.
+		</p>
+		<p>
+			Expanding a story’s reach.
 		</p>
 
 		<p class="quote">
