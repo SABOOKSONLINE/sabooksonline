@@ -46,6 +46,36 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/bookpage.php";
     });
 
+    // Route for serving JSON API requests from React Native
+    $r->addRoute('GET', '/api/books', function () {
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/home/{category}', function ($category) {
+        $_GET['action'] = 'home';
+        $_GET['category'] = $category;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/book/{id}', function ($id) {
+        $_GET['action'] = 'getBook';
+        $_GET['id'] = $id;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/category/{category}', function ($category) {
+        $_GET['action'] = 'getBooksByCategory';
+        $_GET['category'] = $category;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/search/{keyword}', function ($keyword) {
+        $_GET['action'] = 'searchBooks';
+        $_GET['keyword'] = $keyword;
+        require "Application/api.php";
+    });
+
+
     // audioBook
     $r->addRoute('GET', '/library/audiobook/{id}', function ($id) {
         $_GET['q'] = $id;
