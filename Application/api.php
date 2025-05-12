@@ -34,6 +34,10 @@ switch ($action) {
         $controller->getAllBooksJson();
         break;
 
+    case 'getAllCategories':
+        $controller->renderCategoriesJson();
+        break;
+
     case 'getBooksByCategory':
         $category = $_GET['category'] ?? null;
         $controller->getBooksByCategoryJson($category);

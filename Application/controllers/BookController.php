@@ -254,11 +254,26 @@ class BookController
     public function getAllBooksJson()
     {
         $books = $this->bookModel->getBooks();
+        
 
         header('Content-Type: application/json');
         echo json_encode($books);
     }
 
+     public function renderCategoriesJson()
+    {
+        $categories = $this->bookModel->getBookCategories();
+
+        header('Content-Type: application/json');
+
+
+        if ($categories) {
+        echo json_encode($categories);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'No categories found']);
+        }
+    }
     // JSON version: Get books by category
     public function getBooksByCategoryJson($category)
     {
