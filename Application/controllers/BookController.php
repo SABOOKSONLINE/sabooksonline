@@ -239,12 +239,14 @@ class BookController
         $category = htmlspecialchars(trim($category)); // Sanitize category input
         $books = $this->bookModel->getBookListingsByCategory($category, $limit);
 
+        header('Content-Type: application/json');
+
         if ($books) {
             echo json_encode($book);
 
         } else {
             http_response_code(404);
-            echo json_encode(['error' => 'Book not found']);        }
+            echo json_encode(['error' => 'Home categories not found not found']);        }
     }
 
     // JSON version: Get all books
