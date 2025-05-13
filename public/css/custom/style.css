@@ -733,13 +733,13 @@ footer {
 
 .gallery-div {
     position: relative;
-    width: calc(33% - 20px);
     padding: 10px;
 }
 
 .gallery-img {
     position: relative;
     height: 300px;
+    width: 100%;
     overflow: hidden;
     transition: 0.3s ease;
 }
@@ -748,12 +748,13 @@ footer {
     position: absolute;
     width: 100%;
     top: 50%;
-    left: 0;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.1);
+    transition: all 0.3s ease;
 }
 
-.gallery-img:hover {
-    transform: scale(1.05);
+.gallery-img:hover img {
+    transform: translate(-50%, -50%) scale(1.15);
 }
 
 /* ===============================
@@ -894,6 +895,10 @@ footer {
 
     z-index: 2;
 }
+
+/* ===============================
+   OUR SERVICES CARDS / STYLING
+================================= */
 
 .card .card-img {
     position: relative;
