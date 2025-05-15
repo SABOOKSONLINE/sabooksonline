@@ -8,10 +8,10 @@ require_once __DIR__ . "/includes/header.php";
 	<div class="jumbotron jumbotron-md">
 		<div class="container h-100 d-flex flex-column justify-content-end py-5">
 			<div class="jumbo-details">
-				<h1 class="display-4">About <b>SABooksOnline</b></h1>
+				<h1 class="display-4">The <b>SABooksOnline</b> Story</h1>
 				<p class="lead mb-4">The Gateway to South African Literature</p>
 				<div class="d-flex justify-content-start">
-					<a class="btn btn-red me-2" href="#" role="button">
+					<a class="btn btn-red me-2" href="/membership" role="button">
 						Create Membership Account
 						<i class="fas fa-arrow-right"></i>
 					</a>
@@ -63,7 +63,7 @@ require_once __DIR__ . "/includes/header.php";
 
 		<p class="fw-medium">– Founder & MD of SA Books Online, Sbusiso Manqa</p>
 
-		<a class="btn btn-red me-2" href="#" role="button">
+		<a class="btn btn-red me-2" href="/membership" role="button">
 			Create Membership Account
 			<i class="fas fa-arrow-right"></i>
 		</a>
