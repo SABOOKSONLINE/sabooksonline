@@ -80,6 +80,11 @@ class CheckoutController {
             <p><strong>Description:</strong> ' . $description . '</p>
             <p><strong>Price:</strong> R' . $retailPrice . '</p>
 
+            <div class="mb-4 secure-badge">
+                <img src="https://img.icons8.com/color/48/000000/lock--v1.png" alt="Secure">
+                <span>Secure payment powered by PayFast</span>
+            </div>
+
             <form action="https://www.payfast.co.za/eng/process" method="post">';
         
         foreach ($data as $name => $value) {
@@ -88,6 +93,9 @@ class CheckoutController {
 
         $htmlForm .= '
                 <input type="submit" value="Pay Securely with PayFast" style="margin-top:10px; background-color:#00b086; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer;" />
+                <div class="text-center mt-3">
+                    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="180" alt="PayFast">
+                </div>
             </form>
         </div>';
 
