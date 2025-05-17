@@ -1,13 +1,12 @@
 <?php
 require_once __DIR__ . '/../models/BookModel.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../config/connection.php';
 
 class CheckoutController {
     private $bookModel;
     private $userModel;
 
-    public function __construct() {
+    public function __construct($conn) {
         $this->userModel = new userModel($conn);
         $this->bookModel = new BookModel($conn);
     }
@@ -27,7 +26,7 @@ class CheckoutController {
 
     // Generate PayFast Payment Form HTML
     public function generatePaymentForm($book, $user) {
-        $bookId = strtolower($book['CONTENTID']);
+        $bookId = strtolower($book['ID']);
         $cover = htmlspecialchars($book['COVER']);
         $title = htmlspecialchars($book['TITLE']);
         $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
@@ -36,7 +35,6 @@ class CheckoutController {
         $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
 
         $userName = htmlspecialchars($user['ADMIN_NAME']);
-        $userName = htmlspecialchars($user['ADMIN_USERKEY']);
         $userEmail = htmlspecialchars($user['ADMIN_EMAIL']);
         $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
 
@@ -49,14 +47,14 @@ class CheckoutController {
         $data = [
             'merchant_id' => '18172469',
             'merchant_key' => 'gwkk16pbxdd8m',
-            'return_url' => 'https://yourwebsite.com/payment/thank-you',
-            'cancel_url' => 'https://yourwebsite.com/payment/cancel',
-            'notify_url' => 'https://yourwebsite.com/payment/notify',
+            'return_url' => 'https://11-july-2023.sabooksonline.co.za/payment/return',
+            'cancel_url' => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
+            'notify_url' => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
             'name_first' => $userName,
-            'user_id' => $user['last_name'],
             'email_address' => $userEmail,
             'm_payment_id' => uniqid(),
             'amount' => number_format($retailPrice, 2, '.', ''),
+            'item_name' => $title,
             'item_id' => $bookId,
             'subscription_type' => '2',
         ];
@@ -119,25 +117,32 @@ class CheckoutController {
                 die("Invalid signature");
             }
 
-            if ($postData['payment_status'] == 'COMPLETE') {
+           if ($postData['payment_status'] == 'COMPLETE') {
                 $paymentId = $postData['m_payment_id'];
                 $amount = $postData['amount_gross'];
+                $bookId = $postData['item_id']; // You passed this in your form
+                $userEmail = $postData['email_address']; // You passed this too
 
-                $this->bookModel->markBookAsPurchased($paymentId, $amount);
-                $this->thankYou();
+                // Get the user ID using the email
+                $user = $this->userModel->getUserByEmail($userEmail);
+                if (!$user) {
+                    die("User not found");
+                }
+                $userId = $user['ADMIN_ID'];
+
+                // Insert purchase record
+                $stmt = $this->conn->prepare("INSERT INTO purchases (user_id, book_id, payment_id, amount, payment_status) VALUES (?, ?, ?, ?, 'COMPLETE')");
+                $stmt->bind_param("isss", $userId, $bookId, $paymentId, $amount);
+                $stmt->execute();            
+
+
+                include __DIR__ . '/../views/payment/return.php';
+
             } else {
-                $this->cancel();
+                include __DIR__ . '/../views/payment/cancel.php';
+
             }
         }
     }
 
-    public function thankYou() {
-        echo "<h2>Thank you for your purchase!</h2>";
-        echo "<p>Your payment was successful, and the book is now available for download.</p>";
-    }
-
-    public function cancel() {
-        echo "<h2>Payment Cancelled</h2>";
-        echo "<p>Your payment was not completed. Please try again later.</p>";
-    }
 }

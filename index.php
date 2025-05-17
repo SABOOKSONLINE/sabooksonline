@@ -33,8 +33,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/library.php";
     });
 
-    $r->addRoute('GET', '/flutterwave-webhook', function () {
-        require "Application/webhook/flutterwave-webhook.php";
+    $r->addRoute('GET', '/payment/notify', function () {
+        require "Application/views/payment/notify.php";
+    });
+
+    $r->addRoute('GET', '/payment/return', function () {
+        require "Application/views/payment/return.php";
+    });
+
+    $r->addRoute('GET', '/payment/cancel', function () {
+        require "Application/views/payment/cancel.php";
     });
 
     $r->addRoute('GET', '/membership', function () {
