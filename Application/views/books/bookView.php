@@ -105,7 +105,7 @@ $audiobookId = $book['a_id'] ?? null;
                 </div> -->
 
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                <form method="POST" action="/Application/checkout.php">
+                <form method="POST" action="/checkout">
                     <input type="hidden" name="bookId" value="<?= $bookId ?>">
 
                     <button type="submit" class="btn btn-blue me-2">BUY COPY</button>
