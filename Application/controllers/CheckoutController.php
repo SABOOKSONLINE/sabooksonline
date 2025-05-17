@@ -28,16 +28,16 @@ class CheckoutController {
 
     // Generate PayFast Payment Form HTML
     public function generatePaymentForm($book, $user) {
-        $bookId = strtolower($book['ID']);
-        $cover = htmlspecialchars($book['COVER']);
-        $title = htmlspecialchars($book['TITLE']);
-        $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
-        $description = htmlspecialchars($book['DESCRIPTION']);
-        $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+        $bookId = $book['ID'];
+        $cover = $book['COVER'];
+        $title = $book['TITLE'];
+        $publisher = $book['PUBLISHER'];
+        $description = $book['DESCRIPTION'];
+        $retailPrice = $book['RETAILPRICE'];
         $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
 
-        $userName = htmlspecialchars($user['ADMIN_NAME']);
-        $userEmail = htmlspecialchars($user['ADMIN_EMAIL']);
+        $userName = $user['ADMIN_NAME'];
+        $userEmail = $user['ADMIN_EMAIL'];
         $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
 
         if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
@@ -47,19 +47,21 @@ class CheckoutController {
         }
 
         $data = [
-            'merchant_id' => '18172469',
-            'merchant_key' => 'gwkk16pbxdd8m',
-            'return_url' => 'https://11-july-2023.sabooksonline.co.za/payment/return',
-            'cancel_url' => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
-            'notify_url' => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
-            'name_first' => $userName,
-            'email_address' => $userEmail,
-            'm_payment_id' => uniqid(),
-            'amount' => number_format($retailPrice, 2, '.', ''),
-            'item_name' => $title,
-            'item_id' => $bookId,
-            'subscription_type' => '2',
-        ];
+        'merchant_id'     => '18172469',
+        'merchant_key'    => 'gwkk16pbxdd8m',
+        'return_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
+        'name_first'      => $userName,
+        'email_address'   => $userEmail,
+        'm_payment_id'    => uniqid(),
+        'amount'          => number_format($retailPrice, 2, '.', ''),
+        'item_name'       => $title,        
+        'custom_str1'     => $bookId,
+    ];
+
+
+    
 
         $signature = $this->generateSignature($data, 'SABooksOnline2021');
         $data['signature'] = $signature;
@@ -102,21 +104,32 @@ class CheckoutController {
         return $htmlForm;
     }
 
-    private function generateSignature($data, $passPhrase = null) {
-        $pfOutput = '';
-        foreach ($data as $key => $val) {
-            if ($val !== '') {
-                $pfOutput .= $key . '=' . urlencode(trim($val)) . '&';
+    
+
+    public function generateSignature(array $data, string $passphrase = ''): string {
+        // Step 1: Sort the array by key alphabetically
+        ksort($data);
+
+        // Step 2: Build the string in 'key=value' format
+        $signatureString = '';
+        foreach ($data as $key => $value) {
+            if ($value !== '') {
+                $signatureString .= $key . '=' . urlencode(trim($value)) . '&';
             }
         }
 
-        $getString = substr($pfOutput, 0, -1);
-        if ($passPhrase !== null) {
-            $getString .= '&passphrase=' . urlencode(trim($passPhrase));
+        // Step 3: Append passphrase if set
+        if ($passphrase !== '') {
+            $signatureString .= 'passphrase=' . urlencode($passphrase);
+        } else {
+            // Remove last ampersand if no passphrase
+            $signatureString = rtrim($signatureString, '&');
         }
 
-        return md5($getString);
+        // Step 4: Hash with MD5
+        return md5($signatureString);
     }
+
 
     public function paymentNotify() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -130,7 +143,7 @@ class CheckoutController {
            if ($postData['payment_status'] == 'COMPLETE') {
                 $paymentId = $postData['m_payment_id'];
                 $amount = $postData['amount_gross'];
-                $bookId = $postData['item_id']; // You passed this in your form
+                $bookId = $postData['custom_str1']; // You passed this in your form
                 $userEmail = $postData['email_address']; // You passed this too
 
                 // Get the user ID using the email
