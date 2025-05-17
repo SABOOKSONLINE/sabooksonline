@@ -60,14 +60,10 @@ class CheckoutController {
         'custom_str1'     => $bookId,
     ];
 
-
-    
-
         $signature = $this->generateSignature($data, 'SABooksOnline2021');
         $data['signature'] = $signature;
 
         $htmlForm = '
-        <div style="border:1px solid #ccc; padding:20px; border-radius:10px; max-width:500px; margin:auto; font-family:sans-serif;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                 <img src="' . $profile . '" alt="User" style="width:50px;height:50px;border-radius:50%;border:2px solid #eee;" />
                 <strong>' . $userName . '</strong>
@@ -82,29 +78,18 @@ class CheckoutController {
             <p><strong>Description:</strong> ' . $description . '</p>
             <p><strong>Price:</strong> R' . $retailPrice . '</p>
 
-            <div class="mb-4 secure-badge">
-                <img src="https://img.icons8.com/color/48/000000/lock--v1.png" alt="Secure">
-                <span>Secure payment powered by PayFast</span>
-            </div>
-
             <form action="https://www.payfast.co.za/eng/process" method="post">';
         
         foreach ($data as $name => $value) {
-            $htmlForm .= '<input name="' . $name . '" type="hidden" value="' . $value . '" />';
+            $htmlForm .= '<input name="'.$name.'" type="hidden" value="' .$value. '" />';
         }
 
-        $htmlForm .= '
-                <input type="submit" value="Pay Securely with PayFast" style="margin-top:10px; background-color:#00b086; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer;" />
-                <div class="text-center mt-3">
-                    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="180" alt="PayFast">
-                </div>
-            </form>
-        </div>';
+        $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast"><img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
 
         return $htmlForm;
     }
 
-    
+    // $htmlForm .= '<input name="'.$name.'" type="hidden" value=\''.$value.'\' />';
 
     public function generateSignature(array $data, string $passphrase = ''): string {
         // Step 1: Sort the array by key alphabetically
