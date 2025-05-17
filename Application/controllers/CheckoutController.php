@@ -81,15 +81,13 @@ class CheckoutController {
             <form action="https://www.payfast.co.za/eng/process" method="post">';
         
         foreach ($data as $name => $value) {
-            $htmlForm .= '<input name="'.$name.'" type="hidden" value="' .$value. '" />';
+            $htmlForm .= '<input name="'.$name.'" type="hidden" value=\''.$value.'\' />';
         }
 
         $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast"><img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
 
         return $htmlForm;
     }
-
-    // $htmlForm .= '<input name="'.$name.'" type="hidden" value=\''.$value.'\' />';
 
     public function generateSignature(array $data, string $passphrase = ''): string {
         // Step 1: Sort the array by key alphabetically
