@@ -135,10 +135,25 @@ class CheckoutController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $postData = $_POST;
 
-            $signature = $this->generateSignature($postData, 'SABooksOnline2021');
-            if ($signature !== $postData['signature']) {
-                die("Invalid signature");
+             // Step 1: Save and remove the submitted signature from PayFast
+        $submittedSignature = $postData['signature'] ?? '';
+        unset($postData['signature']);
+
+        // Step 2: Generate your own signature
+        $expectedSignature = $this->generateSignature($postData, 'SABooksOnline2021');
+
+        // Step 3: (Optional Debug) Print signatures to compare
+        if ($expectedSignature !== $submittedSignature) {
+            echo "Signature mismatch!<br>";
+            echo "Expected: $expectedSignature<br>";
+            echo "Submitted: $submittedSignature<br><br>";
+            echo "POST data:<br>";
+            foreach ($postData as $key => $value) {
+                echo "$key = '" . htmlspecialchars($value) . "'<br>";
             }
+            die("Invalid signature");
+        }
+
 
            if ($postData['payment_status'] == 'COMPLETE') {
                 $paymentId = $postData['m_payment_id'];
