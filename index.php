@@ -37,7 +37,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/payment/notify.php";
     });
 
-     $r->addRoute('GET', '/checkout', function () {
+     $r->addRoute('POST', '/checkout', function () {
         require "Application/checkout.php";
     });
 
