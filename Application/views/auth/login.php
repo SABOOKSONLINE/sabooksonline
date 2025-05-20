@@ -22,7 +22,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                         <div class="alert alert-danger d-none" role="alert" id="form-alert">
                         </div>
 
-                        <form method="POST" action="../includes/loginWithForm.php">
+                        <form method="POST" action="/loginForm">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input

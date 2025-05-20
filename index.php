@@ -195,6 +195,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require __DIR__ . "/Application/views/auth/login.php";
     });
 
+    $r->addRoute('POST', '/formLogin', function () {
+        require __DIR__ . "/Application/views/includes/loginWithForm.php";
+    });
+
     $r->addRoute('GET', '/signup', function () {
         require __DIR__ . "/Application/views/auth/signup.php";
     });
