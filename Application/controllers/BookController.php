@@ -247,13 +247,22 @@ class BookController
 
         } else {
             http_response_code(404);
-            echo json_encode(['error' => 'Home categories not found']);        }
+            echo json_encode(['error' => 'Home categories not found']);}
     }
 
     // JSON version: Get all books
     public function getAllBooksJson()
     {
         $books = $this->bookModel->getBooks();
+        
+
+        header('Content-Type: application/json');
+        echo json_encode($books);
+    }
+
+     public function getAllEbooksJson()
+    {
+        $books = $this->bookModel->getEbooks();
         
 
         header('Content-Type: application/json');

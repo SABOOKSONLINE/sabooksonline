@@ -37,10 +37,7 @@ if (isset($_GET['code'])) {
 
     $service = new Google_Service_Oauth2($client);
     $user = $service->userinfo->get();
-
-
     $authController = new AuthController($conn);
-
 
 
     $reg_name = $user->getName() ;
@@ -53,12 +50,9 @@ if (isset($_GET['code'])) {
     error_log("Session Contents: " . print_r($_SESSION, true));
 
     if (isset($_SESSION['ADMIN_ID'])) {
-    error_log("✅ Session set for: " . $_SESSION['ADMIN_EMAIL']);
     } else {
-        error_log("❌ Session NOT set");
+        error_log(" Session NOT set");
     }
-
-
 
     if ($loginResult === true && isset($_SESSION['ADMIN_ID'])) {
         // ✅ Proper session is set, now redirect
@@ -67,7 +61,6 @@ if (isset($_GET['code'])) {
     } else {
 
         echo "<div class='alert alert-danger'>Login session could not be established. Please try again.</div>";
-        // ❌ Login failed, show the error
         echo $loginResult;
         exit;
     }

@@ -150,6 +150,31 @@ class BookModel
         return $books;
     }
 
+     /**
+     * Fetch All Ebooks
+     * @return array
+     */
+    public function getEbooks()
+    {
+        $sql = "SELECT * FROM posts WHERE PDFURL IS NOT NULL";
+
+        // prepared statements for executing the query
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $books = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
+
+        return $books;
+    }
+
     public function searchBooks($keyword)
     {
         if ($keyword === '') return [];

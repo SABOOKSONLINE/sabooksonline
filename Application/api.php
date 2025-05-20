@@ -34,6 +34,10 @@ switch ($action) {
         $controller->getAllBooksJson();
         break;
 
+    case 'Ebooks':
+        $controller->getAllEbooksJson();
+        break;
+
     case 'getAllCategories':
         $controller->renderCategoriesJson();
         break;

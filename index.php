@@ -33,8 +33,20 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/library.php";
     });
 
-    $r->addRoute('GET', '/flutterwave-webhook', function () {
-        require "Application/webhook/flutterwave-webhook.php";
+    $r->addRoute('GET', '/payment/notify', function () {
+        require "Application/views/payment/notify.php";
+    });
+
+     $r->addRoute('POST', '/checkout', function () {
+        require "Application/checkout.php";
+    });
+
+    $r->addRoute('GET', '/payment/return', function () {
+        require "Application/views/payment/return.php";
+    });
+
+    $r->addRoute('GET', '/payment/cancel', function () {
+        require "Application/views/payment/cancel.php";
     });
 
     $r->addRoute('GET', '/membership', function () {
@@ -48,6 +60,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // Route for serving JSON API requests from React Native
     $r->addRoute('GET', '/api/books', function () {
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/Ebooks', function () {
+        $_GET['action'] = 'Ebooks';
         require "Application/api.php";
     });
 
@@ -176,6 +193,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('GET', '/login', function () {
         require __DIR__ . "/Application/views/auth/login.php";
+    });
+
+    $r->addRoute('POST', '/formLogin', function () {
+        require __DIR__ . "/Application/views/includes/loginWithForm.php";
     });
 
     $r->addRoute('GET', '/signup', function () {
