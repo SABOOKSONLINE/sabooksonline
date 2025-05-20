@@ -35,54 +35,53 @@ require_once __DIR__ . "/includes/header.php";
             </div>
 
             <div class="row priced-plans py-5 align-content-center justify-content-center">
-                <!-- Premium Plan -->
+                <!-- Pro Plan -->
                 <div class="col-md-4">
                     <div class="plan-title">
                         <h3>Pro</h3>
                     </div>
                     <div class="monthly-price">
-                        <p class="plan-price">R350</p>
+                        <p class="plan-price">R199</p>
                         <p><b>Monthly Subscription</b></p>
                     </div>
                     <div class="yearly-price d-none">
-                        <p class="plan-price">R3360</p>
-                        <p><b>Yearly Subscription (Save R840)</b></p>
+                        <p class="plan-price">R1908</p>
+                        <p><b>Yearly Subscription (Save R480)</b></p>
                     </div>
 
-                    <a href="register/?plan=Premium" class="btn btn-red mb-4">Try free 30 day trial</a>
+                    <a href="register/?plan=Pro" class="btn btn-red mb-4">Select Pro</a>
 
                     <ul class="plan-features list-unstyled">
-                        <li>20 Free Book Listings</li>
-                        <li>1 Audio Book Listings</li>
-                        <li><strong>10 Priced</strong> Books</li>
-                        <li><strong>5 Service</strong> Listing</li>
-                        <li><strong>10 events</strong> per month</li>
-                        <li><strong>Limited</strong> Traffic Analytics</li>
+                        <li>Enhanced analytics dashboard</li>
+                        <li>Promotional tools access</li>
+                        <li>Priority listing in search</li>
+                        <li>35% commission per sale</li>
+                        <li>Quarterly royalty payouts</li>
                     </ul>
                 </div>
 
-                <!-- Deluxe Plan -->
+                <!-- Premium Plan -->
                 <div class="col-md-4">
                     <div class="plan-title">
                         <h3>Premium</h3>
                     </div>
                     <div class="monthly-price">
-                        <p class="plan-price">R500</p>
+                        <p class="plan-price">R499</p>
                         <p><b>Monthly Subscription</b></p>
                     </div>
                     <div class="yearly-price d-none">
-                        <p class="plan-price">R4800</p>
+                        <p class="plan-price">R4788</p>
                         <p><b>Yearly Subscription (Save R1200)</b></p>
                     </div>
 
-                    <a href="register/?plan=Deluxe" class="btn btn-red mb-4">Try free 30 day trial</a>
+                    <a href="register/?plan=Premium" class="btn btn-red mb-4">Select Premium</a>
 
                     <ul class="plan-features list-unstyled">
-                        <li>Unlimited Book Listings</li>
-                        <li><strong>Unlimited Priced</strong> Books</li>
-                        <li><strong>Unlimited Service</strong> Listing</li>
-                        <li><strong>10 events</strong> per month + Custom Event Page</li>
-                        <li><strong>Unlimited</strong> Traffic Analytics</li>
+                        <li>Full analytics suite</li>
+                        <li>Advanced promotional tools</li>
+                        <li>Top-tier visibility</li>
+                        <li>35% commission per sale</li>
+                        <li>Quarterly royalty payouts</li>
                     </ul>
                 </div>
             </div>
