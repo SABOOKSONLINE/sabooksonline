@@ -34,35 +34,11 @@ require_once __DIR__ . "/includes/header.php";
                 <span class="ms-3 fw-bold">Yearly <span class="badge bg-success">Save 20%</span></span>
             </div>
 
-            <div class="row priced-plans py-5">
-                <!-- Standard Plan -->
-                <div class="col-md-4">
-                    <div class="plan-title">
-                        <h3>Standard Plan</h3>
-                    </div>
-                    <div class="monthly-price">
-                        <p class="plan-price">R150</p>
-                        <p><b>Monthly Subscription</b></p>
-                    </div>
-                    <div class="yearly-price d-none">
-                        <p class="plan-price">R1440</p>
-                        <p><b>Yearly Subscription (Save R360)</b></p>
-                    </div>
-
-                    <a href="register/?plan=Standard" class="btn btn-red mb-4">Try free 30 day trial</a>
-
-                    <ul class="plan-features list-unstyled">
-                        <li>5 Free Book Listings</li>
-                        <li><strong>5 Priced</strong> Books</li>
-                        <li><strong>5 Service</strong> Listing</li>
-                        <li><strong>AD 10 events</strong> per month</li>
-                    </ul>
-                </div>
-
+            <div class="row priced-plans py-5 align-content-center justify-content-center">
                 <!-- Premium Plan -->
                 <div class="col-md-4">
                     <div class="plan-title">
-                        <h3>Premium Plan</h3>
+                        <h3>Pro</h3>
                     </div>
                     <div class="monthly-price">
                         <p class="plan-price">R350</p>
@@ -88,7 +64,7 @@ require_once __DIR__ . "/includes/header.php";
                 <!-- Deluxe Plan -->
                 <div class="col-md-4">
                     <div class="plan-title">
-                        <h3>Deluxe Plan</h3>
+                        <h3>Premium</h3>
                     </div>
                     <div class="monthly-price">
                         <p class="plan-price">R500</p>
