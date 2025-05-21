@@ -30,7 +30,7 @@ class CheckoutController {
         die("User not found.");
     }
 
-    generatePaymentForm($book, $user);
+    $this->generatePaymentForm($book, $user);    
     // include __DIR__ . '/../views/payment/purchaseForm.php';
 }
 
