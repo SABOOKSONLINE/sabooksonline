@@ -97,6 +97,24 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    $r->addRoute('POST', '/api/login', function ($keyword) {
+        $_GET['action'] = 'google login';
+        $_GET['keyword'] = $keyword;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/user/books', function ($keyword) {
+        $_GET['action'] = 'userBooks';
+        $_GET['keyword'] = $keyword;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/user/purchasedBooks', function ($keyword) {
+        $_GET['action'] = 'userPurchasedBooks';
+        $_GET['keyword'] = $keyword;
+        require "Application/api.php";
+    });
+
 
     // audioBook
     $r->addRoute('GET', '/library/audiobook/{id}', function ($id) {
