@@ -33,7 +33,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/views/library.php";
     });
 
-    $r->addRoute('GET', '/payment/notify', function () {
+    $r->addRoute('POST', '/payment/notify', function () {
         require "Application/views/payment/notify.php";
     });
 

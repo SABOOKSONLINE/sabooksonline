@@ -11,145 +11,136 @@ class CheckoutController {
 
     public function __construct($conn) {
         $this->conn = $conn;
-        $this->userModel = new UserModel($conn);
+        $this->userModel = new userModel($conn);
         $this->bookModel = new BookModel($conn);
     }
 
-    public function purchaseBook($bookId, $userId) {
-        $book = $this->bookModel->getBookById($bookId);
-        $user = $this->userModel->getUserByNameOrKey($userId);
-
-        if ($book && $user) {
-            $_SESSION['ADMIN_NAME'] = $user['ADMIN_NAME'];
-            $_SESSION['ADMIN_EMAIL'] = $user['ADMIN_EMAIL'];
-            $_SESSION['ADMIN_USERKEY'] = $user['ADMIN_USERKEY'];
-            $_SESSION['ADMIN_PROFILE_IMAGE'] = $user['ADMIN_PROFILE_IMAGE'];
-
-            $paymentForm = $this->generatePaymentForm($book);
-            include __DIR__ . '/../views/payment/purchaseForm.php';
-        } else {
-            echo "Book or user not found.";
-        }
+   public function purchaseBook($bookId, $userId) {
+    if (empty($bookId) || empty($userId)) {
+        die("Invalid book or user ID.");
     }
 
-    public function generatePaymentForm($book) {
-        $bookId = $book['ID'];
-        $title = $book['TITLE'];
-        $retailPrice = $book['RETAILPRICE'];
+    $book = $this->bookModel->getBookById($bookId);
+    $user = $this->userModel->getUserByNameOrKey($userId);
 
-        $userName = $_SESSION['ADMIN_NAME'] ?? 'Anonymous';
-        $userEmail = $_SESSION['ADMIN_EMAIL'] ?? 'noemail@example.com';
-        $userKey = uniqid();
-
-        $passphrase = 'SABooksOnline2021';
-        $amount = number_format($retailPrice, 2, '.', '');
-
-        $data = [
-            'merchant_id' => '18172469',
-            'merchant_key' => 'gwkk16pbxdd8m',
-            'return_url' => 'https://11-july-2023.sabooksonline.co.za/payment/return',
-            'cancel_url' => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
-            'notify_url' => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
-
-            'name_first' => $userName,
-            'name_last'  => $bookId,
-            'email_address' => $userEmail,
-
-            'm_payment_id' => $userKey,
-            'amount' => $amount,
-            'item_name' => $title,
-
-            // Optional: for subscription-type purchase
-            // 'subscription_type' => '2', 
-        ];
-
-        $signature = $this->generateSignature($data, $passphrase);
-        $data['signature'] = $signature;
-
-        $pfHost = false ? 'sandbox.payfast.co.za' : 'www.payfast.co.za'; // toggle testingMode here
-
-        $htmlForm = '<form action="https://' . $pfHost . '/eng/process" method="post">';
-        foreach ($data as $name => $value) {
-            $htmlForm .= '<input name="' . $name . '" type="hidden" value=\'' . $value . '\' />';
-        }
-        $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">';
-        $htmlForm .= '<img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px">';
-        $htmlForm .= '</form>';
-
-        return $htmlForm;
+    if (!$book) {
+        die("Book not found.");
+    }
+    if (!$user) {
+        die("User not found.");
     }
 
-    public function generateSignature($data, $passPhrase = null) {
-        $pfOutput = '';
-        foreach ($data as $key => $val) {
-            if ($val !== '') {
-                $pfOutput .= $key . '=' . urlencode(trim($val)) . '&';
-            }
-        }
-        $getString = substr($pfOutput, 0, -1);
-        if ($passPhrase !== null) {
-            $getString .= '&passphrase=' . urlencode(trim($passPhrase));
-        }
-        return md5($getString);
+    $this->generatePaymentForm($book, $user);    
+    // include __DIR__ . '/../views/payment/purchaseForm.php';
+}
+
+
+    public function generatePaymentForm($book, $user) {
+    if (!$book || !$user) {
+        die("Invalid book or user data.");
     }
+
+    $bookId = $book['ID'] ?? '';
+    $cover = $book['COVER'] ?? '';
+    $title = $book['TITLE'] ?? 'Untitled Book';
+    $publisher = $book['PUBLISHER'] ?? 'Unknown';
+    $description = $book['DESCRIPTION'] ?? 'No description.';
+    $retailPrice = $book['RETAILPRICE'] ?? 0;
+
+    $userName = $user['ADMIN_NAME'] ?? 'Customer';
+    $userEmail = $user['ADMIN_EMAIL'] ?? '';
+
+    if (empty($bookId) || empty($userEmail)) {
+        die("Missing book ID or user email.");
+    }
+
+    $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
+    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
+    $profile = strpos($adminProfileImage, 'googleusercontent.com') !== false
+        ? $adminProfileImage
+        : "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+
+    $data = [
+        'merchant_id'     => '18172469',
+        'merchant_key'    => 'gwkk16pbxdd8m',
+        'return_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
+        'name_first'      => $userName,
+        'email_address'   => $userEmail,
+        'm_payment_id'    => uniqid(),
+        'amount'          => number_format($retailPrice, 2, '.', ''),
+        'item_name'       => $title,
+        'custom_str1'     => $bookId,
+    ];
+
+    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $data['signature'] = $signature;
+
+    $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
+    foreach ($data as $name => $value) {
+        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
+    }
+    $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
+    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
+
+    echo $htmlForm;
+}
+
+
+    function generateSignature($data, $passPhrase = null) {
+    // Create parameter string
+    $pfOutput = '';
+    foreach( $data as $key => $val ) {
+        if($val !== '') {
+            $pfOutput .= $key .'='. urlencode( trim( $val ) ) .'&';
+        }
+    }
+    // Remove last ampersand
+    $getString = substr( $pfOutput, 0, -1 );
+    if( $passPhrase !== null ) {
+        $getString .= '&passphrase='. urlencode( trim( $passPhrase ) );
+    }
+    return md5( $getString );
+}
 
 
     public function paymentNotify() {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405); // Method Not Allowed
-        exit;
-    }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $postData = $_POST;
 
-    $postData = $_POST;
+        // 1. Signature check
+        $submittedSignature = $postData['signature'] ?? '';
+        unset($postData['signature']);
 
-    // Step 1: Extract and remove submitted signature
-    $submittedSignature = $postData['signature'] ?? '';
-    unset($postData['signature']);
+        $expectedSignature = $this->generateSignature($postData, 'SABooksOnline2021');
 
-    // Step 2: Generate expected signature
-    $expectedSignature = $this->generateSignature($postData, 'SABooksOnline2021');
-
-    // Step 3: Compare signatures
-    if ($submittedSignature !== $expectedSignature) {
-        error_log("PayFast signature mismatch. Expected: $expectedSignature, Got: $submittedSignature");
-        http_response_code(400); // Bad Request
-        exit("Invalid signature");
-    }
-
-    // Step 4: Check for complete payment
-    if (isset($postData['payment_status']) && $postData['payment_status'] === 'COMPLETE') {
-        $paymentId = $postData['m_payment_id'] ?? uniqid();
-        $amount = $postData['amount_gross'] ?? '0.00';
-        $bookId = $postData['custom_str1'] ?? '';
-        $userEmail = $postData['email_address'] ?? '';
-
-        // Step 5: Look up user
-        $user = $this->userModel->getUserByEmail($userEmail);
-        if (!$user) {
-            error_log("User not found for email: $userEmail");
-            http_response_code(404); // Not Found
-            exit("User not found");
+        if ($expectedSignature !== $submittedSignature) {
+            die("Invalid signature");
         }
 
-        $userId = $user['ADMIN_ID'];
+        // 2. Check status
+        if ($postData['payment_status'] === 'COMPLETE') {
+            $paymentId = $postData['m_payment_id'];
+            $amount = $postData['amount_gross'];
+            $bookId = $postData['custom_str1'];
+            $userEmail = $postData['email_address'];
 
-        // Step 6: Insert into purchases
-        $stmt = $this->conn->prepare("INSERT INTO purchases (user_id, book_id, payment_id, amount, payment_status) VALUES (?, ?, ?, ?, 'COMPLETE')");
-        $stmt->bind_param("isss", $userId, $bookId, $paymentId, $amount);
-        $success = $stmt->execute();
+            $user = $this->userModel->getUserByEmail($userEmail);
+            if (!$user) {
+                die("User not found");
+            }
+            $userId = $user['ADMIN_ID'];
 
-        if (!$success) {
-            error_log("Database error: " . $stmt->error);
-            http_response_code(500);
-            exit("DB insert failed");
+            // 3. DB insert
+            $stmt = $this->conn->prepare("INSERT INTO purchases (user_id, book_id, payment_id, amount, payment_status) VALUES (?, ?, ?, ?, 'COMPLETE')");
+            $stmt->bind_param("isss", $userId, $bookId, $paymentId, $amount);
+            $stmt->execute();
+
+            include __DIR__ . '/../views/payment/return.php';
+        } else {
+            include __DIR__ . '/../views/payment/cancel.php';
         }
-
-        http_response_code(200);
-        echo "Payment successful";
-    } else {
-        // Payment cancelled or failed
-        http_response_code(200); // Still 200 so PayFast doesn't retry
-        echo "Payment not complete";
     }
 }
 
