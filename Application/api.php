@@ -20,6 +20,10 @@ $controller = new BookController($conn);
 $action = $_GET['action'] ?? 'getAllBooks';
 
 switch ($action) {
+    case 'googleLogin':
+        $id = $_GET['id'] ?? null;
+        $controller->getBookJson($id);
+        break;
     case 'getBook':
         $id = $_GET['id'] ?? null;
         $controller->getBookJson($id);
