@@ -1,0 +1,41 @@
+.dashboard__sidebar {
+    height: calc(100vh - 70px);
+    padding: 25px;
+}
+
+.dashboard__sidebar .nav .nav-link {
+    transition: all 0.3s ease-in-out;
+}
+
+.dashboard__sidebar .nav .nav-link:hover {
+    background: #e5e4e4;
+}
+
+.dashboard__sidebar .nav .active {
+    background: #e5e4e4;
+}
+
+.analysis-card {
+    height: 175px;
+    padding: 0 20px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.analysis-card:hover {
+    background: #fafafa;
+    border-radius: 14px;
+    transform: scale(1.03);
+}
+
+.analysis-card .card-text {
+    font-size: 16px;
+}
+
+.analysis-card .card-title {
+    font-size: 40px;
+}
+
+.analysis-card .card-icon {
+    font-size: 40px;
+}

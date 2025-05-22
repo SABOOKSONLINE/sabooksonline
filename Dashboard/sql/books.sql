@@ -1,0 +1,20 @@
+CREATE TABLE books (
+    book_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_type TEXT,
+    title TEXT NOT NULL,
+    subtitle TEXT,
+    description TEXT,
+    publisher TEXT,
+    price DECIMAL(10,2),
+    language TEXT NOT NULL,
+    publication_date DATE,
+    identifier_type TEXT,
+    identifier_value TEXT,
+    min_age INTEGER NOT NULL,
+    is_mature BOOLEAN,
+    genre TEXT,
+    territory_rights TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
