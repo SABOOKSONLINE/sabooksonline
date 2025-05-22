@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 4. If payment is complete, process it
     if (isset($postData['payment_status']) && $postData['payment_status'] === 'COMPLETE') {
-        $paymentId = $postData['m_payment_id'] ?? uniqid();
-        $amount = $postData['amount_gross'] ?? 0;
-        $bookId = $postData['custom_str1'] ?? null;
         $userEmail = $postData['email_address'] ?? null;
+        $paymentId = isset($postData['m_payment_id']) ? $postData['m_payment_id'] : uniqid();
+        $amount = isset($postData['amount_gross']) ? (float)$postData['amount_gross'] : 0;  
+        $bookId = isset($postData['custom_str1']) ? (int)$postData['custom_str1'] : null;
 
         if ($bookId && $userEmail) {
             $user = $userModel->getUserByEmail($userEmail);
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 die("User not found");
             }
 
-            $userId = $user['ADMIN_ID'];
+            $userId = (int) $user['ADMIN_ID'];
 
             // Insert the purchase
             $stmt = $conn->prepare("INSERT INTO purchases (user_id, book_id, payment_id, amount, payment_status) VALUES (?, ?, ?, ?, 'COMPLETE')");
