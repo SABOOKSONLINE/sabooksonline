@@ -97,9 +97,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-    $r->addRoute('POST', '/api/login', function ($keyword) {
-        $_GET['action'] = 'google login';
-        $_GET['keyword'] = $keyword;
+    $r->addRoute('POST', '/api/login', function () {
+        $_GET['action'] = 'googleLogin';
         require "Application/api.php";
     });
 

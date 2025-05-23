@@ -37,6 +37,10 @@ class UserModel {
         $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
     }
 
+     public function getApiToken($userData) {
+        $userData['ADMIN_USERKEY'];
+    }
+
 
     /**
      * Retrieves a user by either their admin name or admin user key.
