@@ -25,7 +25,10 @@ $action = $event ? "update" : "insert";
 $eventId = $event["ID"] ?? '';
 ?>
 
-<form method="post" action="/handlers/event_handler.php?action=<?= $action ?>&id=<?= $eventId ?>" class="bg-white rounded mb-4 overflow-hidden position-relative" enctype="multipart/form-data">
+<form method="POST"
+    action="<?= $eventId ? "/dashboards/events/update/$eventId" : "/dashboards/events/insert" ?>"
+    class="bg-white rounded mb-4 overflow-hidden position-relative"
+    enctype="multipart/form-data">
     <div class="card border-0 shadow-sm p-4 mb-3">
         <div class="row">
             <div class="border-bottom pb-3 mb-4">

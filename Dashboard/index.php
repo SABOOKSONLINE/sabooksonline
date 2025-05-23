@@ -37,7 +37,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
         </div>
     </section>
 
-    <?php include __DIR__ . "/includes/scripts.php" ?>
+    <?php include __DIR__ . "/views/includes/scripts.php" ?>
 </body>
 
 </html>

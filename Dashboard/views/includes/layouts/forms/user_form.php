@@ -24,7 +24,9 @@ $adminTwitter = htmlspecialchars($user['ADMIN_TWITTER'] ?? '');
 $adminLinkedin = htmlspecialchars($user['ADMIN_LINKEDIN'] ?? '');
 ?>
 
-<form method="post" action="/handlers/user_handler.php?action=update&id=<?= $adminId ?>" class="bg-white rounded mb-4 overflow-hidden position-relative">
+<form method="POST"
+    action="/dashboards/profile/update<?= $adminId ? "/$adminId" : "" ?>"
+    class="bg-white rounded mb-4 overflow-hidden position-relative">
     <div class="card border-0 shadow-sm p-4 mb-3">
         <div class="row">
             <div class="border-bottom pb-3 mb-4">

@@ -38,7 +38,10 @@ $type = htmlspecialchars($book['TYPE'] ?? '');
 
 ?>
 
-<form method="POST" action="/handlers/book_handler.php?action=<?= $bookId ? 'update' : 'insert' ?>&q=<?= $bookId ?>" class="bg-white rounded mb-4 overflow-hidden position-relative" enctype="multipart/form-data">
+<form method="POST"
+    action="<?= $bookId ? "/dashboards/listings/update/$bookId" : "/dashboards/listings/insert" ?>"
+    class="bg-white rounded mb-4 overflow-hidden position-relative"
+    enctype="multipart/form-data">
     <input type="hidden" name="user_id" value="<?= $userId ?>">
     <input type="hidden" name="book_id" value="<?= $bookId ?>">
     <input type="hidden" name="existing_cover" value="<?= htmlspecialchars($cover) ?>">

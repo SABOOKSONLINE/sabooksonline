@@ -45,7 +45,7 @@ $endCount = min($startIndex + $servicesPerPage, $totalServices);
             <?php foreach ($servicesToShow as $service): ?>
                 <tr>
                     <td>
-                        <a href="/views/add/add_services.php?q=<?= $service["ID"] ?>">
+                        <a href="/dashboards/services/<?= $service["ID"] ?>">
                             <?= htmlspecialchars($service['SERVICE']) ?>
                         </a>
                     </td>
@@ -56,7 +56,7 @@ $endCount = min($startIndex + $servicesPerPage, $totalServices);
                         </span>
                     </td>
                     <td>
-                        <a href="/handlers/service_handler.php?id=<?= $service['ID'] ?>&action=delete"
+                        <a href="/dashboards/services/delete/<?= $service['ID'] ?>"
                             class="btn btn-sm btn-danger">
                             Delete
                         </a>

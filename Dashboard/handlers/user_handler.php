@@ -61,9 +61,9 @@ function updateUser($userController)
         }
 
         $userController->updateUserData($userId, $userData);
-        header("Location: /views/manage_profile.php?update=success");
+        header("Location: /dashboards/profile?update=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_profile.php?update=fail");
+        header("Location: /dashboards/profile?update=fail");
         exit;
     }
 }

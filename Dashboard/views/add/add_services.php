@@ -19,16 +19,16 @@ require_once __DIR__ . "/../../controllers/ServicesController.php";
 
                 <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
                     <?php
-                    $contentId = $_GET["q"] ?? "";
+                    $serviceId = $_GET["id"] ?? "";
 
-                    if ($contentId) {
+                    if ($serviceId) {
                         renderHeading("Update Service", "You may update your existing service information.");
                     } else {
                         renderHeading("Create New Service", "You may add a new service with its pricing options.");
                     }
 
                     $servicesController = new ServicesController($conn);
-                    $servicesController->renderServiceById("64c971169092344964c971b98", $contentId);
+                    $servicesController->renderServiceById("64c971169092344964c971b98", $serviceId);
                     ?>
                 </div>
             </div>

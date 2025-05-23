@@ -23,7 +23,9 @@ if ($service) {
 }
 ?>
 
-<form method="post" action="/handlers/service_handler.php?action=<?= $action ?>&id=<?= $serviceId ?>" class="bg-white rounded mb-4 overflow-hidden position-relative">
+<form method="POST"
+    action="<?= $serviceId ? "/dashboards/services/update/$serviceId" : "/dashboards/services/insert" ?>"
+    class="bg-white rounded mb-4 overflow-hidden position-relative">
     <div class="card border-0 shadow-sm p-4 mb-3">
         <div class="row">
             <div class="border-bottom pb-3 mb-4">

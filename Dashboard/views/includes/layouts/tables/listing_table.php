@@ -53,7 +53,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                                 alt="<?= htmlspecialchars($book["TITLE"]) ?> Book Cover"
                                 width="50" height="75">
                             <div>
-                                <a href="/views/add/add_book.php?q=<?= $book["CONTENTID"] ?>">
+                                <a href="/dashboards/listings/<?= $book["CONTENTID"] ?>">
                                     <?= htmlspecialchars($book["TITLE"]) ?>
                                 </a>
                                 <br>
@@ -72,7 +72,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                         </span>
                     </td>
                     <td>
-                        <a href="/handlers/book_handler.php?action=delete&q=<?= $book['CONTENTID'] ?>"
+                        <a href="/dashboards/listings/delete/<?= $book['CONTENTID'] ?>"
                             class="btn btn-sm btn-danger"
                             onclick="return confirm('Are you sure you want to delete this book?')">
                             Delete

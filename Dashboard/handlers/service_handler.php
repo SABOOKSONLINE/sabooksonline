@@ -43,14 +43,15 @@ function insertServiceHandler($serviceController)
         || empty($serviceData['minimum'])
         || empty($serviceData['maximum'])
     ) {
-        header("Location: /views/manage_services.php?status=fail");
+        header("Location: /dashboards/services?status=fail");
+        exit;
     }
 
     try {
         $serviceController->insertServiceData($serviceData);
-        header("Location: /views/manage_services.php?status=success");
+        header("Location: /dashboards/services?status=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_services.php?status=fail");
+        header("Location: /dashboards/services?status=fail");
         exit;
     }
 }
@@ -62,9 +63,9 @@ function updateService($serviceController)
         $serviceId = $_GET["id"];
 
         $serviceController->updateServiceData($serviceId, $serviceData);
-        header("Location: /views/manage_services.php?update=success");
+        header("Location: /dashboards/services?update=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_services.php?update=fail");
+        header("Location: /dashboards/services?update=fail");
         exit;
     }
 }
@@ -75,9 +76,10 @@ function deleteService($serviceController)
         $serviceId = $_GET["id"];
 
         $serviceController->deleteService($serviceId);
-        header("Location: /views/manage_services.php?delete=success");
+        header("Location: /dashboards/services?delete=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_services.php?delete=fail");
+        header("Location: /dashboards/services?delete=fail");
+        exit;
     }
 }
 
@@ -90,5 +92,5 @@ if ($_GET["id"] && $_GET["action"] == "delete") {
 }
 
 if ($_GET["id"] && $_GET['action'] == "update") {
-    updateService($serviceController, $_GET["id"]);
+    updateService($serviceController);
 }

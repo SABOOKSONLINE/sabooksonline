@@ -35,8 +35,6 @@ $endCount = min($startIndex + $reviewsPerPage, $totalReviews);
             <th>Rating</th>
             <th>User</th>
             <th>Date Posted</th>
-            <th>Status</th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -64,18 +62,6 @@ $endCount = min($startIndex + $reviewsPerPage, $totalReviews);
                     <td><?= htmlspecialchars($review['USERNAME'] ?? 'Unknown') ?></td>
                     <td>
                         <?= htmlspecialchars($review['DATEPOSTED'] ?? '') ?>
-                    </td>
-                    <td>
-                        <span class="badge <?= ($review['STATUS'] ?? 'Inactive') === 'Active' ? 'bg-success' : 'bg-secondary' ?>">
-                            <?= htmlspecialchars($review['STATUS'] ?? 'Inactive') ?>
-                        </span>
-                    </td>
-                    <td>
-                        <a href="/handlers/reviews_handler.php?action=delete&id=<?= $review['ID'] ?? '' ?>"
-                            class="btn btn-sm btn-danger"
-                            onclick="return confirm('Are you sure you want to delete this review?')">
-                            Delete
-                        </a>
                     </td>
                 </tr>
             <?php endforeach; ?>

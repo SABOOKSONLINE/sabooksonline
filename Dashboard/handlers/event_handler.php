@@ -88,7 +88,7 @@ function insertEventHandler($eventController)
 
     try {
         $eventController->insertEventData($eventData);
-        header("Location: /views/manage_events.php?status=success");
+        header("Location: /dashboards/events?status=success");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
     }
@@ -101,9 +101,9 @@ function updateEvent($eventController)
         $eventId = $_GET["id"];
 
         $eventController->updateEventData($eventId, $eventData);
-        header("Location: /views/manage_events.php?update=success");
+        header("Location: /dashboards/events?update=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_events.php?update=fail");
+        header("Location: /dashboards/events?update=fail");
         exit;
     }
 }
@@ -114,9 +114,9 @@ function deleteEvent($eventController)
         $eventId = $_GET["id"];
 
         $eventController->deleteEvent($eventId);
-        header("Location: /views/manage_events.php?delete=success");
+        header("Location: /dashboards/events?delete=success");
     } catch (Exception $e) {
-        header("Location: /views/manage_events.php?delete=fail");
+        header("Location: /dashboards/events?delete=fail");
         exit;
     }
 }

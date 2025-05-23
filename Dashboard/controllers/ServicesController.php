@@ -35,7 +35,6 @@ class ServicesController
 
     public function updateServiceData($id, $data)
     {
-        print_r($data);
         $this->serviceModel->updateService($id, $data);
     }
 

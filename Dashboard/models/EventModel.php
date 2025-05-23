@@ -31,12 +31,12 @@ class EventsModel
         return $events;
     }
 
-    public function selectEventByContentId($userId, $contentId)
+    public function selectEventByContentId($userId, $eventId)
     {
-        $sql = "SELECT * FROM events WHERE USERID = ? AND CONTENTID = ?";
+        $sql = "SELECT * FROM events WHERE USERID = ? AND ID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_bind_param($stmt, "ss", $userId, $contentId);
+        mysqli_stmt_bind_param($stmt, "ss", $userId, $eventId);
         mysqli_stmt_execute($stmt);
 
         $result = mysqli_stmt_get_result($stmt);

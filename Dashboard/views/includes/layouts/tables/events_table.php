@@ -54,7 +54,7 @@ $endCount = min($startIndex + $eventsPerPage, $totalEvents);
                                 alt="<?= htmlspecialchars(($event["TITLE"] ?? '') . ' event Cover') ?>"
                                 width="75" height="50">
                             <div>
-                                <a href="/views/add/add_event.php?q=<?= $event["CONTENTID"] ?? '' ?>">
+                                <a href="/dashboards/events/<?= $event["ID"] ?? '' ?>">
                                     <?= htmlspecialchars($event['TITLE'] ?? 'Untitled Event') ?>
                                 </a>
                             </div>
@@ -72,7 +72,7 @@ $endCount = min($startIndex + $eventsPerPage, $totalEvents);
                     </td>
                     <td><?= $event['EVENTTYPE'] ?? 'N/A' ?></td>
                     <td>
-                        <a href="/handlers/event_handler.php?action=delete&id=<?= $event['ID'] ?? '' ?>"
+                        <a href="/dashboards/events/delete/<?= $event['ID'] ?? '' ?>"
                             class="btn btn-sm btn-danger"
                             onclick="return confirm('Are you sure you want to delete this event?')">
                             Delete

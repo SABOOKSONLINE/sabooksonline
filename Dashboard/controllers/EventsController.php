@@ -17,9 +17,9 @@ class EventsController
         }
     }
 
-    public function renderEventByContentId($userId, $contentId)
+    public function renderEventByContentId($userId, $eventId)
     {
-        $event = $this->eventsModel->selectEventByContentId($userId, $contentId);
+        $event = $this->eventsModel->selectEventByContentId($userId, $eventId);
 
         include __DIR__ . "/../views/includes/layouts/forms/event_form.php";
     }

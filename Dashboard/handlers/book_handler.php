@@ -78,11 +78,6 @@ function insertBookHandler($bookController)
 {
     $bookData = formDataArray();
 
-    // echo "<pre>";
-    // print_r($bookData);
-    // echo "</pre>";
-    // die();
-
     if (
         empty($bookData['userid']) ||
         empty($bookData['title']) ||
@@ -106,8 +101,7 @@ function insertBookHandler($bookController)
 
     try {
         $bookController->insertBookData($bookData);
-
-        header("Location: /views/book_listings.php.php?status=success");
+        header("Location: /dashboards/listings?status=success");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
     }
@@ -119,16 +113,11 @@ function updateBookHandler($bookController)
         $bookData = formDataArray();
         $bookId = $_GET["q"];
 
-        // echo "<pre>";
-        // print_r($bookData);
-        // echo "</pre>";
-        // die();
-
         $bookController->updateBookData($bookId, $bookData);
-        header("Location: /views/book_listings.php?update=success");
+        header("Location: /dashboards/listings?update=success");
     } catch (Exception $e) {
         error_log("Update failed: " . $e->getMessage());
-        header("Location: /views/book_listings.php?update=fail&error=" . urlencode($e->getMessage()));
+        header("Location: /dashboards/listings?update=fail&error=" . urlencode($e->getMessage()));
         exit;
     }
 }
@@ -139,9 +128,9 @@ function deleteBookHandler($bookController)
         $bookContentId = $_GET["q"];
 
         $bookController->deleteBookListing($bookContentId);
-        header("Location: /views/book_listings.php?delete=success");
+        header("Location: /dashboards/listings?delete=success");
     } catch (Exception $e) {
-        header("Location: /views/book_listings.php?delete=fail");
+        header("Location: /dashboards/listings?delete=fail");
         exit;
     }
 }
