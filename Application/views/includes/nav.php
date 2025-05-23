@@ -81,13 +81,23 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                     <?php
                     if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])) {
                     ?>
-                        <a href="/dashboard" class="btn btn-outline-secondary rounded-circle p-0" style="width: 48px; height: 48px;">
-                            <img src="<?= htmlspecialchars($profile) ?>" alt="Admin Profile"
-                                class="rounded-circle"
-                                style="width: 100%; height: 100%; object-fit: cover;
-                                        border: 2px solid #dee2e6;
-                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
+                                <img src="<?= htmlspecialchars($profile) ?>" alt="Admin Profile"
+                                    class="rounded-circle"
+                                    style="width: 100%; height: 100%; object-fit: cover;
+                                            border: 2px solid #dee2e6;
+                                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/my-library">My Library</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                            </ul>
+                        </div>
                     <?php
                     } else {
                     ?>
