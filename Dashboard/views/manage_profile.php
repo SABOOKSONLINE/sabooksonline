@@ -13,9 +13,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
     <section>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100" style="width: 16.666667%;">
-                    <?php include __DIR__ . "/../views/includes/layouts/side-bar.php"; ?>
-                </div>
+                <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
                 <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
                     <?php

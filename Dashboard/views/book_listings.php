@@ -13,9 +13,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
     <section>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
-                    <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
-                </div>
+                <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
 
                 <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
@@ -25,16 +23,6 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     $bookListingController = new BookListingController($conn);
                     $bookListingController->renderBookListing("62309008e164734976862309008e");
                     ?>
-
-                    <!-- <div class="row p-3">
-                        <div class="alert alert-success" role="alert">
-                            Submit your PDF Manuscript and MP3 Audio Book File to our Mobile App! Submissions can take up-to 5 working days.
-                        </div>
-                    </div> -->
-
-                    <!-- 62309008e164734976862309008e -->
-
-
                 </div>
             </div>
         </div>
