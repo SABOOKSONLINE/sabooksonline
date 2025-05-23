@@ -18,7 +18,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                 <!-- Main Content -->
                 <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
                     <?php
-                    renderHeading("Manage Events", "You can manage, add or delete your event listings.", "add/add_event.php", "Create New Event");
+                    renderHeading("Manage Events", "You can manage, add or delete your event listings.", "/dashboards/add/event", "Create New Event");
 
                     $deleteEvent = $_GET["delete"] ?? null;
                     $addEventStatus = $_GET["status"] ?? null;

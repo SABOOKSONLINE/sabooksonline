@@ -17,7 +17,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
 
                 <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
                     <?php
-                    renderHeading("Manage Services", "You can manage, add or delete your service listings.", "add/add_services.php", "Create New Service");
+                    renderHeading("Manage Services", "You can manage, add or delete your service listings.", "/dashboards/add/service", "Create New Service");
 
                     $deleteService = $_GET["delete"] ?? null;
                     $addServiceStatus = $_GET["status"] ?? null;

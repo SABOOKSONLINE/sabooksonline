@@ -27,7 +27,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
     <div><?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> books</div>
 </div>
 
-<table class="table table-bordered table-hover align-middle">
+<table class="table table-bordered table-hover align-middle table-responsive table-bordered rounded">
     <thead class="table-light">
         <tr>
             <th>Title</th>

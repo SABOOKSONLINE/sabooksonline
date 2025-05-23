@@ -27,7 +27,7 @@ $endCount = min($startIndex + $servicesPerPage, $totalServices);
     <div><?= $startCount ?>–<?= $endCount ?> of <?= $totalServices ?> services</div>
 </div>
 
-<table class="table table-bordered table-hover align-middle">
+<table class="table table-bordered table-hover align-middle table-responsive table-bordered rounded">
     <thead class="table-light">
         <tr>
             <th>Service Name</th>

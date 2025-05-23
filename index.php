@@ -109,6 +109,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboards/listings', function () {
         require "Dashboard/views/book_listings.php";
     });
+    $r->addRoute('GET', '/dashboards/add/listings', function () {
+        require "Dashboard/views/add/add_book.php";
+    });
     $r->addRoute('POST', '/dashboards/listings/insert', function () {
         $_GET['action'] = 'insert';
         require "Dashboard/handlers/book_handler.php";
@@ -194,6 +197,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
     $r->addRoute('GET', '/dashboards/billing', function () {
         require "Dashboard/views/account_billing.php";
+    });
+
+    // --- Bookshelf & Audiobooks ---
+    $r->addRoute('GET', '/dashboards/bookshelf', function () {
+        require "Dashboard/views/bookshelf.php";
+    });
+    $r->addRoute('GET', '/dashboards/audiobooks', function () {
+        require "Dashboard/views/audiobooks.php";
     });
 
     // =================== Creator, Provider, Gallery, Services, Events (Public) ===================

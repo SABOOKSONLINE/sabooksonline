@@ -28,7 +28,7 @@ $endCount = min($startIndex + $eventsPerPage, $totalEvents);
 </div>
 
 
-<table class="table table-bordered table-hover align-middle">
+<table class="table table-bordered table-hover align-middle table-responsive table-bordered rounded">
     <thead class="table-light">
         <tr>
             <th>Title</th>

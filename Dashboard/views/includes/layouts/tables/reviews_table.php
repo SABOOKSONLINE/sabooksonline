@@ -27,7 +27,7 @@ $endCount = min($startIndex + $reviewsPerPage, $totalReviews);
     <div><?= $startCount ?>–<?= $endCount ?> of <?= $totalReviews ?> reviews</div>
 </div>
 
-<table class="table table-bordered table-hover align-middle">
+<table class="table table-bordered table-hover align-middle table-responsive table-bordered rounded">
     <thead class="table-light">
         <tr>
             <th>Title</th>
