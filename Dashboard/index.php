@@ -5,7 +5,8 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 ?>
 
 <body>
-    <?php include __DIR__ . "/views/includes/nav.php" ?>
+    <?php include __DIR__ . "/views/includes/nav.php"
+    ?>
 
     <section>
         <div class="container-fluid">
@@ -18,15 +19,18 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
                     <div class="row">
                         <?php
-                        // require_once __DIR__ . "/database/connection.php";
-                        // require_once __DIR__ . "/controllers/AnalysisController.php";
+                        require_once __DIR__ . "/database/connection.php";
+                        require_once __DIR__ . "/controllers/AnalysisController.php";
 
-                        // $analysisController = new AnalysisController($con);
-                        // $user_id = "62309008e164734976862309008e";
+                        $analysisController = new AnalysisController($conn);
+                        $user_id = "62309008e164734976862309008e";
 
+                        $titlesCount = $analysisController->getTitlesCount($user_id);
 
-
-                        // renderAnalysisCard("Total Customers", "R " + $totalCustomers[], "fas fa-money-bill");
+                        renderAnalysisCard("Downloads", "1,240", "fas fa-download");
+                        renderAnalysisCard("Listens", "980", "fas fa-headphones");
+                        renderAnalysisCard("Revenue", "R18,500", "fas fa-money-bill");
+                        renderAnalysisCard("Titles", $titlesCount, "fas fa-book");
                         ?>
                     </div>
                 </div>

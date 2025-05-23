@@ -2,19 +2,33 @@
 function renderAnalysisCard($title, $amount, $iconName)
 {
 ?>
-    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-        <div class="card analysis-card shadow-sm border">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <p class="card-text text-muted mb-1"><?= htmlspecialchars($title) ?></p>
-                    <h3 class="card-title fw-semibold"><?= htmlspecialchars($amount) ?></h3>
+    <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
+        <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
+            <div class="d-flex align-items-center justify-content-between h-100">
+
+                <!-- Icon left -->
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                    <i class="<?= htmlspecialchars($iconName) ?> fs-4"></i>
                 </div>
-                <div class="p-3 card-icon text-muted">
-                    <i class="<?= htmlspecialchars($iconName) ?>"></i>
+
+                <!-- Text content right -->
+                <div class="flex-grow-1">
+                    <p class="fw-semibold text-muted text-capitalize small mb-1"><?= htmlspecialchars($title) ?></p>
+                    <h4 class="fw-bold mb-1"><?= htmlspecialchars($amount) ?></h4>
+
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: <?= $amount > 100 ? 100 : $amount ?>%;"></div>
+                    </div>
+
+                    <p class="small text-muted mt-1 mb-0 <?= ($amount == 0) ? '' : 'd-none' ?>">
+                        No data yet
+                    </p>
                 </div>
+
             </div>
         </div>
     </div>
+
 <?php
 }
 ?>
