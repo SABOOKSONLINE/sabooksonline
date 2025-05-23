@@ -69,7 +69,7 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
             <div class="d-none d-xl-flex">
                 <form class="d-flex me-3" action="/library" method="GET">
                     <div class="input-group">
-                        <input class="form-control me-2" type="search" placeholder="Search Title or Publisher" aria-label="Search" name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
+                        <input class="form-control" type="search" placeholder="Search Title or Publisher" aria-label="Search" name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
                     </div>
                 </form>
 
