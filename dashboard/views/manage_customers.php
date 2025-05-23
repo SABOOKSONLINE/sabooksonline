@@ -1,72 +1,32 @@
 <?php
-require_once '../../includes/database_connections/sabooks_user.php';
-require_once '../controllers/ListingsController.php';
+require_once __DIR__ . "/../database/connection.php";
+require_once __DIR__ . "/../models/ServicesModel.php";
+require_once __DIR__ . "/../controllers/ServicesController.php";
 
-$userController = new ListingsController($con);
-$users = $userController->listCustomers();
+include __DIR__ . "/includes/header.php";
+include __DIR__ . "/includes/dashboard_heading.php";
 ?>
 
-<div class="wrapper">
-  <div class="preloader"></div>
+<body>
+    <?php include __DIR__ . "/includes/nav.php"; ?>
 
-  <?php include '../includes/header-dash-main.php';?>
-
-  <div class="dashboard_content_wrapper">
-    <div class="dashboard dashboard_wrapper pr30 pr0-xl">
-      <?php include '../includes/header-dash.php';?>
-
-      <div class="dashboard__main pl0-md">
-        <div class="dashboard__content hover-bgc-color">
-          <div class="row pb40">
-            <?php include '../includes/mobile-guide.php';?>
-            <div class="col-lg-12">
-              <div class="dashboard_title_area">
-                <h2>Customers</h2>
-                <p class="text">You can manage, add or delete your customers/users.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-xl-12">
-              <div class="ps-widget bgc-white bdrs4 p30 mb30 overflow-hidden position-relative">
-                <div class="packages_table table-responsive">
-                  <table class="table-style3 table at-savesearch">
-                    <thead class="t-head">
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Number</th>
-                        <th scope="col">Address</th>
-                      </tr>
-                    </thead>
-                    <tbody class="t-body">
-
-                    <?php if (empty($users)): ?>
-                      <div class='alert alert-info border-none'>You currently have no content uploaded.</div>
-                    <?php else: ?>
-                      <?php foreach ($users as $user): ?>
-                        <tr>
-                          <th scope="row"><?= ucwords($user['first_name'] . ' ' . $user['last_name']) ?></th>
-                          <td class="vam"><span class="pending-style style4"><?= ucwords($user['email']) ?></span></td>
-                          <td class="vam"><?= ucwords($user['mobile']) ?></td>
-                          <td class="vam"><?= ucwords($user['address1']) ?></td>
-                        </tr>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                    
-                    </tbody>
-                  </table>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
+                    <?php include __DIR__ . "/includes/layouts/side-bar.php"; ?>
                 </div>
-              </div>
+
+                <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
+                    <?php
+                    renderHeading("Manage Customers", "You can manage, add or delete your customers/users.");
+                    ?>
+                </div>
             </div>
-          </div>
-
         </div>
-        <?php include '../includes/footer.php';?>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <a class="scrollToHome" href="#"><i class="fas fa-angle-up"></i></a>
-</div>
+    <?php include __DIR__ . "/includes/scripts.php"; ?>
+</body>
+
+</html>

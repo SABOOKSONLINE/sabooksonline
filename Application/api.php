@@ -14,15 +14,27 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/controllers/BookController.php';
+require_once __DIR__ . '/controllers/AuthController.php';
+
 
 $controller = new BookController($conn);
+$authController = new $authController($conn);
+
 
 $action = $_GET['action'] ?? 'getAllBooks';
 
 switch ($action) {
     case 'googleLogin':
-        $id = $_GET['id'] ?? null;
-        $controller->getBookJson($id);
+        if (!isset($input['email'], $input['password'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Email and password are required']);
+            exit;
+        }
+
+        $email = $input['email'];
+        $password = $input['password'];
+        $apiCall = true;
+        $authController->loginWithForm($email,$password,$apiCall);
         break;
     case 'getBook':
         $id = $_GET['id'] ?? null;

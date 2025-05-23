@@ -40,7 +40,7 @@ class AuthController {
     return true;
 }
 
-    public function loginWithForm($email, $password) {
+    public function loginWithForm($email, $password, $api = false) {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return "<div class='alert alert-warning'>Your email is invalid!</div>";
         }
@@ -59,10 +59,14 @@ class AuthController {
                 if (!$this->userModel->verifyPassword($password, $userData['ADMIN_PASSWORD'])) {
                     return "<center class='alert alert-warning'>Password Incorrect!</center>";
                 } else {
-                    $this->userModel->startSession($userData);
-                    header('Location: /dashboard');
+                    if ($api) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true, 'adminKey' => $userData['ADMIN_USERKEY']]);
+                        exit;
+                    }else{
+                        $this->userModel->startSession($userData);
+                        header('Location: /dashboard');}
 
-                    // return '<script>window.location.href="https://11-july-2023.sabooksonline.co.za/dashboard";</script>';
                 }
             }
         }
