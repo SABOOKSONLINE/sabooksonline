@@ -1,4 +1,4 @@
-<div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
+<div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5 mt-4">
     <div class="dashboard__sidebar d-none d-lg-flex flex-column bg-light p-3">
         <div class="mb-auto">
             <p class="text-muted mb-3 mt-3 ps-2 small fw-bold">

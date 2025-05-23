@@ -90,8 +90,8 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                                             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="/my-library">My Library</a></li>
+                                <li><a class="dropdown-item" href="/dashboards">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/dashboards/my-library">My Library</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
