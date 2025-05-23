@@ -278,8 +278,7 @@ switch ($routeInfo[0]) {
         require "Application/views/404.php";
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        $allowedMethods = $routeInfo[1];
-        echo '405 Method Not Allowed';
+        require "Application/views/405.php";
         break;
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
