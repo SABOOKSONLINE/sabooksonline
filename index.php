@@ -8,225 +8,256 @@ require 'vendor/autoload.php';
 use FastRoute\RouteCollector;
 
 $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
+
+    // =================== Public Site Routes ===================
     $r->addRoute('GET', '/', function () {
         require "Application/views/home.php";
     });
-
     $r->addRoute('GET', '/home', function () {
         require "Application/views/home.php";
     });
-
-    $r->addRoute('GET', '/readBook/{id}', function ($id) {
-        $_GET['q'] = $id;
-        require "Application/views/readBook.php"; 
-    });
-    
     $r->addRoute('GET', '/about', function () {
         require "Application/views/about.php";
     });
-
     $r->addRoute('GET', '/contact', function () {
         require "Application/views/contact.php";
     });
-
     $r->addRoute('GET', '/library', function () {
         require "Application/views/library.php";
     });
-
-    $r->addRoute('POST', '/payment/notify', function () {
-        require "Application/views/payment/notify.php";
-    });
-
-     $r->addRoute('POST', '/checkout', function () {
-        require "Application/checkout.php";
-    });
-
-    $r->addRoute('GET', '/payment/return', function () {
-        require "Application/views/payment/return.php";
-    });
-
-    $r->addRoute('GET', '/payment/cancel', function () {
-        require "Application/views/payment/cancel.php";
-    });
-
     $r->addRoute('GET', '/membership', function () {
         require "Application/views/membership.php";
     });
-
     $r->addRoute('GET', '/library/book/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/bookpage.php";
     });
+    $r->addRoute('GET', '/library/audiobook/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Application/views/books/audio/audiobook_view.php";
+    });
 
-    // Route for serving JSON API requests from React Native
+    // =================== Payment Routes ===================
+    $r->addRoute('POST', '/payment/notify', function () {
+        require "Application/views/payment/notify.php";
+    });
+    $r->addRoute('POST', '/checkout', function () {
+        require "Application/checkout.php";
+    });
+    $r->addRoute('GET', '/payment/return', function () {
+        require "Application/views/payment/return.php";
+    });
+    $r->addRoute('GET', '/payment/cancel', function () {
+        require "Application/views/payment/cancel.php";
+    });
+
+    // =================== API Routes ===================
     $r->addRoute('GET', '/api/books', function () {
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/Ebooks', function () {
         $_GET['action'] = 'Ebooks';
         require "Application/api.php";
     });
-
-     $r->addRoute('GET', '/api/categories', function () {
+    $r->addRoute('GET', '/api/categories', function () {
         $_GET['action'] = 'getAllCategories';
         require "Application/api.php";
     });
-
-     $r->addRoute('GET', '/api/home/{category}', function ($category) {
+    $r->addRoute('GET', '/api/home/{category}', function ($category) {
         $_GET['action'] = 'home';
         $_GET['category'] = $category;
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/book/{id}', function ($id) {
         $_GET['action'] = 'getBook';
         $_GET['id'] = $id;
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/category/{category}', function ($category) {
         $_GET['action'] = 'getBooksByCategory';
         $_GET['category'] = $category;
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/search/{keyword}', function ($keyword) {
         $_GET['action'] = 'searchBooks';
         $_GET['keyword'] = $keyword;
         require "Application/api.php";
     });
-
     $r->addRoute('POST', '/api/login', function ($keyword) {
         $_GET['action'] = 'google login';
         $_GET['keyword'] = $keyword;
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/user/books', function ($keyword) {
         $_GET['action'] = 'userBooks';
         $_GET['keyword'] = $keyword;
         require "Application/api.php";
     });
-
     $r->addRoute('GET', '/api/user/purchasedBooks', function ($keyword) {
         $_GET['action'] = 'userPurchasedBooks';
         $_GET['keyword'] = $keyword;
         require "Application/api.php";
     });
 
+    // =================== Dashboard Routes ===================
+    // --- Main Dashboard ---
+    $r->addRoute('GET', '/dashboards', function () {
+        require "Dashboard/index.php";
+    });
 
-    // audioBook
-    $r->addRoute('GET', '/library/audiobook/{id}', function ($id) {
+    // --- Book Listings ---
+    $r->addRoute('GET', '/dashboards/listings', function () {
+        require "Dashboard/views/book_listings.php";
+    });
+    $r->addRoute('POST', '/dashboards/listings/insert', function () {
+        $_GET['action'] = 'insert';
+        require "Dashboard/handlers/book_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/listings/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
         $_GET['q'] = $id;
-        require "Application/views/books/audio/audiobook_view.php";
+        require "Dashboard/handlers/book_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/listings/{id}', function ($id) {
+        $_GET['q'] = $id;
+        require "Dashboard/views/add/add_book.php";
+    });
+    $r->addRoute('GET', '/dashboards/listings/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['q'] = $id;
+        require "Dashboard/handlers/book_handler.php";
     });
 
-    // user dasboard/analytics
-    $r->addRoute('GET', '/dashboard', function () {
-        require "dashboard/index.php";
+    // --- Events ---
+    $r->addRoute('GET', '/dashboards/add/event', function () {
+        require "Dashboard/views/add/add_event.php";
+    });
+    $r->addRoute('GET', '/dashboards/events', function () {
+        require "Dashboard/views/manage_events.php";
+    });
+    $r->addRoute('POST', '/dashboards/events/insert', function () {
+        $_GET['action'] = 'insert';
+        require "Dashboard/handlers/event_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/events/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/event_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/events/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/event_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/events/{id}', function ($id) {
+        $_GET['id'] = $id;
+        require "Dashboard/views/add/add_event.php";
     });
 
-    $r->addRoute('GET', '/dashboard/basic', function () {
-        require "dashboard/basic.php";
+    // --- Services ---
+    $r->addRoute('GET', '/dashboards/add/service', function () {
+        require "Dashboard/views/add/add_services.php";
+    });
+    $r->addRoute('GET', '/dashboards/services', function () {
+        require "Dashboard/views/manage_services.php";
+    });
+    $r->addRoute('POST', '/dashboards/services/insert', function () {
+        $_GET['action'] = 'insert';
+        require "Dashboard/handlers/service_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/services/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/service_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/services/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/service_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/services/{id}', function ($id) {
+        $_GET['id'] = $id;
+        require "Dashboard/views/add/add_services.php";
     });
 
-    $r->addRoute('GET', '/dashboard/upload', function () {
-        require "dashboard/uploadbookContent.php";
+    // --- Reviews, Profile, Billing ---
+    $r->addRoute('GET', '/dashboards/reviews', function () {
+        require "Dashboard/views/manage_reviews.php";
+    });
+    $r->addRoute('GET', '/dashboards/profile', function () {
+        require "Dashboard/views/manage_profile.php";
+    });
+    $r->addRoute('POST', '/dashboards/profile/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/user_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/billing', function () {
+        require "Dashboard/views/account_billing.php";
     });
 
-    $r->addRoute('GET', '/dashboard/listings', function () {
-        require "dashboard/views/manage_books.php";
-    });
-    $r->addRoute('GET', '/dashboard/events', function () {
-        require "dashboard/views/manage_events.php";
-    });
-    $r->addRoute('GET', '/dashboard/services', function () {
-        require "dashboard/views/manage_services.php";
-    });
-    $r->addRoute('GET', '/dashboard/reviews', function () {
-        require "dashboard/views/manage_reviews.php";
-    });
-
-
+    // =================== Creator, Provider, Gallery, Services, Events (Public) ===================
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/creatorpage.php";
     });
-
-    // providers
     $r->addRoute('GET', '/providers', function () {
         require "Application/views/providers.php";
     });
-
-    // gallery
     $r->addRoute('GET', '/gallery', function () {
         require "Application/views/gallery.php";
     });
-
-    // services
     $r->addRoute('GET', '/services', function () {
         require "Application/views/ourServices.php";
     });
-
-    // event routes
     $r->addRoute('GET', '/events', function () {
         require "Application/views/events.php";
     });
-
     $r->addRoute('GET', '/events/event/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/eventpage.php";
     });
 
-    // documentation pages
+    // =================== Documentation Routes ===================
     $r->addRoute('GET', '/content-removal', function () {
         require __DIR__ . "/Application/views/documentations/content-removal.php";
     });
-
     $r->addRoute('GET', '/popia-compliance', function () {
         require __DIR__ . "/Application/views/documentations/popia-compliance.php";
     });
-
     $r->addRoute('GET', '/privacy-policy', function () {
         require __DIR__ . "/Application/views/documentations/privacy-policy.php";
     });
-
     $r->addRoute('GET', '/termination-policy', function () {
         require __DIR__ . "/Application/views/documentations/termination-policy.php";
     });
-
     $r->addRoute('GET', '/terms-and-conditions', function () {
         require __DIR__ . "/Application/views/documentations/terms-and-conditions.php";
     });
-
     $r->addRoute('GET', '/refund-policy', function () {
         require __DIR__ . "/Application/views/documentations/refund-policy.php";
     });
 
-    $r->addRoute('GET', '/google/callback', function () {
-        require  "Application/google/callback.php";
-    });
-
-
+    // =================== Auth Routes ===================
     $r->addRoute('GET', '/login', function () {
         require __DIR__ . "/Application/views/auth/login.php";
     });
-
     $r->addRoute('POST', '/formLogin', function () {
         require __DIR__ . "/Application/views/includes/loginWithForm.php";
     });
-
     $r->addRoute('GET', '/signup', function () {
         require __DIR__ . "/Application/views/auth/signup.php";
     });
-
     $r->addRoute('GET', '/forgot-password', function () {
         require __DIR__ . "/Application/views/auth/forgot_password.php";
     });
-
     $r->addRoute('GET', '/reset-password', function () {
         require __DIR__ . "/Application/views/auth/reset_password.php";
+    });
+
+    // =================== Google OAuth Callback ===================
+    $r->addRoute('GET', '/google/callback', function () {
+        require  "Application/google/callback.php";
     });
 });
 
