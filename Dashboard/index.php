@@ -27,9 +27,9 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
                         $titlesCount = $analysisController->getTitlesCount($user_id);
 
-                        renderAnalysisCard("Downloads", "1,240", "fas fa-download");
-                        renderAnalysisCard("Listens", "980", "fas fa-headphones");
-                        renderAnalysisCard("Revenue", "R18,500", "fas fa-money-bill");
+                        renderAnalysisCard("Downloads", "0", "fas fa-download");
+                        renderAnalysisCard("Listens", "0", "fas fa-headphones");
+                        renderAnalysisCard("Revenue", "0", "fas fa-money-bill");
                         renderAnalysisCard("Titles", $titlesCount, "fas fa-book");
                         ?>
                     </div>
