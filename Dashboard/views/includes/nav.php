@@ -21,16 +21,34 @@ if (isset($userKey)) {
 ?>
 <nav class="navbar navbar-expand-xl navbar-light fixed-top border-bottom bg-white">
     <div class="container-fluid">
+        <button class="btn me-3 d-lg-none" type="button" id="sidebarToggle">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
         <a class="navbar-brand" href="/">
             <img src="https://11-july-2023.sabooksonline.co.za/public/images/sabo_logo.png" alt="sabooksonline logo" width="80">
         </a>
 
         <div class="d-flex order-xl-last">
-            <button class="btn border-0 me-2 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch">
-                <i class="fas fa-search"></i>
-            </button>
+            <div class="dropdown d-xl-none">
+                <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle me-3" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
+                    <img src="<?php echo htmlspecialchars($profile); ?>" alt="Admin Profile"
+                        class="rounded-circle"
+                        style="width: 48px; height: 48px; object-fit: cover;
+                                        border: 2px solid #dee2e6;
+                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="/dashboards/profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/dashboards/account-billing">Account Billing</a></li>
+                    <li><a class="dropdown-item" href="/dashboards/subscription-plans">Subscription Plans</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                </ul>
+            </div>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fas fa-bars"></span>
             </button>
         </div>

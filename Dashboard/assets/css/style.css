@@ -3,6 +3,7 @@ body {
 }
 
 .dashboard__sidebar {
+    position: relative;
     background: #fff;
     border-right: 1px solid #eee;
     margin-top: 70px;

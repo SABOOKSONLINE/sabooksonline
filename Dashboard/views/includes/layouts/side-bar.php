@@ -1,14 +1,13 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
 ?>
-<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0">
-    <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3">
-        <div class="mb-auto">
+<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
+    <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3" id="dashboardSidebar">
+        <div class=" mb-auto">
             <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                 <i class="fas fa-info-circle ms-1 me-1" data-bs-toggle="tooltip" data-bs-placement="right" title="Add books, events, services, and manage reviews"></i>
                 Start Here
             </p>
-
 
             <div class="nav flex-column gap-1">
                 <a href="/dashboards" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/dashboards' || $current_path == '/dashboards/') ? 'active' : ''; ?>">
