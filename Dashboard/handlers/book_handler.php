@@ -33,7 +33,7 @@ function formDataArray()
     $type = htmlspecialchars($_POST["book_type"] ?? 'Book');
 
     if (isset($_FILES['book_cover']) && $_FILES['book_cover']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../uploads/';
+        $uploadDir = __DIR__ . '/../../cms/book-covers/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }

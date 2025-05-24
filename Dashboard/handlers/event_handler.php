@@ -27,7 +27,7 @@ function formDataArray()
     $link = htmlspecialchars($_POST["link"]);
 
     if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../uploads/';
+        $uploadDir = __DIR__ . '/../../cms/event-covers/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
