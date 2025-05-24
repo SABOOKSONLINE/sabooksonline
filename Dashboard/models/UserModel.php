@@ -17,16 +17,16 @@ class UserModel
      * @param string $userId
      * @return array|null
      */
-    public function getUserById($userId)
+    public function getUserById($userKey)
     {
         try {
-            $sql = "SELECT * FROM users WHERE ADMIN_VERIFICATION_LINK = ?";
+            $sql = "SELECT * FROM users WHERE ADMIN_USERKEY = ?";
             $stmt = mysqli_prepare($this->conn, $sql);
             if (!$stmt) {
                 error_log("Failed to prepare statement: " . mysqli_error($this->conn));
                 return null;
             }
-            mysqli_stmt_bind_param($stmt, "s", $userId);
+            mysqli_stmt_bind_param($stmt, "s", $userKey);
             if (!mysqli_stmt_execute($stmt)) {
                 error_log("Failed to execute statement: " . mysqli_stmt_error($stmt));
                 mysqli_stmt_close($stmt);

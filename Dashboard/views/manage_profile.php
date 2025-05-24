@@ -21,6 +21,10 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     renderHeading("My Profile", "");
 
                     $userKey = $_SESSION["ADMIN_USERKEY"];
+                    if (empty($userKey)) {
+                        echo '<div class="alert alert-danger text-center" role="alert">User key is missing. Please <a href="/login">log in</a> again.</div>';
+                        exit;
+                    }
 
                     $userController = new UserController($conn);
                     $userController->renderUserById($userKey);

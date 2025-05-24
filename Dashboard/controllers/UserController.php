@@ -18,9 +18,9 @@ class UserController
      * Render user form by user ID
      * @param string $userId
      */
-    public function renderUserById($userId)
+    public function renderUserById($userKey)
     {
-        $this->userModel->getUserById($userId);
+        $user = $this->userModel->getUserById($userKey);
         include __DIR__ . "/../views/includes/layouts/forms/user_form.php";
     }
 
