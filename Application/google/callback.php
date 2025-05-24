@@ -28,9 +28,8 @@ if (isset($_GET['code'])) {
 
     if ($accessToken) {
 
-    $_SESSION['access_token'] = $accessToken;
-    $client->setAccessToken($accessToken);
-
+        $_SESSION['access_token'] = $accessToken;
+        $client->setAccessToken($accessToken);
     } else {
         die("Failed to retrieve access token.");
     }
@@ -40,7 +39,7 @@ if (isset($_GET['code'])) {
     $authController = new AuthController($conn);
 
 
-    $reg_name = $user->getName() ;
+    $reg_name = $user->getName();
     $reg_email = $user->getEmail();
     $profileimage = $user->getPicture();
 
@@ -56,7 +55,7 @@ if (isset($_GET['code'])) {
 
     if ($loginResult === true && isset($_SESSION['ADMIN_ID'])) {
         // ✅ Proper session is set, now redirect
-        header('Location: /dashboard');
+        header('Location: /dashboards');
         exit;
     } else {
 
@@ -65,4 +64,3 @@ if (isset($_GET['code'])) {
         exit;
     }
 }
-
