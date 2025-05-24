@@ -22,7 +22,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     renderHeading("My Profile", "");
 
                     $userController = new UserController($conn);
-                    $userController->renderUserById("61e5b995116424452051642445205");
+                    $userController->renderUserById($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

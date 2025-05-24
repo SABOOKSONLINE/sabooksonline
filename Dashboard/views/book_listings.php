@@ -8,7 +8,8 @@ include __DIR__ . "/includes/dashboard_heading.php";
 ?>
 
 <body>
-    <?php include __DIR__ . "/includes/nav.php" ?>
+    <?php include __DIR__ . "/includes/nav.php"
+    ?>
 
     <section>
         <div class="container-fluid">
@@ -67,7 +68,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $bookListingController = new BookListingController($conn);
-                    $bookListingController->renderBookListing("62309008e164734976862309008e");
+                    $bookListingController->renderBookListing($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

@@ -66,7 +66,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $serviceController = new ServicesController($conn);
-                    $serviceController->renderServicesByUserId("64c971169092344964c971b98");
+                    $serviceController->renderServicesByUserId($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

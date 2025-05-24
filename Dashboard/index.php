@@ -23,9 +23,9 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         require_once __DIR__ . "/controllers/AnalysisController.php";
 
                         $analysisController = new AnalysisController($conn);
-                        $user_id = "62309008e164734976862309008e";
+                        $userKey = $_SESSION["ADMIN_USERKEY"];
 
-                        $titlesCount = $analysisController->getTitlesCount($user_id);
+                        $titlesCount = $analysisController->getTitlesCount($userKey);
 
                         renderAnalysisCard("Downloads", "0", "fas fa-download");
                         renderAnalysisCard("Listens", "0", "fas fa-headphones");

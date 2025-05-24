@@ -29,7 +29,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $reviewsController = new ReviewsController($conn);
-                    $reviewsController->renderReviewsByUserKey("64aa6e168889112464aa6ef49");
+                    $reviewsController->renderReviewsByUserKey($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

@@ -4,7 +4,9 @@ $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
 session_start();
-if (isset($_SESSION['ADMIN_USERKEY'])) {
+$userKey = $_SESSION['ADMIN_USERKEY'];
+
+if (isset($userKey)) {
     $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
     if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
@@ -12,11 +14,10 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
     } else {
         $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
     }
+} else {
+    header("Location: /login");
+    exit;
 }
-// else {
-//     header("Location: /login");
-//     exit;
-// }
 ?>
 <nav class="navbar navbar-expand-xl navbar-light fixed-top border-bottom bg-white">
     <div class="container-fluid">

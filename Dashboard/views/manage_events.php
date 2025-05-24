@@ -43,7 +43,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $eventsController = new EventsController($conn);
-                    $eventsController->renderEvents("65ca14170774224165ca14219");
+                    $eventsController->renderEvents($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>
