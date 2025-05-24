@@ -73,10 +73,6 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                     </div>
                 </form>
 
-                <!-- <div class="btn-group">
-                    <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
-                    <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
-                </div> -->
                 <div class="btn-group">
                     <?php
                     if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])) {
@@ -90,12 +86,24 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                                             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="/dashboards">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="/dashboards/my-library">My Library</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="/dashboards">
+                                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/dashboards/my-library">
+                                        <i class="fas fa-book me-2"></i> My Library
+                                    </a>
+                                </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="/logout">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     <?php
