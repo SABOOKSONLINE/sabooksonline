@@ -12,22 +12,46 @@ class UserModel
         $this->conn = $connection;
     }
 
+    /**
+     * Get user by ID
+     * @param string $userId
+     * @return array|null
+     */
     public function getUserById($userId)
     {
-        $sql = "SELECT * FROM users WHERE ADMIN_VERIFICATION_LINK = ?";
-        $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $userId);
-        mysqli_stmt_execute($stmt);
+        try {
+            $sql = "SELECT * FROM users WHERE ADMIN_VERIFICATION_LINK = ?";
+            $stmt = mysqli_prepare($this->conn, $sql);
+            if (!$stmt) {
+                error_log("Failed to prepare statement: " . mysqli_error($this->conn));
+                return null;
+            }
+            mysqli_stmt_bind_param($stmt, "s", $userId);
+            if (!mysqli_stmt_execute($stmt)) {
+                error_log("Failed to execute statement: " . mysqli_stmt_error($stmt));
+                mysqli_stmt_close($stmt);
+                return null;
+            }
 
-        $result = mysqli_stmt_get_result($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            if (!$result) {
+                error_log("Failed to get result: " . mysqli_stmt_error($stmt));
+                mysqli_stmt_close($stmt);
+                return null;
+            }
 
-        if (mysqli_num_rows($result) === 0) {
+            if (mysqli_num_rows($result) === 0) {
+                mysqli_stmt_close($stmt);
+                return null;
+            }
+
+            $user = mysqli_fetch_assoc($result);
+            mysqli_stmt_close($stmt);
+            return $user;
+        } catch (Exception $e) {
+            error_log("Error in getUserById: " . $e->getMessage());
             return null;
         }
-
-        $user = mysqli_fetch_assoc($result);
-        mysqli_stmt_close($stmt);
-        return $user;
     }
 
     /**
@@ -58,7 +82,8 @@ class UserModel
 
             $stmt = mysqli_prepare($this->conn, $sql);
             if (!$stmt) {
-                throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+                error_log("Failed to prepare statement: " . mysqli_error($this->conn));
+                return false;
             }
 
             mysqli_stmt_bind_param(
@@ -67,7 +92,7 @@ class UserModel
                 $data['ADMIN_NAME'],
                 $data['ADMIN_NUMBER'],
                 $data['ADMIN_WEBSITE'],
-                $data['ADMIN_ADDRESS'],
+                $data['ADMIN_GOOGLE'],
                 $data['ADMIN_BIO'],
                 $data['ADMIN_FACEBOOK'],
                 $data['ADMIN_INSTAGRAM'],
@@ -81,7 +106,9 @@ class UserModel
 
             $result = mysqli_stmt_execute($stmt);
             if (!$result) {
-                throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+                error_log("Failed to execute statement: " . mysqli_stmt_error($stmt));
+                mysqli_stmt_close($stmt);
+                return false;
             }
 
             $affectedRows = mysqli_stmt_affected_rows($stmt);
@@ -90,7 +117,7 @@ class UserModel
             return $affectedRows > 0;
         } catch (Exception $e) {
             error_log("Error updating user: " . $e->getMessage());
-            throw new Exception("Error updating user: " . $e->getMessage());
+            return false;
         }
     }
 }

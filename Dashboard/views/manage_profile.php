@@ -21,8 +21,10 @@ include __DIR__ . "/includes/dashboard_heading.php";
 
                     renderHeading("My Profile", "");
 
+                    $userKey = $_SESSION["ADMIN_USERKEY"];
+
                     $userController = new UserController($conn);
-                    $userController->renderUserById($_SESSION["ADMIN_USERKEY"]);
+                    $userController->renderUserById($userKey);
                     ?>
                 </div>
             </div>
