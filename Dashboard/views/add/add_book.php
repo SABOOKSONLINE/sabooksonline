@@ -24,8 +24,10 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
                         renderHeading("Add Book Listing", "You can manage, add or delete your book listings.");
                     }
 
+                    $userKey = $_SESSION["ADMIN_USERKEY"];
+
                     $bookListingController = new BookListingController($conn);
-                    $bookListingController->renderBookByContentId("62309008e164734976862309008e", $contentId);
+                    $bookListingController->renderBookByContentId($userKey, $contentId);
                     ?>
                 </div>
             </div>

@@ -25,8 +25,10 @@ require_once __DIR__ . "/../../controllers/ServicesController.php";
                         renderHeading("Create New Service", "You may add a new service with its pricing options.");
                     }
 
+                    $userKey = $_SESSION["ADMIN_USERKEY"];
+
                     $servicesController = new ServicesController($conn);
-                    $servicesController->renderServiceById("64c971169092344964c971b98", $serviceId);
+                    $servicesController->renderServiceById($userKey, $serviceId);
                     ?>
                 </div>
             </div>
