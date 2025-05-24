@@ -14,15 +14,14 @@ class UserController
         $this->userModel = new UserModel($conn);
     }
 
+    /**
+     * Render user form by user ID
+     * @param string $userId
+     */
     public function renderUserById($userId)
     {
-        $user = $this->userModel->getUserById($userId);
-
-        if ($user) {
-            include __DIR__ . "/../views/includes/layouts/forms/user_form.php";
-        } else {
-            echo "User not found.";
-        }
+        $this->userModel->getUserById($userId);
+        include __DIR__ . "/../views/includes/layouts/forms/user_form.php";
     }
 
     /**

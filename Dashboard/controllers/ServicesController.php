@@ -15,10 +15,7 @@ class ServicesController
     public function renderServicesByUserId($userId)
     {
         $services = $this->serviceModel->getServicesByUserId($userId);
-
-        if ($services) {
-            include __DIR__ . "/../views/includes/layouts/tables/services_table.php";
-        }
+        include __DIR__ . "/../views/includes/layouts/tables/services_table.php";
     }
 
     public function renderServiceById($userId, $contentId)

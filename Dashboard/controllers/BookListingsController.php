@@ -16,16 +16,12 @@ class BookListingController
     public function renderBookListing($userId)
     {
         $books = $this->booksModel->selectBooksByUserId($userId);
-
-        if ($books) {
-            include __DIR__ . "/../views/includes/layouts/tables/listing_table.php";
-        }
+        include __DIR__ . "/../views/includes/layouts/tables/listing_table.php";
     }
 
     public function renderBookByContentId($userId, $contentId)
     {
         $book = $this->booksModel->selectBookByContentId($userId, $contentId);
-
         include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
     }
 

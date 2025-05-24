@@ -11,16 +11,12 @@ class EventsController
     public function renderEvents($userId)
     {
         $events = $this->eventsModel->selectEventsByUserId($userId);
-
-        if ($events) {
-            include __DIR__ . "/../views/includes/layouts/tables/events_table.php";
-        }
+        include __DIR__ . "/../views/includes/layouts/tables/events_table.php";
     }
 
     public function renderEventByContentId($userId, $eventId)
     {
         $event = $this->eventsModel->selectEventByContentId($userId, $eventId);
-
         include __DIR__ . "/../views/includes/layouts/forms/event_form.php";
     }
 

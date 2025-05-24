@@ -3,25 +3,23 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$user = $user ?? [];
+$adminId = htmlspecialchars($_SESSION['ADMIN_ID'] ?? '');
+$adminName = htmlspecialchars($_SESSION['ADMIN_NAME'] ?? '');
+$adminEmail = htmlspecialchars($_SESSION['ADMIN_EMAIL'] ?? '');
+$adminNumber = htmlspecialchars($_SESSION['ADMIN_NUMBER'] ?? '');
+$adminPassword = htmlspecialchars($_SESSION['ADMIN_PASSWORD'] ?? '');
+$adminType = htmlspecialchars($_SESSION['ADMIN_TYPE'] ?? '');
+$adminStatus = htmlspecialchars($_SESSION['ADMIN_USER_STATUS'] ?? 'inactive');
+$adminDate = htmlspecialchars($_SESSION['ADMIN_DATE'] ?? date('Y-m-d'));
 
-$adminId = htmlspecialchars($user['ADMIN_ID'] ?? '');
-$adminName = htmlspecialchars($user['ADMIN_NAME'] ?? '');
-$adminEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
-$adminNumber = htmlspecialchars($user['ADMIN_NUMBER'] ?? '');
-$adminPassword = htmlspecialchars($user['ADMIN_PASSWORD'] ?? '');
-$adminType = htmlspecialchars($user['ADMIN_TYPE'] ?? '');
-$adminStatus = htmlspecialchars($user['ADMIN_USER_STATUS'] ?? 'inactive');
-$adminDate = htmlspecialchars($user['ADMIN_DATE'] ?? date('Y-m-d'));
+$adminWebsite = htmlspecialchars($_SESSION['ADMIN_WEBSITE'] ?? '');
+$adminAddress = htmlspecialchars($_SESSION['ADMIN_GOOGLE'] ?? '');
+$adminBio = htmlspecialchars($_SESSION['ADMIN_BIO'] ?? '');
 
-$adminWebsite = htmlspecialchars($user['ADMIN_WEBSITE'] ?? '');
-$adminAddress = htmlspecialchars($user['ADMIN_GOOGLE'] ?? '');
-$adminBio = htmlspecialchars($user['ADMIN_BIO'] ?? '');
-
-$adminFacebook = htmlspecialchars($user['ADMIN_FACEBOOK'] ?? '');
-$adminInstagram = htmlspecialchars($user['ADMIN_INSTAGRAM'] ?? '');
-$adminTwitter = htmlspecialchars($user['ADMIN_TWITTER'] ?? '');
-$adminLinkedin = htmlspecialchars($user['ADMIN_LINKEDIN'] ?? '');
+$adminFacebook = htmlspecialchars($_SESSION['ADMIN_FACEBOOK'] ?? '');
+$adminInstagram = htmlspecialchars($_SESSION['ADMIN_INSTAGRAM'] ?? '');
+$adminTwitter = htmlspecialchars($_SESSION['ADMIN_TWITTER'] ?? '');
+$adminLinkedin = htmlspecialchars($_SESSION['ADMIN_LINKEDIN'] ?? '');
 ?>
 
 <form method="POST"

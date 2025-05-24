@@ -8,7 +8,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
 ?>
 
 <body>
-    <?php include __DIR__ . "/../views/includes/nav.php"; ?>
+    <?php include __DIR__ . "/../views/includes/nav.php" ?>
 
     <section>
         <div class="container-fluid">
@@ -18,7 +18,6 @@ include __DIR__ . "/includes/dashboard_heading.php";
                 <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
                     <?php
                     $contentId = $_GET["q"] ?? "";
-
                     renderHeading("My Profile", "");
 
                     $userKey = $_SESSION["ADMIN_USERKEY"];
