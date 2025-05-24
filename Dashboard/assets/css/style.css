@@ -5,8 +5,8 @@ body {
 .dashboard__sidebar {
     background: #fff;
     border-right: 1px solid #eee;
-    margin-top: 60px;
-    height: calc(100vh - 60px);
+    margin-top: 70px;
+    height: calc(100vh - 70px);
 }
 
 .dashboard__sidebar .nav .nav-link {

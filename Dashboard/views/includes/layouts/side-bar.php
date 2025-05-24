@@ -1,15 +1,14 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
 ?>
-<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar">
-    <div class="dashboard__sidebar d-none d-lg-flex flex-column p-3 hv-100">
+<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0">
+    <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3">
         <div class="mb-auto">
-            <p class="text-muted mb-3 mt-3 ps-2 small fw-bold">
+            <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                 <i class="fas fa-info-circle ms-1 me-1" data-bs-toggle="tooltip" data-bs-placement="right" title="Add books, events, services, and manage reviews"></i>
                 Start Here
             </p>
 
-            <hr class="text-muted my-2">
 
             <div class="nav flex-column gap-1">
                 <a href="/dashboards" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/dashboards' || $current_path == '/dashboards/') ? 'active' : ''; ?>">
@@ -29,14 +28,12 @@ $current_path = $_SERVER['REQUEST_URI'];
                 </a>
             </div>
 
-            <hr class="text-muted my-2">
 
-            <p class="text-muted mb-3 mt-3 ps-2 small fw-bold">
+            <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                 <i class="fas fa-book-open ms-1 me-1" data-bs-toggle="tooltip" data-bs-placement="right" title="Your personal library"></i>
                 My Library
             </p>
 
-            <hr class="text-muted my-2">
 
             <div class="nav flex-column gap-1">
                 <a href="/dashboards/bookshelf" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/bookshelf') === 0) ? 'active' : ''; ?>">
@@ -49,11 +46,9 @@ $current_path = $_SERVER['REQUEST_URI'];
         </div>
 
         <div class="mt-4 pt-2 mt-auto">
-            <p class="text-muted mb-3 ps-2 small fw-bold">
+            <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                 <i class="fas fa-user-circle me-1"></i> My Account
             </p>
-
-            <hr class="text-muted my-2">
 
             <div class="nav flex-column gap-1">
                 <a href="/dashboards/billing" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/billing') === 0) ? 'active' : ''; ?>">
