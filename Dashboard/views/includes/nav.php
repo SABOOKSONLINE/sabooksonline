@@ -25,7 +25,7 @@ if (isset($userKey)) {
             <i class="fas fa-ellipsis-v"></i>
         </button>
         <a class="navbar-brand" href="/">
-            <img src="https://11-july-2023.sabooksonline.co.za/public/images/sabo_logo.png" alt="sabooksonline logo" width="80">
+            <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
         <div class="d-flex order-xl-last">

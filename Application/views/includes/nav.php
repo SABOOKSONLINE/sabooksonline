@@ -20,8 +20,8 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
 
 <nav class="navbar navbar-expand-xl navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            <img src="../../../public/images/sabo_logo.png" alt="sabooksonline logo" width="90">
+        <a class="navbar-brand pe-3 border-end" href="/">
+            <img src="../../../public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
         <div class="d-flex order-xl-last">

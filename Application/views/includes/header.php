@@ -8,7 +8,7 @@
     <meta name="keywords" content="SA Books Online, South African Books, South African Literature, SA Literature">
     <meta name="author" content="SA Books Online">
 
-    <title>SA Books Online, SA Books Online, South African Books, South African Literature, SA Literature - The Gateway To South African Literature</title>
+    <title>SA Books Online - The Gateway To South African Literature</title>
 
     <!-- Favicons-->
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
