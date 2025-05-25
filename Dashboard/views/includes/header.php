@@ -7,7 +7,7 @@
     <title>SABO | Dashboard</title>
 
     <!-- Favicons-->
-    <link rel="shortcut icon" href="/public/images/sabo_favicon (144x144).png" type="image/png">
+    <link rel="shortcut icon" href="/public/images/sabo_favicon (144x144).svg" type="image/svg+xml">
     <link rel="apple-touch-icon" sizes="72x72" href="/public/images/sabo_favicon (72x72).png">
     <link rel="apple-touch-icon" sizes="114x114" href="/public/images/sabo_favicon (114x114).png">
     <link rel="apple-touch-icon" sizes="144x144" href="/public/images/sabo_favicon (144x144).png">
