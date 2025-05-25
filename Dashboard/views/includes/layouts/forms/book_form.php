@@ -5,7 +5,6 @@ error_reporting(E_ALL);
 
 $book = $book ?? [];
 
-$userId = strtolower($book['USERID'] ?? '');
 $bookId = strtolower($book['CONTENTID'] ?? ($_GET['q'] ?? ''));
 
 $title = htmlspecialchars($book['TITLE'] ?? '');
@@ -36,22 +35,22 @@ $availability = htmlspecialchars($book['STOCK'] ?? '');
 $keywords = htmlspecialchars($book['CATEGORY'] ?? '');
 $type = htmlspecialchars($book['TYPE'] ?? '');
 
+$admin_userkey = $_SESSION['ADMIN_USERKEY'] ?? '';
+$admin_username = $_SESSION['ADMIN_NAME'] ?? '';
+
 ?>
 
 <form method="POST"
     action="<?= $bookId ? "/dashboards/listings/update/$bookId" : "/dashboards/listings/insert" ?>"
     class="bg-white rounded mb-4 overflow-hidden position-relative"
     enctype="multipart/form-data">
-    <input type="hidden" name="user_id" value="<?= $userId ?>">
+    <input type="hidden" name="user_id" value="<?= $admin_userkey ?>">
     <input type="hidden" name="book_id" value="<?= $bookId ?>">
     <input type="hidden" name="existing_cover" value="<?= htmlspecialchars($cover) ?>">
 
     <div class="card border-0 shadow-sm p-4 mb-3">
         <h5 class="fw-bold mb-3">Book Information</h5>
         <div class="row">
-
-            <input type="text" name="user_id" value="62309008e164734976862309008e" hidden>
-
             <div class="col-sm-6">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Book Title*</label>
@@ -69,7 +68,7 @@ $type = htmlspecialchars($book['TYPE'] ?? '');
             <div class="col-sm-6">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Publisher*</label>
-                    <input type="text" class="form-control bg-white text-muted opacity-75" name="book_publisher" value="someone" readonly>
+                    <input type="text" class="form-control bg-white text-muted opacity-75" name="book_publisher" value="<?= $admin_username ?>" readonly>
                 </div>
             </div>
 

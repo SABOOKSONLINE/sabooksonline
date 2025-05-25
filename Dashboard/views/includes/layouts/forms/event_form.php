@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 $event = $event ?? [];
 
-$userId = htmlspecialchars($event['USERID'] ?? '');
+$userId = $_SESSION['ADMIN_USERKEY'] ?? '';
 $title = htmlspecialchars($event['TITLE'] ?? '');
 $email = htmlspecialchars($event['EMAIL'] ?? '');
 $phone = htmlspecialchars($event['NUMBER'] ?? '');

@@ -6,8 +6,7 @@ error_reporting(E_ALL);
 $service = $service ?? [];
 
 $serviceName = htmlspecialchars($service['SERVICE'] ?? '');
-// must remove temp userid (testing)
-$userId = htmlspecialchars($service['USERID'] ?? '64c971169092344964c971b98');
+$userId = $_SESSION['ADMIN_USERKEY'];
 $status = htmlspecialchars($service['STATUS'] ?? 'draft');
 $created = htmlspecialchars($service['CREATED'] ?? '');
 $minimum = htmlspecialchars($service['MINIMUM'] ?? '');
