@@ -24,7 +24,7 @@ if (isset($userKey)) {
         <button class="btn me-3 d-lg-none" type="button" id="sidebarToggle">
             <i class="fas fa-ellipsis-v"></i>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand pe-3" href="/">
             <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
