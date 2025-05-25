@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | SABO</title>
 
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/public/images/sabo_favicon (144x144).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/public/images/sabo_favicon (72x72).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="/public/images/sabo_favicon (114x114).svg">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="/public/images/sabo_favicon (144x144).svg">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
