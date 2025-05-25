@@ -207,6 +207,23 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/views/audiobooks.php";
     });
 
+    // --- Audiobook Handling Routes ---
+    $r->addRoute('POST', '/dashboards/listings/insertAudio', function () {
+        require "Dashboard/handlers/audiobook_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/listings/updateAudio/{id}', function ($id) {
+        $_GET['q'] = $id;
+        $_GET['action'] = 'updateAudio';
+        require "Dashboard/handlers/audiobook_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/add/audiobook', function () {
+        require "Dashboard/views/add/add_audiobook.php";
+    });
+    $r->addRoute('GET', '/dashboards/add/audiobook/{id}', function ($id) {
+        $_GET['id'] = $id;
+        require "Dashboard/views/add/add_audiobook.php";
+    });
+
     // =================== Creator, Provider, Gallery, Services, Events (Public) ===================
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;

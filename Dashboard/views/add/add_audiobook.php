@@ -7,7 +7,8 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
 ?>
 
 <body>
-    <?php include __DIR__ . "/../includes/nav.php" ?>
+    <?php // include __DIR__ . "/../includes/nav.php" 
+    ?>
 
     <section>
         <div class="container-fluid">
@@ -16,22 +17,22 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
 
                 <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
                     <?php
-                    $contentId = $_GET["q"] ?? "";
+                    $contentId = $_GET["id"] ?? "";
 
                     if ($contentId) {
-                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/listings/insertAudio", "Add Audiobook");
+                        renderHeading("Update Audiobook", "You can update your audiobook details.");
                     } else {
-                        renderHeading("Add Book Listing", "You can manage, add or delete your book listings.");
+                        renderHeading("Add Audiobook", "Fill in details to add a new audiobook.");
                     }
 
-                    $userKey = $_SESSION["ADMIN_USERKEY"];
+                    // $userKey = $_SESSION["ADMIN_USERKEY"];
+                    $bookId = "279";
 
                     $bookListingController = new BookListingController($conn);
-                    $bookListingController->renderBookByContentId($userKey, $contentId);
+                    $bookListingController->getAudiobookByBookId($bookId);
                     ?>
                 </div>
             </div>
-        </div>
         </div>
     </section>
 

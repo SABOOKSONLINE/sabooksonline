@@ -243,6 +243,30 @@ class BookListingsModel
         return $categories;
     }
 
+    public function selectAudiobookByBookId($bookId)
+    {
+        $sql = "SELECT * FROM audiobooks WHERE book_id = ?";
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $bookId);
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+        if (!$result) {
+            throw new Exception("Failed to fetch result: " . mysqli_error($this->conn));
+        }
+
+        $audiobook = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+        return $audiobook;
+    }
+
     /**
      * Insert a new audiobook
      * @param int $book_id Book ID (posts.ID or posts.CONTENTID)
@@ -250,7 +274,7 @@ class BookListingsModel
      * @return int Inserted audiobook ID
      * @throws Exception If the query fails
      */
-    public function insertAudiobook($book_id, $data)
+    public function insertAudiobook($data)
     {
         $sql = "INSERT INTO audiobooks (book_id, narrator, duration_minutes, release_date) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -260,7 +284,7 @@ class BookListingsModel
         mysqli_stmt_bind_param(
             $stmt,
             "isis",
-            $book_id,
+            $data['book_id'],
             $data['narrator'],
             $data['duration_minutes'],
             $data['release_date']
@@ -280,9 +304,9 @@ class BookListingsModel
      * @return bool True if update was successful
      * @throws Exception If the query fails
      */
-    public function updateAudiobook($audiobook_id, $data)
+    public function updateAudiobook($book_id, $data)
     {
-        $sql = "UPDATE audiobooks SET narrator = ?, duration_minutes = ?, release_date = ? WHERE id = ?";
+        $sql = "UPDATE audiobooks SET narrator = ?, duration_minutes = ?, release_date = ? WHERE book_id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
@@ -293,7 +317,7 @@ class BookListingsModel
             $data['narrator'],
             $data['duration_minutes'],
             $data['release_date'],
-            $audiobook_id
+            $book_id
         );
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
