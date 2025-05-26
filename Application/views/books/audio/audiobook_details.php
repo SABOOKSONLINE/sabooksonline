@@ -18,10 +18,6 @@ $narrator = !empty($book['a_narrator']) ? htmlspecialchars($book['a_narrator']) 
 $audioDuration = !empty($book['a_duration_minutes']) ? (int)$book['a_duration_minutes'] . ' mins' : 'N/A';
 $audiobookId = $book['a_id'] ?? null;
 
-$chapterNumber = $book['ac_chapter_number'] ?? null;
-$chapterTitle = !empty($book['ac_chapter_title']) ? htmlspecialchars($book['ac_chapter_title']) : null;
-$chapterAudioUrl = !empty($book['ac_audio_url']) ? htmlspecialchars($book['ac_audio_url']) : null;
-$chapterDuration = $book['ac_duration_minutes'] ?? null;
 ?>
 
 <style>
@@ -63,9 +59,12 @@ $chapterDuration = $book['ac_duration_minutes'] ?? null;
             <span class="text-muted">Genre:</span>
             <a href="/library?category=<?= $category ?>" class="fw-semibold"><?= $category ?></a>
         </p>
-
     </div>
     <div class="audio-chapters">
-        <?php include __DIR__ . "/audiobook_chapters.php" ?>
+        <?php foreach ($audiobookChapters as $chapter): ?>
+            <div class="chapter" audio_url="<?= $chapter['audio_url'] ?>">
+                <span><?= $chapter['chapter_number'] ?> - <?= $chapter['chapter_title'] ?></span>
+            </div>
+        <?php endforeach; ?>
     </div>
 </div>

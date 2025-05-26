@@ -1,6 +1,8 @@
 <?php require_once __DIR__ . "/../../includes/header.php"; ?>
 
 <body>
+    <?php require_once __DIR__ . "/../../includes/nav.php"; ?>
+
     <section class="audio-book">
 
         <?php

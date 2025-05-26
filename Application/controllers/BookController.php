@@ -72,35 +72,17 @@ class BookController
         $contentId = htmlspecialchars(trim($contentId));
 
         $book = $this->bookModel->getBookById($contentId);
+        $audiobookChapters = $this->bookModel->getChaptersByAudiobookId($book['a_id'] ?? null);
 
         if ($book) {
             include __DIR__ . '/../views/books/audio/audiobook_details.php';
         } else {
             echo "Book not found.";
         }
-    }
 
-    /**
-     * Render the view for a single book by its ID.
-     */
-    public function renderAudioBookChapters($audiobook_id)
-    {
-        $contentId = $_GET['q'] ?? null;
 
-        if (!$contentId) {
-            header("Location: /404");
-            exit;
-        }
-
-        // Sanitize the contentId (if used in the view)
-        $contentId = htmlspecialchars(trim($contentId));
-
-        $book = $this->bookModel->getBookById($contentId);
-
-        if ($book) {
-            include __DIR__ . '/../views/books/audio/audiobook_details.php';
-        } else {
-            echo "Book not found.";
+        if (empty($audiobookChapters)) {
+            echo "Audiobook chapters not found.";
         }
     }
 
@@ -219,7 +201,7 @@ class BookController
         }
     }
 
-        //  JSON version: Get single book by ID
+    //  JSON version: Get single book by ID
     public function getBookJson($id)
     {
         $book = $this->bookModel->getBookById($id);
@@ -244,32 +226,32 @@ class BookController
 
         if ($books) {
             echo json_encode($books);
-
         } else {
             http_response_code(404);
-            echo json_encode(['error' => 'Home categories not found']);}
+            echo json_encode(['error' => 'Home categories not found']);
+        }
     }
 
     // JSON version: Get all books
     public function getAllBooksJson()
     {
         $books = $this->bookModel->getBooks();
-        
+
 
         header('Content-Type: application/json');
         echo json_encode($books);
     }
 
-     public function getAllEbooksJson()
+    public function getAllEbooksJson()
     {
         $books = $this->bookModel->getEbooks();
-        
+
 
         header('Content-Type: application/json');
         echo json_encode($books);
     }
 
-     public function renderCategoriesJson()
+    public function renderCategoriesJson()
     {
         $categories = $this->bookModel->getBookCategories();
 
@@ -277,7 +259,7 @@ class BookController
 
 
         if ($categories) {
-        echo json_encode($categories);
+            echo json_encode($categories);
         } else {
             http_response_code(404);
             echo json_encode(['error' => 'No categories found']);
@@ -302,5 +284,4 @@ class BookController
         header('Content-Type: application/json');
         echo json_encode($books);
     }
-
 }

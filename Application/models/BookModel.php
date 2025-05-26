@@ -150,7 +150,7 @@ class BookModel
         return $books;
     }
 
-     /**
+    /**
      * Fetch All Ebooks
      * @return array
      */

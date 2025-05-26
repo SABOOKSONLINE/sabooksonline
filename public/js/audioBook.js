@@ -21,7 +21,7 @@ jQuery(document).ready(function () {
             audioUrl = selectAudio.attr("audio_url");
         }
 
-        audio = new Audio("/public/audio/" + audioUrl);
+        audio = new Audio("/cms-data/audiobooks/" + audioUrl);
         selectChapterByUrl(audioUrl);
     };
 
