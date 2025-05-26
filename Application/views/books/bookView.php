@@ -10,6 +10,7 @@ $description = htmlspecialchars($book['DESCRIPTION']);
 $isbn = htmlspecialchars($book['ISBN']);
 $website = htmlspecialchars($book['WEBSITE']);
 $retailPrice = htmlspecialchars($book['RETAILPRICE']);
+$ebook = htmlspecialchars($book['PDFURL']);
 
 $bookId = $_GET['q'] ?? null;
 
@@ -70,33 +71,46 @@ $audiobookId = $book['a_id'] ?? null;
             </div> -->
 
             <!-- Action Buttons & Price -->
-            <div class="row gy-3">
+            <div class="row gy-1">
                 <!-- READ NOW -->
                 <!-- <div class="col-12 d-flex flex-wrap align-items-center">
                     <span class="btn btn-green me-2">READ NOW</span>
                     <span class="text-muted mb-2">COMING SOON</span>
                 </div> -->
 
-                <div class="col-12 d-flex flex-wrap align-items-center">
-                    <a href="/readBook/<?= $bookId ?>" class="btn btn-green me-2">READ NOW</a>
-                </div>
-
+                <?php if ($ebook): ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <a href="/readBook/<?= $bookId ?>" class="btn btn-green me-2">
+                            <i class="fas fa-book-open"></i> READ E-BOOK NOW
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <span class="btn btn-yellow me-2 disabled">
+                            <i class="fas fa-book-open"></i> E-BOOK NOT AVAILABLE
+                        </span>
+                    </div>
+                <?php endif; ?>
 
                 <!-- LISTEN TO AUDIOBOOK -->
-                <!-- <?php // if ($audiobookId): 
-                        ?> -->
-                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
-                        <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
-                    </a>
-                    <span class="fw-bold align-content-end text-end">
-                        <small class="text-muted fw-normal">
-                            FREE
-                        </small>
-                    </span>
-                </div>
-                <!-- <?php // endif; 
-                        ?> -->
+                <?php if ($audiobookId): ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
+                            <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
+                        </a>
+                        <span class="fw-bold align-content-end text-end">
+                            <small class="text-muted fw-normal">
+                                FREE
+                            </small>
+                        </span>
+                    </div>
+                <?php else: ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <span class="btn btn-yellow me-2 disabled">
+                            <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
+                        </span>
+                    </div>
+                <?php endif; ?>
 
                 <!-- BUY COPY -->
                 <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
@@ -105,14 +119,14 @@ $audiobookId = $book['a_id'] ?? null;
                 </div> -->
 
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                <form method="POST" action="/checkout">
-                    <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                    <form method="POST" action="/checkout">
+                        <input type="hidden" name="bookId" value="<?= $bookId ?>">
 
-                    <button type="submit" class="btn btn-blue me-2">BUY COPY</button>
-                </form>
-                <span class="fw-bold align-content-end">
-                    <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
-                </span>
+                        <button type="submit" class="btn btn-blue me-2">BUY COPY</button>
+                    </form>
+                    <span class="fw-bold align-content-end">
+                        <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
+                    </span>
                 </div>
             </div>
         </div>
