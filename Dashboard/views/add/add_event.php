@@ -16,7 +16,7 @@ require_once __DIR__ . "/../../controllers/EventsController.php";
                 <?php include __DIR__ . "/../includes/layouts/side-bar.php"; ?>
 
 
-                <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
+                <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
                     $eventId = $_GET["id"] ?? "";
 

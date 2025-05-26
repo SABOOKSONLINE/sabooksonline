@@ -16,7 +16,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
             <div class="row">
                 <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
-                <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
+                <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
                     renderHeading("Manage Orders", "You can manage and view your online orders.");
                     ?>
