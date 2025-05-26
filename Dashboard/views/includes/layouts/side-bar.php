@@ -1,7 +1,7 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
 ?>
-<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
+<div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white" style="z-index: 1060;">
     <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3" id="dashboardSidebar">
         <div class=" mb-auto">
             <p class="text-muted py-3 ps-2 small fw-bold border-bottom">

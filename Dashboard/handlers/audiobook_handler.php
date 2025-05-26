@@ -59,10 +59,27 @@ function updateAudiobookHandler($audiobookController)
     }
 }
 
+function deleteAudioBookHandler($audiobookController)
+{
+    try {
+        $bookId = $_GET["id"];
+
+        $audiobookController->deleteAudiobookByBookId($bookId);
+        header("Location: /dashboards/listings?delete=success");
+    } catch (Exception $e) {
+        header("Location: /dashboards/listings?delete=fail");
+        exit;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_GET["action"]) && $_GET["action"] == "updateAudio") {
         updateAudiobookHandler($audiobookController);
     } else {
         insertAudiobookHandler($audiobookController);
     }
+}
+
+if ($_GET["id"] && $_GET['action'] == "deleteAudio") {
+    deleteAudioBookHandler($audiobookController);
 }

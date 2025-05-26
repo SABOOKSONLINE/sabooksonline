@@ -245,7 +245,21 @@ class BookListingsModel
 
     public function selectAudiobookByBookId($bookId)
     {
-        $sql = "SELECT * FROM audiobooks WHERE book_id = ?";
+        $sql = "SELECT 
+                    audiobooks.id AS audiobook_id,
+                    audiobooks.book_id,
+                    audiobooks.narrator,
+                    audiobooks.duration_minutes AS audiobook_duration,
+                    audiobooks.release_date,
+                    audiobook_chapters.id AS chapter_id,
+                    audiobook_chapters.chapter_number,
+                    audiobook_chapters.chapter_title,
+                    audiobook_chapters.audio_url,
+                    audiobook_chapters.duration_minutes AS chapter_duration
+                FROM audiobooks 
+                LEFT JOIN audiobook_chapters 
+                  ON audiobooks.id = audiobook_chapters.audiobook_id
+                WHERE audiobooks.book_id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
 
         if (!$stmt) {
@@ -262,10 +276,74 @@ class BookListingsModel
             throw new Exception("Failed to fetch result: " . mysqli_error($this->conn));
         }
 
-        $audiobook = mysqli_fetch_assoc($result);
+        $rows = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $rows[] = $row;
+        }
         mysqli_stmt_close($stmt);
-        return $audiobook;
+
+        // When only one chapter exists, return a single entry; otherwise return a list.
+        if (count($rows) === 1) {
+            return $rows[0];
+        }
+        return $rows;
     }
+
+    public function deleteAudiobookByBookId($bookId)
+    {
+        mysqli_begin_transaction($this->conn);
+
+        try {
+            $sqlGet = "SELECT id FROM audiobooks WHERE book_id = ?";
+            $stmtGet = mysqli_prepare($this->conn, $sqlGet);
+            if (!$stmtGet) {
+                throw new Exception("Failed to prepare get statement: " . mysqli_error($this->conn));
+            }
+            mysqli_stmt_bind_param($stmtGet, "i", $bookId);
+            if (!mysqli_stmt_execute($stmtGet)) {
+                throw new Exception("Failed to execute get statement: " . mysqli_stmt_error($stmtGet));
+            }
+            $resultGet = mysqli_stmt_get_result($stmtGet);
+            $audiobookIds = [];
+            while ($row = mysqli_fetch_assoc($resultGet)) {
+                $audiobookIds[] = $row['id'];
+            }
+            mysqli_stmt_close($stmtGet);
+
+            if (!empty($audiobookIds)) {
+                $placeholders = implode(',', array_fill(0, count($audiobookIds), '?'));
+                $sqlDelChapters = "DELETE FROM audiobook_chapters WHERE audiobook_id IN ($placeholders)";
+                $stmtDelChapters = mysqli_prepare($this->conn, $sqlDelChapters);
+                if (!$stmtDelChapters) {
+                    throw new Exception("Failed to prepare delete chapters statement: " . mysqli_error($this->conn));
+                }
+                $types = str_repeat("i", count($audiobookIds));
+                mysqli_stmt_bind_param($stmtDelChapters, $types, ...$audiobookIds);
+                if (!mysqli_stmt_execute($stmtDelChapters)) {
+                    throw new Exception("Failed to execute delete chapters statement: " . mysqli_stmt_error($stmtDelChapters));
+                }
+                mysqli_stmt_close($stmtDelChapters);
+            }
+
+            $sqlDelAudiobooks = "DELETE FROM audiobooks WHERE book_id = ?";
+            $stmtDelAudiobooks = mysqli_prepare($this->conn, $sqlDelAudiobooks);
+            if (!$stmtDelAudiobooks) {
+                throw new Exception("Failed to prepare delete audiobook statement: " . mysqli_error($this->conn));
+            }
+            mysqli_stmt_bind_param($stmtDelAudiobooks, "i", $bookId);
+            if (!mysqli_stmt_execute($stmtDelAudiobooks)) {
+                throw new Exception("Failed to execute delete audiobook statement: " . mysqli_stmt_error($stmtDelAudiobooks));
+            }
+            mysqli_stmt_close($stmtDelAudiobooks);
+
+            mysqli_commit($this->conn);
+            return true;
+        } catch (Exception $e) {
+            mysqli_rollback($this->conn);
+            throw $e;
+        }
+    }
+
 
     /**
      * Insert a new audiobook
@@ -279,19 +357,17 @@ class BookListingsModel
         $sql = "INSERT INTO audiobooks (book_id, narrator, duration_minutes, release_date) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
-            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+            throw new Exception("Insert Audiobook: Failed to prepare statement: " . mysqli_error($this->conn));
         }
-        mysqli_stmt_bind_param(
-            $stmt,
-            "isis",
-            $data['book_id'],
-            $data['narrator'],
-            $data['duration_minutes'],
-            $data['release_date']
-        );
+
+        if (!mysqli_stmt_bind_param($stmt, "isis", $data['book_id'], $data['narrator'], $data['duration_minutes'], $data['release_date'])) {
+            throw new Exception("Insert Audiobook: Failed to bind parameters: " . mysqli_stmt_error($stmt));
+        }
+
         if (!mysqli_stmt_execute($stmt)) {
-            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+            throw new Exception("Insert Audiobook: Failed to execute statement: " . mysqli_stmt_error($stmt));
         }
+
         $insertId = mysqli_insert_id($this->conn);
         mysqli_stmt_close($stmt);
         return $insertId;
@@ -334,7 +410,7 @@ class BookListingsModel
      * @return int Inserted chapter ID
      * @throws Exception If the query fails
      */
-    public function insertAudiobookChapter($audiobook_id, $data)
+    public function insertAudiobookChapter($data)
     {
         $sql = "INSERT INTO audiobook_chapters (audiobook_id, chapter_number, chapter_title, audio_url, duration_minutes) VALUES (?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -344,7 +420,7 @@ class BookListingsModel
         mysqli_stmt_bind_param(
             $stmt,
             "iissi",
-            $audiobook_id,
+            $data['audiobook_id'],
             $data['chapter_number'],
             $data['chapter_title'],
             $data['audio_url'],
@@ -365,25 +441,43 @@ class BookListingsModel
      * @return bool True if update was successful
      * @throws Exception If the query fails
      */
-    public function updateAudiobookChapter($chapter_id, $data)
+    public function updateAudiobookChapter($chapterId, $data)
     {
-        $sql = "UPDATE audiobook_chapters SET chapter_number = ?, chapter_title = ?, audio_url = ?, duration_minutes = ? WHERE id = ?";
+        $sql = "UPDATE audiobook_chapters SET chapter_number = ?, chapter_title = ?, audio_url = ? WHERE id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
         }
         mysqli_stmt_bind_param(
             $stmt,
-            "issii",
+            "issi",
             $data['chapter_number'],
             $data['chapter_title'],
             $data['audio_url'],
-            $data['duration_minutes'],
-            $chapter_id
+            $chapterId
         );
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
         }
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+        mysqli_stmt_close($stmt);
+        return $affectedRows > 0;
+    }
+
+    public function deleteAudiobookChapter($chapterId)
+    {
+        $sql = "DELETE FROM audiobook_chapters WHERE id = ?";
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $chapterId);
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
         $affectedRows = mysqli_stmt_affected_rows($stmt);
         mysqli_stmt_close($stmt);
         return $affectedRows > 0;

@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 $audiobook = $audiobook ?? [];
 
-$audiobookId = $audiobook['book_id'] ?? '';
+$audiobookId = $audiobook['audiobook_id'] ?? '';
 $bookid = $audiobook['book_id'] ?? '';
 
 $narrator = $audiobook['narrator'] ?? '';
@@ -18,9 +18,17 @@ $releaseDate = $audiobook['release_date'] ?? '';
     enctype="multipart/form-data">
 
     <div class="card border-0 shadow-sm p-4 mb-3">
-        <h5 class="fw-bold mb-3">Audiobook Information</h5>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="fw-bold mb-3">Audiobook Information</h5>
+            <?php if (!empty($audiobookId)): ?>
+                <a href="/dashboards/listings/deleteAudio/<?= $bookid ?>" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to delete this audiobook?');">
+                    Delete
+                </a>
+            <?php endif; ?>
+        </div>
         <div class="row">
-            <input type="text" class="form-control" name="book_id" value="<?= $bookid ?>" hidden>
+            <input type="text" class="form-control" name="book_id" value="<?= $bookId ?>" hidden>
 
             <div class="col-sm-6">
                 <div class="mb-3">
