@@ -512,4 +512,33 @@ class BookListingsModel
         mysqli_stmt_close($stmt);
         return $affectedRows > 0;
     }
+
+    public function getAdminName($userKey)
+    {
+        $sql = "SELECT * FROM users WHERE CONTENTID = ADMIN_USERKEY = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "s", $userId, $contentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+        if (!$result) {
+            throw new Exception("Failed to fetch result: " . mysqli_error($this->conn));
+        }
+
+        if (mysqli_num_rows($result) == 0) {
+            return null;
+        }
+
+        $user = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+
+        return $user['ADMIN_NAME'];
+    }
 }

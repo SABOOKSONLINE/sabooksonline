@@ -27,6 +27,7 @@ $bookListingController = new BookListingController($conn);
                     }
 
                     $userKey = $_SESSION["ADMIN_USERKEY"];
+                    $$admin_username = $bookListingController->getAdminName($userKey);
 
                     $bookListingController->renderBookByContentId($userKey, $contentId);
                     ?>

@@ -37,7 +37,6 @@ $keywords = htmlspecialchars($book['CATEGORY'] ?? '');
 $type = htmlspecialchars($book['TYPE'] ?? '');
 
 $admin_userkey = $_SESSION['ADMIN_USERKEY'] ?? '';
-$admin_username = $_SESSION['ADMIN_NAME'] ?? '';
 
 ?>
 

@@ -25,6 +25,11 @@ class BookListingController
         include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
     }
 
+    public function getAdminName($userKey)
+    {
+        $this->booksModel->getAdminName($userKey);
+    }
+
     public function insertBookData($data)
     {
         $this->booksModel->insertBook($data);
