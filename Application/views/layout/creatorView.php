@@ -3,16 +3,16 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$name         = htmlspecialchars($creator['ADMIN_NAME']);
-$type         = htmlspecialchars($creator['ADMIN_TYPE']);
-$profileImage = htmlspecialchars($creator['ADMIN_PROFILE_IMAGE']);
-$joinDate     = htmlspecialchars($creator['ADMIN_DATE']);
-$bio          = nl2br(htmlspecialchars($creator['ADMIN_BIO']));
-$website      = htmlspecialchars($creator['ADMIN_WEBSITE']);
-$email        = htmlspecialchars($creator['ADMIN_EMAIL']);
-$facebook     = htmlspecialchars($creator['ADMIN_FACEBOOK']);
-$instagram    = htmlspecialchars($creator['ADMIN_INSTAGRAM']);
-$twitter      = htmlspecialchars($creator['ADMIN_TWITTER']);
+$name         = html_entity_decode($creator['ADMIN_NAME']);
+$type         = html_entity_decode($creator['ADMIN_TYPE']);
+$profileImage = html_entity_decode($creator['ADMIN_PROFILE_IMAGE']);
+$joinDate     = html_entity_decode($creator['ADMIN_DATE']);
+$bio          = nl2br(html_entity_decode($creator['ADMIN_BIO']));
+$website      = html_entity_decode($creator['ADMIN_WEBSITE']);
+$email        = html_entity_decode($creator['ADMIN_EMAIL']);
+$facebook     = html_entity_decode($creator['ADMIN_FACEBOOK']);
+$instagram    = html_entity_decode($creator['ADMIN_INSTAGRAM']);
+$twitter      = html_entity_decode($creator['ADMIN_TWITTER']);
 ?>
 
 <div class="row">

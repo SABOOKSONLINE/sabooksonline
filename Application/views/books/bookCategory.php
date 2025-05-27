@@ -1,10 +1,10 @@
 <?php foreach ($books as $book):
     $contentId = strtolower($book['CONTENTID']);
-    $cover = htmlspecialchars($book['COVER']);
-    $title = htmlspecialchars($book['TITLE']);
-    $shortTitle = strlen($title) > 30 ? substr($title, 0, 30) . '...' : $title;
-    $userId = strtolower($book['USERID']);
-    $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
+    $cover = html_entity_decode($book['COVER']);
+    $title = html_entity_decode($book['TITLE']);
+    $shortTitle = html_entity_decode(strlen($title) > 30 ? substr($title, 0, 30) . '...' : $title);
+    $userId = html_entity_decode(strtolower($book['USERID']));
+    $publisher = ucwords(html_entity_decode($book['PUBLISHER']));
 ?>
     <div class="book-card">
         <span class="book-card-num"></span>
