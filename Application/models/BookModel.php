@@ -83,8 +83,7 @@ class BookModel
                     a.created_at AS a_created_at
                 FROM posts AS p
                 LEFT JOIN audiobooks AS a ON a.book_id = p.ID
-                WHERE p.CONTENTID = ?
-                AND p.STATUS = 'active'";
+                WHERE p.CONTENTID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $contentId);

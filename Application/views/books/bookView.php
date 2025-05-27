@@ -10,13 +10,12 @@ $description = html_entity_decode($book['DESCRIPTION']);
 $isbn = html_entity_decode($book['ISBN']);
 $website = html_entity_decode($book['WEBSITE']);
 $retailPrice = html_entity_decode($book['RETAILPRICE']);
-$ebook = html_entity_decode($book['PDFURL']);
+$ebook = $book['PDFURL'] ?? '';
 
 $bookId = $_GET['q'] ?? null;
 
 $audiobookId = $book['a_id'] ?? null;
 ?>
-
 
 <div class="container pt-4 pb-5">
     <div class="row">
@@ -72,7 +71,7 @@ $audiobookId = $book['a_id'] ?? null;
 
             <!-- Action Buttons & Price -->
             <div class="row gy-1">
-                <?php if ($ebook): ?>
+                <?php if (!empty($ebook)): ?>
                     <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
                         <a href="/library/readBook/<?= $bookId ?>" class="btn btn-green me-2">
                             <i class="fas fa-book-open"></i> READ E-BOOK NOW
