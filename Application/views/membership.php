@@ -29,62 +29,81 @@ require_once __DIR__ . "/includes/header.php";
                 <span class="me-3 fw-bold">Monthly</span>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="billingToggle" style="width: 3em; height: 1.5em;">
-                    <label class="form-check-label" for="billingToggle"></label>
                 </div>
                 <span class="ms-3 fw-bold">Yearly <span class="badge bg-success">Save 20%</span></span>
             </div>
 
+            <!-- Plans -->
             <div class="row priced-plans py-5 align-content-center justify-content-center">
-                <!-- Pro Plan -->
+                <!-- PRO PLAN -->
                 <div class="col-md-4">
-                    <div class="plan-title">
-                        <h3>Pro</h3>
-                    </div>
-                    <div class="monthly-price">
-                        <p class="plan-price">R199</p>
-                        <p><b>Monthly Subscription</b></p>
-                    </div>
-                    <div class="yearly-price d-none">
-                        <p class="plan-price">R1908</p>
-                        <p><b>Yearly Subscription (Save R480)</b></p>
-                    </div>
+                    <form method="POST" action="/checkout" class="subscription-form">
+                        <div class="plan-title"><h3>Pro</h3></div>
 
-                    <a href="register/?plan=Pro" class="btn btn-red mb-4">Select Pro</a>
+                        <div class="monthly-price">
+                            <p class="plan-price">R199</p>
+                            <p><b>Monthly Subscription</b></p>
+                        </div>
+                        <div class="yearly-price d-none">
+                            <p class="plan-price">R1908</p>
+                            <p><b>Yearly Subscription (Save R480)</b></p>
+                        </div>
 
-                    <ul class="plan-features list-unstyled">
-                        <li>Enhanced analytics dashboard</li>
-                        <li>Promotional tools access</li>
-                        <li>Priority listing in search</li>
-                        <li>35% commission per sale</li>
-                        <li>Quarterly royalty payouts</li>
-                    </ul>
+                        <!-- Payment Option -->
+                        <div class="mb-3">
+                            <label class="form-label">Payment Option:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentOption" value="upfront" checked>
+                                <label class="form-check-label">Pay Now</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentOption" value="later">
+                                <label class="form-check-label">Pay Later</label>
+                            </div>
+                        </div>
+
+                        <!-- Clean values -->
+                        <input type="hidden" name="planType" class="plan-type-input" value="Pro-Monthly">
+
+                        <button type="submit" class="btn btn-red mb-4">Select Pro</button>
+                    </form>
                 </div>
 
-                <!-- Premium Plan -->
+                <!-- PREMIUM PLAN -->
                 <div class="col-md-4">
-                    <div class="plan-title">
-                        <h3>Premium</h3>
-                    </div>
-                    <div class="monthly-price">
-                        <p class="plan-price">R499</p>
-                        <p><b>Monthly Subscription</b></p>
-                    </div>
-                    <div class="yearly-price d-none">
-                        <p class="plan-price">R4788</p>
-                        <p><b>Yearly Subscription (Save R1200)</b></p>
-                    </div>
+                    <form method="POST" action="/subscribe" class="subscription-form">
+                        <div class="plan-title"><h3>Premium</h3></div>
 
-                    <a href="register/?plan=Premium" class="btn btn-red mb-4">Select Premium</a>
+                        <div class="monthly-price">
+                            <p class="plan-price">R499</p>
+                            <p><b>Monthly Subscription</b></p>
+                        </div>
+                        <div class="yearly-price d-none">
+                            <p class="plan-price">R4788</p>
+                            <p><b>Yearly Subscription (Save R1200)</b></p>
+                        </div>
 
-                    <ul class="plan-features list-unstyled">
-                        <li>Full analytics suite</li>
-                        <li>Advanced promotional tools</li>
-                        <li>Top-tier visibility</li>
-                        <li>35% commission per sale</li>
-                        <li>Quarterly royalty payouts</li>
-                    </ul>
+                        <!-- Payment Option -->
+                        <div class="mb-3">
+                            <label class="form-label">Payment Option:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentOption" value="upfront" checked>
+                                <label class="form-check-label">Pay Now</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentOption" value="later">
+                                <label class="form-check-label">Pay Later</label>
+                            </div>
+                        </div>
+
+                        <!-- Clean values -->
+                        <input type="hidden" name="planType" class="plan-type-input" value="Premium-Monthly">
+
+                        <button type="submit" class="btn btn-red mb-4">Select Premium</button>
+                    </form>
                 </div>
             </div>
+
         </div>
     </section>
     <?php require_once __DIR__ . "/includes/footer.php" ?>

@@ -65,6 +65,15 @@ class UserModel {
         return $result->fetch_assoc(); // Only using first match
     }
 
+    public function updateUserPlanRoyalties($userId, $planName, $billingCycle) {
+
+    $sql = "UPDATE users SET admin_subscription = ?, billing_cycle = ?, subscription_status = 'royalties' WHERE ADMIN_USERKEY = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ssi", $planName, $billingCycle, $userId);
+    return $stmt->execute();
+    }
+
+
     /**
      * Fetches all posts associated with a specific user key.
      *

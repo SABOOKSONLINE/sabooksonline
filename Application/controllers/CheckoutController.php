@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/BookModel.php';
 require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../models/BillingModel.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 
@@ -31,7 +32,40 @@ class CheckoutController {
     }
 
     $this->generatePaymentForm($book, $user);    
-    // include __DIR__ . '/../views/payment/purchaseForm.php';
+}
+
+    public function subscribe($planType, $paymentOption, $userId) {
+    if (empty($userId)) {
+        die("Invalid user ID.");
+    }
+
+    $user = $this->userModel->getUserByNameOrKey($userId);
+    if (!$user) {
+        die("User not found.");
+    }
+
+    // Extract plan details from the planType
+    $billingModel = new BillingModel();
+    $planDetails = $billingModel->getPlanDetails($planType); // returns ['name' => 'Pro', 'billing' => 'Monthly', 'amount' => 199]
+
+    if (!$planDetails) {
+        die("Invalid plan type.");
+    }
+
+    if ($paymentOption === "later") {
+        // Save to DB or update user record as Pay Later
+        $this->userModel->updateUserPlanRoyalties($userId, $planDetails['name'], $planDetails['billing']);
+        echo "Subscription saved. You chose to pay later.";
+    } else {
+        // Pay now → redirect to PayFast with correct amount
+        $this->generatePaymentFormPlan(
+            $planDetails['name'],
+            $planDetails['amount'],
+            $planDetails['billing'],
+            $paymentOption,
+            $user
+        );
+    }
 }
 
 
@@ -54,12 +88,6 @@ class CheckoutController {
         die("Missing book ID or user email.");
     }
 
-    $coverUrl = "https://sabooksonline.co.za/cms-data/book-covers/" . $cover;
-    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? '';
-    $profile = strpos($adminProfileImage, 'googleusercontent.com') !== false
-        ? $adminProfileImage
-        : "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
-
     $data = [
         'merchant_id'     => '18172469',
         'merchant_key'    => 'gwkk16pbxdd8m',
@@ -74,6 +102,8 @@ class CheckoutController {
         'custom_str1'     => $bookId,
     ];
 
+    
+
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
@@ -86,6 +116,60 @@ class CheckoutController {
 
     echo $htmlForm;
 }
+    public function generatePaymentFormPlan($plan, $planPrice, $subscriptionType, $paymentOption, $user) {
+    if (!$plan || !$user) {
+        die("Invalid plan or user data.");
+    }
+
+    $userName = $user['ADMIN_NAME'] ?? 'Customer';
+    $userEmail = $user['ADMIN_EMAIL'] ?? '';
+
+    if (empty($userEmail)) {
+        die("Missing user email.");
+    }
+
+    // Default PayFast parameters
+    $data = [
+        'merchant_id'     => '18172469',
+        'merchant_key'    => 'gwkk16pbxdd8m',
+        'return_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
+        'name_first'      => $userName,
+        'email_address'   => $userEmail,
+        'm_payment_id'    => uniqid(),
+        'item_name'       => $plan,
+        'custom_str1'     => $paymentOption,
+        'custom_str2'     => $subscriptionType,
+    ];
+
+    // If user chose to pay now, generate subscription form
+    if ($paymentOption === 'upfront') {
+        $data['subscription_type'] = 1;
+        $data['billing_date'] = date('Y-m-d'); // Today
+        $data['recurring_amount'] = number_format($planPrice, 2, '.', '');
+        $data['cycles'] = 0; // Unlimited billing
+
+        // Set frequency
+        $data['frequency'] = ($subscriptionType === 'Yearly') ? 7 : 3; // 7 = Yearly, 3 = Monthly
+    }
+
+    // Generate signature
+    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $data['signature'] = $signature;
+
+    // Build the form
+    $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
+    foreach ($data as $name => $value) {
+        $htmlForm .= '<input type="hidden" name="'.htmlspecialchars($name).'" value="'.htmlspecialchars($value, ENT_QUOTES).'">';
+    }
+    $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
+        <br><img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px">
+    </form>';
+
+    echo $htmlForm;
+}
+
 
 
     function generateSignature($data, $passPhrase = null) {
