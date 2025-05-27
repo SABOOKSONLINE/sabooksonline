@@ -248,7 +248,7 @@ $admin_userkey = $_SESSION['ADMIN_USERKEY'] ?? '';
             </div>
 
             <div class="mt-3">
-                <?php if (!empty($contentId)): ?>
+                <?php if (!empty($bookId)): ?>
                     <button class="btn btn-success" type="submit">Update Book</button>
                 <?php else: ?>
                     <button class="btn btn-success" type="submit">Save Book</button>
