@@ -56,7 +56,6 @@ $releaseDate = $audiobook['release_date'] ?? '';
 </form>
 
 <?php
-// Only show the chapter form if the audiobook was saved (i.e. a valid book ID exists)
 if ($bookid):
     include __DIR__ . '/audiobook_chapter_form.php';
 endif;

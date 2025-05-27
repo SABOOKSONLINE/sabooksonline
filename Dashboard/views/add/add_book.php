@@ -4,10 +4,12 @@ include __DIR__ . "/../includes/dashboard_heading.php";
 require_once __DIR__ . "/../../database/connection.php";
 require_once __DIR__ . "/../../models/BookListingsModel.php";
 require_once __DIR__ . "/../../controllers/BookListingsController.php";
+$bookListingController = new BookListingController($conn);
 ?>
 
 <body>
-    <?php include __DIR__ . "/../includes/nav.php" ?>
+    <?php // include __DIR__ . "/../includes/nav.php" 
+    ?>
 
     <section>
         <div class="container-fluid">
@@ -18,7 +20,6 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
                     <?php
                     $contentId = $_GET["q"] ?? "";
 
-
                     if ($contentId) {
                         renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/add/audiobook/$contentId", "Add Audiobook");
                     } else {
@@ -27,7 +28,6 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
 
                     $userKey = $_SESSION["ADMIN_USERKEY"];
 
-                    $bookListingController = new BookListingController($conn);
                     $bookListingController->renderBookByContentId($userKey, $contentId);
                     ?>
                 </div>
