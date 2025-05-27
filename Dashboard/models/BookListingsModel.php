@@ -243,27 +243,23 @@ class BookListingsModel
         return $categories;
     }
 
-    public function selectAudiobookByBookId($contentId)
+    public function selectAudiobookByBookId($bookId)
     {
         $sql = "SELECT 
-                    p.*, 
-                    a.id AS audiobook_id,
-                    a.book_id,
-                    a.narrator,
-                    a.duration_minutes AS audiobook_duration,
-                    a.release_date AS audiobook_release_date,
-                    a.created_at AS audiobook_created_at,
-                    ac.id AS chapter_id,
-                    ac.chapter_number,
-                    ac.chapter_title,
-                    ac.audio_url,
-                    ac.duration_minutes AS chapter_duration
-                FROM posts AS p
-                LEFT JOIN audiobooks AS a 
-                    ON a.book_id = p.ID
-                LEFT JOIN audiobook_chapters AS ac 
-                    ON a.id = ac.audiobook_id
-                WHERE p.CONTENTID = ?";
+                    audiobooks.id AS audiobook_id,
+                    audiobooks.book_id,
+                    audiobooks.narrator,
+                    audiobooks.duration_minutes AS audiobook_duration,
+                    audiobooks.release_date,
+                    audiobook_chapters.id AS chapter_id,
+                    audiobook_chapters.chapter_number,
+                    audiobook_chapters.chapter_title,
+                    audiobook_chapters.audio_url,
+                    audiobook_chapters.duration_minutes AS chapter_duration
+                FROM audiobooks 
+                LEFT JOIN audiobook_chapters 
+                  ON audiobooks.id = audiobook_chapters.audiobook_id
+                WHERE audiobooks.book_id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
 
         if (!$stmt) {
@@ -291,6 +287,36 @@ class BookListingsModel
             return $rows[0];
         }
         return $rows;
+    }
+
+    public function selectAudiobookByContentId($contentId)
+    {
+        $sql = "SELECT 
+                    p.*, 
+                    a.id AS a_id,
+                    a.book_id AS a_book_id,
+                    a.narrator AS a_narrator,
+                    a.duration_minutes AS a_duration_minutes,
+                    a.release_date AS a_release_date,
+                    a.release_date AS a_release_date,
+                    a.created_at AS a_created_at
+                FROM posts AS p
+                LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+                WHERE p.CONTENTID = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $contentId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return null;
+        }
+
+        $book = mysqli_fetch_assoc($result);
+
+        mysqli_stmt_close($stmt);
+        return $book;
     }
 
     public function deleteAudiobookByBookId($bookId)
