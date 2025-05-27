@@ -1,22 +1,21 @@
 <?php
 $contentId = strtolower($book['USERID']);
 $bookId = strtolower($book['CONTENTID']);
-$cover = htmlspecialchars($book['COVER']);
-$title = htmlspecialchars($book['TITLE']);
-$category = htmlspecialchars($book['CATEGORY']);
-$publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
-$authors = htmlspecialchars($book['AUTHORS']);
-$description = htmlspecialchars($book['DESCRIPTION']);
-$isbn = htmlspecialchars($book['ISBN']);
-$website = htmlspecialchars($book['WEBSITE']);
-$retailPrice = htmlspecialchars($book['RETAILPRICE']);
-$ebook = htmlspecialchars($book['PDFURL']);
+$cover = html_entity_decode($book['COVER']);
+$title = html_entity_decode($book['TITLE']);
+$category = html_entity_decode($book['CATEGORY']);
+$publisher = ucwords(html_entity_decode($book['PUBLISHER']));
+$authors = html_entity_decode($book['AUTHORS']);
+$description = html_entity_decode($book['DESCRIPTION']);
+$isbn = html_entity_decode($book['ISBN']);
+$website = html_entity_decode($book['WEBSITE']);
+$retailPrice = html_entity_decode($book['RETAILPRICE']);
+$ebook = $book['PDFURL'] ?? '';
 
 $bookId = $_GET['q'] ?? null;
 
 $audiobookId = $book['a_id'] ?? null;
 ?>
-
 
 <div class="container pt-4 pb-5">
     <div class="row">
@@ -72,15 +71,9 @@ $audiobookId = $book['a_id'] ?? null;
 
             <!-- Action Buttons & Price -->
             <div class="row gy-1">
-                <!-- READ NOW -->
-                <!-- <div class="col-12 d-flex flex-wrap align-items-center">
-                    <span class="btn btn-green me-2">READ NOW</span>
-                    <span class="text-muted mb-2">COMING SOON</span>
-                </div> -->
-
-                <?php if ($ebook): ?>
+                <?php if (!empty($ebook)): ?>
                     <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <a href="/readBook/<?= $bookId ?>" class="btn btn-green me-2">
+                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-green me-2">
                             <i class="fas fa-book-open"></i> READ E-BOOK NOW
                         </a>
                     </div>
@@ -111,12 +104,6 @@ $audiobookId = $book['a_id'] ?? null;
                         </span>
                     </div>
                 <?php endif; ?>
-
-                <!-- BUY COPY -->
-                <!-- <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= $website ?>" target="_blank" class="btn btn-blue me-2">BUY COPY</a>
-                    <span class="fw-bold align-content-end"><small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00</span>
-                </div> -->
 
                 <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
                     <form method="POST" action="/checkout">

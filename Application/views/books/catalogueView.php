@@ -12,13 +12,13 @@ function booksByPage($books, $page)
     }
 
     foreach ($paginatedBooks[$page] as $book) {
-        $contentId = strtolower(htmlspecialchars($book['CONTENTID']));
-        $cover = htmlspecialchars($book['COVER']);
-        $title = htmlspecialchars($book['TITLE']);
-        $category = htmlspecialchars($book['CATEGORY']);
-        $description = htmlspecialchars($book['DESCRIPTION']);
-        $userId = strtolower(htmlspecialchars($book['USERID']));
-        $publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
+        $contentId = strtolower(html_entity_decode($book['CONTENTID']));
+        $cover = html_entity_decode($book['COVER']);
+        $title = html_entity_decode($book['TITLE']);
+        $category = html_entity_decode($book['CATEGORY']);
+        $description = html_entity_decode($book['DESCRIPTION']);
+        $userId = strtolower(html_entity_decode($book['USERID']));
+        $publisher = ucwords(html_entity_decode($book['PUBLISHER']));
 
 ?>
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
@@ -30,10 +30,10 @@ function booksByPage($books, $page)
                 </div>
                 <div class="w-100">
                     <a class="book-card-little text-capitalize" href="/library/book/<?= $contentId ?>">
-                        <?= strlen($title) > 15 ? htmlspecialchars(substr($title, 0, 15)) . '...' : $title ?>
+                        <?= strlen($title) > 15 ? substr($title, 0, 15) . '...' : $title ?>
                     </a>
                     <p>
-                        <?= strlen($description) > 85 ? htmlspecialchars(substr($description, 0, 85)) . '...' : $description ?>
+                        <?= strlen($description) > 85 ? (substr($description, 0, 85)) . '...' : $description ?>
                     </p>
                     <span class="book-card-pub">
                         Published by: <a class="text-muted" href="/creators/creator/<?= $userId ?>"><?= $publisher ?></a>

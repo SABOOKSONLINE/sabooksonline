@@ -18,8 +18,9 @@ require_once __DIR__ . "/../../controllers/BookListingsController.php";
                     <?php
                     $contentId = $_GET["q"] ?? "";
 
+
                     if ($contentId) {
-                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/listings/insertAudio", "Add Audiobook");
+                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/add/audiobook/$contentId", "Add Audiobook");
                     } else {
                         renderHeading("Add Book Listing", "You can manage, add or delete your book listings.");
                     }

@@ -8,8 +8,8 @@
         </div>
         <?php if (!empty($buttonUrl) || !empty($buttonInnerText)): ?>
             <div class="col text-end">
-                <a href="<?= htmlspecialchars($buttonUrl) ?>" class="btn btn-dark btn-lg">
-                    <?= htmlspecialchars($buttonInnerText) ?>
+                <a href="<?= $buttonUrl ?>" class="btn btn-dark btn-lg">
+                    <?= $buttonInnerText ?>
                 </a>
             </div>
         <?php endif; ?>
