@@ -8,7 +8,7 @@ $bookListingController = new BookListingController($conn);
 ?>
 
 <body>
-    <?php include __DIR__ . "/../includes/nav.php" 
+    <?php include __DIR__ . "/../includes/nav.php"
     ?>
 
     <section>
@@ -27,7 +27,6 @@ $bookListingController = new BookListingController($conn);
                     }
 
                     $userKey = $_SESSION["ADMIN_USERKEY"];
-                    $$admin_username = $bookListingController->getAdminName($userKey);
 
                     $bookListingController->renderBookByContentId($userKey, $contentId);
                     ?>
