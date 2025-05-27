@@ -49,7 +49,7 @@ $endCount = min($startIndex + $eventsPerPage, $totalEvents);
                 <tr>
                     <td>
                         <div class="d-flex align-items-center">
-                            <img src="https://sabooksonline.co.za/cms-data/event-covers/<?= htmlspecialchars($event['COVER'] ?? '') ?>"
+                            <img src="/cms-data/event-covers/<?= htmlspecialchars($event['COVER'] ?? '') ?>"
                                 class="me-2 rounded shadow-sm"
                                 alt="<?= htmlspecialchars(($event["TITLE"] ?? '') . ' event Cover') ?>"
                                 width="75" height="50">

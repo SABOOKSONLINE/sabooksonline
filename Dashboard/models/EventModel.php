@@ -58,8 +58,8 @@ class EventsModel
         $sql = "INSERT INTO events (
             USERID, COVER, TITLE, EMAIL, NUMBER, 
             VENUE, EVENTDATE, EVENTTIME, EVENTEND, TIMEEND, 
-            DESCRIPTION, EVENTTYPE, ATTENDANCE, DURATION, LINK, CONTENTID, STATUS
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            DESCRIPTION, EVENTTYPE, DURATION, LINK, CONTENTID, STATUS
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -68,7 +68,7 @@ class EventsModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssssssss",
+            "ssssssssssssssss",
             $data['userid'],
             $data['cover'],
             $data['title'],
@@ -81,7 +81,6 @@ class EventsModel
             $data['end_time'],
             $data['description'],
             $data['event_type'],
-            $data['attendance'],
             $data['duration'],
             $data['link'],
             $data['contentid'],
@@ -113,7 +112,6 @@ class EventsModel
             TIMEEND = ?,
             DESCRIPTION = ?,
             EVENTTYPE = ?,
-            ATTENDANCE = ?,
             DURATION = ?,
             LINK = ?,
             STATUS = ?
@@ -126,7 +124,7 @@ class EventsModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "ssssssssssssssssi",
+            "sssssssssssssssi",
             $data['userid'],
             $data['cover'],
             $data['title'],
@@ -139,7 +137,6 @@ class EventsModel
             $data['end_time'],
             $data['description'],
             $data['event_type'],
-            $data['attendance'],
             $data['duration'],
             $data['link'],
             $data['status'],

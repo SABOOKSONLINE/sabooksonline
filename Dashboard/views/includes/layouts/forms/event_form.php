@@ -43,8 +43,9 @@ $eventId = $event["ID"] ?? '';
                     <input type="file" class="form-control" name="cover" <?= $action === 'insert' ? 'required' : '' ?>>
                     <?php if (!empty($cover)): ?>
                         <div class="mt-2">
-                            <label class="form-label fw-semibold">Current Cover:</label>
-                            <img src="<?= $cover ?>" alt="Event Cover" class="img-fluid rounded" style="max-height: 150px;">
+                            <label class="form-label fw-semibold">Current Cover:</label> <br>
+                            <img src="/cms-data/event-covers/<?= $cover ?>" alt="Event Cover" class="img-fluid rounded" style="max-height: 150px;">
+                            <input type="text" name="existing_cover" value="<?= $cover ?>" hidden>
                         </div>
                     <?php endif; ?>
                 </div>

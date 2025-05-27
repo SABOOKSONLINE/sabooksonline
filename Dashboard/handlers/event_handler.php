@@ -22,21 +22,21 @@ function formDataArray()
     $endTime = htmlspecialchars($_POST["end_time"]);
     $description = htmlspecialchars($_POST["description"]);
     $eventType = htmlspecialchars($_POST["eventType"]);
-    $attendance = htmlspecialchars($_POST["attendance"]);
+    $attendance = htmlspecialchars($_POST["attendence"]) ?? "In-Person";
     $duration = htmlspecialchars($_POST["duration"]);
     $link = htmlspecialchars($_POST["link"]);
 
     if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../../cms/event-covers/';
+        $uploadDir = __DIR__ . '/../../cms-data/event-covers/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $cover = '/uploads/' . basename($_FILES['cover']['name']);
+        $cover = uniqid('', true) . basename($_FILES['cover']['name']);
         if (!move_uploaded_file($_FILES['cover']['tmp_name'], $uploadDir . basename($_FILES['cover']['name']))) {
             die("Failed to upload cover image.");
         }
     } else {
-        $cover = htmlspecialchars($_POST['existing_cover'] ?? null);
+        $cover = htmlspecialchars($_POST['existing_cover']);
     }
 
     $created = date('Y-m-d H:i:s');
