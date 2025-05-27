@@ -36,7 +36,7 @@ $availability = htmlspecialchars($book['STOCK'] ?? '');
 $keywords = htmlspecialchars($book['CATEGORY'] ?? '');
 $type = htmlspecialchars($book['TYPE'] ?? '');
 
-$admin_userkey = $_SESSION['ADMIN_USERKEY'] ?? '';
+$admin_userkey = $_SESSION["ADMIN_USERKEY"];
 
 ?>
 
@@ -68,7 +68,7 @@ $admin_userkey = $_SESSION['ADMIN_USERKEY'] ?? '';
             <div class="col-sm-6">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Publisher*</label>
-                    <input type="text" class="form-control bg-white text-muted opacity-75" name="book_publisher" value="<?= $publisher ?>" readonly>
+                    <input type="text" class="form-control bg-white text-muted opacity-75" name="book_publisher" value="<?= $publisher ?>" required>
                 </div>
             </div>
 

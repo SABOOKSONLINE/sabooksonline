@@ -9,7 +9,7 @@ require_once __DIR__ . "/../controllers/BookListingsController.php";
 
 $bookController = new BookListingController($conn);
 
-function formDataArray($bookController = null)
+function formDataArray()
 {
     $bookId = htmlspecialchars($_POST["book_id"]);
     $userId = htmlspecialchars($_POST["user_id"]);
@@ -27,7 +27,7 @@ function formDataArray($bookController = null)
     $status = htmlspecialchars($_POST["book_status"]);
     $publishedDate = htmlspecialchars($_POST["book_date_published"]);
     $keywords = htmlspecialchars($_POST["book_keywords"] ?? $category);
-    $publisher = htmlspecialchars($_POST["book_publisher"] ?? $bookController->getAdminName($userId));
+    $publisher = htmlspecialchars($_POST["book_publisher"]);
     $language = htmlspecialchars($_POST["book_languages"] ?? '');
     $stock = htmlspecialchars($_POST["book_stock"]);
 
@@ -83,7 +83,7 @@ function formDataArray($bookController = null)
 
 function insertBookHandler($bookController)
 {
-    $bookData = formDataArray($bookController);
+    $bookData = formDataArray();
 
     if (
         empty($bookData['userid']) ||
