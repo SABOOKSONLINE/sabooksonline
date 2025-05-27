@@ -1,16 +1,16 @@
 <?php
 $contentId = strtolower($book['USERID']);
 $bookId = strtolower($book['CONTENTID']);
-$cover = htmlspecialchars($book['COVER']);
-$title = htmlspecialchars($book['TITLE']);
-$category = htmlspecialchars($book['CATEGORY']);
-$publisher = ucwords(htmlspecialchars($book['PUBLISHER']));
-$authors = htmlspecialchars($book['AUTHORS']);
-$description = htmlspecialchars($book['DESCRIPTION']);
-$isbn = htmlspecialchars($book['ISBN']);
-$website = htmlspecialchars($book['WEBSITE']);
-$retailPrice = htmlspecialchars($book['RETAILPRICE']);
-$ebook = htmlspecialchars($book['PDFURL']);
+$cover = html_entity_decode($book['COVER']);
+$title = html_entity_decode($book['TITLE']);
+$category = html_entity_decode($book['CATEGORY']);
+$publisher = ucwords(html_entity_decode($book['PUBLISHER']));
+$authors = html_entity_decode($book['AUTHORS']);
+$description = html_entity_decode($book['DESCRIPTION']);
+$isbn = html_entity_decode($book['ISBN']);
+$website = html_entity_decode($book['WEBSITE']);
+$retailPrice = html_entity_decode($book['RETAILPRICE']);
+$ebook = html_entity_decode($book['PDFURL']);
 
 $bookId = $_GET['q'] ?? null;
 
