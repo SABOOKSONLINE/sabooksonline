@@ -39,7 +39,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
         </tr>
     </thead>
     <tbody>
-        <?php if (empty($booksToShow)): ?>
+        <?php if (empty($books)): ?>
             <tr>
                 <td colspan="6" class="text-center">No books available.</td>
             </tr>
@@ -48,27 +48,27 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 <tr>
                     <td>
                         <div class="d-flex align-items-center">
-                            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>"
+                            <img src="/cms-data/book-covers/<?= html_entity_decode($book['COVER']) ?>"
                                 class="me-2 rounded shadow-sm"
-                                alt="<?= htmlspecialchars($book["TITLE"]) ?> Book Cover"
+                                alt="<?= html_entity_decode($book["TITLE"]) ?> Book Cover"
                                 width="50" height="75">
                             <div>
                                 <a href="/dashboards/listings/<?= $book["CONTENTID"] ?>">
-                                    <?= htmlspecialchars($book["TITLE"]) ?>
+                                    <?= html_entity_decode($book["TITLE"]) ?>
                                 </a>
                                 <br>
-                                <small class="text-muted"><b>ISBN:</b> <?= htmlspecialchars($book["ISBN"]) ?></small>
+                                <small class="text-muted"><b>ISBN:</b> <?= html_entity_decode($book["ISBN"]) ?></small>
                             </div>
                         </div>
                     </td>
-                    <td><?= htmlspecialchars($book["AUTHORS"]) ?></td>
-                    <td><?= htmlspecialchars($book["DATEPOSTED"]) ?></td>
+                    <td><?= html_entity_decode($book["AUTHORS"]) ?></td>
+                    <td><?= html_entity_decode($book["DATEPOSTED"]) ?></td>
                     <td>
-                        <?= $book["RETAILPRICE"] == 0 ? "FREE" : "R " . htmlspecialchars($book["RETAILPRICE"]) ?>
+                        <?= $book["RETAILPRICE"] == 0 ? "FREE" : "R " . html_entity_decode($book["RETAILPRICE"]) ?>
                     </td>
                     <td>
                         <span class="badge <?= ($book['STATUS'] ?? 'inactive') === 'active' ? 'bg-success' : 'bg-secondary' ?>">
-                            <?= htmlspecialchars(strtoupper($book["STATUS"])) ?>
+                            <?= html_entity_decode(strtoupper($book["STATUS"])) ?>
                         </span>
                     </td>
                     <td>

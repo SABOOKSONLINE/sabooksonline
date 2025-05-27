@@ -67,8 +67,10 @@ include __DIR__ . "/includes/dashboard_heading.php";
                         ';
                     }
 
+                    $userKey = $_SESSION["ADMIN_USERKEY"];
+
                     $bookListingController = new BookListingController($conn);
-                    $bookListingController->renderBookListing($_SESSION["ADMIN_USERKEY"]);
+                    $bookListingController->renderBookListing($userKey);
                     ?>
                 </div>
             </div>

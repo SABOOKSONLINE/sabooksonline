@@ -139,14 +139,14 @@ class BookListingsModel
      * @return bool True if update was successful
      * @throws Exception If the query fails
      */
-    public function updateBook($contentId, $data)
+    public function updateBook($bookId, $data)
     {
         $sql = "UPDATE posts SET 
                     TITLE = ?, CATEGORY = ?, WEBSITE = ?, DESCRIPTION = ?, COVER = ?, 
                     USERID = ?, TYPE = ?, DATEPOSTED = ?, STATUS = ?, ISBN = ?, 
                     RETAILPRICE = ?, KEYWORDS = ?, PUBLISHER = ?, 
                     LANGUAGES = ?, STOCK = ?, AUTHORS = ?
-                WHERE CONTENTID = ?";
+                WHERE ID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -172,7 +172,7 @@ class BookListingsModel
             $data['languages'],
             $data['stock'],
             $data['authors'],
-            $contentId
+            $bookId
         );
 
         if (!mysqli_stmt_execute($stmt)) {

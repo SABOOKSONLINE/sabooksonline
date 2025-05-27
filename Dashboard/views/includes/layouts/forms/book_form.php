@@ -5,7 +5,8 @@ error_reporting(E_ALL);
 
 $book = $book ?? [];
 
-$bookId = strtolower($book['CONTENTID'] ?? ($_GET['q'] ?? ''));
+$bookId = htmlspecialchars($book['ID'] ?? '');
+$contentId = htmlspecialchars($book['CONTENTID'] ?? $_GET['q']);
 
 $title = htmlspecialchars($book['TITLE'] ?? '');
 $cover = htmlspecialchars($book['COVER'] ?? '');
@@ -248,7 +249,7 @@ $admin_username = $_SESSION['ADMIN_NAME'] ?? '';
             </div>
 
             <div class="mt-3">
-                <?php if ($bookId !== ""): ?>
+                <?php if (!empty($contentId)): ?>
                     <button class="btn btn-success" type="submit">Update Book</button>
                 <?php else: ?>
                     <button class="btn btn-success" type="submit">Save Book</button>

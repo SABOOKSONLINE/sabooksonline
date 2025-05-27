@@ -11,6 +11,7 @@ $bookController = new BookListingController($conn);
 
 function formDataArray()
 {
+    $bookId = htmlspecialchars($_POST["book_id"]);
     $userId = htmlspecialchars($_POST["user_id"]);
     $title = htmlspecialchars($_POST["book_title"]);
     $price = htmlspecialchars($_POST["book_price"] ?? '0');
@@ -25,7 +26,7 @@ function formDataArray()
     $website = htmlspecialchars($_POST["book_website"]);
     $status = htmlspecialchars($_POST["book_status"]);
     $publishedDate = htmlspecialchars($_POST["book_date_published"]);
-    $keywords = htmlspecialchars($_POST["book_keywords"]);
+    $keywords = htmlspecialchars($_POST["book_keywords"] ?? $category);
     $publisher = htmlspecialchars($_POST["book_publisher"]);
     $language = htmlspecialchars($_POST["book_languages"] ?? '');
     $stock = htmlspecialchars($_POST["book_stock"]);
@@ -33,11 +34,11 @@ function formDataArray()
     $type = htmlspecialchars($_POST["book_type"] ?? 'Book');
 
     if (isset($_FILES['book_cover']) && $_FILES['book_cover']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../../cms/book-covers/';
+        $uploadDir = __DIR__ . '/../../cms-data/book-covers/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $cover = '/uploads/' . basename($_FILES['book_cover']['name']);
+        $cover = uniqid('', true) . basename($_FILES['book_cover']['name']);
         if (!move_uploaded_file($_FILES['book_cover']['tmp_name'], $uploadDir . basename($_FILES['book_cover']['name']))) {
             die("Failed to upload book cover.");
         }
@@ -51,6 +52,7 @@ function formDataArray()
 
     $bookData = [
         'userid' => $userId,
+        'bookId' => $bookId,
         'title' => $title,
         'price' => $price,
         'category' => $category,
@@ -70,6 +72,11 @@ function formDataArray()
         'languages' => $language,
         'stock' => $stock
     ];
+
+    // echo "<pre>";
+    // print_r($bookData);
+    // echo "</pre>";
+    // die();
 
     return $bookData;
 }
@@ -100,7 +107,7 @@ function insertBookHandler($bookController)
     }
 
     try {
-        $bookController->insertBookData($bookData);
+        echo $bookController->insertBookData($bookData);
         header("Location: /dashboards/listings?status=success");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
@@ -111,7 +118,7 @@ function updateBookHandler($bookController)
 {
     try {
         $bookData = formDataArray();
-        $bookId = $_GET["q"];
+        $bookId = $bookData['bookId'];
 
         $bookController->updateBookData($bookId, $bookData);
         header("Location: /dashboards/listings?update=success");

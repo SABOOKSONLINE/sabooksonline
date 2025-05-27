@@ -30,9 +30,9 @@ class BookListingController
         $this->booksModel->insertBook($data);
     }
 
-    public function updateBookData($contentId, $data)
+    public function updateBookData($bookId, $data)
     {
-        $this->booksModel->updateBook($contentId, $data);
+        $this->booksModel->updateBook($bookId, $data);
     }
 
     public function deleteBookListing($contentId)
