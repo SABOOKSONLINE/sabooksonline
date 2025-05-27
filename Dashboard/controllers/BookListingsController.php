@@ -55,9 +55,9 @@ class BookListingController
         $this->booksModel->deleteAudiobookByBookId($bookId);
     }
 
-    public function getAudiobookByBookId($bookId)
+    public function getAudiobookByBookId($contentId)
     {
-        $audiobook = $this->booksModel->selectAudiobookByBookId($bookId);
+        $audiobook = $this->booksModel->selectAudiobookByBookId($contentId);
         include __DIR__ . "/../views/includes/layouts/forms/audiobook_form.php";
     }
 
