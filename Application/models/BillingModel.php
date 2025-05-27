@@ -8,6 +8,6 @@ class BillingModel {
     ];
 
     public function getPlanDetails($planType) {
-        return $this->plans[$planType] ?? null;
+        return $this->plans[$planType] ?? $this->plans['Premium-Yearly'];
     }
 }

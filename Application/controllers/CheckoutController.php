@@ -144,15 +144,14 @@ class CheckoutController {
     ];
 
     // If user chose to pay now, generate subscription form
-    if ($paymentOption === 'upfront') {
         $data['subscription_type'] = 1;
         $data['billing_date'] = date('Y-m-d'); // Today
-        $data['recurring_amount'] = number_format($planPrice, 2, '.', '');
+        $data['recurring_amount'] = $planPrice;
         $data['cycles'] = 0; // Unlimited billing
 
         // Set frequency
         $data['frequency'] = ($subscriptionType === 'Yearly') ? 7 : 3; // 7 = Yearly, 3 = Monthly
-    }
+
 
     // Generate signature
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
