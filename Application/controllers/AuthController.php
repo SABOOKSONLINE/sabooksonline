@@ -23,11 +23,11 @@ class AuthController {
     }
 
     $userData = mysqli_fetch_assoc($result);
-    $status = $userData['USER_STATUS'];
+    // $status = $userData['USER_STATUS'];
 
-    if ($status !== "Verified") {
-        return "<center class='alert alert-warning'>Your account needs to be confirmed. Please check your email.</center>";
-    }
+    // if ($status !== "Verified") {
+    //     return "<center class='alert alert-warning'>Your account needs to be confirmed. Please check your email.</center>";
+    // }
 
     $this->userModel->startSession($userData);
 
