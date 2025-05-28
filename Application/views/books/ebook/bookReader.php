@@ -234,3 +234,149 @@ function renderChapters() {
 </script>
 </body>
 </html>
+
+<!-- /////////
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Single Page PDF Viewer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    #pdf-viewer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+    canvas {
+      margin: 10px 0;
+      max-width: 90%;
+      height: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .nav-buttons, .zoom-buttons {
+      margin: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 4px;
+      border: none;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>PDF Viewer (Single Page with Flip or Scroll)</h1>
+  <div id="pdf-viewer">
+    <canvas id="single-canvas"></canvas>
+  </div>
+
+  <div class="nav-buttons">
+    <button onclick="prevPage()">⬅ Prev</button>
+    <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
+    <button onclick="nextPage()">Next ➡</button>
+  </div>
+
+  <div class="zoom-buttons">
+    <button onclick="zoomOut()">➖ Zoom Out</button>
+    <button onclick="zoomIn()">➕ Zoom In</button>
+    <button onclick="toggleScroll()">📜 Toggle Scroll</button>
+  </div>
+
+  <script>
+    const url = "https://example.com/your-pdf-file.pdf"; // CHANGE TO YOUR PDF URL
+    let pdfDoc = null;
+    let pageNum = 1;
+    let zoom = 1.2;
+    let isScrollMode = false;
+
+    const canvas = document.getElementById("single-canvas");
+    const ctx = canvas.getContext("2d");
+
+    function renderPages() {
+      document.getElementById("page-num").textContent = pageNum;
+
+      if (isScrollMode) {
+        document.getElementById("pdf-viewer").innerHTML = ""; // Clear viewer
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          pdfDoc.getPage(i).then(page => {
+            const viewport = page.getViewport({ scale: zoom });
+            const pageCanvas = document.createElement("canvas");
+            pageCanvas.width = viewport.width;
+            pageCanvas.height = viewport.height;
+            const pageCtx = pageCanvas.getContext("2d");
+            page.render({ canvasContext: pageCtx, viewport: viewport });
+            document.getElementById("pdf-viewer").appendChild(pageCanvas);
+          });
+        }
+      } else {
+        document.getElementById("pdf-viewer").innerHTML = ""; // Clear and re-add single canvas
+        document.getElementById("pdf-viewer").appendChild(canvas);
+        pdfDoc.getPage(pageNum).then(page => {
+          const viewport = page.getViewport({ scale: zoom });
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          page.render({ canvasContext: ctx, viewport: viewport });
+        });
+      }
+    }
+
+    function prevPage() {
+      if (pageNum <= 1 || isScrollMode) return;
+      pageNum--;
+      renderPages();
+    }
+
+    function nextPage() {
+      if (pageNum >= pdfDoc.numPages || isScrollMode) return;
+      pageNum++;
+      renderPages();
+    }
+
+    function zoomIn() {
+      zoom += 0.2;
+      renderPages();
+    }
+
+    function zoomOut() {
+      zoom = Math.max(0.4, zoom - 0.2);
+      renderPages();
+    }
+
+    function toggleScroll() {
+      isScrollMode = !isScrollMode;
+      pageNum = 1;
+      renderPages();
+    }
+
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      pdfDoc = pdf;
+      document.getElementById("page-count").textContent = pdfDoc.numPages;
+      renderPages();
+    }).catch(err => {
+      alert("Failed to load PDF: " + err.message);
+    });
+  </script>
+</body>
+</html> -->
