@@ -55,7 +55,7 @@ class CheckoutController {
     if ($paymentOption === "later") {
         // Save to DB or update user record as Pay Later
         $this->userModel->updateUserPlanRoyalties($userId, $planDetails['name'], $planDetails['billing']);
-        echo "Subscription saved. You chose to pay later.";
+        header('Location: /dashboards');
     } else {
         // Pay now → redirect to PayFast with correct amount
         $this->generatePaymentFormPlan(
@@ -132,38 +132,38 @@ class CheckoutController {
     $formattedAmount = number_format($planPrice, 2, '.', '');
 
     $data = [
-    'merchant_id'     => '18172469',
-    'merchant_key'    => 'gwkk16pbxdd8m',
-    'return_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/return',
-    'cancel_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
-    'notify_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
-    'name_first'      => $userName,
-    'email_address'   => $userEmail,
-    'm_payment_id'    => uniqid(),
-    'item_name'       => $plan,
-    'custom_str1'     => $paymentOption,
-    'custom_str2'     => $subscriptionType,
-    'subscription_type' => 1,
-    'billing_date'    => date('Y-m-d'), // Start immediately
-    'recurring_amount'=> $formattedAmount,
-    'cycles'          => 0, // Unlimited billing
-    'frequency'       => ($subscriptionType === 'Yearly') ? 7 : 3, // 7 = Yearly, 3 = Monthly
+        'merchant_id'       => '18172469',
+        'merchant_key'      => 'gwkk16pbxdd8m',
+        'return_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/return',
+        'cancel_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
+        'notify_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
+        'name_first'        => $userName,
+        'email_address'     => $userEmail,
+        'm_payment_id'      => uniqid(),
+        'item_name'         => $plan,
+        'custom_str1'       => $paymentOption,
+        // 'custom_str2'       => $subscriptionType,
+        'subscription_type' => 1,
+        'billing_date'      => date('Y-m-d'), // Start immediately
+        'amount'            => $formattedAmount, // Subscription amount
+        // debug i must write amount not recuriing amount note
+        'recurring_amount'  => $formattedAmount, // Recurring amount
+        'cycles'            => 0, // Unlimited billing
+        'frequency'         => ($subscriptionType === 'Yearly') ? 7 : 3, // 7 = Yearly, 3 = Monthly
     ];
 
 
-
+    ksort($data);
     // Generate signature
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-    // Build the form
     $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
     foreach ($data as $name => $value) {
-        $htmlForm .= '<input type="hidden" name="'.htmlspecialchars($name).'" value="'.htmlspecialchars($value, ENT_QUOTES).'">';
+        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
     $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
-        <br><img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px">
-    </form>';
+    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
 
     echo $htmlForm;
 }

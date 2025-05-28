@@ -94,7 +94,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <!-- PREMIUM PLAN -->
                 <div class="col-md-4">
-                    <form method="POST" action="/subscribe" class="subscription-form">
+                    <form method="POST" action="/checkout" class="subscription-form">
                         <div class="plan-title w-75 mx-auto">
                             <h3>Premium</h3>
                             <p class="small">Best suited for publishers and authors with international aspirations.</p>

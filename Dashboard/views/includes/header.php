@@ -23,4 +23,6 @@
 
     <link rel="stylesheet" href="/Dashboard/assets/css/style.css">
     <link rel="stylesheet" href="/Dashboard/assets/css/responsive.css">
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
 </head>

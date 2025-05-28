@@ -18,7 +18,7 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 
 $controller = new BookController($conn);
-$authController = new $authController($conn);
+$authController = new AuthController($conn);
 
 
 $action = $_GET['action'] ?? 'getAllBooks';

@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bookId'])) {
     $bookId = $_POST['bookId'];
 
     if (!$userId) {
-        echo "Please log in to buy books.";
+        header('Location: /login');
         exit;
     }
 

@@ -10,6 +10,7 @@ $startCount = $startIndex + 1;
 $endCount = min($startIndex + $booksPerPage, $totalBooks);
 ?>
 
+
 <h5 class="mb-3">Showing <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books</h5>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -36,6 +37,8 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             <th>Price</th>
             <th>Status</th>
             <th>Actions</th>
+            <th>PDF</th>
+            <th>Upload</th>
         </tr>
     </thead>
     <tbody>
@@ -78,6 +81,16 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                             Delete
                         </a>
                     </td>
+                    <td>
+                    <?php if (!empty($book['PDFURL'])): ?>
+                        <a href="<?= $book['PDFURL'] ?>" target="_blank">View PDF</a>
+                    <?php else: ?>
+                        <span>No Content</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <button class="btn-upload" onclick="uploadPdf('<?= $book['CONTENTID'] ?>')">Upload PDF</button>
+                </td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
