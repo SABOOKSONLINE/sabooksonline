@@ -81,6 +81,8 @@ class UserModel {
     $subscription = 'Free';
     $verificationLink = $userKey;
     $status = 'Verified';
+    $status1 = 'approved';
+
 
     $insert = $this->conn->prepare("
         INSERT INTO users (
@@ -98,7 +100,7 @@ class UserModel {
         $userKey,
         $subscription,
         $verificationLink,
-        $status,
+        $status1,
         $userKey,
         $status
     );
