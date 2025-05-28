@@ -128,11 +128,12 @@ class CheckoutController {
         die("Missing user email.");
     }
 
+    // Default PayFast parameters
     $formattedAmount = number_format($planPrice, 2, '.', '');
 
-    // Step 1: Prepare base data
     $data = [
         'merchant_id'       => '18172469',
+        'merchant_key'      => 'gwkk16pbxdd8m',
         'return_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/return',
         'cancel_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
         'notify_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
@@ -141,37 +142,31 @@ class CheckoutController {
         'm_payment_id'      => uniqid(),
         'item_name'         => $plan,
         'custom_str1'       => $paymentOption,
+        // 'custom_str2'       => $subscriptionType,
         'subscription_type' => 1,
         'billing_date'      => date('Y-m-d'), // Start immediately
-        'amount'            => $formattedAmount,
-        'recurring_amount'  => $formattedAmount,
-        'cycles'            => 0, // Unlimited
-        'frequency'         => ($subscriptionType === 'Yearly') ? 7 : 3,
+        'amount'            => $formattedAmount, // Subscription amount
+        // debug i must write amount not recuriing amount note
+        'recurring_amount'  => $formattedAmount, // Recurring amount
+        'cycles'            => 0, // Unlimited billing
+        'frequency'         => ($subscriptionType === 'Yearly') ? 7 : 3, // 7 = Yearly, 3 = Monthly
     ];
 
-    // Step 2: Add merchant_key for signature generation only
-    $dataForSignature = $data;
-    $dataForSignature['merchant_key'] = 'gwkk16pbxdd8m';
 
-    // Step 3: Sort alphabetically and generate signature
-    ksort($dataForSignature);
-    $signature = $this->generateSignature($dataForSignature, 'SABooksOnline2021');
-
-    // Step 4: Add signature to original data (not the one with merchant_key)
+    ksort($data);
+    // Generate signature
+    $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-    // Step 5: Build form HTML
     $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
     foreach ($data as $name => $value) {
-        $htmlForm .= '<input name="'.htmlspecialchars($name, ENT_QUOTES).'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
+        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
     $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
-        <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px">
-    </form>';
+    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
 
     echo $htmlForm;
 }
-
 
 
 
