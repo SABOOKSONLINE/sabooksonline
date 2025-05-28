@@ -10,7 +10,7 @@ class AuthController {
         $this->userModel = new UserModel($conn);
     }
 
-    public function loginWithGoogle($email) {
+    public function loginWithGoogle($email,$reg_name,$profileImage) {
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return "<div class='alert alert-warning'>Your email is invalid!</div>";
@@ -19,7 +19,7 @@ class AuthController {
     $result = $this->userModel->findUserByEmail($email);
 
     if (!mysqli_num_rows($result)) {
-        return "<center class='alert alert-warning'>Email Not Found!</center>";
+        $this->userModel->insertGoogleUser($reg_name, $email, $profileImage, $email);
     }
 
     $userData = mysqli_fetch_assoc($result);
@@ -49,6 +49,7 @@ class AuthController {
 
         if (!mysqli_num_rows($result)) {
             return "<center class='alert alert-warning'>Email Not Found!</center>";
+
         } else {
             $userData = mysqli_fetch_assoc($result);
             $status = $userData['USER_STATUS'];

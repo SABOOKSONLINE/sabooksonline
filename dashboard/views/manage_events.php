@@ -13,15 +13,12 @@ include __DIR__ . "/includes/dashboard_heading.php";
     <section>
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar -->
-                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
-                    <?php include __DIR__ . "/includes/layouts/side-bar.php"; ?>
-                </div>
+                <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
                 <!-- Main Content -->
-                <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
+                <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
-                    renderHeading("Manage Events", "You can manage, add or delete your event listings.", "add/add_event.php", "Create New Event");
+                    renderHeading("Manage Events", "You can manage, add or delete your event listings.", "/dashboards/add/event", "Create New Event");
 
                     $deleteEvent = $_GET["delete"] ?? null;
                     $addEventStatus = $_GET["status"] ?? null;
@@ -46,7 +43,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $eventsController = new EventsController($conn);
-                    $eventsController->renderEvents("65ca14170774224165ca14219");
+                    $eventsController->renderEvents($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

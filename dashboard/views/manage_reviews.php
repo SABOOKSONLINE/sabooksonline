@@ -13,13 +13,10 @@ include __DIR__ . "/includes/dashboard_heading.php";
     <section>
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar -->
-                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
-                    <?php include __DIR__ . "/includes/layouts/side-bar.php"; ?>
-                </div>
+                <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
                 <!-- Main Content -->
-                <div class="col offset-lg-3 offset-xl-2 p-5 overflow-y-scroll mt-5">
+                <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
                     renderHeading("Manage Reviews", "Track feedback and performance insights on your uploaded content.");
 
@@ -32,7 +29,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $reviewsController = new ReviewsController($conn);
-                    $reviewsController->renderReviewsByUserKey("64aa6e168889112464aa6ef49");
+                    $reviewsController->renderReviewsByUserKey($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>

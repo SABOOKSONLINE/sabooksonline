@@ -13,13 +13,11 @@ include __DIR__ . "/includes/dashboard_heading.php";
     <section>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-3 col-xl-2 position-fixed bg-light vh-100 pt-5">
-                    <?php include __DIR__ . "/includes/layouts/side-bar.php"; ?>
-                </div>
+                <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
-                <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
+                <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
-                    renderHeading("Manage Services", "You can manage, add or delete your service listings.", "add/add_services.php", "Create New Service");
+                    renderHeading("Manage Services", "You can manage, add or delete your service listings.", "/dashboards/add/service", "Create New Service");
 
                     $deleteService = $_GET["delete"] ?? null;
                     $addServiceStatus = $_GET["status"] ?? null;
@@ -68,7 +66,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     }
 
                     $serviceController = new ServicesController($conn);
-                    $serviceController->renderServicesByUserId("64c971169092344964c971b98");
+                    $serviceController->renderServicesByUserId($_SESSION["ADMIN_USERKEY"]);
                     ?>
                 </div>
             </div>
