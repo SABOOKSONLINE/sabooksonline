@@ -73,6 +73,53 @@ class UserModel {
     return $stmt->execute();
     }
 
+    //signup user
+    public function insertGoogleUser($name, $email, $profileImage, $googleId) {
+    // Generate a unique user key
+    $userKey = uniqid('user_');
+
+    // Default values
+    $userStatus = 'approved';
+    $verificationLink = null;
+    $userStatus2 = 'Verified';
+    $password = null;
+    $date = date('Y-m-d H:i:s');
+
+    $sql = "INSERT INTO users (
+        ADMIN_NAME, 
+        ADMIN_EMAIL, 
+        ADMIN_GOOGLE, 
+        ADMIN_PROFILE_IMAGE, 
+        ADMIN_VERIFICATION_LINK, 
+        ADMIN_USERKEY, 
+        ADMIN_USER_STATUS, 
+        USER_STATUS, 
+        ADMIN_DATE, 
+        ADMIN_PASSWORD
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ssssssssss", 
+        $name, 
+        $email, 
+        $googleId, 
+        $profileImage, 
+        $verificationLink, 
+        $userKey, 
+        $userStatus, 
+        $userStatus2, 
+        $date, 
+        $password
+    );
+
+    if ($stmt->execute()) {
+        return $userKey; // Return user key on success
+    } else {
+        return false;
+    }
+    }
+
+
 
     /**
      * Fetches all posts associated with a specific user key.

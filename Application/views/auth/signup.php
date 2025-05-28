@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/../includes/header.php";
 
+require_once __DIR__ . "/../includes/google_authUrl.php";
+
 require_once __DIR__ . "/../../Config/connection.php";
 ?>
 
@@ -60,7 +62,7 @@ require_once __DIR__ . "/../../Config/connection.php";
 
                         <!-- Google Signup Button -->
                         <div class="text-center mb-4">
-                            <a href="" class="btn btn-outline-dark">
+                            <a href="<?php echo $authUrl; ?>" class="btn btn-outline-dark">
                                 Sign Up with <i class="fab fa-google"></i> Google
                             </a>
                         </div>

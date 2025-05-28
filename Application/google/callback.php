@@ -44,7 +44,7 @@ if (isset($_GET['code'])) {
     $profileimage = $user->getPicture();
 
 
-    $loginResult = $authController->loginWithGoogle($reg_email);
+    $loginResult = $authController->loginWithGoogle($reg_email,$reg_name,$profileimage);
 
     error_log("Session Contents: " . print_r($_SESSION, true));
 
