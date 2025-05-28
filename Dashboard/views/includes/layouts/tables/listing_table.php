@@ -38,7 +38,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             <th>Status</th>
             <th>Actions</th>
             <th>PDF</th>
-            <th>Upload</th>
+            <!-- <th>Upload</th> -->
         </tr>
     </thead>
     <tbody>
@@ -82,15 +82,15 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                         </a>
                     </td>
                     <td>
-                    <?php if (!empty($book['PDFURL'])): ?>
-                        <a href="<?= $book['PDFURL'] ?>" target="_blank">View PDF</a>
-                    <?php else: ?>
-                        <span>No Content</span>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <button class="btn-upload" onclick="uploadPdf('<?= $book['CONTENTID'] ?>')">Upload PDF</button>
-                </td>
+                        <?php if (!empty($book['PDFURL'])): ?>
+                            <a href="/cms-data/book-pdfs/<?= $book['PDFURL'] ?>" target="_blank" download>View PDF</a>
+                        <?php else: ?>
+                            <span>No Content</span>
+                        <?php endif; ?>
+                    </td>
+                    <!-- <td>
+                        <button class="btn-upload" onclick="uploadPdf('<?= $book['CONTENTID'] ?>')">Upload PDF</button>
+                    </td> -->
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>

@@ -20,6 +20,7 @@ $status = html_entity_decode($book['STATUS'] ?? 'Draft');
 $availability = html_entity_decode($book['STOCK'] ?? '');
 $keywords = html_entity_decode($book['CATEGORY'] ?? '');
 $type = html_entity_decode($book['TYPE'] ?? '');
+$pdf = html_entity_decode($book['PDFURL'] ?? '');
 
 $datePosted = null;
 if (!empty($book['DATEPOSTED'])) {
@@ -226,7 +227,7 @@ if (!empty($book['DATEPOSTED'])) {
             </div>
 
             <hr class="my-4">
-            <h5 class="fw-bold mb-3">Book Cover</h5>
+            <h5 class="fw-bold mb-3">Book Cover & Ebook Files</h5>
             <div class="col-sm-12">
                 <div class="mb-3">
                     <label for="bookCover" class="form-label fw-semibold">Upload Book Cover*</label>
@@ -240,6 +241,22 @@ if (!empty($book['DATEPOSTED'])) {
                     <?php endif; ?>
                 </div>
             </div>
+
+            <div class="col-sm-12">
+                <div class="mb-3">
+                    <label for="bookPdf" class="form-label fw-semibold">Upload Book PDF</label>
+                    <input type="file" class="form-control" id="bookPdf" name="book_pdf" accept=".pdf">
+
+                    <?php if (!empty($pdf)): ?>
+                        <div class="mt-2">
+                            <label class="form-label fw-semibold">Current PDF:</label><br>
+                            <a href="/cms-data/book-pdfs/<?= htmlspecialchars($pdf) ?>" class="btn btn-primary btn-sm" target="_blank">View PDF</a>
+                            <input type="hidden" name="existing_pdf" value="<?= $pdf ?>">
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
 
             <div class="mt-3">
                 <?php if (!empty($bookId)): ?>

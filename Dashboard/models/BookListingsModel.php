@@ -94,8 +94,8 @@ class BookListingsModel
 
         $sql = "INSERT INTO posts (
                     TITLE, CATEGORY, WEBSITE, DESCRIPTION, COVER, CONTENTID, USERID, TYPE, DATEPOSTED,
-                    STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS, PDFURL
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -104,7 +104,7 @@ class BookListingsModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssssssss",
+            "ssssssssssssssssss",
             $data['title'],
             $data['category'],
             $data['website'],
@@ -121,7 +121,8 @@ class BookListingsModel
             $data['publisher'],
             $data['languages'],
             $data['stock'],
-            $data['authors']
+            $data['authors'],
+            $data['pdf']
         );
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -145,7 +146,7 @@ class BookListingsModel
                     TITLE = ?, CATEGORY = ?, WEBSITE = ?, DESCRIPTION = ?, COVER = ?, 
                     USERID = ?, TYPE = ?, DATEPOSTED = ?, STATUS = ?, ISBN = ?, 
                     RETAILPRICE = ?, KEYWORDS = ?, PUBLISHER = ?, 
-                    LANGUAGES = ?, STOCK = ?, AUTHORS = ?
+                    LANGUAGES = ?, STOCK = ?, AUTHORS = ?, PDFURL = ?
                 WHERE ID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -155,7 +156,7 @@ class BookListingsModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssssssss",
+            "ssssssssssssssssss",
             $data['title'],
             $data['category'],
             $data['website'],
@@ -172,7 +173,8 @@ class BookListingsModel
             $data['languages'],
             $data['stock'],
             $data['authors'],
-            $bookId
+            $data['pdf'],
+            $bookId,
         );
 
         if (!mysqli_stmt_execute($stmt)) {

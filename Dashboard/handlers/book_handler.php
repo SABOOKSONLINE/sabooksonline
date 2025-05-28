@@ -14,7 +14,7 @@ function formDataArray()
     $bookId = htmlspecialchars($_POST["book_id"]);
     $userId = htmlspecialchars($_POST["user_id"]);
     $title = htmlspecialchars($_POST["book_title"]);
-    $price = htmlspecialchars($_POST["book_price"]);
+    $price = htmlspecialchars($_POST["book_price"] ?? '0');
 
     $category = isset($_POST["book_category"]) && is_array($_POST["book_category"])
         ? implode(", ", array_map("htmlspecialchars", $_POST["book_category"]))
@@ -43,8 +43,22 @@ function formDataArray()
             die("Failed to upload book cover.");
         }
     } else {
-        $cover = htmlspecialchars($_POST['existing_cover'] ?? null);
+        $cover = htmlspecialchars($_POST['existing_cover'] ?? '');
     }
+
+    if (isset($_FILES['book_pdf']) && $_FILES['book_pdf']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . '/../../cms-data/book-pdfs/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $pdf = uniqid('', true) . basename($_FILES['book_pdf']['name']);
+        if (!move_uploaded_file($_FILES['book_pdf']['tmp_name'], $uploadDir . basename($_FILES['book_pdf']['name']))) {
+            die("Failed to upload book PDF.");
+        }
+    } else {
+        $pdf = htmlspecialchars($_POST['existing_pdf'] ?? '');
+    }
+
 
     $created = date('Y-m-d H:i:s');
     $modified = date('Y-m-d H:i:s');
@@ -70,7 +84,8 @@ function formDataArray()
         'dateposted' => $datePosted,
         'publisher' => $publisher,
         'languages' => $language,
-        'stock' => $stock
+        'stock' => $stock,
+        'pdf' => $pdf
     ];
 
     // echo "<pre>";
@@ -90,17 +105,14 @@ function insertBookHandler($bookController)
         empty($bookData['title']) ||
         empty($bookData['cover']) ||
         empty($bookData['category']) ||
-        empty($bookData['publisher']) ||
         empty($bookData['authors']) ||
         empty($bookData['description']) ||
         empty($bookData['isbn']) ||
-        empty($bookData['website']) ||
         empty($bookData['languages']) ||
         empty($bookData['status']) ||
         empty($bookData['stock']) ||
         empty($bookData['type']) ||
-        empty($bookData['dateposted']) ||
-        empty($bookData['keywords'])
+        empty($bookData['dateposted'])
     ) {
         die("Validation failed: Missing required fields.");
     }

@@ -83,66 +83,71 @@ include __DIR__ . "/includes/dashboard_heading.php";
     </section>
 
     <?php include __DIR__ . "/includes/scripts.php" ?>
-    <script>
+    <!-- <script>
+        const widget = cloudinary.createUploadWidget({
+            cloudName: 'dapufnac8',
+            uploadPreset: 'bookContent',
+            resourceType: 'raw',
+            clientAllowedFormats: ['pdf'],
+            folder: 'books',
+            context: {
+                access: "public"
+            }, // 👈 Add this if your preset supports it
+            public_id: `book_${contentId}` // Optional: set filename
+        }, (error, result) => {
+            if (!error && result && result.event === "success") {
+                const pdfUrl = result.info.secure_url;
 
-const widget = cloudinary.createUploadWidget({
-    cloudName: 'dapufnac8',
-    uploadPreset: 'bookContent',
-    resourceType: 'raw',
-    clientAllowedFormats: ['pdf'],
-    folder: 'books',
-    context: {access: "public"},         // 👈 Add this if your preset supports it
-    public_id: `book_${contentId}`       // Optional: set filename
-}, (error, result) => {
-    if (!error && result && result.event === "success") {
-        const pdfUrl = result.info.secure_url;
-
-        fetch('/includes/save-pdf-url', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
-        })
-        .then(res => res.text())
-        .then(response => {
-            alert(response);
-            location.reload();
-        })
-        .catch(err => alert("Failed to save PDF URL"));
-    }
-});
+                fetch('/includes/save-pdf-url', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
+                    })
+                    .then(res => res.text())
+                    .then(response => {
+                        alert(response);
+                        location.reload();
+                    })
+                    .catch(err => alert("Failed to save PDF URL"));
+            }
+        });
 
 
-function uploadPdf(contentId) {
-    const widget = cloudinary.createUploadWidget({
+        function uploadPdf(contentId) {
+            const widget = cloudinary.createUploadWidget({
 
-        cloudName: 'dapufnac8',
-        uploadPreset: 'bookContent',
-        resourceType: 'raw',
-        clientAllowedFormats: ['pdf'],
-        folder: 'books',
-    
+                cloudName: 'dapufnac8',
+                uploadPreset: 'bookContent',
+                resourceType: 'raw',
+                clientAllowedFormats: ['pdf'],
+                folder: 'books',
 
-    }, (error, result) => {
-        if (!error && result && result.event === "success") {
-            const pdfUrl = result.info.secure_url;
 
-            fetch('/includes/save-pdf-url', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
-            })
-            .then(res => res.text())
-            .then(response => {
-                alert(response);
-                location.reload();
-            })
-            .catch(err => alert("Failed to save PDF URL"));
+            }, (error, result) => {
+                if (!error && result && result.event === "success") {
+                    const pdfUrl = result.info.secure_url;
+
+                    fetch('/includes/save-pdf-url', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
+                        })
+                        .then(res => res.text())
+                        .then(response => {
+                            alert(response);
+                            location.reload();
+                        })
+                        .catch(err => alert("Failed to save PDF URL"));
+                }
+            });
+
+            widget.open();
         }
-    });
-
-    widget.open();
-}
-</script>
+    </script> -->
 
 </body>
 
