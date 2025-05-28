@@ -145,8 +145,9 @@ class CheckoutController {
     'custom_str2'     => $subscriptionType,
     'subscription_type' => 1,
     'billing_date'    => date('Y-m-d'), // Start immediately
+    'amount'          => $formattedAmount, // Subscription amount
     // debug i must write amount not recuriing amount note
-    'recurring_amount'=> "5.00",
+    'recurring_amount'=> $formattedAmount, // Recurring amount
     'cycles'          => 0, // Unlimited billing
     'frequency'       => ($subscriptionType === 'Yearly') ? 7 : 3, // 7 = Yearly, 3 = Monthly
     ];
