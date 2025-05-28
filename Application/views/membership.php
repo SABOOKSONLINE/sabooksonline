@@ -38,7 +38,10 @@ require_once __DIR__ . "/includes/header.php";
                 <!-- PRO PLAN -->
                 <div class="col-md-4">
                     <form method="POST" action="/checkout" class="subscription-form">
-                        <div class="plan-title"><h3>Pro</h3></div>
+                        <div class="plan-title w-75 mx-auto">
+                            <h3>Pro</h3>
+                            <p class="small">Ideal for publishers and authors trading within Africa.</p>
+                        </div>
 
                         <div class="monthly-price">
                             <p class="plan-price">R199</p>
@@ -48,6 +51,26 @@ require_once __DIR__ . "/includes/header.php";
                             <p class="plan-price">R1908</p>
                             <p><b>Yearly Subscription (Save R480)</b></p>
                         </div>
+
+                        <!-- Additional Content -->
+                        <ul class="list-unstyled w-75 mx-auto">
+                            <li class="mb-3 d-flex align-items-start">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">African Territory Trade Levy</h6>
+                                    <p class="mb-0 small">
+                                        Seamless sales commission structure applicable to all transactions within African territories.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">African Continent Analytics</h6>
+                                    <p class="mb-0 small">
+                                        Access to performance insights and sales data across African markets to track reach and optimise engagement.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
 
                         <!-- Payment Option -->
                         <div class="mb-3">
@@ -72,7 +95,10 @@ require_once __DIR__ . "/includes/header.php";
                 <!-- PREMIUM PLAN -->
                 <div class="col-md-4">
                     <form method="POST" action="/subscribe" class="subscription-form">
-                        <div class="plan-title"><h3>Premium</h3></div>
+                        <div class="plan-title w-75 mx-auto">
+                            <h3>Premium</h3>
+                            <p class="small">Best suited for publishers and authors with international aspirations.</p>
+                        </div>
 
                         <div class="monthly-price">
                             <p class="plan-price">R499</p>
@@ -82,6 +108,26 @@ require_once __DIR__ . "/includes/header.php";
                             <p class="plan-price">R4788</p>
                             <p><b>Yearly Subscription (Save R1200)</b></p>
                         </div>
+
+                        <!-- Additional Content -->
+                        <ul class="list-unstyled w-75 mx-auto">
+                            <li class="mb-3 d-flex align-items-start">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">Global Territory Trade Levy</h6>
+                                    <p class="mb-0 small">
+                                        Inclusive commission framework covering international distribution and royalties management.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">Global Analytics Dashboard</h6>
+                                    <p class="mb-0 small">
+                                        Comprehensive reporting tools offering global sales trends, market segmentation, and audience engagement insights.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
 
                         <!-- Payment Option -->
                         <div class="mb-3">
@@ -103,7 +149,6 @@ require_once __DIR__ . "/includes/header.php";
                     </form>
                 </div>
             </div>
-
         </div>
     </section>
     <?php require_once __DIR__ . "/includes/footer.php" ?>
