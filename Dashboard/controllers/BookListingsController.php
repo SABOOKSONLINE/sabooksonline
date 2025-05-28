@@ -19,9 +19,9 @@ class BookListingController
         include __DIR__ . "/../views/includes/layouts/tables/listing_table.php";
     }
 
-    public function renderBookByContentId($userId, $contentId)
+    public function renderBookByContentId($userKey, $contentId)
     {
-        $book = $this->booksModel->selectBookByContentId($userId, $contentId);
+        $book = $this->booksModel->selectBookByContentId($userKey, $contentId);
         include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
     }
 
@@ -60,7 +60,7 @@ class BookListingController
         $this->booksModel->deleteAudiobookByBookId($bookId);
     }
 
-    public function getAudiobookByBookId($bookId)
+    public function getAudiobookByBookId($bookId, $contentId = null)
     {
         $audiobook = $this->booksModel->selectAudiobookByBookId($bookId);
         include __DIR__ . "/../views/includes/layouts/forms/audiobook_form.php";
@@ -83,6 +83,7 @@ class BookListingController
 
     public function getAudiobookByContentId($contentId)
     {
-        $this->booksModel->selectAudiobookByContentId($contentId);
+        $book = $this->booksModel->selectAudiobookByContentId($contentId);
+        return $book;
     }
 }

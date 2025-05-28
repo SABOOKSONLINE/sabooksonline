@@ -14,7 +14,7 @@ function formDataArray()
     $bookId = htmlspecialchars($_POST["book_id"]);
     $userId = htmlspecialchars($_POST["user_id"]);
     $title = htmlspecialchars($_POST["book_title"]);
-    $price = htmlspecialchars($_POST["book_price"] ?? '0');
+    $price = htmlspecialchars($_POST["book_price"]);
 
     $category = isset($_POST["book_category"]) && is_array($_POST["book_category"])
         ? implode(", ", array_map("htmlspecialchars", $_POST["book_category"]))
@@ -100,7 +100,6 @@ function insertBookHandler($bookController)
         empty($bookData['stock']) ||
         empty($bookData['type']) ||
         empty($bookData['dateposted']) ||
-        !isset($bookData['price']) ||
         empty($bookData['keywords'])
     ) {
         die("Validation failed: Missing required fields.");
@@ -132,7 +131,7 @@ function updateBookHandler($bookController)
 function deleteBookHandler($bookController)
 {
     try {
-        $bookContentId = $_GET["q"];
+        $bookContentId = $_GET["id"];
 
         $bookController->deleteBookListing($bookContentId);
         header("Location: /dashboards/listings?delete=success");
@@ -146,10 +145,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["action"] == "insert") {
     insertBookHandler($bookController);
 }
 
-if ($_GET["q"] && $_GET["action"] == "delete") {
-    deleteBookHandler($bookController);
+if ($_GET["id"] && $_GET['action'] == "update") {
+    updateBookHandler($bookController);
 }
 
-if ($_GET["q"] && $_GET['action'] == "update") {
-    updateBookHandler($bookController);
+if ($_GET["id"] && $_GET["action"] == "delete") {
+    deleteBookHandler($bookController);
 }

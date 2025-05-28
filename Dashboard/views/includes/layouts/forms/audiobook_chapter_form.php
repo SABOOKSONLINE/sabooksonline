@@ -12,6 +12,7 @@ $durationMinutes = $audiobook['duration_minutes'] ?? '';
     class="bg-white rounded mb-4 overflow-hidden position-relative"
     enctype="multipart/form-data">
 
+    <input type="hidden" name="content_id" value="<?= $contentId ?>">
     <input type="hidden" name="audiobook_id" value="<?= $audiobookId ?>">
     <input type="hidden" name="chapter_id" value="<?= $chapterId ?>">
 

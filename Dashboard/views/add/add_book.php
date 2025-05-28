@@ -1,9 +1,11 @@
-<?php include __DIR__ . "/../includes/header.php";
+<?php
+include __DIR__ . "/../includes/header.php";
 include __DIR__ . "/../includes/dashboard_heading.php";
 
 require_once __DIR__ . "/../../database/connection.php";
 require_once __DIR__ . "/../../models/BookListingsModel.php";
 require_once __DIR__ . "/../../controllers/BookListingsController.php";
+
 $bookListingController = new BookListingController($conn);
 ?>
 
@@ -18,21 +20,19 @@ $bookListingController = new BookListingController($conn);
 
                 <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
-                    $contentId = $_GET["q"] ?? "";
+                    $contentId = $_GET["id"] ?? null;
+                    $userKey = $_SESSION["ADMIN_USERKEY"];
 
-                    if ($contentId) {
-                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.");
+                    if (isset($_GET["id"]) && !empty($_GET["id"])) {
+                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/add/audiobook/$contentId", "Add Audiobook");
                     } else {
                         renderHeading("Add Book Listing", "You can manage, add or delete your book listings.");
                     }
-
-                    $userKey = $_SESSION["ADMIN_USERKEY"];
 
                     $bookListingController->renderBookByContentId($userKey, $contentId);
                     ?>
                 </div>
             </div>
-        </div>
         </div>
     </section>
 

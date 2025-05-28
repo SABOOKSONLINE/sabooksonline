@@ -76,7 +76,7 @@ function insertAudiobookChapterHandler($audiobookController)
 
     try {
         $audiobookController->insertAudiobookChapter($data);
-        header("Location: /dashboards/listings/updateAudio/{$data['audiobook_id']}?status=success");
+        header("Location: /dashboards/add/audiobook/{$_POST['content_id']}?status=success");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
     }
@@ -92,11 +92,10 @@ function updateAudiobookChapterHandler($audiobookController)
 
     try {
         $audiobookController->updateAudiobookChapter($data['chapter_id'], $data);
-        header("Location: /dashboards/listings/updateAudio/{$data['audiobook_id']}?update=success");
+        header("Location: /dashboards/add/audiobook/{$_POST['content_id']}?update=success");
     } catch (Exception $e) {
         error_log("Update failed: " . $e->getMessage());
-        header("Location: /dashboards/listings?delete=fail");
-        exit;
+        die();
     }
 }
 
@@ -111,11 +110,10 @@ function deleteAudiobookChapterHandler($audiobookController)
 
     try {
         $audiobookController->deleteAudiobookChapter($chapterId);
-        header("Location: /dashboards/listings/updateAudio/{$data['audiobook_id']}?update=success");
+        header("Location: /dashboards/listings?delete=success");
     } catch (Exception $e) {
         error_log("Delete failed: " . $e->getMessage());
-        header("Location: /dashboards/listings?delete=fail");
-        exit;
+        die();
     }
 }
 

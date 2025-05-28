@@ -6,14 +6,12 @@ error_reporting(E_ALL);
 $audiobook = $audiobook ?? [];
 
 $audiobookId = $audiobook['audiobook_id'] ?? '';
-$bookid = $audiobook['book_id'] ?? '';
-
-$narrator = $audiobook['narrator'] ?? '';
-$releaseDate = $audiobook['release_date'] ?? '';
+$narrator = html_entity_decode($audiobook['narrator'] ?? '');
+$releaseDate = html_entity_decode($audiobook['release_date'] ?? '');
 ?>
 
 <form method="POST"
-    action="<?= $bookid ? "/dashboards/listings/updateAudio/$bookid" : "/dashboards/listings/insertAudio" ?>"
+    action="<?= $audiobook ? "/dashboards/listings/updateAudio/$bookId" : "/dashboards/listings/insertAudio/" ?>"
     class="bg-white rounded mb-4 overflow-hidden position-relative"
     enctype="multipart/form-data">
 
@@ -21,13 +19,14 @@ $releaseDate = $audiobook['release_date'] ?? '';
         <div class="d-flex align-items-center justify-content-between mb-2">
             <h5 class="fw-bold mb-3">Audiobook Information</h5>
             <?php if (!empty($audiobookId)): ?>
-                <a href="/dashboards/listings/deleteAudio/<?= $bookid ?>" class="btn btn-danger btn-sm"
+                <a href="/dashboards/listings/deleteAudio/<?= $bookId ?>" class="btn btn-danger btn-sm"
                     onclick="return confirm('Are you sure you want to delete this audiobook?');">
                     Delete
                 </a>
             <?php endif; ?>
         </div>
         <div class="row">
+            <input type="text" class="form-control" name="content_id" value="<?= $contentId ?>" hidden>
             <input type="text" class="form-control" name="book_id" value="<?= $bookId ?>" hidden>
 
             <div class="col-sm-6">
@@ -56,7 +55,7 @@ $releaseDate = $audiobook['release_date'] ?? '';
 </form>
 
 <?php
-if ($bookid):
+if (!empty($audiobook)):
     include __DIR__ . '/audiobook_chapter_form.php';
 endif;
 ?>

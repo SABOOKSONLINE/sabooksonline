@@ -5,18 +5,21 @@ error_reporting(E_ALL);
 
 $book = $book ?? [];
 
-$bookId = htmlspecialchars($book['ID'] ?? '');
-$contentId = htmlspecialchars($book['CONTENTID'] ?? $_GET['q']);
-
-$title = htmlspecialchars($book['TITLE'] ?? '');
-$cover = htmlspecialchars($book['COVER'] ?? '');
+$bookId = html_entity_decode($book['ID'] ?? '');
+$title = html_entity_decode($book['TITLE'] ?? '');
+$cover = html_entity_decode($book['COVER'] ?? '');
 $category = $book['CATEGORY'] ?? '';
-$publisher = ucwords(htmlspecialchars($book['PUBLISHER'] ?? ''));
-$authors = htmlspecialchars($book['AUTHORS'] ?? '');
-$description = htmlspecialchars($book['DESCRIPTION'] ?? '');
-$isbn = htmlspecialchars($book['ISBN'] ?? '');
-$website = htmlspecialchars($book['WEBSITE'] ?? '');
-$retailPrice = htmlspecialchars($book['RETAILPRICE'] ?? '');
+$publisher = ucwords(html_entity_decode($book['PUBLISHER'] ?? ''));
+$authors = html_entity_decode($book['AUTHORS'] ?? '');
+$description = html_entity_decode($book['DESCRIPTION'] ?? '');
+$isbn = html_entity_decode($book['ISBN'] ?? '');
+$website = html_entity_decode($book['WEBSITE'] ?? '');
+$retailPrice = html_entity_decode($book['RETAILPRICE'] ?? '');
+$languages = html_entity_decode($book['LANGUAGES'] ?? '');
+$status = html_entity_decode($book['STATUS'] ?? 'Draft');
+$availability = html_entity_decode($book['STOCK'] ?? '');
+$keywords = html_entity_decode($book['CATEGORY'] ?? '');
+$type = html_entity_decode($book['TYPE'] ?? '');
 
 $datePosted = null;
 if (!empty($book['DATEPOSTED'])) {
@@ -29,24 +32,15 @@ if (!empty($book['DATEPOSTED'])) {
         }
     }
 }
-
-$languages = htmlspecialchars($book['LANGUAGES'] ?? '');
-$status = htmlspecialchars($book['STATUS'] ?? 'Draft');
-$availability = htmlspecialchars($book['STOCK'] ?? '');
-$keywords = htmlspecialchars($book['CATEGORY'] ?? '');
-$type = htmlspecialchars($book['TYPE'] ?? '');
-
-$admin_userkey = $_SESSION["ADMIN_USERKEY"];
-
 ?>
 
 <form method="POST"
     action="<?= $bookId ? "/dashboards/listings/update/$bookId" : "/dashboards/listings/insert" ?>"
     class="bg-white rounded mb-4 overflow-hidden position-relative"
     enctype="multipart/form-data">
-    <input type="hidden" name="user_id" value="<?= $admin_userkey ?>">
+    <input type="hidden" name="user_id" value="<?= $userKey ?>">
     <input type="hidden" name="book_id" value="<?= $bookId ?>">
-    <input type="hidden" name="existing_cover" value="<?= htmlspecialchars($cover) ?>">
+    <input type="hidden" name="existing_cover" value="<?= html_entity_decode($cover) ?>">
 
     <div class="card border-0 shadow-sm p-4 mb-3">
         <h5 class="fw-bold mb-3">Book Information</h5>
@@ -240,8 +234,8 @@ $admin_userkey = $_SESSION["ADMIN_USERKEY"];
                     <?php if (!empty($cover)): ?>
                         <div class="mt-2">
                             <label class="form-label fw-semibold">Current Cover:</label> <br>
-                            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="Book Cover" class="img-fluid rounded" style="max-height: 150px;">
-                            <input type="hidden" name="existing_cover" value="<?= htmlspecialchars($cover) ?>">
+                            <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover" class="img-fluid rounded" style="max-height: 150px;">
+                            <input type="hidden" name="existing_cover" value="<?= $cover ?>">
                         </div>
                     <?php endif; ?>
                 </div>

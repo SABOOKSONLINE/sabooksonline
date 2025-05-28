@@ -110,11 +110,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // --- Book Listings ---
-    $r->addRoute('GET', '/dashboards/listings', function () {
-        require "Dashboard/views/book_listings.php";
-    });
     $r->addRoute('GET', '/dashboards/add/listings', function () {
         require "Dashboard/views/add/add_book.php";
+    });
+    $r->addRoute('GET', '/dashboards/listings', function () {
+        require "Dashboard/views/book_listings.php";
     });
     $r->addRoute('POST', '/dashboards/listings/insert', function () {
         $_GET['action'] = 'insert';
@@ -122,16 +122,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
     $r->addRoute('POST', '/dashboards/listings/update/{id}', function ($id) {
         $_GET['action'] = 'update';
-        $_GET['q'] = $id;
+        $_GET['id'] = $id;
         require "Dashboard/handlers/book_handler.php";
     });
     $r->addRoute('GET', '/dashboards/listings/{id}', function ($id) {
-        $_GET['q'] = $id;
+        $_GET['id'] = $id;
         require "Dashboard/views/add/add_book.php";
     });
     $r->addRoute('GET', '/dashboards/listings/delete/{id}', function ($id) {
         $_GET['action'] = 'delete';
-        $_GET['q'] = $id;
+        $_GET['id'] = $id;
         require "Dashboard/handlers/book_handler.php";
     });
 
@@ -216,7 +216,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/audiobook_handler.php";
     });
     $r->addRoute('POST', '/dashboards/listings/updateAudio/{id}', function ($id) {
-        $_GET['q'] = $id;
+        $_GET['id'] = $id;
         $_GET['action'] = 'updateAudio';
         require "Dashboard/handlers/audiobook_handler.php";
     });
@@ -225,9 +225,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['action'] = 'deleteAudio';
         require "Dashboard/handlers/audiobook_handler.php";
     });
-    // $r->addRoute('GET', '/dashboards/add/audiobook', function () {
-    //     require "Dashboard/views/add/add_audiobook.php";
-    // });
     $r->addRoute('GET', '/dashboards/add/audiobook/{id}', function ($id) {
         $_GET['id'] = $id;
         require "Dashboard/views/add/add_audiobook.php";
@@ -238,13 +235,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/audiobook_chapter_handler.php";
     });
     $r->addRoute('POST', '/dashboards/listings/updateAudioChapter/{id}', function ($id) {
-        $_GET['q'] = $id;
+        $_GET['id'] = $id;
         $_GET['action'] = 'updateAudioChapter';
         require "Dashboard/handlers/audiobook_chapter_handler.php";
-    });
-    $r->addRoute('GET', '/dashboards/listings/updateAudio/{audiobook_id}', function ($audiobook_id) {
-        $_GET['audiobook_id'] = $audiobook_id;
-        require "Dashboard/views/add/add_audiobook.php";
     });
     $r->addRoute('GET', '/dashboards/listings/deleteAudioChapter/{chapterId}', function ($chapterId) {
         $_GET['id'] = $chapterId;
