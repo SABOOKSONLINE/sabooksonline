@@ -55,7 +55,7 @@ class CheckoutController {
     if ($paymentOption === "later") {
         // Save to DB or update user record as Pay Later
         $this->userModel->updateUserPlanRoyalties($userId, $planDetails['name'], $planDetails['billing']);
-        echo "Subscription saved. You chose to pay later.";
+        header('Location: /dashboard');
     } else {
         // Pay now → redirect to PayFast with correct amount
         $this->generatePaymentFormPlan(

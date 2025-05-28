@@ -9,7 +9,9 @@ $authors = html_entity_decode($book['AUTHORS']);
 $description = html_entity_decode($book['DESCRIPTION']);
 $isbn = html_entity_decode($book['ISBN']);
 $website = html_entity_decode($book['WEBSITE']);
-$retailPrice = html_entity_decode($book['RETAILPRICE']);
+// $retailPrice = html_entity_decode($book['RETAILPRICE']);
+$retailPrice = $book['RETAILPRICE'];
+
 $ebook = $book['PDFURL'] ?? '';
 
 $bookId = $_GET['q'] ?? null;
