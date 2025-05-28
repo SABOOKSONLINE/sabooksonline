@@ -80,7 +80,7 @@ class UserModel {
     $userKey = uniqid('', true);
     $subscription = 'Free';
     $verificationLink = $userKey;
-    $status = 'active';
+    $status = 'Verified';
 
     $insert = $this->conn->prepare("
         INSERT INTO users (
