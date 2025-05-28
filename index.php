@@ -313,7 +313,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/reset-password', function () {
         require __DIR__ . "/Application/views/auth/reset_password.php";
     });
-
+    $r->addRoute('POST', '/auth/signup-handler', function () {
+        require __DIR__ . "/Application/views/auth/signup_handler.php";
+    });
+    $r->addRoute('POST', '/auth/login-handler', function () {
+        require __DIR__ . "/Application/views/auth/login_handler.php";
+    });
     // =================== Google OAuth Callback ===================
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
