@@ -199,7 +199,7 @@ if (!empty($book['DATEPOSTED'])) {
             <div class="col-sm-6">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Retail Price</label>
-                    <input type="number" class="form-control" name="book_retail_price" value="<?= $retailPrice ?>">
+                    <input type="number" class="form-control" name="book_price" value="<?= $retailPrice ?>">
                 </div>
             </div>
 
