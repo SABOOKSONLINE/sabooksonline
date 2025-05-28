@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Login success
             $_SESSION['user_id'] = $userId;
             $_SESSION['alert'] = ['type' => 'success', 'message' => 'Login successful! Welcome back.'];
-            header("Location: /Dashboards");
+            header("Location: /");
             exit;
         } else {
             $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Incorrect password.'];
