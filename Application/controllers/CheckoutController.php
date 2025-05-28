@@ -153,7 +153,7 @@ class CheckoutController {
     ];
 
 
-    // ksort($data);
+    ksort($data);
     // Generate signature
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
