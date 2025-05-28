@@ -10,6 +10,8 @@ $startCount = $startIndex + 1;
 $endCount = min($startIndex + $booksPerPage, $totalBooks);
 ?>
 
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
 <h5 class="mb-3">Showing <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books</h5>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -36,6 +38,8 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             <th>Price</th>
             <th>Status</th>
             <th>Actions</th>
+            <th>PDF</th>
+            <th>Upload</th>
         </tr>
     </thead>
     <tbody>
@@ -78,6 +82,16 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                             Delete
                         </a>
                     </td>
+                    <td>
+                    <?php if (!empty($book['PDFURL'])): ?>
+                        <a href="<?= $book['PDFURL'] ?>" target="_blank">View PDF</a>
+                    <?php else: ?>
+                        <span>No Content</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <button class="btn-upload" onclick="uploadPdf('<?= $book['CONTENTID'] ?>')">Upload PDF</button>
+                </td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -99,3 +113,63 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
         </li>
     </ul>
 </nav>
+<script>
+
+const widget = cloudinary.createUploadWidget({
+    cloudName: 'dapufnac8',
+    uploadPreset: 'bookContent',
+    resourceType: 'raw',
+    clientAllowedFormats: ['pdf'],
+    folder: 'books',
+    context: {access: "public"},         // 👈 Add this if your preset supports it
+    public_id: `book_${contentId}`       // Optional: set filename
+}, (error, result) => {
+    if (!error && result && result.event === "success") {
+        const pdfUrl = result.info.secure_url;
+
+        fetch('../../includes/save-pdf-url.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
+        })
+        .then(res => res.text())
+        .then(response => {
+            alert(response);
+            location.reload();
+        })
+        .catch(err => alert("Failed to save PDF URL"));
+    }
+});
+
+
+function uploadPdf(contentId) {
+    const widget = cloudinary.createUploadWidget({
+
+        cloudName: 'dapufnac8',
+        uploadPreset: 'bookContent',
+        resourceType: 'raw',
+        clientAllowedFormats: ['pdf'],
+        folder: 'books',
+    
+
+    }, (error, result) => {
+        if (!error && result && result.event === "success") {
+            const pdfUrl = result.info.secure_url;
+
+            fetch('../../includes/save-pdf-url.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
+            })
+            .then(res => res.text())
+            .then(response => {
+                alert(response);
+                location.reload();
+            })
+            .catch(err => alert("Failed to save PDF URL"));
+        }
+    });
+
+    widget.open();
+}
+</script>
