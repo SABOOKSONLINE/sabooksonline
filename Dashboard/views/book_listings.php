@@ -92,7 +92,7 @@ const widget = cloudinary.createUploadWidget({
     if (!error && result && result.event === "success") {
         const pdfUrl = result.info.secure_url;
 
-        fetch('includes/save-pdf-url.php', {
+        fetch('/includes/save-pdf-url', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
@@ -121,7 +121,7 @@ function uploadPdf(contentId) {
         if (!error && result && result.event === "success") {
             const pdfUrl = result.info.secure_url;
 
-            fetch('includes/save-pdf-url.php', {
+            fetch('/includes/save-pdf-url', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `contentid=${contentId}&pdf_url=${encodeURIComponent(pdfUrl)}`
