@@ -111,7 +111,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // --- cloudinary save content ---
     $r->addRoute('POST', '/includes/save-pdf-url', function () {
-        require "Dashboard/views/includes/save-pdf-url.php";
+        require __DIR__ . "/Dashboard/views/includes/save-pdf-url.php";
+
     });
     // --- Book Listings ---
     $r->addRoute('GET', '/dashboards/listings', function () {
