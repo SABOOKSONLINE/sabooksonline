@@ -158,14 +158,12 @@ class CheckoutController {
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-    // Build the form
     $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
     foreach ($data as $name => $value) {
-        $htmlForm .= '<input type="hidden" name="'.htmlspecialchars($name).'" value="'.htmlspecialchars($value, ENT_QUOTES).'">';
+        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
     $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
-        <br><img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px">
-    </form>';
+    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
 
     echo $htmlForm;
 }
