@@ -142,7 +142,7 @@ class CheckoutController {
         'm_payment_id'      => uniqid(),
         'item_name'         => $plan,
         'custom_str1'       => $paymentOption,
-        'custom_str2'       => $subscriptionType,
+        // 'custom_str2'       => $subscriptionType,
         'subscription_type' => 1,
         'billing_date'      => date('Y-m-d'), // Start immediately
         'amount'            => $formattedAmount, // Subscription amount
