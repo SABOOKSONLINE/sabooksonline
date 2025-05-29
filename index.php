@@ -112,7 +112,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     // --- cloudinary save content ---
     $r->addRoute('POST', '/includes/save-pdf-url', function () {
         require __DIR__ . "/Dashboard/views/includes/save-pdf-url.php";
-
     });
     // --- Book Listings ---
     $r->addRoute('GET', '/dashboards/add/listings', function () {
@@ -320,6 +319,24 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     // =================== Google OAuth Callback ===================
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
+    });
+
+    // =================== File Download & Views ===================
+    $r->addRoute('GET', '/view/pdfs/{filename}', function ($filename) {
+        $safeFilename = basename($filename); // prevent directory traversal
+        $path = __DIR__ . '/cms-data/book-pdfs/' . $safeFilename;
+
+        if (!file_exists($path)) {
+            http_response_code(404);
+            echo "PDF not found.";
+            return;
+        }
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $safeFilename . '"');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+        exit;
     });
 });
 

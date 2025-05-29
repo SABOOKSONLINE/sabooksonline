@@ -83,7 +83,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     </td>
                     <td>
                         <?php if (!empty($book['PDFURL'])): ?>
-                            <a href="/cms-data/book-pdfs/<?= $book['PDFURL'] ?>" target="_blank" download>View PDF</a>
+                            <a href="/view/pdfs/<?= $book['PDFURL'] ?>" target="_blank">View PDF</a>
                         <?php else: ?>
                             <span>No Content</span>
                         <?php endif; ?>

@@ -51,8 +51,12 @@ function formDataArray()
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $pdf = uniqid('', true) . basename($_FILES['book_pdf']['name']);
-        if (!move_uploaded_file($_FILES['book_pdf']['tmp_name'], $uploadDir . basename($_FILES['book_pdf']['name']))) {
+
+        $originalName = basename($_FILES['book_pdf']['name']);
+        $safeName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $originalName);
+        $pdf = uniqid('', true) . $safeName;
+
+        if (!move_uploaded_file($_FILES['book_pdf']['tmp_name'], $uploadDir . $pdf)) {
             die("Failed to upload book PDF.");
         }
     } else {
