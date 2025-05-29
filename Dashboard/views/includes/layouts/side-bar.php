@@ -1,10 +1,10 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
+$subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
 ?>
 <div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
     <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3" id="dashboardSidebar">
         <div class=" mb-auto">
-            $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
             <?php if (isset($subscriptionPlan) && strtolower($subscriptionPlan) == 'pro' || strtolower($subscriptionPlan) == 'premium'): ?>
                 <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                     <i class="fas fa-info-circle ms-1 me-1" data-bs-toggle="tooltip" data-bs-placement="right" title="Add books, events, services, and manage reviews"></i>
