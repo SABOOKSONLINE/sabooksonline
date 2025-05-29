@@ -109,7 +109,7 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                     <?php
                     } else {
                     ?>
-                        <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
+                        <a href="/signup" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
                         <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
                     <?php
                     }
@@ -119,7 +119,7 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
 
             <div class="d-xl-none bg-light p-3">
                 <div class="d-grid gap-2">
-                    <a href="/membership" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
+                    <a href="/signup" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
                     <a href="/login" class="btn btn-danger btn-red">LOGIN <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>

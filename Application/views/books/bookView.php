@@ -117,6 +117,17 @@ $audiobookId = $book['a_id'] ?? null;
                         <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
                     </span>
                 </div>
+                <span class="small text-muted mt-3 d-block">
+                    <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
+                        Responsibility of Third-Party Sellers.</small>
+                    <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
+                        books. However, the responsibility for physical book sales—including monetary collection,
+                        warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
+                        publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
+                        shipment, or condition of physical books purchased through or as a result of activity on our
+                        platform. Customers are encouraged to engage directly with the relevant seller for any
+                        enquiries or support related to their purchase.</small>
+                </span>
             </div>
         </div>
     </div>
