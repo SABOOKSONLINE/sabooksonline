@@ -1,4 +1,18 @@
 <?php
+$isLocal = in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']);
+
+$cookieParams = [
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => $isLocal ? '' : '.sabooksonline.co.za',
+    'secure' => !$isLocal,
+    'httponly' => true,
+    'samesite' => 'Lax',
+];
+
+session_set_cookie_params($cookieParams);
+session_start();
+
 function setUserSession(mysqli $conn, string $email): bool
 {
     $stmt = mysqli_prepare($conn, "SELECT ADMIN_ID, ADMIN_SUBSCRIPTION, ADMIN_PROFILE_IMAGE, ADMIN_USERKEY, ADMIN_USER_STATUS 
