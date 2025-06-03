@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/../../Config/connection.php";
+require_once __DIR__ . "/../util/helpers/session_helper.php"; // adjust this path if needed
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["log_email"] ?? '');
@@ -29,11 +30,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         mysqli_stmt_fetch($stmt);
 
         if (password_verify($password, $hashedPassword)) {
-            // Login success
-            $_SESSION['user_id'] = $userId;
-            $_SESSION['alert'] = ['type' => 'success', 'message' => 'Login successful! Welcome back.'];
-            header("Location: /");
-            exit;
+            // Set full session using helper
+            if (setUserSession($conn, $email)) {
+                $_SESSION['alert'] = ['type' => 'success', 'message' => 'Login successful! Welcome back.'];
+                header("Location: /dashboards");
+                exit;
+            } else {
+                $_SESSION['alert'] = ['type' => 'warning', 'message' => 'Login succeeded, but session could not be set.'];
+                header("Location: /login");
+                exit;
+            }
         } else {
             $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Incorrect password.'];
             header("Location: /login");
