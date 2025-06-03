@@ -7,14 +7,16 @@ session_start();
 if (isset($_SESSION['ADMIN_USERKEY'])) {
     $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
-    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
-        $profile = $adminProfileImage;
-    } else {
-        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
-    }
+    $profile = $adminProfileImage === "https://www.vecteezy.com/free-vector/default-profile-picture"
+        ? $adminProfileImage
+        : (strpos($adminProfileImage, 'googleusercontent.com') !== false
+            ? $adminProfileImage
+            : "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage);
 } else {
     $profile = null;
 }
+?>
+
 ?>
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>
 
