@@ -1,10 +1,16 @@
 <?php
-$serverName = "localhost";
-$username = "sabooks_library";
-$password = "1m0g7mR3$";
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$primaryDb = "Sibusisomanqa_update_3";
-$secondaryDb = "Sibusisomanqa_website_plesk";
+$serverName = "localhost";
+$username = "sabookso_db";
+$primaryDb = "sabookso_db";
+
+$username2nd = "sabookso_plesk_acc";
+$secondaryDb = "sabookso_plesk_acc";
+
+$password = "slTFvaj07dNY6Ke";
 
 // Enable exceptions for mysqli
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -15,11 +21,10 @@ try {
     $conn->set_charset("utf8mb4");
 
     // Create connection to secondaryDB
-    $mysqli = new mysqli($serverName, $username, $password, $secondaryDb);
+    $mysqli = new mysqli($serverName, $username2nd, $password, $secondaryDb);
     $mysqli->set_charset("utf8mb4");
 } catch (mysqli_sql_exception $e) {
-
     // Centralized error logging
     error_log("Database Connection Error: " . $e->getMessage());
-    die("A database error occurred. Please try again later.");
+    die("Database Connection Error: " . $e->getMessage());
 }

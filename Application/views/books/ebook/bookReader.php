@@ -1,382 +1,219 @@
+<?php
+require_once __DIR__ . "/../../includes/header.php";
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title><?= htmlspecialchars($book['TITLE']) ?> - Reader</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f4f4f4;
       color: #333;
-      user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
+      transition: background-color 0.3s, color 0.3s;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-    }
-    #pdf-viewer {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-    canvas {
-      border: 1px solid #ccc;
-      margin: 5px;
-      max-width: 45%;
-      height: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      background: white;
-    }
-    .nav-buttons, .zoom-buttons {
-      margin: 15px;
-    }
-    button {
-      background-color: #008cba;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #005f5f;
-    }
+
     .dark-mode {
       background-color: #121212;
       color: #eee;
     }
-    .dark-mode canvas {
-      background-color: #2c2c2c;
+
+    .container {
+      max-width: 960px;
+      margin: auto;
+      padding: 1rem;
     }
-    #chapterNav {
-      margin-top: 20px;
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
     }
-    #chapters-list {
-      list-style: none;
-      padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 1rem;
     }
-    #chapters-list li {
-      padding: 5px;
-      border-bottom: 1px solid #ccc;
+
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
       cursor: pointer;
+      transition: background-color 0.2s ease;
     }
-    #chapters-list li:hover {
-      background-color: #ddd;
+
+    button:hover {
+      background-color: #0056b3;
     }
+
     .toggle-mode {
       position: fixed;
       top: 10px;
       right: 10px;
+      z-index: 1000;
     }
-  </style>
-</head>
-<body class="prevent-select">
-  <div class="toggle-mode">
-    <button onclick="toggleMode()">🌓 Toggle Theme</button>
-  </div>
 
-  <div class="container">
-  <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
-
-    <div id="chapterNav">
-      <h3>Chapters</h3>
-      <ul id="chapters-list"></ul>
-    </div>
-
-    <div id="pdf-viewer">
-      <canvas id="left-canvas"></canvas>
-      <canvas id="right-canvas"></canvas>
-    </div>
-
-    <div class="nav-buttons">
-      <button onclick="prevPage()">⬅ Prev</button>
-      <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
-      <button onclick="nextPage()">Next ➡</button>
-    </div>
-
-    <div class="zoom-buttons">
-      <button onclick="zoomOut()">➖ Zoom Out</button>
-      <button onclick="zoomIn()">➕ Zoom In</button>
-    </div>
-  </div>
-
-<script>
-
-const url = "<?= htmlspecialchars($book['PDFURL'], ENT_QUOTES, 'UTF-8') ?>";
-let pdfDoc = null,
-    pageNum = parseInt(localStorage.getItem(url + '-last-page')) || 1,
-    zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
-    leftCanvas = document.getElementById("left-canvas"),
-    rightCanvas = document.getElementById("right-canvas"),
-    leftCtx = leftCanvas.getContext("2d"),
-    rightCtx = rightCanvas.getContext("2d"),
-    chapterTitles = [];
-
-pdfjsLib.getDocument(url).promise.then(pdf => {
-  pdfDoc = pdf;
-  document.getElementById("page-count").textContent = pdf.numPages;
-  extractTextFromPDF();
-  renderPages();
-});
-
-function renderPages() {
-  if (!pdfDoc) return;
-
-  // Save last page
-  localStorage.setItem(url + '-last-page', pageNum);
-
-  // Render left page
-  pdfDoc.getPage(pageNum).then(page => {
-    let viewport = page.getViewport({ scale: zoom });
-    leftCanvas.height = viewport.height;
-    leftCanvas.width = viewport.width;
-    page.render({ canvasContext: leftCtx, viewport: viewport });
-  });
-
-  // Render right page (next page)
-  if (pageNum + 1 <= pdfDoc.numPages) {
-    pdfDoc.getPage(pageNum + 1).then(page => {
-      let viewport = page.getViewport({ scale: zoom });
-      rightCanvas.height = viewport.height;
-      rightCanvas.width = viewport.width;
-      page.render({ canvasContext: rightCtx, viewport: viewport });
-    });
-  } else {
-    rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
-  }
-
-  document.getElementById("page-num").textContent = pageNum;
-}
-
-function prevPage() {
-  if (pageNum > 1) {
-    pageNum -= 2;
-    if (pageNum < 1) pageNum = 1;
-    renderPages();
-  }
-}
-
-function nextPage() {
-  if (pageNum + 1 < pdfDoc.numPages) {
-    pageNum += 2;
-    renderPages();
-  }
-}
-
-function zoomIn() {
-  zoom += 0.2;
-  localStorage.setItem('zoom', zoom);
-  renderPages();
-}
-
-function zoomOut() {
-  zoom = Math.max(0.5, zoom - 0.2);
-  localStorage.setItem('zoom', zoom);
-  renderPages();
-}
-
-function toggleMode() {
-  document.body.classList.toggle("dark-mode");
-}
-
-function extractTextFromPDF() {
-  let promises = [];
-  for (let i = 1; i <= pdfDoc.numPages; i++) {
-    promises.push(pdfDoc.getPage(i).then(page => page.getTextContent()));
-  }
-
-  Promise.all(promises).then(pages => {
-    chapterTitles = [];
-    pages.forEach((pageText, index) => {
-      const pageNum = index + 1;
-      let textContent = pageText.items.map(item => item.str).join(' ');
-      // Detect chapter titles
-      let matches = textContent.match(/Chapter\s+\d+[^.]*/gi);
-      if (matches) {
-        matches.forEach(title => {
-          chapterTitles.push({ title, page: pageNum });
-        });
-      }
-    });
-
-    renderChapters();
-  });
-}
-
-function renderChapters() {
-  const chapterList = document.getElementById("chapters-list");
-  chapterList.innerHTML = "";
-  chapterTitles.forEach(chap => {
-    const li = document.createElement("li");
-    li.textContent = chap.title + " (p." + chap.page + ")";
-    li.onclick = () => {
-      pageNum = chap.page;
-      renderPages();
-    };
-    chapterList.appendChild(li);
-  });
-}
-</script>
-</body>
-</html>
-
-<!-- /////////
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Single Page PDF Viewer</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f8f8f8;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      margin: 20px 0;
-    }
-    #pdf-viewer {
+    #pdf-pages {
       display: flex;
       flex-direction: column;
+      gap: 20px;
       align-items: center;
-      overflow-y: auto;
-      max-height: 90vh;
     }
+
     canvas {
-      margin: 10px 0;
-      max-width: 90%;
-      height: auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      max-width: 100%;
+      height: auto;
     }
-    .nav-buttons, .zoom-buttons {
-      margin: 10px;
+
+    .dark-mode canvas {
+      background-color: #1e1e1e;
     }
-    button {
-      padding: 8px 16px;
-      margin: 4px;
-      border: none;
-      background: #007bff;
-      color: white;
+
+    #chapterNav {
+      max-height: 300px;
+      overflow-y: auto;
+      background: #fff;
+      padding: 10px;
+      margin: 1rem auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .dark-mode #chapterNav {
+      background-color: #1e1e1e;
+    }
+
+    #chapters-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #chapters-list li {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ccc;
       cursor: pointer;
-      border-radius: 4px;
+      transition: background 0.2s;
     }
-    button:hover {
-      background: #0056b3;
+
+    #chapters-list li:hover {
+      background-color: #e2e2e2;
+    }
+
+    .dark-mode #chapters-list li:hover {
+      background-color: #333;
     }
   </style>
 </head>
 <body>
-  <h1>PDF Viewer (Single Page with Flip or Scroll)</h1>
-  <div id="pdf-viewer">
-    <canvas id="single-canvas"></canvas>
-  </div>
+    <?php require_once __DIR__ . "/../../includes/nav.php"; ?>   
 
-  <div class="nav-buttons">
-    <button onclick="prevPage()">⬅ Prev</button>
-    <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
-    <button onclick="nextPage()">Next ➡</button>
-  </div>
+  <div class="container">
+    <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
 
-  <div class="zoom-buttons">
-    <button onclick="zoomOut()">➖ Zoom Out</button>
-    <button onclick="zoomIn()">➕ Zoom In</button>
-    <button onclick="toggleScroll()">📜 Toggle Scroll</button>
+    <div id="pdf-pages"></div>
   </div>
 
   <script>
-    const url = "https://example.com/your-pdf-file.pdf"; // CHANGE TO YOUR PDF URL
-    let pdfDoc = null;
-    let pageNum = 1;
-    let zoom = 1.2;
-    let isScrollMode = false;
+    const url = "<?= htmlspecialchars($book['PDFURL'], ENT_QUOTES, 'UTF-8') ?>";
+    let pdfDoc = null,
+        zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
+        pageRendered = 0,
+        chapterTitles = [];
 
-    const canvas = document.getElementById("single-canvas");
-    const ctx = canvas.getContext("2d");
+    const pdfPagesContainer = document.getElementById("pdf-pages");
 
-    function renderPages() {
-      document.getElementById("page-num").textContent = pageNum;
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      pdfDoc = pdf;
+      renderAllPages();
+      extractTextFromPDF();
+    });
 
-      if (isScrollMode) {
-        document.getElementById("pdf-viewer").innerHTML = ""; // Clear viewer
-        for (let i = 1; i <= pdfDoc.numPages; i++) {
-          pdfDoc.getPage(i).then(page => {
-            const viewport = page.getViewport({ scale: zoom });
-            const pageCanvas = document.createElement("canvas");
-            pageCanvas.width = viewport.width;
-            pageCanvas.height = viewport.height;
-            const pageCtx = pageCanvas.getContext("2d");
-            page.render({ canvasContext: pageCtx, viewport: viewport });
-            document.getElementById("pdf-viewer").appendChild(pageCanvas);
-          });
-        }
-      } else {
-        document.getElementById("pdf-viewer").innerHTML = ""; // Clear and re-add single canvas
-        document.getElementById("pdf-viewer").appendChild(canvas);
+    function renderAllPages() {
+      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
         pdfDoc.getPage(pageNum).then(page => {
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
           const viewport = page.getViewport({ scale: zoom });
-          canvas.height = viewport.height;
+
           canvas.width = viewport.width;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          page.render({ canvasContext: ctx, viewport: viewport });
+          canvas.height = viewport.height;
+          page.render({ canvasContext: context, viewport: viewport });
+
+          pdfPagesContainer.appendChild(canvas);
         });
       }
     }
 
-    function prevPage() {
-      if (pageNum <= 1 || isScrollMode) return;
-      pageNum--;
-      renderPages();
-    }
-
-    function nextPage() {
-      if (pageNum >= pdfDoc.numPages || isScrollMode) return;
-      pageNum++;
-      renderPages();
-    }
-
     function zoomIn() {
       zoom += 0.2;
-      renderPages();
+      localStorage.setItem('zoom', zoom);
+      refreshPages();
     }
 
     function zoomOut() {
-      zoom = Math.max(0.4, zoom - 0.2);
-      renderPages();
+      zoom = Math.max(0.5, zoom - 0.2);
+      localStorage.setItem('zoom', zoom);
+      refreshPages();
     }
 
-    function toggleScroll() {
-      isScrollMode = !isScrollMode;
-      pageNum = 1;
-      renderPages();
+    function refreshPages() {
+      pdfPagesContainer.innerHTML = "";
+      renderAllPages();
     }
 
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-      pdfDoc = pdf;
-      document.getElementById("page-count").textContent = pdfDoc.numPages;
-      renderPages();
-    }).catch(err => {
-      alert("Failed to load PDF: " + err.message);
-    });
+    function toggleMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    function extractTextFromPDF() {
+      let promises = [];
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        promises.push(pdfDoc.getPage(i).then(page => page.getTextContent()));
+      }
+
+      Promise.all(promises).then(pages => {
+        chapterTitles = [];
+        pages.forEach((pageText, index) => {
+          const pageNum = index + 1;
+          let textContent = pageText.items.map(item => item.str).join(' ');
+          let matches = textContent.match(/Chapter\s+\d+[^.]*/gi);
+          if (matches) {
+            matches.forEach(title => {
+              chapterTitles.push({ title, page: pageNum });
+            });
+          }
+        });
+        renderChapters();
+      });
+    }
+
+    function renderChapters() {
+      const chapterList = document.getElementById("chapters-list");
+      chapterList.innerHTML = "";
+      chapterTitles.forEach(chap => {
+        const li = document.createElement("li");
+        li.textContent = chap.title + " (p." + chap.page + ")";
+        li.onclick = () => scrollToPage(chap.page);
+        chapterList.appendChild(li);
+      });
+    }
+
+    function scrollToPage(pageNumber) {
+      const canvasList = document.querySelectorAll("#pdf-pages canvas");
+      if (canvasList[pageNumber - 1]) {
+        canvasList[pageNumber - 1].scrollIntoView({ behavior: "smooth" });
+      }
+    }
   </script>
 </body>
-</html> -->
+</html>

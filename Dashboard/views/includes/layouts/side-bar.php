@@ -7,6 +7,7 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
         <div class=" mb-auto">
             <?php if (
                 strtolower($subscriptionPlan) === 'pro' ||
+                $subscriptionPlan === 'Pro' ||
                 strtolower($subscriptionPlan) === 'premium' ||
                 strtolower($subscriptionPlan) === 'standard' ||
                 strtolower($subscriptionPlan) === 'deluxe'
@@ -60,7 +61,7 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                 <a href="/dashboards/billing" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/billing') === 0) ? 'active' : ''; ?>">
                     <i class="fas fa-file-invoice-dollar me-2"></i> Account Billing
                 </a>
-                <a href="/dashboards/subscriptions" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/subscriptions') === 0) ? 'active' : ''; ?>">
+                <a href="/membership" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/membership') === 0) ? 'active' : ''; ?>">
                     <i class="fas fa-credit-card me-2"></i> Subscription Plans
                 </a>
                 <a href="/dashboards/profile" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/profile') === 0) ? 'active' : ''; ?>">

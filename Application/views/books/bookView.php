@@ -1,5 +1,7 @@
 <?php
 $contentId = strtolower($book['USERID']);
+$Id = strtolower($book['ID']);
+
 $bookId = strtolower($book['CONTENTID']);
 $cover = html_entity_decode($book['COVER']);
 $title = html_entity_decode($book['TITLE']);
@@ -17,7 +19,74 @@ $ebook = $book['PDFURL'] ?? '';
 $bookId = $_GET['q'] ?? null;
 
 $audiobookId = $book['a_id'] ?? null;
+
+require __DIR__ . "/../../models/UserModel.php";
+require __DIR__ . "/../../Config/connection.php";
+
+
+$bookModel = new UserModel($conn);
+
+// Use logged-in user's email (assumes session is set)
+$email = $_SESSION['ADMIN_EMAIL'] ?? '';
+
+$userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
+
+// Check if the user purchased this book
+$userOwnsThisBook = false;
+
+foreach ($userBooks as $purchasedBook) {
+    if ($purchasedBook['ID'] == $Id) {
+        $userOwnsThisBook = true;
+        break;
+    }
+}
+
+//this is for the share button
+$link = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
+
+<div class="modal fade" id="shareCard" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header border-0 position-relative">
+                <h5 class="modal-title w-100 text-center">Share This</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" value="<?= $link ?>" readonly>
+                    <button class="btn btn-outline-secondary" type="button" id="copyLink">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="https://wa.me/?text=Check%20out%20this%20book%20published%20by%20<?= urlencode($publisher) ?>%20at%20sabooksonline%20<?= urlencode($link) ?>"
+                        class="text-success" target="_blank">
+                        <i class="fab fa-whatsapp fa-2x"></i>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($link) ?>"
+                        class="text-primary" target="_blank">
+                        <i class="fab fa-facebook fa-2x"></i>
+                    </a>
+
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url=<?= urlencode($link) ?>&title=Book%20published%20by%20<?= urlencode($publisher) ?>&summary=Check%20out%20this%20book%20at%20sabooksonline"
+                        class="text-primary" target="_blank">
+                        <i class="fab fa-linkedin fa-2x"></i>
+                    </a>
+
+                    <a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20book%20published%20by%20<?= urlencode($publisher) ?>%20at%20sabooksonline&url=<?= urlencode($link) ?>"
+                        class="text-info" target="_blank">
+                        <i class="fab fa-twitter fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container pt-4 pb-5">
     <div class="row">
@@ -55,7 +124,7 @@ $audiobookId = $book['a_id'] ?? null;
                 <div class="">
                     <span class="category-link"><b>ISBN NUMBER:</b> <?= $isbn ?></span>
                     <a href="/creators/creator/<?= $contentId ?>" class="category-link"><b>About</b> <?= $publisher ?></a>
-                    <!-- <a href="<?= $website ?>" class="category-link">Publish Website</a> -->
+                    <button class="category-link" data-bs-toggle="modal" data-bs-target="#shareCard"><i class="fas fa-share"></i> Share</button>
                 </div>
             </div>
 
@@ -73,19 +142,51 @@ $audiobookId = $book['a_id'] ?? null;
 
             <!-- Action Buttons & Price -->
             <div class="row gy-1">
-                <?php if (!empty($ebook)): ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-green me-2">
-                            <i class="fas fa-book-open"></i> READ E-BOOK NOW
-                        </a>
+                <!-- READ EBOOK BUTTON -->
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5><?= htmlspecialchars($title) ?></h5>
+
+                        <?php if ((int)$retailPrice === 0): ?>
+                            <!-- FREE BOOK -->
+                            <?php if (!empty($ebook)): ?>
+                                <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
+                                    <i class="fas fa-book-open"></i> READ E-BOOK NOW (Free)
+                                </a>
+                            <?php else: ?>
+                                <span class="btn btn-secondary disabled">
+                                    <i class="fas fa-clock"></i> Content not yet available.
+                                </span>
+                            <?php endif; ?>
+                            
+                        <?php elseif ($userOwnsThisBook): ?>
+                            <!-- PAID BOOK: USER OWNS IT -->
+                            <?php if (!empty($ebook)): ?>
+                                <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
+                                    <i class="fas fa-book-open"></i> READ E-BOOK NOW
+                                </a>
+                            <?php else: ?>
+                                <span class="btn btn-secondary disabled">
+                                    <i class="fas fa-clock"></i> You’ve already purchased this book. Content is not yet available.
+                                </span>
+                            <?php endif; ?>
+
+                        <?php else: ?>
+                            <!-- PAID BOOK: USER DOES NOT OWN IT -->
+                            <?php if (!empty($ebook)): ?>
+                                <span class="btn btn-warning disabled">
+                                    <i class="fas fa-lock"></i> E-BOOK LOCKED – PLEASE PURCHASE
+                                </span>
+                            <?php else: ?>
+                                <span class="btn btn-secondary disabled">
+                                    <i class="fas fa-clock"></i> PRE-PURCHASE — Content NOT AVAILABLE YET
+                                </span>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
-                <?php else: ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <span class="btn btn-yellow me-2 disabled">
-                            <i class="fas fa-book-open"></i> E-BOOK NOT AVAILABLE
-                        </span>
-                    </div>
-                <?php endif; ?>
+
+
+
 
                 <!-- LISTEN TO AUDIOBOOK -->
                 <?php if ($audiobookId): ?>
@@ -107,16 +208,27 @@ $audiobookId = $book['a_id'] ?? null;
                     </div>
                 <?php endif; ?>
 
-                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <form method="POST" action="/checkout">
-                        <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                <?php if ((float)$retailPrice >= 10): ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <form method="POST" action="/checkout">
+                            <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                            <button type="submit" class="btn btn-blue me-2">BUY Ebook</button>
+                        </form>
+                        <span class="fw-bold align-content-end">
+                            <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
 
-                        <button type="submit" class="btn btn-blue me-2">BUY COPY</button>
-                    </form>
-                    <span class="fw-bold align-content-end">
-                        <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= $retailPrice ?>.00
-                    </span>
+                <?php if ($website): ?>
+                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                    <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
+                        Buy Hard Copy – (external link)
+                    </a>
                 </div>
+            <?php endif; ?>
+
+
                 <span class="small text-muted mt-3 d-block">
                     <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
                         Responsibility of Third-Party Sellers.</small>
@@ -131,4 +243,5 @@ $audiobookId = $book['a_id'] ?? null;
             </div>
         </div>
     </div>
+</div>
 </div>

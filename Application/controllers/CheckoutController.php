@@ -55,14 +55,16 @@ class CheckoutController {
     if ($paymentOption === "later") {
         // Save to DB or update user record as Pay Later
         $this->userModel->updateUserPlanRoyalties($userId, $planDetails['name'], $planDetails['billing']);
+        $_SESSION['ADMIN_SUBSCRIPTION'] = $planDetails['name'];
+
         header('Location: /dashboards');
     } else {
         // Pay now → redirect to PayFast with correct amount
         $this->generatePaymentFormPlan(
-            $planDetails['name'],
+            $planType,
             $planDetails['amount'],
             $planDetails['billing'],
-            $paymentOption,
+            $planDetails['name'],
             $user
         );
     }
@@ -91,9 +93,9 @@ class CheckoutController {
     $data = [
         'merchant_id'     => '18172469',
         'merchant_key'    => 'gwkk16pbxdd8m',
-        'return_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/return',
-        'cancel_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
-        'notify_url'      => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
+        'return_url'      => 'https://www.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://www.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://www.sabooksonline.co.za/payment/notify',
         'name_first'      => $userName,
         'email_address'   => $userEmail,
         'm_payment_id'    => uniqid(),
@@ -107,16 +109,23 @@ class CheckoutController {
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-    $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
+
+        $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
     foreach ($data as $name => $value) {
         $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
-    $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
-    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
+    $htmlForm .= '</form>';
+
+    $htmlForm .= '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("payfastForm").submit();
+        });
+    </script>';
 
     echo $htmlForm;
+
 }
-    public function generatePaymentFormPlan($plan, $planPrice, $subscriptionType, $paymentOption, $user) {
+    public function generatePaymentFormPlan($plan, $planPrice, $subscriptionType, $planName, $user) {
     if (!$plan || !$user) {
         die("Invalid plan or user data.");
     }
@@ -130,42 +139,44 @@ class CheckoutController {
 
     // Default PayFast parameters
     $formattedAmount = number_format($planPrice, 2, '.', '');
+    $amount = number_format( sprintf( '%.2f', $planPrice ), 2, '.', '' );
 
-    $data = [
-        'merchant_id'       => '18172469',
-        'merchant_key'      => 'gwkk16pbxdd8m',
-        'return_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/return',
-        'cancel_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/cancel',
-        'notify_url'        => 'https://11-july-2023.sabooksonline.co.za/payment/notify',
-        'name_first'        => $userName,
-        'email_address'     => $userEmail,
-        'm_payment_id'      => uniqid(),
-        'item_name'         => $plan,
-        'custom_str1'       => $paymentOption,
-        // 'custom_str2'       => $subscriptionType,
-        'subscription_type' => 1,
-        'billing_date'      => date('Y-m-d'), // Start immediately
-        'amount'            => $formattedAmount, // Subscription amount
-        // debug i must write amount not recuriing amount note
-        'recurring_amount'  => $formattedAmount, // Recurring amount
-        'cycles'            => 0, // Unlimited billing
-        'frequency'         => ($subscriptionType === 'Yearly') ? 7 : 3, // 7 = Yearly, 3 = Monthly
-    ];
+    $data = array(
+    // Merchant details
+    'merchant_id' => '18172469',//18172469   test: 10030247
+    'merchant_key' => 'gwkk16pbxdd8m',//gwkk16pbxdd8m    test: g84pzvwrmr8rj
+    'return_url' => 'https://www.sabooksonline.co.za/payment/return',
+    'cancel_url' => 'https://www.sabooksonline.co.za/payment/cancel',
+    'notify_url' => 'https://www.sabooksonline.co.za/payment/notify',
+    // Buyer details
+    'name_first' => $userName,
+    'name_last'  => $subscriptionType,
+    'email_address'=> $userEmail,
+    // Transaction details
+    'm_payment_id' => $user['ADMIN_USERKEY'], // Unique payment ID to pass through to notify_url
+    'amount' => number_format( sprintf( '%.2f', $planPrice ), 2, '.', '' ),
+    'item_name' => $plan,
+    'custom_str2'     => $planName,
+    'subscription_type' => '2',   
+);
 
-
-    ksort($data);
-    // Generate signature
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-    $htmlForm = '<form action="https://www.payfast.co.za/eng/process" method="post">';
+        $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
     foreach ($data as $name => $value) {
         $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
-    $htmlForm .= '<input class="ud-btn btn-thm mt-2" type="submit" value="Pay With PayFast">
-    <img src="https://my.sabooksonline.co.za/img/Payfast By Network_dark.svg" width="200px"></form>';
+    $htmlForm .= '</form>';
+
+    $htmlForm .= '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("payfastForm").submit();
+        });
+    </script>';
 
     echo $htmlForm;
+
 }
 
 
@@ -186,45 +197,6 @@ class CheckoutController {
     return md5( $getString );
 }
 
-
-    public function paymentNotify() {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $postData = $_POST;
-
-        // 1. Signature check
-        $submittedSignature = $postData['signature'] ?? '';
-        unset($postData['signature']);
-
-        $expectedSignature = $this->generateSignature($postData, 'SABooksOnline2021');
-
-        if ($expectedSignature !== $submittedSignature) {
-            die("Invalid signature");
-        }
-
-        // 2. Check status
-        if ($postData['payment_status'] === 'COMPLETE') {
-            $paymentId = $postData['m_payment_id'];
-            $amount = $postData['amount_gross'];
-            $bookId = $postData['custom_str1'];
-            $userEmail = $postData['email_address'];
-
-            $user = $this->userModel->getUserByEmail($userEmail);
-            if (!$user) {
-                die("User not found");
-            }
-            $userId = $user['ADMIN_ID'];
-
-            // 3. DB insert
-            $stmt = $this->conn->prepare("INSERT INTO purchases (user_id, book_id, payment_id, amount, payment_status) VALUES (?, ?, ?, ?, 'COMPLETE')");
-            $stmt->bind_param("isss", $userId, $bookId, $paymentId, $amount);
-            $stmt->execute();
-
-            include __DIR__ . '/../views/payment/return.php';
-        } else {
-            include __DIR__ . '/../views/payment/cancel.php';
-        }
-    }
-}
 
 
 }

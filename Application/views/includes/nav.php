@@ -1,21 +1,36 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . "/../../Config/connection.php";
+require_once __DIR__ . "/../../models/PageVisitsModel.php";
+require_once __DIR__ . "/../../controllers/PageVisitsController.php";
+
+$tracker = new PageVisitsController($conn);
+$tracker->trackVisits();
 
 $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
 session_start();
-if (isset($_SESSION['ADMIN_USERKEY'])) {
+$userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
+
+if (isset($userKey) && !empty($userKey)) {
     $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
-    $profile = $adminProfileImage === "https://www.vecteezy.com/free-vector/default-profile-picture"
-        ? $adminProfileImage
-        : (strpos($adminProfileImage, 'googleusercontent.com') !== false
-            ? $adminProfileImage
-            : "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage);
+    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+        $profile = $adminProfileImage;
+    } else {
+        $profile = "/public/images/user-3296.png";
+    }
 } else {
     $profile = null;
 }
 ?>
+
+
+
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>
 
 <nav class="navbar navbar-expand-xl navbar-light bg-light">
@@ -79,7 +94,7 @@ if (isset($_SESSION['ADMIN_USERKEY'])) {
                     ?>
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
-                                <img src="<?= htmlspecialchars($profile) ?>" alt="Admin Profile"
+                                <img src="<?= $profile ?>" alt="Admin Profile"
                                     class="rounded-circle"
                                     style="width: 100%; height: 100%; object-fit: cover;
                                             border: 2px solid #dee2e6;

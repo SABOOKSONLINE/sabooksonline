@@ -12,6 +12,43 @@ class UserModel
         $this->conn = $connection;
     }
 
+    public function getPurchasedBooksByUserEmail($email) {
+    $sql = "
+        SELECT 
+            b.id AS ID,
+            b.contentid AS CONTENTID,
+            b.cover AS COVER,
+            b.title AS TITLE,
+            b.publisher AS PUBLISHER,
+            b.description AS DESCRIPTION,
+            b.retailprice AS RETAILPRICE,
+            b.pdfurl AS PDFURL,
+            bp.payment_date,
+            bp.amount
+        FROM book_purchases bp
+        JOIN posts b ON bp.book_id = b.id
+        WHERE bp.user_email = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $books = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $books[] = $row;
+        }
+
+        $stmt->close();
+        return $books;
+    } else {
+        error_log("❌ Failed to fetch purchased books: " . $stmt->error);
+        return [];
+    }
+}
+
     /**
      * Get user by ID
      * @param string $userId
@@ -53,6 +90,28 @@ class UserModel
             return null;
         }
     }
+
+    public function getBookIdsByUserEmail($email) {
+    $sql = "SELECT book_id FROM book_purchases WHERE user_email = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $bookIds = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $bookIds[] = $row['book_id'];
+        }
+
+        $stmt->close();
+        return $bookIds;
+    } else {
+        error_log("Failed to fetch book IDs: " . $stmt->error);
+        return [];
+    }
+}
+
 
     /**
      * Update user data by ID

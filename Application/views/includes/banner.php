@@ -3,7 +3,7 @@
         <?php foreach ($banners as $index => $banner): ?>
             <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
                 <a href="<?= $banner['UPLOADED'] ?>">
-                    <img src="https://admin-dashboard.sabooksonline.co.za/banners/<?= $banner['IMAGE'] ?>"
+                    <img src="/img/<?= str_replace('../../../', '', $banner['IMAGE']) ?>"
                         class="d-block w-100"
                         alt="<?= $banner['SLIDE'] ?>"
                         style="border-radius: 25px">

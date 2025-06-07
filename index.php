@@ -323,7 +323,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // =================== File Download & Views ===================
     $r->addRoute('GET', '/view/pdfs/{filename}', function ($filename) {
-        $safeFilename = basename($filename);
+        $safeFilename = basename($filename); // prevent directory traversal
         $path = __DIR__ . '/cms-data/book-pdfs/' . $safeFilename;
 
         if (!file_exists($path)) {
