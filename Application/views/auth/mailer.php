@@ -2,7 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../../../vendor/autoload.php';
 
 function sendVerificationEmail($to, $link)
 {
