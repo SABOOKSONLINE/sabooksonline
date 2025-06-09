@@ -36,6 +36,5 @@ function setUserSession(mysqli $conn, string $email): bool
     $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
     $_SESSION['ADMIN_EMAIL'] = $userData['ADMIN_EMAIL'];
 
-
     return true;
 }
