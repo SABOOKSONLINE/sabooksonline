@@ -42,7 +42,7 @@ foreach ($userBooks as $purchasedBook) {
 }
 
 //this is for the share button
-$link = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 
 <div class="modal fade" id="shareCard" tabindex="-1">
@@ -67,7 +67,7 @@ $link = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     </a>
 
                     <!-- Facebook -->
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($link) ?>"
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.sabooksonline.co.za/library/book/<?= $_GET['q'] ?>"
                         class="text-primary" target="_blank">
                         <i class="fab fa-facebook fa-2x"></i>
                     </a>
@@ -158,7 +158,7 @@ $link = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                     <i class="fas fa-clock"></i> Content not yet available.
                                 </span>
                             <?php endif; ?>
-                            
+
                         <?php elseif ($userOwnsThisBook): ?>
                             <!-- PAID BOOK: USER OWNS IT -->
                             <?php if (!empty($ebook)): ?>
@@ -188,60 +188,60 @@ $link = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 
 
-                <!-- LISTEN TO AUDIOBOOK -->
-                <?php if ($audiobookId): ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
-                            <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
-                        </a>
-                        <span class="fw-bold align-content-end text-end">
-                            <small class="text-muted fw-normal">
-                                FREE
-                            </small>
-                        </span>
-                    </div>
-                <?php else: ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <span class="btn btn-yellow me-2 disabled">
-                            <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
-                        </span>
-                    </div>
-                <?php endif; ?>
+                    <!-- LISTEN TO AUDIOBOOK -->
+                    <?php if ($audiobookId): ?>
+                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                            <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
+                                <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
+                            </a>
+                            <span class="fw-bold align-content-end text-end">
+                                <small class="text-muted fw-normal">
+                                    FREE
+                                </small>
+                            </span>
+                        </div>
+                    <?php else: ?>
+                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                            <span class="btn btn-yellow me-2 disabled">
+                                <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
+                            </span>
+                        </div>
+                    <?php endif; ?>
 
-                <?php if ((float)$retailPrice >= 10): ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <form method="POST" action="/checkout">
-                            <input type="hidden" name="bookId" value="<?= $bookId ?>">
-                            <button type="submit" class="btn btn-blue me-2">BUY Ebook</button>
-                        </form>
-                        <span class="fw-bold align-content-end">
-                            <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
-                        </span>
-                    </div>
-                <?php endif; ?>
+                    <?php if ((float)$retailPrice >= 10): ?>
+                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                            <form method="POST" action="/checkout">
+                                <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                                <button type="submit" class="btn btn-blue me-2">BUY Ebook</button>
+                            </form>
+                            <span class="fw-bold align-content-end">
+                                <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
 
-                <?php if ($website): ?>
-                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
-                        Buy Hard Copy – (external link)
-                    </a>
+                    <?php if ($website): ?>
+                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                            <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
+                                Buy Hard Copy – (external link)
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+
+                    <span class="small text-muted mt-3 d-block">
+                        <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
+                            Responsibility of Third-Party Sellers.</small>
+                        <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
+                            books. However, the responsibility for physical book sales—including monetary collection,
+                            warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
+                            publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
+                            shipment, or condition of physical books purchased through or as a result of activity on our
+                            platform. Customers are encouraged to engage directly with the relevant seller for any
+                            enquiries or support related to their purchase.</small>
+                    </span>
                 </div>
-            <?php endif; ?>
-
-
-                <span class="small text-muted mt-3 d-block">
-                    <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
-                        Responsibility of Third-Party Sellers.</small>
-                    <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
-                        books. However, the responsibility for physical book sales—including monetary collection,
-                        warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
-                        publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
-                        shipment, or condition of physical books purchased through or as a result of activity on our
-                        platform. Customers are encouraged to engage directly with the relevant seller for any
-                        enquiries or support related to their purchase.</small>
-                </span>
             </div>
         </div>
     </div>
-</div>
 </div>
