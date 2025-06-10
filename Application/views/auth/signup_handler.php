@@ -104,12 +104,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     mysqli_stmt_close($stmt);
-
-
     mysqli_close($conn);
-    // $_SESSION['alert'] = ['type' => 'success', 'message' => 'Registration successful. Welcome!'];
-    // header("Location: /dashboards");
-    $verifyLink = "https://sabooksonline.co.za/verify/{$token}";
+
+
+    $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
     sendVerificationEmail($email, $verifyLink);
     header("Location: /registration_success");
 
