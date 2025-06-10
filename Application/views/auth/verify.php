@@ -27,7 +27,7 @@ if (isset($_GET['token'])) {
         mysqli_stmt_execute($updateStmt);
 
         $_SESSION['alert'] = ['type' => 'success', 'message' => 'Email verified successfully. You may now log in.'];
-        header("Location: /dashboards");
+        header("Location: /dashboards/");
         exit;
     } else {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid or expired verification link.'];
