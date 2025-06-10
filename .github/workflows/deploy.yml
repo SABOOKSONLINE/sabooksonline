@@ -1,12 +1,35 @@
-name: Composer Install
+name: Install Composer Dependencies
 
-on: [push]
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-    install:
+    install-composer:
         runs-on: ubuntu-latest
+
         steps:
-            - uses: actions/checkout@v2
-            - uses: php-actions/composer@v6
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup PHP 8.4.7
+              uses: shivammathur/setup-php@v2
               with:
-                  args: install
+                  php-version: "8.4"
+                  coverage: none
+
+            - name: Cache Composer dependencies
+              id: composer-cache
+              uses: actions/cache@v4
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-php-
+
+            - name: Install Composer dependencies
+              run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
