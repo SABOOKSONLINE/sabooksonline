@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '46dc5a7ff97236febdb87f076348101ba374e111',
+        'reference' => '83f8d46df2ec1662da570225c8312ea433075a40',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '46dc5a7ff97236febdb87f076348101ba374e111',
+            'reference' => '83f8d46df2ec1662da570225c8312ea433075a40',
             'dev_requirement' => false,
         ),
         'cloudinary/cloudinary_php' => array(
@@ -170,6 +170,15 @@
             'install_path' => __DIR__ . '/../paragonie/random_compat',
             'aliases' => array(),
             'reference' => '996434e5492cb4c3edcb9168db6fbb1359ef965a',
+            'dev_requirement' => false,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.10.0',
+            'version' => '6.10.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'reference' => 'bf74d75a1fde6beaa34a0ddae2ec5fce0f72a144',
             'dev_requirement' => false,
         ),
         'phpseclib/phpseclib' => array(
