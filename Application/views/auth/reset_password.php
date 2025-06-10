@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../includes/header.php";
-
 require_once __DIR__ . "/../../Config/connection.php";
 ?>
 
@@ -20,10 +19,17 @@ require_once __DIR__ . "/../../Config/connection.php";
                             Password Reset!
                         </h5>
 
-                        <div class="alert alert-danger d-none" role="alert" id="form-alert">
-                        </div>
+                        <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
+                        <?php if (!empty($_SESSION['alert'])): ?>
+                            <div class="alert alert-<?= $_SESSION['alert']['type'] ?> alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($_SESSION['alert']['message']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php unset($_SESSION['alert']); ?>
+                        <?php endif; ?>
 
-                        <form method="POST" action="">
+                        <form method="POST" action="/auth/reset-password-handler">
+                            <input type="hidden" name="token" value="<?= isset($_GET['token']) ? $_GET['token'] : '' ?>" required>
                             <div class="mb-3">
                                 <label for="password" class="form-label">New Password</label>
                                 <input type="password" name="new_password" class="form-control" required>

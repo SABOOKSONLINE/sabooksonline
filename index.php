@@ -307,7 +307,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/forgot-password', function () {
         require __DIR__ . "/Application/views/auth/forgot_password.php";
     });
-    $r->addRoute('GET', '/reset-password', function () {
+    $r->addRoute('GET', '/reset-password/{token}', function ($token) {
+        $_GET['token'] = $token;
         require __DIR__ . "/Application/views/auth/reset_password.php";
     });
     $r->addRoute('POST', '/auth/signup-handler', function () {
@@ -316,11 +317,17 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/auth/login-handler', function () {
         require __DIR__ . "/Application/views/auth/login_handler.php";
     });
+    $r->addRoute('POST', '/auth/reset-password-handler', function () {
+        require __DIR__ . "/Application/views/auth/reset_password_handler.php";
+    });
+    $r->addRoute('POST', '/auth/forgot-password-handler', function () {
+        require __DIR__ . "/Application/views/auth/forgot_password_handler.php";
+    });
     $r->addRoute('GET', '/verify/{token}', function ($token) {
         $_GET['token'] = $token;
         require __DIR__ . "/Application/views/auth/verify.php";
     });
-    $r->addRoute('GET', '/registration_success', function () {  
+    $r->addRoute('GET', '/registration_success', function () {
         require __DIR__ . "/Application/views/auth/registration_success.php";
     });
     // =================== Google OAuth Callback ===================

@@ -20,10 +20,16 @@ require_once __DIR__ . "/../../Config/connection.php";
                             Forgot Password!
                         </h5>
 
-                        <div class="alert alert-danger d-none" role="alert" id="form-alert">
-                        </div>
+                        <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
+                        <?php if (!empty($_SESSION['alert'])): ?>
+                            <div class="alert alert-<?= $_SESSION['alert']['type'] ?> alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($_SESSION['alert']['message']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php unset($_SESSION['alert']); ?>
+                        <?php endif; ?>
 
-                        <form method="POST" action="">
+                        <form method="POST" action="/auth/forgot-password-handler">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input
