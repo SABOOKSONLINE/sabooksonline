@@ -1,6 +1,7 @@
 <?php
 $isLocal = in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']);
 
+
 $cookieParams = [
     'lifetime' => 0,
     'path' => '/',
@@ -33,6 +34,7 @@ function setUserSession(mysqli $conn, string $email): bool
     $_SESSION['ADMIN_PROFILE_IMAGE'] = $userData['ADMIN_PROFILE_IMAGE'];
     $_SESSION['ADMIN_USERKEY'] = $userData['ADMIN_USERKEY'];
     $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
+    $_SESSION['ADMIN_EMAIL'] = $userData['ADMIN_EMAIL'];
 
     return true;
 }

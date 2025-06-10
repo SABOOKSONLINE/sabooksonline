@@ -3,7 +3,9 @@
 $cookieDomain = ".sabooksonline.co.za";
 session_set_cookie_params(0, '/', $cookieDomain);
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $userKey = $_SESSION['ADMIN_USERKEY'];
 
 if (isset($userKey)) {
@@ -12,7 +14,7 @@ if (isset($userKey)) {
     if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
         $profile = $adminProfileImage;
     } else {
-        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+        $profile = "/public/images/user-3296.png";
     }
 } else {
     header("Location: /login");
@@ -59,7 +61,7 @@ if (isset($userKey)) {
                     <a class="nav-link active" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboards/bookshelf">Library</a>
+                    <a class="nav-link" href="/library">Library</a>
                 </li>
             </ul>
 
@@ -76,7 +78,7 @@ if (isset($userKey)) {
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             <li><a class="dropdown-item" href="/dashboards/profile">Profile</a></li>
                             <li><a class="dropdown-item" href="/dashboards/account-billing">Account Billing</a></li>
-                            <li><a class="dropdown-item" href="/dashboards/subscription-plans">Subscription Plans</a></li>
+                            <li><a class="dropdown-item" href="/membership">Subscription Plans</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>

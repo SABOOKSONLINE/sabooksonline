@@ -1,7 +1,7 @@
 <?php
-session_start();
+// session_start();
 require_once __DIR__ . "/../../Config/connection.php";
-require_once __DIR__ . "/../util/helpers/session_helper.php";
+require_once __DIR__ . "/mailer.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["reg_name"] ?? '');
@@ -10,6 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $confirm_email = trim($_POST["confirm_mail"] ?? '');
     $password = $_POST["password"] ?? '';
     $confirm_password = $_POST["confirm_password"] ?? '';
+
+    $token = bin2hex(random_bytes(16));
 
     // Validate fields
     if (
@@ -65,12 +67,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $subscription = 'Free';
     $verificationLink = $userKey;
     $profile = "https://www.vecteezy.com/free-vector/default-profile-picture";
-    $status = "active";
+    $status = "Unverified";
 
     $sql = "INSERT INTO users (
         ADMIN_NAME, ADMIN_EMAIL, ADMIN_NUMBER, ADMIN_PASSWORD, 
-        ADMIN_USERKEY, ADMIN_SUBSCRIPTION, ADMIN_VERIFICATION_LINK, ADMIN_PROFILE_IMAGE, ADMIN_USER_STATUS, RESETLINK, USER_STATUS
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ADMIN_USERKEY, ADMIN_SUBSCRIPTION, ADMIN_VERIFICATION_LINK, ADMIN_PROFILE_IMAGE, ADMIN_USER_STATUS, RESETLINK, USER_STATUS, verify_token
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
@@ -81,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     mysqli_stmt_bind_param(
         $stmt,
-        "sssssssssss",
+        "ssssssssssss",
         $name,
         $email,
         $phone,
@@ -92,7 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $profile,
         $status,
         $userKey,
-        $status
+        $status,
+        $token
     );
 
     if (!mysqli_stmt_execute($stmt)) {
@@ -102,18 +105,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     mysqli_stmt_close($stmt);
 
-    // Set session if user data was fetched successfully
-    if (setUserSession($conn, $email)) {
-        mysqli_close($conn);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Registration successful. Welcome!'];
-        header("Location: /dashboards");
-        exit;
-    } else {
-        mysqli_close($conn);
-        $_SESSION['alert'] = ['type' => 'warning', 'message' => 'Registered, but session could not be started. Please log in manually.'];
-        header("Location: /login");
-        exit;
-    }
+
+    mysqli_close($conn);
+    // $_SESSION['alert'] = ['type' => 'success', 'message' => 'Registration successful. Welcome!'];
+    // header("Location: /dashboards");
+    $verifyLink = "https://sabooksonline.co.za/verify/{$token}";
+    sendVerificationEmail($email, $verifyLink);
+    header("Location: /registration_success");
+
+    exit;
 } else {
     header("Location: /signup");
     exit;

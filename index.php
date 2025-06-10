@@ -316,6 +316,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/auth/login-handler', function () {
         require __DIR__ . "/Application/views/auth/login_handler.php";
     });
+    $r->addRoute('GET', '/verify/{token}', function ($token) {
+        $_GET['token'] = $token;
+        require __DIR__ . "/Application/views/auth/verify.php";
+    });
+    $r->addRoute('GET', '/registration_success', function () {  
+        require __DIR__ . "/Application/views/auth/registration_success.php";
+    });
     // =================== Google OAuth Callback ===================
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
@@ -323,7 +330,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // =================== File Download & Views ===================
     $r->addRoute('GET', '/view/pdfs/{filename}', function ($filename) {
-        $safeFilename = basename($filename);
+        $safeFilename = basename($filename); // prevent directory traversal
         $path = __DIR__ . '/cms-data/book-pdfs/' . $safeFilename;
 
         if (!file_exists($path)) {

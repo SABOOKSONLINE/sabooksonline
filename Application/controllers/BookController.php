@@ -6,10 +6,14 @@ error_reporting(E_ALL);
 class BookController
 {
     private $bookModel;
+    // private $userModel;
+
 
     public function __construct($conn)
     {
         $this->bookModel = new BookModel($conn);
+        // $this->userModel = new UserModel($conn);
+
     }
 
     /**
@@ -28,6 +32,8 @@ class BookController
         $contentId = htmlspecialchars(trim($contentId));
 
         $book = $this->bookModel->getBookById($contentId);
+        // $purchased = $this->userModel->getPurchasedBooksByUserEmail($email);
+
 
         if ($book) {
             include __DIR__ . '/../views/books/bookView.php';

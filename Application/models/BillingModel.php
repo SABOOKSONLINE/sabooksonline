@@ -10,4 +10,35 @@ class BillingModel {
     public function getPlanDetails($planType) {
         return $this->plans[$planType];
     }
+
+    public function save(array $data): bool
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO payments (
+                invoice_id, payment_date, amount_paid, token, status
+            ) VALUES (?, ?, ?, ?, ?)
+        ");
+
+        if (!$stmt) {
+            error_log("Prepare failed: " . $this->db->error);
+            return false;
+        }
+
+        $stmt->bind_param(
+            'ssdss',
+            $data['invoice_id'],
+            $data['payment_date'],
+            $data['amount_paid'],
+            $data['token'],
+            $data['status']
+        );
+
+        $success = $stmt->execute();
+        if (!$success) {
+            error_log("Execute failed: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return $success;
+    }
 }

@@ -20,6 +20,8 @@ class AuthController {
 
     if (!mysqli_num_rows($result)) {
         $this->userModel->insertGoogleUser($reg_name, $email, $profileImage, $email);
+         // 🔁 Re-query after insertion
+        $result = $this->userModel->findUserByEmail($email);
     }
 
     $userData = mysqli_fetch_assoc($result);

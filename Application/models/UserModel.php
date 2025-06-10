@@ -19,6 +19,36 @@ class UserModel {
         $this->conn = $conn;
     }
 
+
+    public function getPurchasedBooksByUserEmail($email) {
+        $sql = "
+            SELECT 
+                b.id AS ID,
+                b.cover AS COVER,
+                b.title AS TITLE,
+                b.publisher AS PUBLISHER,
+                b.description AS DESCRIPTION,
+                b.retailprice AS RETAILPRICE,
+                b.pdfurl AS PDF_URL
+            FROM book_purchases bp
+            JOIN posts b ON bp.book_id = b.id
+            WHERE bp.user_email = ?
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $books = [];
+        while ($row = $result->fetch_assoc()) {
+            $books[] = $row;
+        }
+
+        $stmt->close();
+        return $books;
+    }
+    
     public function findUserByEmail($email) {
         // $email = mysqli_real_escape_string($this->conn, $email);
         $sql = "SELECT * FROM users WHERE ADMIN_EMAIL = '$email' LIMIT 1;";
@@ -35,6 +65,7 @@ class UserModel {
         $_SESSION['ADMIN_PROFILE_IMAGE'] = $userData['ADMIN_PROFILE_IMAGE'];
         $_SESSION['ADMIN_USERKEY'] = $userData['ADMIN_USERKEY'];
         $_SESSION['ADMIN_USER_STATUS'] = $userData['ADMIN_USER_STATUS'];
+        $_SESSION['ADMIN_EMAIL'] = $userData['ADMIN_EMAIL'];
     }
 
      public function getApiToken($userData) {
@@ -69,7 +100,15 @@ class UserModel {
 
     $sql = "UPDATE users SET admin_subscription = ?, billing_cycle = ?, subscription_status = 'royalties' WHERE ADMIN_USERKEY = ?";
     $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("ssi", $planName, $billingCycle, $userId);
+    $stmt->bind_param("sss", $planName, $billingCycle, $userId);
+    return $stmt->execute();
+    }
+
+    public function updateUserPlanMonthly($userId, $planName, $billingCycle) {
+
+    $sql = "UPDATE users SET admin_subscription = ?, billing_cycle = ?, subscription_status = ? WHERE ADMIN_USERKEY = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ssss", $planName, $billingCycle,$planName ,$userId);
     return $stmt->execute();
     }
 
