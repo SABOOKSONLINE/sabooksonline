@@ -78,7 +78,7 @@ class CheckoutController {
 
     $bookId = $book['ID'] ?? '';
     $cover = $book['COVER'] ?? '';
-    $title = $book['TITLE'] ?? 'Untitled Book';
+    $title = html_entity_decode($book['TITLE']) ?? 'Untitled Book';
     $publisher = $book['PUBLISHER'] ?? 'Unknown';
     $description = $book['DESCRIPTION'] ?? 'No description.';
     $retailPrice = $book['RETAILPRICE'] ?? 0;

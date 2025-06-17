@@ -15,11 +15,12 @@ $description = html_entity_decode($book['DESCRIPTION'] ?? '');
 $isbn = html_entity_decode($book['ISBN'] ?? '');
 $website = html_entity_decode($book['WEBSITE'] ?? '');
 $retailPrice = html_entity_decode($book['RETAILPRICE'] ?? '');
+$EbookPrice = html_entity_decode($book['EBOOKPRICE'] ?? '');
 $languages = html_entity_decode($book['LANGUAGES'] ?? '');
 $status = html_entity_decode($book['STATUS'] ?? 'Draft');
-$availability = html_entity_decode($book['STOCK'] ?? '');
+$availability = html_entity_decode($book['STOCK'] ?? 'in stock');
 $keywords = html_entity_decode($book['CATEGORY'] ?? '');
-$type = html_entity_decode($book['TYPE'] ?? '');
+$type = html_entity_decode($book['TYPE'] ?? 'book');
 $pdf = html_entity_decode($book['PDFURL'] ?? '');
 
 $datePosted = null;
@@ -37,43 +38,44 @@ if (!empty($book['DATEPOSTED'])) {
 
 <form method="POST"
     action="<?= $bookId ? "/dashboards/listings/update/$bookId" : "/dashboards/listings/insert" ?>"
-    class="bg-white rounded mb-4 overflow-hidden position-relative"
+    class="bg-white rounded shadow-sm p-4 mb-4"
     enctype="multipart/form-data">
+
+    <!-- Hidden Fields -->
     <input type="hidden" name="user_id" value="<?= $userKey ?>">
     <input type="hidden" name="book_id" value="<?= $bookId ?>">
+    <input type="hidden" name="existing_pdf" value="<?= $pdf ?>">
     <input type="hidden" name="existing_cover" value="<?= html_entity_decode($cover) ?>">
+    <input type="hidden" name="book_stock" value="<?= $availability ?>">
+    <input type="hidden" name="book_type" value="<?= $type ?>">
 
-    <div class="card border-0 shadow-sm p-4 mb-3">
-        <h5 class="fw-bold mb-3">Book Information</h5>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Book Title*</label>
-                    <input type="text" class="form-control" name="book_title" value="<?= $title ?>" required>
-                </div>
-            </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Authors*</label>
-                    <input type="text" class="form-control" name="book_authors" value="<?= $authors ?>" required>
-                </div>
-            </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Publisher*</label>
-                    <input type="text" class="form-control bg-white text-muted opacity-75" name="book_publisher" value="<?= $publisher ?>" required>
-                </div>
-            </div>
+    <!-- Section: Basic Book Info -->
+    <h4 class="fw-bold mb-4">Basic Book Information</h4>
+    <div class="row g-3">
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Languages*</label>
-                    <select class="form-select" name="book_languages" required>
-                        <option value="">Select Language</option>
-                        <?php
-                        $languagesList = [
+        <div class="col-md-6">
+            <label class="form-label">Title <span class="text-danger">*</span></label>
+            <input type="text" name="book_title" class="form-control" placeholder="e.g. The Hidden Truth" value="<?= $title ?>" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Author(s) <span class="text-danger">*</span></label>
+            <input type="text" name="book_authors" class="form-control" placeholder="e.g. John Doe, Jane Smith" value="<?= $authors ?>" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Publisher <span class="text-danger">*</span></label>
+            <input type="text" name="book_publisher" class="form-control" placeholder="e.g. Penguin Books" value="<?= $publisher ?>" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Language <span class="text-danger">*</span></label>
+            <select class="form-select" name="book_languages" required>
+                <option value="">Choose language</option>
+                <?php
+                $languagesList = [
                             "Afrikaans",
                             "English",
                             "IsiNdebele",
@@ -86,43 +88,43 @@ if (!empty($book['DATEPOSTED'])) {
                             "Tshivenda",
                             "Xitsonga"
                         ];
-                        foreach ($languagesList as $lang) {
-                            $selected = ($lang == $languages) ? 'selected' : '';
-                            echo "<option value=\"$lang\" $selected>$lang</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
+                foreach ($languagesList as $lang) {
+                    $selected = ($lang == $languages) ? 'selected' : '';
+                    echo "<option value=\"$lang\" $selected>$lang</option>";
+                }
+                ?>
+            </select>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">ISBN Number*</label>
-                    <input type="text" class="form-control" name="book_isbn" value="<?= $isbn ?>" required>
-                </div>
-            </div>
+        <div class="col-md-6">
+            <label class="form-label">ISBN Number <span class="text-danger">*</span></label>
+            <input type="text" name="book_isbn" class="form-control" placeholder="e.g. 978-3-16-148410-0" value="<?= $isbn ?>" required>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Publish Date*</label>
-                    <input type="date" class="form-control" name="book_date_published" value="<?= $datePosted ?>" required>
-                </div>
-            </div>
+        <div class="col-md-6">
+            <label class="form-label">Publish Date <span class="text-danger">*</span></label>
+            <input type="date" name="book_date_published" class="form-control" value="<?= $datePosted ?>" required>
+        </div>
 
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Book Description <small>(Maximum of 600 characters)</small></label>
-                    <textarea class="form-control" rows="6" maxlength="600" name="book_desc" required><?= $description ?></textarea>
-                </div>
-            </div>
+        <div class="col-12">
+            <label class="form-label">Description <small class="text-muted">(Max 600 characters)</small></label>
+            <textarea name="book_desc" class="form-control" rows="4" maxlength="600" required placeholder="Brief summary of the book..."><?= $description ?></textarea>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label for="bookCategory" class="form-label fw-semibold">Book Categories*</label>
-                    <select id="bookCategory" class="form-select" name="book_category[]" required>
-                        <option value="">Select Category</option>
-                        <?php
-                        $categories = [
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Section: Category & Type -->
+    <h4 class="fw-bold mb-3">Category & Format</h4>
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Main Category <span class="text-danger">*</span></label>
+            <select name="book_category[]" class="form-select" required>
+                <option value="">Choose a category</option>
+                <?php
+                $categories = [
                             "Fiction",
                             "Poetry",
                             "Adult Fiction",
@@ -161,110 +163,92 @@ if (!empty($book['DATEPOSTED'])) {
                             "Environment"
                         ];
 
-                        foreach ($categories as $cat) {
-                            echo "<option value=\"$cat\">$cat</option>\n";
-                        }
-                        if ($category) {
-                            echo "<option value=\"$category\" selected>$category</option>\n";
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Keywords</label>
-                    <input type="text" class="form-control" name="book_keywords" value="<?= $keywords ?? $category ?>">
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Type*</label>
-                    <select class="form-select" name="book_type" required>
-                        <option value="">Select Type</option>
-                        <option value="publisher" <?= $type == 'publisher' ? 'selected' : '' ?>>Publisher</option>
-                        <option value="author" <?= $type == 'author' ? 'selected' : '' ?>>Author</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Website</label>
-                    <input type="url" class="form-control" name="book_website" value="<?= $website ?>">
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Retail Price</label>
-                    <input type="number" class="form-control" name="book_price" value="<?= $retailPrice ?>">
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Status*</label>
-                    <select class="form-select" name="book_status" required>
-                        <option value="">Select Status</option>
-                        <option value="active" <?= $status == 'active' ? 'selected' : '' ?>>Active</option>
-                        <option value="inactive" <?= $status !== 'active' ? 'selected' : '' ?>>Inactive</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Availability*</label>
-                    <select class="form-select" name="book_stock" required>
-                        <option value="">Select Availability</option>
-                        <option value="In-Stock" <?= $availability == 'In-Stock' ? 'selected' : '' ?>>In-Stock</option>
-                        <option value="Out of Stock" <?= $availability == 'Out of Stock' ? 'selected' : '' ?>>Out of Stock</option>
-                    </select>
-                </div>
-            </div>
-
-            <hr class="my-4">
-            <h5 class="fw-bold mb-3">Book Cover & Ebook Files</h5>
-            <div class="col-sm-12">
-                <div class="mb-3">
-                    <label for="bookCover" class="form-label fw-semibold">Upload Book Cover*</label>
-                    <input type="file" class="form-control" id="bookCover" name="book_cover" accept="image/*" <?= empty($cover) ? 'required' : '' ?>>
-                    <?php if (!empty($cover)): ?>
-                        <div class="mt-2">
-                            <label class="form-label fw-semibold">Current Cover:</label> <br>
-                            <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover" class="img-fluid rounded" style="max-height: 150px;">
-                            <input type="hidden" name="existing_cover" value="<?= $cover ?>">
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="col-sm-12">
-                <div class="mb-3">
-                    <label for="bookPdf" class="form-label fw-semibold">Upload Book PDF</label>
-                    <input type="file" class="form-control" id="bookPdf" name="book_pdf" accept=".pdf">
-
-                    <?php if (!empty($pdf)): ?>
-                        <div class="mt-2">
-                            <label class="form-label fw-semibold">Current PDF:</label><br>
-                            <a href="/cms-data/book-pdfs/<?= htmlspecialchars($pdf) ?>" class="btn btn-primary btn-sm" target="_blank">View PDF</a>
-                            <input type="hidden" name="existing_pdf" value="<?= $pdf ?>">
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-
-            <div class="mt-3">
-                <?php if (!empty($bookId)): ?>
-                    <button class="btn btn-success" type="submit">Update Book</button>
-                <?php else: ?>
-                    <button class="btn btn-success" type="submit">Save Book</button>
-                <?php endif; ?>
-            </div>
+                foreach ($categories as $cat) {
+                    echo "<option value=\"$cat\">" . htmlspecialchars($cat) . "</option>";
+                }
+                if ($category) {
+                    echo "<option value=\"$category\" selected>$category</option>";
+                }
+                ?>
+            </select>
         </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Keywords (Optional)</label>
+            <input type="text" name="book_keywords" class="form-control" placeholder="e.g. thriller, South Africa" value="<?= $keywords ?? $category ?>">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Purchase Link (Hard Copy)</label>
+            <input type="url" name="book_website" class="form-control" placeholder="https://..." value="<?= $website ?>">
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Section: Pricing -->
+    <h4 class="fw-bold mb-3">Availability & Pricing</h4>
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Retail Price (Hard Copy)</label>
+            <input type="number" name="book_price" class="form-control" placeholder="e.g. 199.99" value="<?= $retailPrice ?>">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Ebook Price (PDF)</label>
+            <input type="number" name="Ebook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $EbookPrice ?>">
+        </div>
+
+         <div class="col-md-6">
+            <label class="form-label">Audio book Price</label>
+            <input type="number" name="Abook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $AbookPrice ?>">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Status <span class="text-danger">*</span></label>
+            <select name="book_status" class="form-select" required>
+                <option value="">Choose status</option>
+                <option value="active" <?= $status == 'active' ? 'selected' : '' ?>>Active</option>
+                <option value="inactive" <?= $status !== 'active' ? 'selected' : '' ?>>Inactive</option>
+            </select>
+        </div>
+
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Section: Uploads -->
+    <h4 class="fw-bold mb-3">Uploads</h4>
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Upload Book Cover Image <span class="text-danger">*</span></label>
+            <input type="file" name="book_cover" class="form-control" accept="image/*" <?= empty($cover) ? 'required' : '' ?>>
+            <?php if (!empty($cover)): ?>
+                <div class="mt-2">
+                    <small class="text-muted">Current Cover:</small><br>
+                    <img src="/cms-data/book-covers/<?= $cover ?>" class="img-thumbnail" style="max-height: 150px;">
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Upload Ebook (PDF)</label>
+            <input type="file" name="book_pdf" class="form-control" accept=".pdf">
+            <?php if (!empty($pdf)): ?>
+                <div class="mt-2">
+                    <small class="text-muted">Current PDF:</small><br>
+                    <a href="/cms-data/book-pdfs/<?= htmlspecialchars($pdf) ?>" target="_blank" class="btn btn-outline-primary btn-sm">View Current PDF</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="mt-4 text-end">
+        <button type="submit" class="btn btn-success px-4">
+            <?= !empty($bookId) ? 'Update Book' : 'Save Book' ?>
+        </button>
     </div>
 </form>

@@ -1,5 +1,6 @@
 <?php
 include __DIR__ . "/views/includes/header.php";
+
 include __DIR__ . "/views/includes/layouts/card.php";
 include __DIR__ . "/views/includes/dashboard_heading.php";
 ?>
@@ -13,8 +14,8 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
             <div class="row">
                 <?php include __DIR__ . "/views/includes/layouts/side-bar.php" ?>
 
-                <div class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
-                    <?php renderHeading("Dashboard", "A Comprehensive Overview of Your Dashboard Metrics and Insights", "#", "Print to PDF") ?>
+                <div id="pdfContent" class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
+                    <?php renderHeading("Dashboard", "A Comprehensive Overview of Your Dashboard Metrics and Insights", "", "Print to PDF",true) ?>
 
 
                     <div class="row">
@@ -33,9 +34,10 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
                         $bookView = $analysisController->getBookViews($userKey);
                         $profileView = $analysisController->getProfileViews($userKey);
-                        $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID']); // optionally add date range
+                        $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID']);
                         $eventView = $analysisController->getEventViews($userKey);
                         $downloads = $analysisController->getDownloadsByEmail($email);
+                        $topBooks = $analysisController->getTopBooks($userKey);
 
                         // Time-based analytics
                         $bookViewsByMonthYear = $analysisController->getBookViewsByMonthYear($userKey);
@@ -50,8 +52,8 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
 
 
-                        renderAnalysisCard("Downloads", $downloads, "fas fa-cloud-download-alt"); 
-                        renderAnalysisCard("Listens", "0", "fas fa-headphones-alt");       
+                        renderAnalysisCard("Ebooks Downloaded", $downloads, "fas fa-cloud-download-alt"); 
+                        renderAnalysisCard("Audio Listens", "0", "fas fa-headphones-alt");       
                         renderAnalysisCard("Revenue", "0", "fas fa-coins");                 
                         renderAnalysisCard("Titles", $titlesCount, "fas fa-book-open");     
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");  
@@ -61,13 +63,32 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         ?>
                     </div>
 
+                    <?php if (!empty($topBooks)): ?>
+                        <div class="row">
+                            <h2 class="most-viewed-title">Your Most Viewed Books</h2>                            
+                            <?php foreach ($topBooks as $index => $book): ?>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                                    <div class="book-card position-relative text-center">
+                                        <span class="book-card-num"><?= $index + 1 ?></span>
+
+                                        <div class="card shadow-sm rounded-4 overflow-hidden" style="width: 100%; max-width: 260px;">
+                                            <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" class="card-img-top" alt="<?= htmlspecialchars($book['TITLE']) ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted">No views yet. Share your books to get more readers!</p>
+                    <?php endif; ?>
+
+
+
                     <div class="row mb-3">
                         <div class="col-12">
                             <div class="card p-4 shadow-sm border-0">
-                                <h5 class="mb-3">My Subscription</h5>
                                 <?php if (!empty($subscriptionDetails)): ?>
                                     <p><strong>Plan:</strong> <?= htmlspecialchars($subscriptionDetails['admin_subscription']) ?></p>
-                                    <p><strong>Billing Cycle:</strong> <?= htmlspecialchars($subscriptionDetails['billing_cycle']) ?></p>
                                     <p><strong>Status:</strong> <?= htmlspecialchars($subscriptionDetails['subscription_status']) ?></p>
                                 <?php else: ?>
                                     <p>No subscription data available.</p>
@@ -233,6 +254,78 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
         generateGeoChart(provinceCtx, 'Views by Province', <?= json_encode($bookViewsByProvince) ?>);
         generateGeoChart(cityCtx, 'Views by City', <?= json_encode($bookViewsByCity) ?>);
     </script>
+    <script>
+            document.getElementById('printPDF')?.addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+
+            const content = document.getElementById("pdfContent");
+
+            html2canvas(content, { scale: 2 }).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgProps = pdf.getImageProperties(imgData);
+
+                const pdfWidth = pageWidth;
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                let position = 0;
+
+                if (pdfHeight > pageHeight) {
+                    // Split into multiple pages
+                    let heightLeft = pdfHeight;
+                    while (heightLeft > 0) {
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                        heightLeft -= pageHeight;
+                        position -= pageHeight;
+                        if (heightLeft > 0) pdf.addPage();
+                    }
+                } else {
+                    // Single page
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                }
+
+                pdf.save("dashboard_report.pdf");
+            });
+        });
+    </script>
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".count-up");
+
+    counters.forEach(counter => {
+      const target = +counter.getAttribute("data-target");
+      const duration = 4000; // Total animation time in ms
+      const frameRate = 60; // Frames per second
+      const totalFrames = Math.round(duration / (1000 / frameRate));
+      let currentFrame = 0;
+
+      const countUp = () => {
+        currentFrame++;
+        const progress = currentFrame / totalFrames;
+        const currentValue = Math.round(target * progress);
+
+        counter.innerText = currentValue;
+
+        if (currentFrame < totalFrames) {
+          requestAnimationFrame(countUp);
+        } else {
+          counter.innerText = target;
+        }
+      };
+
+      countUp();
+    });
+  });
+</script>
+
+
+    <!-- jsPDF & html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </body>
 
 </html>

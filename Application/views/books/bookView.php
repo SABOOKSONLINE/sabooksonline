@@ -13,6 +13,9 @@ $isbn = html_entity_decode($book['ISBN']);
 $website = html_entity_decode($book['WEBSITE']);
 // $retailPrice = html_entity_decode($book['RETAILPRICE']);
 $retailPrice = $book['RETAILPRICE'];
+$eBookPrice = $book['EBOOKPRICE'] ?? '0';
+$aBookPrice = $book['ABOOKPRICE'] ?? '0';
+
 
 $ebook = $book['PDFURL'] ?? '';
 
@@ -28,6 +31,9 @@ $bookModel = new UserModel($conn);
 
 // Use logged-in user's email (assumes session is set)
 $email = $_SESSION['ADMIN_EMAIL'] ?? '';
+
+$_SESSION['action'] = $_SERVER['REQUEST_URI'];
+
 
 $userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
 
@@ -145,7 +151,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 <!-- READ EBOOK BUTTON -->
                 <div class="card mb-3 shadow-sm">
                     <div class="card-body">
-                        <h5><?= htmlspecialchars($title) ?></h5>
+                        <h5><?= $title ?></h5>
 
                         <?php if ((int)$retailPrice === 0): ?>
                             <!-- FREE BOOK -->
@@ -153,95 +159,103 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
                                     <i class="fas fa-book-open"></i> READ E-BOOK NOW (Free)
                                 </a>
-                            <?php else: ?>
-                                <span class="btn btn-secondary disabled">
-                                    <i class="fas fa-clock"></i> Content not yet available.
-                                </span>
                             <?php endif; ?>
-
                         <?php elseif ($userOwnsThisBook): ?>
                             <!-- PAID BOOK: USER OWNS IT -->
                             <?php if (!empty($ebook)): ?>
                                 <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
                                     <i class="fas fa-book-open"></i> READ E-BOOK NOW
                                 </a>
-                            <?php else: ?>
-                                <span class="btn btn-secondary disabled">
-                                    <i class="fas fa-clock"></i> You’ve already purchased this book. Content is not yet available.
-                                </span>
-                            <?php endif; ?>
-
-                        <?php else: ?>
-                            <!-- PAID BOOK: USER DOES NOT OWN IT -->
-                            <?php if (!empty($ebook)): ?>
-                                <span class="btn btn-warning disabled">
-                                    <i class="fas fa-lock"></i> E-BOOK LOCKED – PLEASE PURCHASE
-                                </span>
-                            <?php else: ?>
-                                <span class="btn btn-secondary disabled">
-                                    <i class="fas fa-clock"></i> PRE-PURCHASE — Content NOT AVAILABLE YET
-                                </span>
                             <?php endif; ?>
                         <?php endif; ?>
+
+
                     </div>
 
 
 
 
-                    <!-- LISTEN TO AUDIOBOOK -->
-                    <?php if ($audiobookId): ?>
-                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                            <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
-                                <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
-                            </a>
-                            <span class="fw-bold align-content-end text-end">
-                                <small class="text-muted fw-normal">
-                                    FREE
-                                </small>
-                            </span>
-                        </div>
-                    <?php else: ?>
-                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                            <span class="btn btn-yellow me-2 disabled">
-                                <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
-                            </span>
-                        </div>
+                <!-- LISTEN TO AUDIOBOOK -->
+                <?php if ($audiobookId): ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
+                            <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
+                        </a>
+                        <span class="fw-bold align-content-end text-end">
+                            <small class="text-muted fw-normal">
+                                Price
+                            </small><br>R<?= number_format($aBookPrice, 2) ?>
+                        </span>
+                    </div>
+                <?php else: ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <span class="btn btn-yellow me-2 disabled">
+                            <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
+                        </span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ((float)$eBookPrice >= 10 && !empty($ebook)): ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <form method="POST" action="/checkout" id="buyEbookForm">
+                            <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                            <button type="submit" class="btn btn-blue me-2" id="buyEbookButton">BUY Ebook</button>
+                        </form>
+                        <span class="fw-bold align-content-end">
+                            <small class="text-muted fw-normal">PRICE</small> <br>R<?= number_format($eBookPrice, 2) ?>
+                        </span>
+                    </div>
+
+                    <?php if (isset($_SESSION['buy']) && $_SESSION['buy'] === 'yes'): ?>
+                        <script>
+                            window.addEventListener('DOMContentLoaded', () => {
+                                const btn = document.getElementById('buyEbookButton');
+                                if (btn) btn.click();
+                            });
+                        </script>
+                        <?php unset($_SESSION['buy']); ?>
                     <?php endif; ?>
 
-                    <?php if ((float)$retailPrice >= 10): ?>
-                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                            <form method="POST" action="/checkout">
-                                <input type="hidden" name="bookId" value="<?= $bookId ?>">
-                                <button type="submit" class="btn btn-blue me-2">BUY Ebook</button>
-                            </form>
-                            <span class="fw-bold align-content-end">
-                                <small class="text-muted fw-normal">RETAIL PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($website): ?>
-                        <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                            <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
-                                Buy Hard Copy – (external link)
-                            </a>
-                        </div>
-                    <?php endif; ?>
+                <?php else: ?>
+                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <span class="btn btn-yellow me-2 disabled">
+                            <i class="fas fa-book"></i> EBOOK NOT AVAILABLE
+                        </span>
+                    </div>
+                <?php endif; ?>
 
 
-                    <span class="small text-muted mt-3 d-block">
-                        <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
-                            Responsibility of Third-Party Sellers.</small>
-                        <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
-                            books. However, the responsibility for physical book sales—including monetary collection,
-                            warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
-                            publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
-                            shipment, or condition of physical books purchased through or as a result of activity on our
-                            platform. Customers are encouraged to engage directly with the relevant seller for any
-                            enquiries or support related to their purchase.</small>
-                    </span>
+                <?php if ($website): ?>
+                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                    <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
+                        Physical book – Purchase link
+                    </a>
+                    <span class="fw-bold align-content-end">
+                            <small class="text-muted fw-normal">PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
+                        </span>
                 </div>
+            <?php else: ?>
+             <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
+                        <span class="btn btn-yellow me-2 disabled">
+                            <i class="fas fa-link"></i> Purchase LINK NOT AVAILABLE
+                        </span>
+                    </div>
+                <?php endif; ?>
+
+
+                <span class="small text-muted mt-3 d-block">
+                    <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
+                        Responsibility of Third-Party Sellers.</small>
+                    <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
+                        books. However, the responsibility for physical book sales—including monetary collection,
+                        warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
+                        publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
+                        shipment, or condition of physical books purchased through or as a result of activity on our
+                        platform. Customers are encouraged to engage directly with the relevant seller for any
+                        enquiries or support related to their purchase.</small>
+                </span>
             </div>
         </div>
     </div>
+</div>
 </div>

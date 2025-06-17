@@ -23,30 +23,108 @@ body {
     background: #ddd;
 }
 
+/* Analysis Card Styles */
 .analysis-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease,
-        background-color 0.3s ease, color 0.3s ease;
-    border: none;
-    background-color: #ffffff;
+    /* border: 1px solid #6c757d; */
+        /* soft black outline */    /* Black outline */
+    background-color: #fff;
     color: #555;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    border-radius: 0.5rem;
+    padding: 1rem;
 }
 
+/* Hover Effects */
 .analysis-card:hover {
     transform: scale(1.02);
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
-    background-color: #000;
-    color: #eee;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    color: #222 !important;
 }
 
-.analysis-card .text-muted {
-    transition: all 0.3s ease;
-}
-
-.analysis-card:hover .text-muted {
-    color: #eee !important;
-}
-
+.analysis-card:hover .text-muted,
 .analysis-card:hover .text-primary {
-    color: #eee !important;
+    color: #222 !important;
+}
+
+/* Stylish Section Cards */
+#stylish-section .book-card {
+    margin: 14px 20px;
+    transition: 0.3s ease;
+}
+
+#stylish-section .book-card img {
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+#stylish-section .book-card:hover img {
+    transform: scale(1.15);
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.book-card-num {
+    position: absolute;
+    top: 50%;
+    left: -50px;
+            /* Closer to the bottom of the card */
+    transform: translateY(-50%);
+    color: var(--off-white);
+    font-size: 180px;
+            /* Bigger number */
+    font-weight: 900;
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.book-card:hover .book-card-num {
+    color: var(--yellow);
+    transform: translateY(-50%) rotateZ(-10deg) scale(1.1);
+    z-index: 3;
+    opacity: 0.25;
+}
+
+/* View count */
+.view-count {
+    margin-top: 2px;
+    /* slightly closer to title */
+    font-size: 1rem;
+    /* larger text */
+    font-weight: 600;
+    color: #333;
+    /* darker for contrast */
+    border: 1px solid #333;
+    /* black outline */
+    border-radius: 6px;
+    padding: 2px 6px;
+    display: inline-block;
+    background-color: #f8f9fa;
+    /* subtle background */
+}
+/* Control image size in book cards */
+.book-card img {
+    width: 100%;
+    max-height: 240px;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+}
+h2,
+h5.most-viewed-title {
+    /* font-weight: 700; */
+    font-size: 'bold';
+    /* Adjust size as needed */
+    /* color: #1a1a1a; */
+    /* Dark gray for good contrast */
+    /* Optional: makes it uppercase */
+    margin-bottom: 1rem;
+    /* Accent underline */
+    padding-bottom: 0.3rem;
+    max-width: fit-content;
+    /* Shrinks underline to text width */
 }

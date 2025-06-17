@@ -24,9 +24,9 @@ $bookListingController = new BookListingController($conn);
                     $userKey = $_SESSION["ADMIN_USERKEY"];
 
                     if (isset($_GET["id"]) && !empty($_GET["id"])) {
-                        renderHeading("Update Book Listing", "You can manage, add or delete your book listings.", "/dashboards/add/audiobook/$contentId", "Add Audiobook");
+                        renderHeading("Manage Book", "You can manage, add or delete your book listings.", "/dashboards/add/audiobook/$contentId", "Add Audiobook");
                     } else {
-                        renderHeading("Add Book Listing", "You can manage, add or delete your book listings.");
+                        renderHeading("Add New Book", "You can manage, add or delete your book listings.");
                     }
 
                     $bookListingController->renderBookByContentId($userKey, $contentId);

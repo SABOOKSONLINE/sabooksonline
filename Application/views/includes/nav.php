@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../../models/PageVisitsModel.php";
@@ -107,7 +104,7 @@ if (isset($userKey) && !empty($userKey)) {
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="/dashboards/my-library">
+                                    <a class="dropdown-item" href="/dashboards/bookshelf">
                                         <i class="fas fa-book me-2"></i> My Library
                                     </a>
                                 </li>

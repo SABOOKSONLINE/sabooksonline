@@ -24,6 +24,10 @@ class AnalysisController
         return $this->model->getBookViews($user_id);
     }
 
+    public function getTopBooks($user_id) {
+        return $this->model->getUserMostViewedBooks($user_id);
+    }
+
     public function getProfileViews($user_id) {
         return $this->model->getProfileViews($user_id);
     }

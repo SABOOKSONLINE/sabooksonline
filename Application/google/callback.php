@@ -43,17 +43,16 @@ if (isset($_GET['code'])) {
     $reg_email = $user->getEmail();
     $profileimage = $user->getPicture();
 
-
     $loginResult = $authController->loginWithGoogle($reg_email,$reg_name,$profileimage);
 
-    error_log("Session Contents: " . print_r($_SESSION, true));
-
-    if (isset($_SESSION['ADMIN_ID'])) {
-    } else {
-        error_log(" Session NOT set");
-    }
-
     if ($loginResult === true && isset($_SESSION['ADMIN_ID'])) {
+
+        if (isset($_SESSION['action'])) {
+            $redirectTo = $_SESSION['action'];
+            unset($_SESSION['action']); // Clean up
+            header("Location: $redirectTo");
+            exit;
+        }
         // ✅ Proper session is set, now redirect
         header('Location: /dashboards');
         exit;

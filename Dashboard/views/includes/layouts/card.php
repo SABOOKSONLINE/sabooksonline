@@ -14,7 +14,10 @@ function renderAnalysisCard($title, $amount, $iconName)
                 <!-- Text content right -->
                 <div class="flex-grow-1">
                     <p class="fw-semibold text-muted text-capitalize small mb-1"><?= htmlspecialchars($title) ?></p>
-                    <h4 class="fw-bold mb-1"><?= htmlspecialchars($amount) ?></h4>
+                    <h4 class="fw-bold mb-1">
+                    <span class="count-up" data-target="<?= (int) $amount ?>">0</span>
+                    </h4>
+
 
                     <div class="progress" style="height: 6px;">
                         <div class="progress-bar bg-primary" style="width: <?= $amount > 100 ? 100 : $amount ?>%;"></div>

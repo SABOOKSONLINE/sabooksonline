@@ -11,12 +11,13 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 ?>
 
 
-<h5 class="mb-3">Showing <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books</h5>
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        Books per page:
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h5>Showing <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books</h5>
+    </div>
+    <div class="col-md-6 text-end">
         <form method="get" class="d-inline">
+            <label for="limit" class="form-label me-2">Books per page:</label>
             <select name="limit" class="form-select d-inline w-auto" onchange="this.form.submit()">
                 <option value="5" <?= $booksPerPage == 5 ? 'selected' : '' ?>>5</option>
                 <option value="10" <?= $booksPerPage == 10 ? 'selected' : '' ?>>10</option>
@@ -25,79 +26,47 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             <input type="hidden" name="page" value="1">
         </form>
     </div>
-    <div><?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> books</div>
 </div>
 
-<table class="table table-bordered table-hover align-middle table-responsive table-bordered rounded">
-    <thead class="table-light">
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Date Posted</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Actions</th>
-            <th>PDF</th>
-            <!-- <th>Upload</th> -->
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (empty($books)): ?>
-            <tr>
-                <td colspan="6" class="text-center">No books available.</td>
-            </tr>
-        <?php else: ?>
-            <?php foreach ($booksToShow as $book): ?>
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <img src="/cms-data/book-covers/<?= html_entity_decode($book['COVER']) ?>"
-                                class="me-2 rounded shadow-sm"
-                                alt="<?= html_entity_decode($book["TITLE"]) ?> Book Cover"
-                                width="50" height="75">
-                            <div>
-                                <a href="/dashboards/listings/<?= $book["CONTENTID"] ?>">
-                                    <?= html_entity_decode($book["TITLE"]) ?>
-                                </a>
-                                <br>
-                                <small class="text-muted"><b>ISBN:</b> <?= html_entity_decode($book["ISBN"]) ?></small>
-                            </div>
+<?php if (empty($booksToShow)): ?>
+    <div class="alert alert-warning text-center">No books available.</div>
+<?php else: ?>
+    <div class="row g-4">
+        <?php foreach ($booksToShow as $book): ?>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/cms-data/book-covers/<?= html_entity_decode($book['COVER']) ?>"
+                         class="card-img-top" alt="<?= html_entity_decode($book["TITLE"]) ?> Book Cover"
+                         style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            <a href="/dashboards/listings/<?= $book["CONTENTID"] ?>" class="text-decoration-none">
+                                <?= html_entity_decode($book["TITLE"]) ?>
+                            </a>
+                        </h5>
+                        <p class="mb-1"><strong>Author:</strong> <?= html_entity_decode($book["AUTHORS"]) ?></p>
+                        <p class="mb-1"><strong>Date Posted:</strong> <?= html_entity_decode($book["DATEPOSTED"]) ?></p>
+                        <p class="mb-1"><strong>Price:</strong>
+                            <?= $book["RETAILPRICE"] == 0 ? "FREE" : "R " . html_entity_decode($book["RETAILPRICE"]) ?>
+                        </p>
+                        <div class="mt-auto">
+                            <a href="/dashboards/listings/<?= $book["CONTENTID"] ?>" class="btn btn-outline-primary btn-sm mb-2 w-100" target="_blank">
+                                <?= !empty($book['PDFURL']) ? 'Manage Ebook' : 'Manage book' ?>
+                            </a>
+                            <a href="/dashboards/listings/delete/<?= $book['CONTENTID'] ?>"
+                               class="btn btn-danger btn-sm w-100"
+                               onclick="return confirm('Are you sure you want to delete this book?')">
+                                Delete
+                            </a>
                         </div>
-                    </td>
-                    <td><?= html_entity_decode($book["AUTHORS"]) ?></td>
-                    <td><?= html_entity_decode($book["DATEPOSTED"]) ?></td>
-                    <td>
-                        <?= $book["RETAILPRICE"] == 0 ? "FREE" : "R " . html_entity_decode($book["RETAILPRICE"]) ?>
-                    </td>
-                    <td>
-                        <span class="badge <?= ($book['STATUS'] ?? 'inactive') === 'active' ? 'bg-success' : 'bg-secondary' ?>">
-                            <?= html_entity_decode(strtoupper($book["STATUS"])) ?>
-                        </span>
-                    </td>
-                    <td>
-                        <a href="/dashboards/listings/delete/<?= $book['CONTENTID'] ?>"
-                            class="btn btn-sm btn-danger"
-                            onclick="return confirm('Are you sure you want to delete this book?')">
-                            Delete
-                        </a>
-                    </td>
-                    <td>
-                        <?php if (!empty($book['PDFURL'])): ?>
-                            <a href="/view/pdfs/<?= $book['PDFURL'] ?>" target="_blank">View PDF</a>
-                        <?php else: ?>
-                            <span>No Content</span>
-                        <?php endif; ?>
-                    </td>
-                    <!-- <td>
-                        <button class="btn-upload" onclick="uploadPdf('<?= $book['CONTENTID'] ?>')">Upload PDF</button>
-                    </td> -->
-                </tr>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </tbody>
-</table>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
-<nav>
+<nav class="mt-4">
     <ul class="pagination justify-content-center">
         <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
             <a class="page-link" href="?page=<?= $currentPage - 1 ?>&limit=<?= $booksPerPage ?>">Previous</a>

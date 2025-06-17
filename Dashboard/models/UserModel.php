@@ -22,6 +22,8 @@ class UserModel
             b.publisher AS PUBLISHER,
             b.description AS DESCRIPTION,
             b.retailprice AS RETAILPRICE,
+            b.abookprice AS APRICE,
+            b.ebookprice AS EPRICE,
             b.pdfurl AS PDFURL,
             bp.payment_date,
             bp.amount

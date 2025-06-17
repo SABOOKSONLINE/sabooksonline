@@ -62,7 +62,7 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                     <i class="fas fa-file-invoice-dollar me-2"></i> Account Billing
                 </a>
                 <a href="/membership" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/membership') === 0) ? 'active' : ''; ?>">
-                    <i class="fas fa-credit-card me-2"></i> Subscription Plans
+                    <i class="fas fa-credit-card me-2"></i> Sell Books
                 </a>
                 <a href="/dashboards/profile" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/profile') === 0) ? 'active' : ''; ?>">
                     <i class="fas fa-user-edit me-2"></i> My Profile

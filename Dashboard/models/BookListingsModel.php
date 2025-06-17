@@ -94,22 +94,24 @@ class BookListingsModel
 
         $sql = "INSERT INTO posts (
                     TITLE, CATEGORY, WEBSITE, DESCRIPTION, COVER, CONTENTID, USERID, TYPE, DATEPOSTED,
-                    STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS, PDFURL
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS, PDFURL, EBOOKPRICE, ABOOKPRICE
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
         }
 
+        $cover = $data['cover'];
+
         mysqli_stmt_bind_param(
             $stmt,
-            "ssssssssssssssssss",
+            "ssssssssssssssssssss",
             $data['title'],
             $data['category'],
             $data['website'],
             $data['description'],
-            $data['cover'],
+            $cover,
             $data['contentid'],
             $data['userid'],
             $data['type'],
@@ -122,7 +124,11 @@ class BookListingsModel
             $data['languages'],
             $data['stock'],
             $data['authors'],
-            $data['pdf']
+            $data['pdf'],
+            $data['Eprice'],
+            $data['Aprice']
+
+
         );
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -146,7 +152,7 @@ class BookListingsModel
                     TITLE = ?, CATEGORY = ?, WEBSITE = ?, DESCRIPTION = ?, COVER = ?, 
                     USERID = ?, TYPE = ?, DATEPOSTED = ?, STATUS = ?, ISBN = ?, 
                     RETAILPRICE = ?, KEYWORDS = ?, PUBLISHER = ?, 
-                    LANGUAGES = ?, STOCK = ?, AUTHORS = ?, PDFURL = ?
+                    LANGUAGES = ?, STOCK = ?, AUTHORS = ?, PDFURL = ?, EBOOKPRICE = ?, ABOOKPRICE = ?
                 WHERE ID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -154,14 +160,17 @@ class BookListingsModel
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
         }
 
+
+        $cover = $data['cover'];
+
         mysqli_stmt_bind_param(
             $stmt,
-            "ssssssssssssssssss",
+            "ssssssssssssssssssss",
             $data['title'],
             $data['category'],
             $data['website'],
             $data['description'],
-            $data['cover'],
+            $cover,
             $data['userid'],
             $data['type'],
             $data['dateposted'],
@@ -174,6 +183,8 @@ class BookListingsModel
             $data['stock'],
             $data['authors'],
             $data['pdf'],
+            $data['Eprice'],
+            $data['Aprice'],
             $bookId,
         );
 
