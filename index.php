@@ -56,6 +56,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // =================== API Routes ===================
+    $r->addRoute('GET', '/api/onix', function () {
+        require "Application/onix.php";
+    });
     $r->addRoute('GET', '/api/books', function () {
         require "Application/api.php";
     });
@@ -351,6 +354,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         header('Content-Length: ' . filesize($path));
         readfile($path);
         exit;
+    });
+
+    // =================== Tanci API ===================
+    $r->addRoute('GET', '/api/read_remote_data/{apiKey}/{userKey}', function ($apiKey, $userKey) {
+        $_GET['api_key'] = $apiKey;
+        $_GET['userkey'] = $userKey;
+        require __DIR__ . "/API/read_remote_data.php";
     });
 });
 
