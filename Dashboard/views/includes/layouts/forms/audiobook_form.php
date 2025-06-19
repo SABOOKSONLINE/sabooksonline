@@ -3,12 +3,18 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$audiobook = $audiobook ?? [];
+// If $audiobook is an array of rows (more than 1), get the first one:
+if (isset($audiobook[0])) {
+    $audioDetails = $audiobook[0];
+} else {
+    $audioDetails = $audiobook; // fallback if only one row or empty
+}
 
-$audiobookId = $audiobook['audiobook_id'] ?? '';
-$narrator = html_entity_decode($audiobook['narrator'] ?? '');
-$releaseDate = html_entity_decode($audiobook['release_date'] ?? '');
+$audiobookId = $audioDetails['audiobook_id'] ?? '';
+$narrator = html_entity_decode($audioDetails['narrator'] ?? '');
+$releaseDate = html_entity_decode($audioDetails['release_date'] ?? '');
 ?>
+
 
 <form method="POST"
     action="<?= $audiobook ? "/dashboards/listings/updateAudio/$bookId" : "/dashboards/listings/insertAudio/" ?>"
@@ -55,7 +61,12 @@ $releaseDate = html_entity_decode($audiobook['release_date'] ?? '');
 </form>
 
 <?php
-if (!empty($audiobook)):
-    include __DIR__ . '/audiobook_chapter_form.php';
-endif;
+if (!empty($audiobook)) {
+    foreach ($audiobook as $audiobookChapter) {
+        include __DIR__ . '/audiobook_chapter_form.php';
+    }
+}
+
+$audiobookChapter = [];
+include __DIR__ . '/audiobook_chapter_form.php';
 ?>

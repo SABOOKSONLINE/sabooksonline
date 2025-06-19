@@ -34,7 +34,7 @@ function insertAudiobookHandler($audiobookController)
 
     try {
         $audiobookController->insertAudiobook($data);
-        header("Location: /dashboards/add/audiobook/{$_POST['content_id']}?status=success");
+        header("Location: /dashboards/listings/{$_POST['content_id']}?status=success");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
     }
@@ -51,7 +51,7 @@ function updateAudiobookHandler($audiobookController)
 
     try {
         $audiobookController->updateAudiobook($bookId, $data);
-        header("Location: /dashboards/add/audiobook/{$_POST['content_id']}?update=success");
+        header("Location: /dashboards/listings/{$_POST['content_id']}?update=success");
     } catch (Exception $e) {
         error_log("Update failed: " . $e->getMessage());
         die();

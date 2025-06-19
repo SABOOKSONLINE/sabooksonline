@@ -1,11 +1,11 @@
 <?php
-$chapter = $audiobook ?? [];
-$chapterId = $audiobook['chapter_id'] ?? '';
+$chapter = $audiobookChapter ?? [];
+$chapterId = $audiobookChapter['chapter_id'] ?? '';
 
-$chapterNumber = $audiobook['chapter_number'] ?? '';
-$chapterTitle = $audiobook['chapter_title'] ?? '';
-$audioUrl = $audiobook['audio_url'] ?? '';
-$durationMinutes = $audiobook['duration_minutes'] ?? '';
+$chapterNumber = $audiobookChapter['chapter_number'] ?? '';
+$chapterTitle = $audiobookChapter['chapter_title'] ?? '';
+$audioUrl = $audiobookChapter['audio_url'] ?? '';
+$durationMinutes = $audiobookChapter['duration_minutes'] ?? '';
 ?>
 <form method="POST"
     action="<?= $chapterId ? "/dashboards/listings/updateAudioChapter/$chapterId" : "/dashboards/listings/insertAudioChapter" ?>"

@@ -272,7 +272,8 @@ class BookListingsModel
                 FROM audiobooks 
                 LEFT JOIN audiobook_chapters 
                   ON audiobooks.id = audiobook_chapters.audiobook_id
-                WHERE audiobooks.book_id = ?";
+                WHERE audiobooks.book_id = ?
+                ORDER BY audiobook_chapters.chapter_number ASC";
         $stmt = mysqli_prepare($this->conn, $sql);
 
         if (!$stmt) {
@@ -295,10 +296,6 @@ class BookListingsModel
         }
         mysqli_stmt_close($stmt);
 
-        // When only one chapter exists, return a single entry; otherwise return a list.
-        if (count($rows) === 1) {
-            return $rows[0];
-        }
         return $rows;
     }
 
