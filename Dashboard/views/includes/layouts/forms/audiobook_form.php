@@ -67,6 +67,8 @@ if (!empty($audiobook)) {
     }
 }
 
-$audiobookChapter = [];
-include __DIR__ . '/audiobook_chapter_form.php';
+if (count($audiobook) > 0) {
+    $audiobookChapter = [];
+    include __DIR__ . '/audiobook_chapter_form.php';
+}
 ?>
