@@ -6,18 +6,20 @@
     $userId = html_entity_decode(strtolower($book['USERID']));
     $publisher = ucwords(html_entity_decode($book['PUBLISHER']));
 ?>
-    <div class="book-card">
+    <div class="bk-card">
         <span class="book-card-num"></span>
-        <a class="book-card-cover" href="/library/book/<?= $contentId ?>">
-            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
-        </a>
-        <div class="book-card-info">
-            <a class="book-card-little" href="/library/book/<?= $contentId ?>">
-                <?= $shortTitle ?>
+        <div class="bk-img">
+            <a href="/library/book/<?= $contentId ?>">
+                <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
             </a>
-            <span class="book-card-pub">
+        </div>
+        <div class="bk-details">
+            <p class="bk-heading-md">
+                <?= $shortTitle ?>
+            </p>
+            <p class="bk-text-meta">
                 Published by: <a class="text-muted" href="/creators/creator/<?= $userId ?>"><?= $publisher ?></a>
-            </span>
+            </p>
         </div>
     </div>
 <?php endforeach; ?>
