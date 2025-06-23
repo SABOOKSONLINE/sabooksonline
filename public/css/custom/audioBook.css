@@ -245,3 +245,58 @@
 .active-chapter {
     background: var(--off-white);
 }
+
+.open-audio-details {
+    position: fixed;
+    right: 8px;
+    top: 100px;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+    border: 1px solid var(--off-white);
+
+    color: var(--black);
+    background: var(--white);
+
+    transition: 0.3s ease;
+    display: none;
+}
+
+.open-audio-details:hover {
+    color: var(--off-white);
+    background: var(--black);
+    border: 1px solid var(--black);
+}
+
+.open-audio-details span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+@media (max-width: 769px) {
+    .audio-cover {
+        width: 100%;
+    }
+
+    .audio-book-list {
+        display: none;
+    }
+
+    .show-ad {
+        display: block;
+        width: 100%;
+    }
+
+    .hide-cv {
+        display: none;
+    }
+
+    .open-audio-details {
+        display: block;
+    }
+}

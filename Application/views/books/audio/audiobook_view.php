@@ -14,6 +14,12 @@
         $controller->renderAudioBookView();
         ?>
 
+        <div class="open-audio-details">
+            <span>
+                <i class="fas fa-bars"></i>
+            </span>
+        </div>
+
         <div class="audio-controllers">
             <div class="audio-ctrl-row">
                 <div class="audio-ctrls">

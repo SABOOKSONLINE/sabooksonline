@@ -143,4 +143,15 @@ jQuery(document).ready(function () {
             continuePlaying();
         });
     });
+
+    const openAudioDetailsButton = document.querySelector(
+        ".open-audio-details"
+    );
+    const audioCoverSide = document.querySelector(".audio-cover");
+    const audioDetails = document.querySelector(".audio-book-list");
+
+    openAudioDetailsButton.addEventListener("click", () => {
+        audioCoverSide.classList.toggle("hide-cv");
+        audioDetails.classList.toggle("show-ad");
+    });
 });

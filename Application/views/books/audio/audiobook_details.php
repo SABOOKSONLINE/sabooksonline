@@ -22,14 +22,14 @@ $audiobookId = $book['a_id'] ?? null;
 
 <style>
     .audio-cover::before {
-        background: url("https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>");
+        background: url("/cms-data/book-covers/<?= $cover ?>");
 
         background-position: center;
         background-size: cover;
     }
 
     .audio-controllers::before {
-        background: url("https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>");
+        background: url("/cms-data/book-covers/<?= $cover ?>");
 
         background-position: center;
         background-size: cover;
@@ -37,7 +37,7 @@ $audiobookId = $book['a_id'] ?? null;
 </style>
 <div class="audio-cover">
     <div class="audio-img">
-        <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="Book Cover" />
+        <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover" />
     </div>
 </div>
 <div class="audio-book-list">
