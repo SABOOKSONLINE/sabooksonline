@@ -148,7 +148,7 @@
 .bk-img {
     position: relative;
     overflow: hidden;
-    width: 100%;
+    width: 202px;
     height: 296px;
 }
 
@@ -207,7 +207,7 @@
     border-radius: var(--bk-space-xl);
 
     display: grid;
-    grid-template-columns: 200px auto;
+    grid-template-columns: auto auto;
 }
 
 .bk-card-lg .bk-img {

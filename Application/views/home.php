@@ -43,7 +43,7 @@ $bookController = new BookController($conn);
                 <?php renderSectionHeading("Recommended For You", "Your Next Great Read Starts Here.", "Show more", "/library") ?>
             </div>
 
-            <div class="book-cards mt-4" id="editor_choice">
+            <div class="book-cards mt-4" id="recommended">
                 <div class="book-card-slide">
                     <?php
                     $bookController->renderBookCardByCategory();
@@ -59,16 +59,16 @@ $bookController = new BookController($conn);
         </div>
     </section>
 
-    <section class="section" id="stylish-section">
+    <section class="section">
         <div class="container-fluid">
             <div class="container">
                 <?php renderSectionHeading("Editor's Choice", "Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.", "Show more", "/library") ?>
             </div>
 
-            <div class="book-cards mt-4" id="editor_choice">
+            <div class="book-cards mt-4" id="editors_choice">
                 <div class="book-card-slide">
                     <?php
-                    $bookController->renderBookCardByCategory("editors choice", 6);
+                    $bookController->renderBookCardByCategory("editors choice", 6, true);
                     ?>
                 </div>
 
