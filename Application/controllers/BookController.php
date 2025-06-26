@@ -291,11 +291,20 @@ class BookController
         echo json_encode($books);
     }
 
-    public function renderBookByViews()
+    public function renderBookByViews($category = null, $limit = null)
     {
-        $books = $this->bookModel->getBooksByViews();
-        if ($books) {
-            include __DIR__ . '/../views/books/bkCard.php';
+        if (!$category || !$limit) {
+            $books = $this->bookModel->getBooksByViews();
+
+            if ($books) {
+                include __DIR__ . '/../views/books/bkCard.php';
+            }
+        } else {
+            $books = $this->bookModel->getBookListingsByCategory($category, $limit);
+
+            if ($books) {
+                include __DIR__ . '/../views/books/bkCard.php';
+            }
         }
     }
 }

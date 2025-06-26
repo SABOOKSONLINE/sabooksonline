@@ -60,13 +60,15 @@ $bookController = new BookController($conn);
     </section>
 
     <section class="section" id="stylish-section">
-        <div class="container">
-            <?php renderSectionHeading("Editor's Choice", "Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.", "Show more", "/library") ?>
+        <div class="container-fluid">
+            <div class="container">
+                <?php renderSectionHeading("Editor's Choice", "Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.", "Show more", "/library") ?>
+            </div>
 
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    $bookController->renderListingsByCategory("editors choice", 6);
+                    $bookController->renderBookByViews("editors choice", 6);
                     ?>
                 </div>
 
@@ -81,7 +83,7 @@ $bookController = new BookController($conn);
 
     <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
 
-    <section class="section bg-off-white">
+    <section class="section">
         <div class="container">
             <?php renderSectionHeading("Latest Collections", "Fresh Off the Press — Discover the Newest Reads.", "Show more", "/library") ?>
 
