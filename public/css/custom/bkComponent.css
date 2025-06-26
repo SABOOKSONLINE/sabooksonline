@@ -19,6 +19,7 @@
     --bk-font-light: 300;
     --bk-font-regular: 400;
     --bk-font-medium: 500;
+    --bk-font-semi-bold: 600;
     --bk-font-bold: 700;
 
     --bk-space-xxl: 3rem;
@@ -31,6 +32,7 @@
     --bk-radius-sm: 4px;
     --bk-radius-md: 8px;
     --bk-radius-lg: 16px;
+    --bk-radius-xl: 32px;
     --bk-border-width: 1px;
 
     --bk-shadow-sm: 2px 2px 8px rgba(0, 0, 0, 0.1);
@@ -48,7 +50,7 @@
 }
 
 [class^="bk-heading"] {
-    font-weight: var(--bk-font-bold);
+    font-weight: var(--bk-font-semi-bold);
     font-family: var(--bk-font-family);
     color: var(--bk-color-text-primary);
     line-height: 100%;
@@ -83,9 +85,17 @@
 
 .bk-text-meta {
     font-size: var(--bk-text-sm);
+    color: var(--bk-color-text-primary);
+    font-family: var(--bk-font-family);
+    font-weight: var(--bk-font-semi-bold);
+    line-height: 100%;
+}
+
+.bk-text-para {
+    font-size: var(--bk-text-sm);
     color: var(--bk-color-text-muted);
     font-family: var(--bk-font-family);
-    font-weight: var(--bk-font-light);
+    font-weight: var(--bk-font-regular);
     line-height: 100%;
 }
 
@@ -93,6 +103,9 @@
     font-size: inherit;
     color: inherit;
     line-height: 100%;
+
+    color: var(--bk-color-text-muted);
+    font-weight: var(--bk-font-light);
 }
 
 .bk-slider {
@@ -147,7 +160,11 @@
 .bk-details {
     width: inherit;
     padding: var(--bk-space-md);
-    padding-bottom: var(--bk-space-xs);
+    padding-bottom: var(--bk-space-xs) var(--bk-space-sm);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .bk-divider {
@@ -155,6 +172,50 @@
     background: var(--bk-color-border);
     margin: var(--bk-space-md) 0;
 }
+
+.bk-tags {
+    display: flex;
+    gap: var(--bk-space-xs);
+}
+
+.bk-tag {
+    font-size: var(--bk-text-xs);
+    border: var(--bk-border-width) solid var(--bk-color-border);
+    padding: var(--bk-space-xs) var(--bk-space-md);
+    border-radius: var(--bk-radius-xl);
+
+    text-decoration: none;
+    color: var(--bk-color-text-primary);
+    background-color: var(--bk-color-bg-secondary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bk-tag-black {
+    background: var(--bk-color-text-primary);
+    color: var(--bk-color-bg-primary);
+    border: var(--bk-border-width) solid var(--bk-color-text-primary);
+}
+
+.bk-card-lg {
+    min-width: 500px;
+    max-width: 500px;
+    max-height: 330px;
+    padding: var(--bk-space-md);
+    border-radius: var(--bk-space-xl);
+
+    display: grid;
+    grid-template-columns: 200px auto;
+}
+
+.bk-card-lg .bk-img {
+    border-radius: var(--bk-radius-lg);
+    border: var(--bk-border-width) solid var(--bk-color-border);
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------------------------- */
 
 .book-cards {
     position: relative;

@@ -36,6 +36,35 @@ $bookController = new BookController($conn);
     </div>
 
     <section class="section" id="stylish-section">
+        <div class="container-fluid">
+            <div class="container">
+                <h1 class="fw-bold mb-0">Trending Books</h1>
+                <span class="text-muted">
+                    Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                </span>
+            </div>
+
+            <div class="book-cards mt-4" id="editor_choice">
+                <div class="book-card-slide">
+                    <?php
+                    $bookController->renderBookByViews();
+                    ?>
+                </div>
+
+                <div class="book-card-btn btn-right">
+                    <div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="mt-4">
+                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
+            </h1>
+        </div>
+    </section>
+
+    <section class="section" id="stylish-section">
         <div class="container">
             <h1 class="fw-bold mb-0">Editor's Choice</h1>
             <span class="text-muted">

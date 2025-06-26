@@ -243,4 +243,26 @@ class BookModel
         mysqli_stmt_close($stmt);
         return $categories;
     }
+
+    public function getBooksByViews()
+    {
+        $sql = "SELECT * FROM posts ORDER BY RAND() LIMIT 10";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 0) {
+            return [];
+        }
+
+        $books = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
+
+        // closing the prepared statement
+        mysqli_stmt_close($stmt);
+        return $books;
+    }
 }

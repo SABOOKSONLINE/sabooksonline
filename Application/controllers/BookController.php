@@ -290,4 +290,12 @@ class BookController
         header('Content-Type: application/json');
         echo json_encode($books);
     }
+
+    public function renderBookByViews()
+    {
+        $books = $this->bookModel->getBooksByViews();
+        if ($books) {
+            include __DIR__ . '/../views/books/bkCard.php';
+        }
+    }
 }
