@@ -40,7 +40,7 @@ $bookController = new BookController($conn);
     <section class="section" id="stylish-section">
         <div class="container-fluid">
             <div class="container">
-                <?php renderSectionHeading("Trending Books", "What Everyone's Reading — Join the Trend.", "Show more", "/library") ?>
+                <?php renderSectionHeading("Recommended For You", "Your Next Great Read Starts Here.", "Show more", "/library") ?>
             </div>
 
             <div class="book-cards mt-4" id="editor_choice">
