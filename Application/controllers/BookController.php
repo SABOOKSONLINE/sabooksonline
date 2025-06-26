@@ -291,7 +291,7 @@ class BookController
         echo json_encode($books);
     }
 
-    public function renderBookByViews($category = null, $limit = null)
+    public function renderBookCardByCategory($category = null, $limit = null)
     {
         if (!$category || !$limit) {
             $books = $this->bookModel->getBooksByViews();

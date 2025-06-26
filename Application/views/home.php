@@ -46,7 +46,7 @@ $bookController = new BookController($conn);
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    $bookController->renderBookByViews();
+                    $bookController->renderBookCardByCategory();
                     ?>
                 </div>
 
@@ -68,7 +68,7 @@ $bookController = new BookController($conn);
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
                     <?php
-                    $bookController->renderBookByViews("editors choice", 6);
+                    $bookController->renderBookCardByCategory("editors choice", 6);
                     ?>
                 </div>
 
