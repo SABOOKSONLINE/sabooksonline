@@ -7,6 +7,8 @@ require_once __DIR__ . "/../controllers/BookController.php";
 require_once __DIR__ . "/../models/BannerModel.php";
 require_once __DIR__ . "/../controllers/BannerController.php";
 
+require_once __DIR__ . "/layout/sectionHeading.php";
+
 $bookController = new BookController($conn);
 ?>
 
@@ -38,23 +40,7 @@ $bookController = new BookController($conn);
     <section class="section" id="stylish-section">
         <div class="container-fluid">
             <div class="container">
-                <div class="row align-items-center justify-content-between">
-                    <!-- Left Content -->
-                    <div class="col-md-8 col-12 mb-3 mb-md-0">
-                        <h1 class="fw-bold mb-1">Trending Books</h1>
-                        <span class="text-muted">
-                            Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                        </span>
-                    </div>
-
-                    <!-- Right Button -->
-                    <div class="col-md-auto col-12 text-md-end">
-                        <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
-                            Show more
-                            <div class="fas fa-arrow-right"></div>
-                        </a>
-                    </div>
-                </div>
+                <?php renderSectionHeading("Trending Books", "What Everyone's Reading — Join the Trend.", "Show more", "/library") ?>
             </div>
 
             <div class="book-cards mt-4" id="editor_choice">
@@ -75,23 +61,7 @@ $bookController = new BookController($conn);
 
     <section class="section" id="stylish-section">
         <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <!-- Left Content -->
-                <div class="col-md-8 col-12 mb-3 mb-md-0">
-                    <h1 class="fw-bold mb-1">Editor's Choice</h1>
-                    <span class="text-muted">
-                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                    </span>
-                </div>
-
-                <!-- Right Button -->
-                <div class="col-md-auto col-12 text-md-end">
-                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
-                        Show more
-                        <div class="fas fa-arrow-right"></div>
-                    </a>
-                </div>
-            </div>
+            <?php renderSectionHeading("Editor's Choice", "Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.", "Show more", "/library") ?>
 
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
@@ -113,23 +83,7 @@ $bookController = new BookController($conn);
 
     <section class="section bg-off-white">
         <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <!-- Left Content -->
-                <div class="col-md-8 col-12 mb-3 mb-md-0">
-                    <h1 class="fw-bold mb-1">Latest Collections</h1>
-                    <span class="text-muted">
-                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                    </span>
-                </div>
-
-                <!-- Right Button -->
-                <div class="col-md-auto col-12 text-md-end">
-                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
-                        Show more
-                        <div class="fas fa-arrow-right"></div>
-                    </a>
-                </div>
-            </div>
+            <?php renderSectionHeading("Latest Collections", "Fresh Off the Press — Discover the Newest Reads.", "Show more", "/library") ?>
 
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
@@ -150,23 +104,7 @@ $bookController = new BookController($conn);
 
     <section class="section">
         <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <!-- Left Content -->
-                <div class="col-md-8 col-12 mb-3 mb-md-0">
-                    <h1 class="fw-bold mb-1">Fiction Collections</h1>
-                    <span class="text-muted">
-                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                    </span>
-                </div>
-
-                <!-- Right Button -->
-                <div class="col-md-auto col-12 text-md-end">
-                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
-                        Show more
-                        <div class="fas fa-arrow-right"></div>
-                    </a>
-                </div>
-            </div>
+            <?php renderSectionHeading("Fiction Collections", "Escape Into Stories — Fiction That Moves You.", "Show more", "/library") ?>
 
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
@@ -188,23 +126,7 @@ $bookController = new BookController($conn);
     <section class="section bg-children">
         <div class="container">
             <div>
-                <div class="row align-items-center justify-content-between">
-                    <!-- Left Content -->
-                    <div class="col-md-8 col-12 mb-3 mb-md-0">
-                        <h1 class="fw-bold mb-1">Children's Collections</h1>
-                        <span class="text-muted">
-                            Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                        </span>
-                    </div>
-
-                    <!-- Right Button -->
-                    <div class="col-md-auto col-12 text-md-end">
-                        <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
-                            Show more
-                            <div class="fas fa-arrow-right"></div>
-                        </a>
-                    </div>
-                </div>
+                <?php renderSectionHeading("Children's Collections", "Rooted in Wisdom, Growing Through Stories — Empowering African Children to Read and Rise.", "Show more", "/library") ?>
 
                 <div class="book-cards mt-4" id="childrens_collections">
                     <div class="book-card-slide">
