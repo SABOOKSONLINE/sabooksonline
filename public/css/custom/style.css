@@ -3,9 +3,9 @@
    These variables are reusable throughout the stylesheet for consistent theming.
 */
 :root {
-    /* Colors */
+    /* ========== Color Palette ========== */
     --red: #e74c3c;
-    --deep-red: #ff002b;
+    --deep-red: #ca4232;
     --white: #fff;
     --off-white: #f3f3f3;
     --black: #000;
@@ -15,111 +15,145 @@
     --yellow: #f58234;
     --gray: #7d7d7d;
     --light-gray: #f5f5f5;
+
+    /* ========== Typography ========== */
+    --font-primary: "Inter", sans-serif;
+    --font-weight-normal: 500;
+    --font-weight-bold: 700;
+    --text-transform-upper: uppercase;
+
+    /* ========== Size Scale (rem) ========== */
+    --size-2xs: 0.125rem; /* 2px */
+    --size-xs: 0.25rem; /* 4px */
+    --size-sm: 0.5rem; /* 8px */
+    --size-md: 0.75rem; /* 12px */
+    --size-base: 1rem; /* 16px */
+    --size-lg: 1.25rem; /* 20px */
+    --size-xl: 1.5rem; /* 24px */
+    --size-2xl: 2rem; /* 32px */
+    --size-3xl: 2.25rem;
+    --size-4xl: 2.5rem;
+    --size-5xl: 2.75rem;
+    --size-6xl: 3rem;
+    --size-7xl: 3.25rem;
+    --size-8xl: 3.5rem;
+
+    /* ========== Button System ========== */
+    --btn-font-size: var(--size-base);
+    --btn-padding-y: var(--size-sm);
+    --btn-padding-x: var(--size-xl);
+    --btn-padding: var(--btn-padding-y) var(--btn-padding-x);
+    --btn-padding-special: var(--size-sm) var(--size-md);
+    --btn-border-radius: var(--size-sm);
+    --btn-transition: all 0.3s ease;
+    --btn-min-width: 6.25rem; /* 100px */
+    --btn-opacity: 0.75;
+    --btn-opacity-hover: 1;
+    --btn-border-width: var(--size-xxs);
 }
 
+/* ========== Base Styles ========== */
 body {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-primary);
+    font-size: var(--size-base); /* Sets 1rem = 16px base */
+}
+
+/* ========== Utility Classes ========== */
+[class*="bg-"] {
+    background: var(--color);
+}
+[class*="text-"] {
+    color: var(--color);
 }
 
 .bg-off-white {
-    background: var(--off-white, #f3f3f3);
+    --color: var(--off-white);
 }
-
 .bg-red {
-    background: var(--red, #ff0051);
+    --color: var(--red);
 }
-
 .bg-white {
-    background: var(--white, #fff);
+    --color: var(--white);
 }
-
 .text-off-white {
-    color: var(--off-white, #f3f3f3);
+    --color: var(--off-white);
 }
-
 .text-red {
-    color: var(--red, #ff0051);
+    --color: var(--red);
 }
-
 .text-white {
-    color: var(--white, #fff);
+    --color: var(--white);
 }
 
-/* ===============================
-   BUTTON / STYLING
-================================= */
-
-/* Base button styling */
+/* ========== Button Component ========== */
 .btn {
-    font-weight: bold;
-    font-size: 12px;
-    padding: 10px 25px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
+    font-weight: var(--font-weight-normal);
+    font-size: var(--btn-font-size);
+    padding: var(--btn-padding);
+    border-radius: var(--btn-border-radius);
+    transition: var(--btn-transition);
+    text-transform: var(--text-transform-upper);
+    border: var(--btn-border-width) solid transparent;
+    text-transform: lowercase;
+    text-transform: capitalize;
 }
 
-/* Outline button variant */
+/* Button Variants - Color Logic */
 .btn-outline-red {
-    background: none;
-    color: var(--red);
-    border: 1px solid var(--red);
+    --btn-color: var(--red);
+    --btn-bg: transparent;
+    --btn-border: var(--red);
+    --btn-hover-bg: var(--deep-red);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--deep-red);
 }
 
-/* Solid button variants */
 .btn-red {
-    background: var(--red);
-    color: var(--white);
-    border: 1px solid var(--red);
+    --btn-color: var(--white);
+    --btn-bg: var(--red);
+    --btn-border: var(--red);
+    --btn-hover-bg: var(--deep-red);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--deep-red);
 }
 
 .btn-green {
-    background: var(--green);
-    color: var(--white);
-    border: 1px solid var(--green);
+    --btn-color: var(--white);
+    --btn-bg: var(--green);
+    --btn-border: var(--green);
+    --btn-hover-bg: var(--green);
 }
 
 .btn-blue {
-    background: var(--blue);
-    color: var(--white);
-    border: 1px solid var(--blue);
+    --btn-color: var(--white);
+    --btn-bg: var(--blue);
+    --btn-border: var(--blue);
+    --btn-hover-bg: var(--blue);
 }
 
 .btn-yellow {
-    background: var(--yellow);
-    color: var(--white);
-    border: 1px solid var(--yellow);
+    --btn-color: var(--white);
+    --btn-bg: var(--yellow);
+    --btn-border: var(--yellow);
+    --btn-hover-bg: var(--yellow);
 }
 
-/* Hover states for red variants */
-.btn-outline-red:hover,
-.btn-red:hover {
-    background: var(--deep-red);
-    color: var(--white);
-    border: 1px solid var(--deep-red);
-}
-
-/* Special white button */
 .btn-white {
-    background: none;
-    color: var(--white);
-    border: 1px solid var(--white);
-    padding: 10px 12px;
-    opacity: 0.75;
-    min-width: 100px;
+    --btn-color: var(--black);
+    --btn-bg: var(--white);
+    --btn-border: var(--white);
+    --btn-hover-bg: var(--white);
 }
 
-.btn-white:hover {
-    opacity: 1;
+/* Button State Management */
+.btn {
+    color: var(--btn-color, inherit);
+    background: var(--btn-bg, transparent);
+    border-color: var(--btn-border, transparent);
 }
 
-/* Hover states for green, blue, yellow */
-.btn-green:hover,
-.btn-blue:hover,
-.btn-yellow:hover {
-    color: var(--white);
-    background: var(--brown); /* Intentional dark hover */
-    /* opacity: 0.7; */ /* Could be re-enabled if needed */
+.btn:hover {
+    opacity: 0.95;
 }
 
 /* ===============================
@@ -251,8 +285,8 @@ body {
 ================================= */
 
 footer {
-    background: var(--brown);
-    padding: 50px;
+    background: var(--black);
+    padding: var(--size-8xl);
 }
 
 .footer-links {

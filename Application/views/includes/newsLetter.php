@@ -19,7 +19,7 @@
                     placeholder="Enter your email"
                     aria-label="Email for newsletter"
                     required>
-                <button class="btn btn-danger" type="submit">Subscribe</button>
+                <button class="btn btn-white" type="submit">Subscribe</button>
             </form>
         </div>
     </div>
