@@ -38,10 +38,23 @@ $bookController = new BookController($conn);
     <section class="section" id="stylish-section">
         <div class="container-fluid">
             <div class="container">
-                <h1 class="fw-bold mb-0">Trending Books</h1>
-                <span class="text-muted">
-                    Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-                </span>
+                <div class="row align-items-center justify-content-between">
+                    <!-- Left Content -->
+                    <div class="col-md-8 col-12 mb-3 mb-md-0">
+                        <h1 class="fw-bold mb-1">Trending Books</h1>
+                        <span class="text-muted">
+                            Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                        </span>
+                    </div>
+
+                    <!-- Right Button -->
+                    <div class="col-md-auto col-12 text-md-end">
+                        <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
+                            Show more
+                            <div class="fas fa-arrow-right"></div>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="book-cards mt-4" id="editor_choice">
@@ -57,19 +70,28 @@ $bookController = new BookController($conn);
                     </div>
                 </div>
             </div>
-
-            <h1 class="mt-4">
-                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
-            </h1>
         </div>
     </section>
 
     <section class="section" id="stylish-section">
         <div class="container">
-            <h1 class="fw-bold mb-0">Editor's Choice</h1>
-            <span class="text-muted">
-                Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
-            </span>
+            <div class="row align-items-center justify-content-between">
+                <!-- Left Content -->
+                <div class="col-md-8 col-12 mb-3 mb-md-0">
+                    <h1 class="fw-bold mb-1">Editor's Choice</h1>
+                    <span class="text-muted">
+                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                    </span>
+                </div>
+
+                <!-- Right Button -->
+                <div class="col-md-auto col-12 text-md-end">
+                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
+                        Show more
+                        <div class="fas fa-arrow-right"></div>
+                    </a>
+                </div>
+            </div>
 
             <div class="book-cards mt-4" id="editor_choice">
                 <div class="book-card-slide">
@@ -84,16 +106,30 @@ $bookController = new BookController($conn);
                     </div>
                 </div>
             </div>
-
-            <h1 class="mt-4">
-                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
-            </h1>
         </div>
     </section>
 
+    <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
+
     <section class="section bg-off-white">
         <div class="container">
-            <h1 class="fw-bold mb-0">Latest Collections</h1>
+            <div class="row align-items-center justify-content-between">
+                <!-- Left Content -->
+                <div class="col-md-8 col-12 mb-3 mb-md-0">
+                    <h1 class="fw-bold mb-1">Latest Collections</h1>
+                    <span class="text-muted">
+                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                    </span>
+                </div>
+
+                <!-- Right Button -->
+                <div class="col-md-auto col-12 text-md-end">
+                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
+                        Show more
+                        <div class="fas fa-arrow-right"></div>
+                    </a>
+                </div>
+            </div>
 
             <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide">
@@ -109,16 +145,28 @@ $bookController = new BookController($conn);
                     </div>
                 </div>
             </div>
-
-            <h1 class="mt-4">
-                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
-            </h1>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
-            <h1 class="fw-bold mb-0">Fiction Collections</h1>
+            <div class="row align-items-center justify-content-between">
+                <!-- Left Content -->
+                <div class="col-md-8 col-12 mb-3 mb-md-0">
+                    <h1 class="fw-bold mb-1">Fiction Collections</h1>
+                    <span class="text-muted">
+                        Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                    </span>
+                </div>
+
+                <!-- Right Button -->
+                <div class="col-md-auto col-12 text-md-end">
+                    <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
+                        Show more
+                        <div class="fas fa-arrow-right"></div>
+                    </a>
+                </div>
+            </div>
 
             <div class="book-cards mt-4" id="fiction_collections">
                 <div class="book-card-slide">
@@ -134,19 +182,28 @@ $bookController = new BookController($conn);
                     </div>
                 </div>
             </div>
-
-            <h1 class="mt-4">
-                <a href="/library" class="btn btn-red text-uppercase">View more books</a>
-            </h1>
         </div>
     </section>
 
     <section class="section bg-children">
         <div class="container">
             <div>
-                <h1 class="fw-bold mb-0">Children's Collections</h1>
-                <div class="text-muted">
-                    Rooted in Wisdom, Growing Through Stories — Empowering African Children to Read and Rise.
+                <div class="row align-items-center justify-content-between">
+                    <!-- Left Content -->
+                    <div class="col-md-8 col-12 mb-3 mb-md-0">
+                        <h1 class="fw-bold mb-1">Children's Collections</h1>
+                        <span class="text-muted">
+                            Chosen by Our Editors for Their Impact, Insight, and the Power to Stay With You.
+                        </span>
+                    </div>
+
+                    <!-- Right Button -->
+                    <div class="col-md-auto col-12 text-md-end">
+                        <a href="/library" class="text-decoration-none text-muted fw-semibold g-3">
+                            Show more
+                            <div class="fas fa-arrow-right"></div>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="book-cards mt-4" id="childrens_collections">
@@ -163,16 +220,9 @@ $bookController = new BookController($conn);
                         </div>
                     </div>
                 </div>
-
-                <div class="mt-4">
-                    <a href="" class="btn btn-red text-uppercase">View more books</a>
-                </div>
             </div>
         </div>
     </section>
-
-    <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
-
     <?php require_once __DIR__ . "/includes/footer.php" ?>
 
     <?php require_once __DIR__ .  "/includes/scripts.php" ?>
