@@ -1,3 +1,73 @@
 section {
     padding: 50px 0;
 }
+
+/* ===============================
+   NEWSLETTER FORM / STYLING
+================================= */
+
+.nl-section {
+    padding: 100px 0;
+}
+
+.nl-section::before {
+    background: url("/public/images/ndebele_patterns.jpeg");
+    background-position: center;
+    background-size: cover;
+    content: "";
+
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.nl-section::after {
+    background: linear-gradient(90deg, #000, #000, rgb(0, 0, 0, 0));
+    content: "";
+
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+@media (max-width: 767px) {
+    .nl-section {
+        padding: 300px 0 50px;
+    }
+
+    .nl-section::before {
+        height: 100%;
+        width: 100%;
+    }
+
+    .nl-section::after {
+        background: linear-gradient(
+            0deg,
+            #000,
+            rgb(0, 0, 0, 0.8),
+            rgb(0, 0, 0, 0.3)
+        );
+    }
+}
+
+/* Typography */
+.nl-heading {
+    font-size: var(--typo-heading-size);
+    font-weight: var(--typo-heading-weight);
+    color: var(--white);
+    line-height: 100%;
+    margin: 0 0 var(--space-md);
+}
+
+.nl-subheading {
+    font-size: var(--typo-size-base);
+    color: var(--gray);
+    margin-bottom: var(--space-lg);
+    line-height: 100%;
+}

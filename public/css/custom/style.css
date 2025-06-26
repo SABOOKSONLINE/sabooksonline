@@ -3,7 +3,8 @@
    These variables are reusable throughout the stylesheet for consistent theming.
 */
 :root {
-    --red: #ff0051;
+    /* Colors */
+    --red: #e74c3c;
     --deep-red: #ff002b;
     --white: #fff;
     --off-white: #f3f3f3;
@@ -12,6 +13,8 @@
     --green: #2c8e43;
     --blue: #2d3691;
     --yellow: #f58234;
+    --gray: #7d7d7d;
+    --light-gray: #f5f5f5;
 }
 
 body {
@@ -550,77 +553,6 @@ footer {
 
 .gallery-img:hover img {
     transform: translate(-50%, -50%) scale(1.15);
-}
-
-/* ===============================
-   SUBSCRIBE / STYLING
-================================= */
-
-.sub-layout {
-    background: linear-gradient(90deg, var(--red), var(--yellow));
-    padding: 100px 0;
-}
-
-.sub-layout h2 {
-    color: var(--white);
-}
-
-.sub-layout p {
-    color: var(--off-white);
-}
-
-.sub-layout .form-control {
-    background: none;
-    color: var(--white);
-    padding: 15px;
-    border-radius: 30px;
-    border: 2px solid var(--white);
-}
-
-.btn-sub {
-    font-size: 14px;
-    background: none;
-    color: var(--white);
-    border: 2px solid var(--white);
-    border-radius: 30px 30px 30px 30px;
-}
-
-.btn-sub:hover {
-    background: var(--white);
-    color: var(--red);
-}
-
-.newsletter-form input[type="email"] {
-    background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 999px;
-    padding: 12px 20px;
-    font-weight: 600;
-    font-size: 1rem;
-    outline: none;
-}
-
-.newsletter-form input::placeholder {
-    color: #fff;
-    opacity: 0.8;
-    font-weight: 500;
-}
-
-.newsletter-form button {
-    background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 999px;
-    padding: 12px 24px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    transition: background 0.3s ease;
-}
-
-.newsletter-form button:hover {
-    background: #fff;
-    color: #ff2a68; /* or any strong color matching your gradient */
 }
 
 /* ===============================

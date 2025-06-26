@@ -1,4 +1,14 @@
 :root {
+    /* ======== Typography Sizes ======== */
+    --typo-size-xs: 0.75rem; /* 12px */
+    --typo-size-sm: 0.875rem; /* 14px */
+    --typo-size-base: 1rem; /* 16px */
+    --typo-size-md: 1.125rem; /* 18px */
+    --typo-size-lg: 1.25rem; /* 20px */
+    --typo-size-xl: 1.5rem; /* 24px */
+    --typo-size-2xl: 2rem; /* 32px */
+    --typo-size-3xl: 2.5rem; /* 40px */
+
     /* Typography */
     --typo-heading-size: 2rem;
     --typo-subheading-size: 1.5rem;
@@ -6,11 +16,13 @@
     --typo-subheading-weight: 400;
     --typo-link-size: 1rem;
 
-    /* Colors */
-    --typo-heading-color: #222;
-    --typo-subheading-color: #7d7d7d;
+    /* Typography Colors */
+    --typo-heading-color: var(--black);
+    --typo-subheading-color: var(--gray);
     --typo-link-color: var(--red);
-    --typo-link-hover-color: #7d7d7d;
+    --typo-link-hover-color: var(--gray);
+    --typo-text-color: var(--color-text);
+    --typo-text-light: var(--color-text-light);
 
     /* Spacing */
     --section-padding: 2rem;
