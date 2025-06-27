@@ -333,6 +333,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/registration_success', function () {
         require __DIR__ . "/Application/views/auth/registration_success.php";
     });
+
     // =================== Google OAuth Callback ===================
     $r->addRoute('GET', '/google/callback', function () {
         require  "Application/google/callback.php";
@@ -361,6 +362,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['api_key'] = $apiKey;
         $_GET['userkey'] = $userKey;
         require __DIR__ . "/API/read_remote_data.php";
+    });
+
+    // =================== Google OAuth Callback ===================
+    $r->addRoute('POST', '/newsletter-handler', function () {
+        require __DIR__ . "/Application/handlers/newsletterHandler.php";
     });
 });
 

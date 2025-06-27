@@ -151,6 +151,15 @@ body {
     --btn-hover-bg: var(--gray-200);
 }
 
+.btn-black {
+    --btn-color: var(--white);
+    --btn-bg: var(--black);
+    --btn-border: var(--black);
+    --btn-hover-bg: var(--black-hover);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--black-hover);
+}
+
 /* Button State Management */
 .btn {
     color: var(--btn-color, inherit);

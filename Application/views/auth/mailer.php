@@ -1,6 +1,7 @@
 <?php
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
@@ -24,6 +25,6 @@ function sendVerificationEmail($to, $link)
 
         $mail->send();
     } catch (Exception $e) {
-        error_log("Email error: {$mail->ErrorInfo}");
+        error_log("Email error: {$e->getMessage()}");
     }
 }

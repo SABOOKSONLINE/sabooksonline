@@ -121,7 +121,7 @@ if (isset($userKey) && !empty($userKey)) {
                     <?php
                     } else {
                     ?>
-                        <a href="/signup" class="btn btn-outline-red">Sign Up</a>
+                        <a href="/signup" class="btn btn-black">Sign Up</a>
                         <a href="/login" class="btn btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
                     <?php
                     }
@@ -131,7 +131,7 @@ if (isset($userKey) && !empty($userKey)) {
 
             <div class="d-xl-none bg-light p-3">
                 <div class="d-grid gap-2">
-                    <a href="/signup" class="btn btn-outline-danger btn-outline-red">Sign Up</a>
+                    <a href="/signup" class="btn btn-black">Sign Up</a>
                     <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>
