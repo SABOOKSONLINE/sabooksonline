@@ -38,7 +38,7 @@
 
 @media (max-width: 767px) {
     .nl-section {
-        padding: 300px 0 50px;
+        padding: 200px 8px 50px;
     }
 
     .nl-section::before {
