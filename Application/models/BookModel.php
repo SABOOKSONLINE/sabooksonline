@@ -130,7 +130,7 @@ class BookModel
      */
     public function getBooks()
     {
-        $sql = "SELECT * FROM posts";
+        $sql = "SELECT * FROM posts ORDER BY RAND()";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
