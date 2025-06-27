@@ -92,10 +92,16 @@ body {
     padding: var(--btn-padding);
     border-radius: var(--btn-border-radius);
     transition: var(--btn-transition);
-    text-transform: var(--text-transform-upper);
+    text-transform: capitalize; /* Fixed: Only one transform property */
     border: var(--btn-border-width) solid transparent;
-    text-transform: lowercase;
-    text-transform: capitalize;
+    cursor: pointer;
+    display: inline-flex;
+    gap: var(--size-sm);
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
 
 /* Button Variants - Color Logic */
@@ -121,28 +127,28 @@ body {
     --btn-color: var(--white);
     --btn-bg: var(--green);
     --btn-border: var(--green);
-    --btn-hover-bg: var(--green);
+    --btn-hover-bg: var(--brown);
 }
 
 .btn-blue {
     --btn-color: var(--white);
     --btn-bg: var(--blue);
     --btn-border: var(--blue);
-    --btn-hover-bg: var(--blue);
+    --btn-hover-bg: var(--brown);
 }
 
 .btn-yellow {
     --btn-color: var(--white);
     --btn-bg: var(--yellow);
     --btn-border: var(--yellow);
-    --btn-hover-bg: var(--yellow);
+    --btn-hover-bg: var(--brown);
 }
 
 .btn-white {
     --btn-color: var(--black);
     --btn-bg: var(--white);
     --btn-border: var(--white);
-    --btn-hover-bg: var(--white);
+    --btn-hover-bg: var(--gray-200);
 }
 
 /* Button State Management */
@@ -153,7 +159,34 @@ body {
 }
 
 .btn:hover {
-    opacity: 0.95;
+    color: var(--btn-hover-color, var(--btn-color));
+    background: var(--btn-hover-bg, var(--btn-bg));
+    border-color: var(--btn-hover-border, var(--btn-border));
+    transform: translateY(-1px); /* Subtle lift effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Depth indicator */
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Pseudo-element for smooth hover transition */
+.btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.btn:hover::after {
+    opacity: 1;
 }
 
 /* ===============================

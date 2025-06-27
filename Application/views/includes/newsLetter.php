@@ -10,17 +10,18 @@
         </div>
 
         <div class="col-md-6">
-            <form action="" method="post" class="d-flex">
+            <form action="/newsletterHandler" method="post" class="d-flex">
                 <input
                     type="email"
                     id="newsletter-email"
                     name="subscribe"
-                    class="form-control me-2 text-secondary"
-                    placeholder="Enter your email"
+                    class="form-control form-control-lg me-2 text-secondary nl-input"
+                    placeholder="Enter email Address"
                     aria-label="Email for newsletter"
                     required>
                 <button class="btn btn-white" type="submit">Subscribe</button>
             </form>
+            <small class="nl-fine">Weekly newsletter only. No spam, unsubscribe at any time.</small>
         </div>
     </div>
 </section>
