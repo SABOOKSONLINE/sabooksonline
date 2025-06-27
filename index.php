@@ -56,6 +56,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // =================== API Routes ===================
+    $r->addRoute('POST', '/api/book-action', function () {
+        require "Application/API/ActionApi.php";
+    });
     $r->addRoute('GET', '/api/onix', function () {
         require "Application/onix.php";
     });
