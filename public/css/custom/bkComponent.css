@@ -205,6 +205,17 @@
     border: var(--bk-border-width) solid var(--bk-color-text-primary);
 }
 
+.bk-card-md {
+    min-width: 500px;
+    max-width: 500px;
+    max-height: 330px;
+    padding: var(--bk-space-md);
+    border-radius: var(--bk-space-xl);
+
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
 .bk-card-lg {
     min-width: 500px;
     max-width: 500px;
@@ -214,6 +225,11 @@
 
     display: grid;
     grid-template-columns: auto auto;
+}
+
+.bk-card-lg .bk-img {
+    border-radius: var(--bk-radius-lg);
+    border: var(--bk-border-width) solid var(--bk-color-border);
 }
 
 .bk-card-lg .bk-img {
@@ -241,6 +257,7 @@
         overflow: hidden;
 
         padding: 0;
+        margin: 0;
     }
 
     .bk-card-lg .bk-details {
