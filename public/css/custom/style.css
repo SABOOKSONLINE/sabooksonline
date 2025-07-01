@@ -58,6 +58,14 @@ body {
     font-size: var(--size-base); /* Sets 1rem = 16px base */
 }
 
+.text-shadow {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+.lead {
+    line-height: 100%;
+}
+
 /* ========== Utility Classes ========== */
 [class*="bg-"] {
     background: var(--color);

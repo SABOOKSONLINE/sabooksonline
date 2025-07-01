@@ -15,20 +15,30 @@ $bookController = new BookController($conn);
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-    <div class="jumbotron jumbotron-lg">
+    <div class="jumbotron jumbotron-lg bg-dark text-white">
         <div class="container h-100 d-flex flex-column justify-content-end py-5">
             <div class="jumbo-details">
-                <h1 class="display-4">Welcome to <b>SABooksOnline</b></h1>
-                <p class="lead mb-4">The Gateway to South African Literature</p>
-                <div class="d-flex justify-content-start">
+                <h1 class="display-4 fw-bold">Welcome to <b>SABooksOnline</b></h1>
+                <div class="row">
+                    <div class="col-12 col-md-7">
+                        <p class="lead mb-3 text-shadow">
+                            The Gateway to South African Literature. Discover stories that reflect the heart of South Africa, from township tales to historic struggles and modern voices.
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-2">
                     <a class="btn btn-red me-2" href="/library" role="button">
-                        EXPLORE LIBRARY
-                        <i class="fas fa-arrow-right"></i>
+                        Explore Library <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a class="btn btn-white" href="/signup" role="button">
+                        Publish with Us
                     </a>
                 </div>
             </div>
         </div>
     </div>
+
+
 
     <div class="container">
         <?php
@@ -44,7 +54,7 @@ $bookController = new BookController($conn);
             </div>
 
             <div class="book-cards mt-4" id="recommended">
-                <div class="book-card-slide">
+                <div class="book-card-slide scroll-right">
                     <?php
                     $bookController->renderBookCardByCategory();
                     ?>
@@ -66,7 +76,7 @@ $bookController = new BookController($conn);
             </div>
 
             <div class="book-cards mt-4" id="editors_choice">
-                <div class="book-card-slide">
+                <div class="book-card-slide scroll-left">
                     <?php
                     $bookController->renderBookCardByCategory("editors choice", 6, true);
                     ?>

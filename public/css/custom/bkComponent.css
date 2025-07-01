@@ -288,8 +288,16 @@
     display: flex;
     gap: 30px;
     width: 100%;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     padding: 10px;
+
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.book-card-slide::-webkit-scrollbar {
+    display: none;
 }
 
 .book-card {
