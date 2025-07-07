@@ -19,17 +19,6 @@ $bookListingController = new BookListingController($conn);
                 <?php include __DIR__ . "/../includes/layouts/side-bar.php"; ?>
 
                 <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
-                    <div class="mb-4">
-                        <button id="showBookDetails" class="btn btn-dark me-2">Book Details</button>
-
-                        <?php if (isset($_GET["id"])): ?>
-                            <button id="showAudioDetails" class="btn btn-outline-dark">Audiobook Details</button>
-                        <?php else: ?>
-                            <span class="btn btn-outline-dark text-muted disabled">
-                                <i class="fas fa-lock me-1"></i> Add book details to unlock
-                            </span>
-                        <?php endif; ?>
-                    </div>
 
                     <div id="bookDetailsSection">
                         <?php

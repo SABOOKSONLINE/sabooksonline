@@ -1,4 +1,5 @@
 <?php
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -23,6 +24,13 @@ $keywords = html_entity_decode($book['CATEGORY'] ?? '');
 $type = html_entity_decode($book['TYPE'] ?? 'book');
 $pdf = html_entity_decode($book['PDFURL'] ?? '');
 
+$narrator = htmlspecialchars_decode($book['narrator'] ?? '');
+$releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
+
+if (!empty($narrator)) {
+    $chapters = $book['chapters'];
+}
+
 $datePosted = null;
 if (!empty($book['DATEPOSTED'])) {
     $formats = ['l jS \o\f F Y', 'Y-m-d', 'd-m-Y', 'm/d/Y'];
@@ -34,6 +42,7 @@ if (!empty($book['DATEPOSTED'])) {
         }
     }
 }
+
 ?>
 
 <form method="POST"
@@ -76,18 +85,18 @@ if (!empty($book['DATEPOSTED'])) {
                 <option value="">Choose language</option>
                 <?php
                 $languagesList = [
-                            "Afrikaans",
-                            "English",
-                            "IsiNdebele",
-                            "IsiXhosa",
-                            "IsiZulu",
-                            "Sesotho",
-                            "Sesotho sa Leboa",
-                            "Setswana",
-                            "SiSwati",
-                            "Tshivenda",
-                            "Xitsonga"
-                        ];
+                    "Afrikaans",
+                    "English",
+                    "IsiNdebele",
+                    "IsiXhosa",
+                    "IsiZulu",
+                    "Sesotho",
+                    "Sesotho sa Leboa",
+                    "Setswana",
+                    "SiSwati",
+                    "Tshivenda",
+                    "Xitsonga"
+                ];
                 foreach ($languagesList as $lang) {
                     $selected = ($lang == $languages) ? 'selected' : '';
                     echo "<option value=\"$lang\" $selected>$lang</option>";
@@ -125,43 +134,43 @@ if (!empty($book['DATEPOSTED'])) {
                 <option value="">Choose a category</option>
                 <?php
                 $categories = [
-                            "Fiction",
-                            "Poetry",
-                            "Adult Fiction",
-                            "Arts & Photography",
-                            "Biographies & Memoirs",
-                            "Business & Money",
-                            "Children",
-                            "Comics & Graphic Novels",
-                            "Computers & Technology",
-                            "Cooking, Food & Wines",
-                            "Crafts, Hobbies & Home",
-                            "Education & Training",
-                            "Engineering & Transportation",
-                            "Health, Fitness & Dieting",
-                            "History",
-                            "Humour & Entertainment",
-                            "Law",
-                            "LGBTQIA+",
-                            "Medical",
-                            "Mystery, Thriller & Suspense",
-                            "Mythology",
-                            "Nonfiction",
-                            "Parenting & Relationships",
-                            "Politics & Social Sciences",
-                            "Religion & Spirituality",
-                            "Romance",
-                            "Science & Math",
-                            "Science Fiction & Fantasy",
-                            "Self-Help",
-                            "Sports & Outdoors",
-                            "Teen & Young Adult",
-                            "Travel",
-                            "Magazines & Newspapers",
-                            "Psychology",
-                            "Reference",
-                            "Environment"
-                        ];
+                    "Fiction",
+                    "Poetry",
+                    "Adult Fiction",
+                    "Arts & Photography",
+                    "Biographies & Memoirs",
+                    "Business & Money",
+                    "Children",
+                    "Comics & Graphic Novels",
+                    "Computers & Technology",
+                    "Cooking, Food & Wines",
+                    "Crafts, Hobbies & Home",
+                    "Education & Training",
+                    "Engineering & Transportation",
+                    "Health, Fitness & Dieting",
+                    "History",
+                    "Humour & Entertainment",
+                    "Law",
+                    "LGBTQIA+",
+                    "Medical",
+                    "Mystery, Thriller & Suspense",
+                    "Mythology",
+                    "Nonfiction",
+                    "Parenting & Relationships",
+                    "Politics & Social Sciences",
+                    "Religion & Spirituality",
+                    "Romance",
+                    "Science & Math",
+                    "Science Fiction & Fantasy",
+                    "Self-Help",
+                    "Sports & Outdoors",
+                    "Teen & Young Adult",
+                    "Travel",
+                    "Magazines & Newspapers",
+                    "Psychology",
+                    "Reference",
+                    "Environment"
+                ];
 
                 foreach ($categories as $cat) {
                     echo "<option value=\"$cat\">" . htmlspecialchars($cat) . "</option>";
@@ -200,7 +209,7 @@ if (!empty($book['DATEPOSTED'])) {
             <input type="number" name="Ebook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $EbookPrice ?>">
         </div>
 
-         <div class="col-md-6">
+        <div class="col-md-6">
             <label class="form-label">Audio book Price</label>
             <input type="number" name="Abook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $AbookPrice ?>">
         </div>
@@ -220,7 +229,7 @@ if (!empty($book['DATEPOSTED'])) {
     <hr class="my-4">
 
     <!-- Section: Uploads -->
-    <h4 class="fw-bold mb-3">Uploads</h4>
+    <h4 class="fw-bold mb-3">Ebook Upload</h4>
     <div class="row g-3">
 
         <div class="col-md-6">
@@ -246,9 +255,205 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 
+
+    <hr class="my-4">
+
+    <div class="d-flex align-content-center justify-content-between">
+        <h4 class="fw-bold mb-3">Audiobook Details</h4>
+        <?php if ($narrator): ?>
+            <div class="">
+                <span
+                    class="btn btn-sm btn-outline-primary" id="adit_ab">
+                    Edit Audiobook Details
+                    <i class="fas fa-edit"></i>
+                </span>
+            </div>
+        <?php endif; ?>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">
+                Narrator
+                <?php if (!empty($narrator)): ?>
+                    <small class="text-muted">(Read only)</small>
+                <?php endif; ?>
+            </label>
+            <input type="text" class="form-control bg-light" name="audiobook_narrator"
+                placeholder="e.g. John Smith" value="<?= $narrator ?>" id="audiobook_narrator" readonly>
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">
+                Release Date
+                <?php if (!empty($narrator)): ?>
+                    <small class="text-muted">(Read only)</small>
+                <?php endif; ?>
+            </label>
+            <input type="date" class="form-control bg-light" name="release_date"
+                value="<?= $releaseDate ?>" readonly id="release_date">
+        </div>
+
+        <?php if (!empty($narrator)): ?>
+            <?php if (count($chapters) > 0): ?>
+                <div class="table-responsive mt-4">
+                    <h5 class="fw-semi-bold mb-3">Audiobook Chapter List</h5>
+                    <table class="table table-hover align-middle">
+                        <tbody>
+                            <?php foreach ($chapters as $chapter): ?>
+                                <tr>
+                                    <td class="fw-bold"><?= htmlspecialchars($chapter['chapter_number']) ?></td>
+                                    <td><?= htmlspecialchars($chapter['chapter_title']) ?></td>
+                                    <td>
+                                        <?php if (!empty($chapter['audio_url'])): ?>
+                                            <audio controls class="w-100">
+                                                <source src="/cms-data/audiobooks/<?= htmlspecialchars($chapter['audio_url']) ?>" type="audio/mpeg">
+                                            </audio>
+                                        <?php else: ?>
+                                            <span class="text-muted">No audio</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-end">
+                                        <span
+                                            class="btn btn-sm btn-outline-primary edit_chapter"
+                                            data-chapter-id="<?= htmlspecialchars($chapter['chapter_id']) ?>"
+                                            data-chapter-number="<?= htmlspecialchars($chapter['chapter_number']) ?>"
+                                            data-chapter-title="<?= htmlspecialchars($chapter['chapter_title']) ?>"
+                                            data-audio-url="<?= htmlspecialchars($chapter['audio_url']) ?>">
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                        <a class="btn btn-sm btn-outline-danger edit_chapter"
+                                            href="/dashboards/listings/deleteAudioChapter/<?= $chapter['chapter_id'] ?>">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($narrator): ?>
+            <div class="col">
+                <span class="btn btn-dark" id="pop_form_btn"><i class="fas fa-plus"></i> Add Chapter</span>
+            </div>
+        <?php endif; ?>
+    </div>
+
+
     <div class="mt-4 text-end">
         <button type="submit" class="btn btn-success px-4">
             <?= !empty($bookId) ? 'Update Book' : 'Save Book' ?>
         </button>
     </div>
 </form>
+
+<div class="pop_bg">
+    <div class="pop_form">
+        <form method="POST"
+            action="/dashboards/listings/insertAudioChapter"
+            enctype="multipart/form-data" id="chapter_form">
+
+
+            <input type="hidden" name="content_id" value="<?= $contentId ?>">
+            <input type="hidden" name="audiobook_id" value="<?= $book['audiobook_id'] ?>">
+            <input type="hidden" name="chapter_id" id="chapter_id" value="<?= $chapter['chapter_id'] ?>">
+
+            <div class="card border-0 p-4">
+                <span class="close_pop_form">
+                    <i class="fas fa-times"></i>
+                </span>
+
+                <div class="row g-3">
+                    <h4 class="fw-bold mb-3">Audiobook Chapter Information</h4>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Chapter Number <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="chapter_number" id="chapter_number" required>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Chapter Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="chapter_title" id="chapter_title" required>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Audio File <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" name="audio_url" accept=".mp3">
+                    </div>
+
+                    <?php if (count($book['chapters'])): ?>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Current Audio:</label> <br>
+                            <audio id="audio_url" controls>
+                                <source src="" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="col-12">
+                        <button class="btn btn-success" type="submit" id="chapter_btn">Add Chapter</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="ab_pop_bg">
+    <div class="row">
+        <div class="ab_pop_form p-4 bg-white col-lg-6">
+            <form method="POST"
+                action="<?= $narrator ? "/dashboards/listings/updateAudio/$bookId" : "/dashboards/listings/insertAudio/" ?>"
+                enctype="multipart/form-data" id="ab_form">
+
+                <span class="close_ab_pop_form">
+                    <i class="fas fa-times"></i>
+                </span>
+
+                <input type="text" class="form-control" name="content_id" id="content_id" value="<?= $contentId ?>" hidden>
+                <input type="text" class="form-control" name="book_id" id="book_id" value="<?= $bookId ?>" hidden>
+
+
+                <h4 class="fw-bold mb-3">Audiobook Information</h4>
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">Narrator <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="audiobook_narrator" value="<?= $narrator ?>" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label">Release Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="release_date" value="<?= $releaseDate ?>" required>
+                    </div>
+
+                    <div class="d-flex align-content-center justify-content-between">
+                        <div class="col-6">
+                            <button class="btn btn-success" type="submit" id="ab_btn">
+                                <?php if ($narrator): ?>
+                                    Update Details
+                                <?php else: ?>
+                                    Save Details
+                                <?php endif; ?>
+                            </button>
+                        </div>
+                        <div>
+                            <?php if ($narrator): ?>
+                                <a href="/dashboards/listings/deleteAudio/<?= $bookId ?>" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this audiobook?');">
+                                    Delete
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -26,10 +26,11 @@ body {
 /* Analysis Card Styles */
 .analysis-card {
     /* border: 1px solid #6c757d; */
-        /* soft black outline */    /* Black outline */
+    /* soft black outline */ /* Black outline */
     background-color: #fff;
     color: #555;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+        background-color 0.3s ease, color 0.3s ease;
     border-radius: 0.5rem;
     padding: 1rem;
 }
@@ -69,11 +70,11 @@ body {
     position: absolute;
     top: 50%;
     left: -50px;
-            /* Closer to the bottom of the card */
+    /* Closer to the bottom of the card */
     transform: translateY(-50%);
     color: var(--off-white);
     font-size: 180px;
-            /* Bigger number */
+    /* Bigger number */
     font-weight: 900;
     z-index: 0;
     opacity: 0.15;
@@ -117,7 +118,7 @@ body {
 h2,
 h5.most-viewed-title {
     /* font-weight: 700; */
-    font-size: 'bold';
+    font-size: "bold";
     /* Adjust size as needed */
     /* color: #1a1a1a; */
     /* Dark gray for good contrast */
@@ -127,4 +128,56 @@ h5.most-viewed-title {
     padding-bottom: 0.3rem;
     max-width: fit-content;
     /* Shrinks underline to text width */
+}
+
+.pop_form,
+.ab_pop_form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 16px;
+    z-index: 10;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    transition: 0.3s all ease;
+}
+
+.pop_bg,
+.ab_pop_bg {
+    content: "";
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%) scale(0);
+    backdrop-filter: blur(20px);
+}
+
+.close_pop_form,
+.close_ab_pop_form {
+    position: fixed;
+    background: transparent;
+    color: #ddd;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 30px;
+    height: 30px;
+    align-content: center;
+    text-align: center;
+    right: 16px;
+    top: 16px;
+    border-radius: 50%;
+    transition: 0.3s all ease;
+}
+
+.close_pop_form:hover,
+.close_ab_pop_form:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #888;
+    border: 1px solid #888;
+}
+
+.pop_form_active {
+    transform: translate(-50%, -50%) scale(1);
 }

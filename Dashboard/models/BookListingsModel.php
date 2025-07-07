@@ -55,7 +55,26 @@ class BookListingsModel
      */
     public function selectBookByContentId($userId, $contentId)
     {
-        $sql = "SELECT * FROM posts WHERE USERID = ? AND CONTENTID = ?";
+        $sql = "SELECT 
+                p.*, 
+                a.id AS audiobook_id,
+                a.book_id,
+                a.narrator,
+                a.duration_minutes AS audiobook_duration,
+                a.release_date,
+                c.id AS chapter_id,
+                c.chapter_number,
+                c.chapter_title,
+                c.audio_url,
+                c.duration_minutes AS chapter_duration
+            FROM posts AS p
+            LEFT JOIN audiobooks AS a 
+                ON a.book_id = p.ID
+            LEFT JOIN audiobook_chapters AS c 
+                ON a.id = c.audiobook_id
+            WHERE p.USERID = ? AND p.CONTENTID = ?
+            ORDER BY c.chapter_number ASC
+        ";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -68,19 +87,34 @@ class BookListingsModel
         }
 
         $result = mysqli_stmt_get_result($stmt);
-        if (!$result) {
-            throw new Exception("Failed to fetch result: " . mysqli_error($this->conn));
-        }
-
-        if (mysqli_num_rows($result) == 0) {
+        if (!$result || mysqli_num_rows($result) == 0) {
             return null;
         }
 
-        $book = mysqli_fetch_assoc($result);
+        $book = null;
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            if (!$book) {
+                $book = $row;
+                $book['chapters'] = [];
+            }
+
+            if ($row['chapter_id']) {
+                $book['chapters'][] = [
+                    'chapter_id' => $row['chapter_id'],
+                    'chapter_number' => $row['chapter_number'],
+                    'chapter_title' => $row['chapter_title'],
+                    'audio_url' => $row['audio_url'],
+                    'duration_minutes' => $row['chapter_duration'],
+                ];
+            }
+        }
+
         mysqli_stmt_close($stmt);
 
         return $book;
     }
+
 
     /**
      * Insert a new book

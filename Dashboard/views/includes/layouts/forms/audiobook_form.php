@@ -3,6 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+
 // If $audiobook is an array of rows (more than 1), get the first one:
 if (isset($audiobook[0])) {
     $audioDetails = $audiobook[0];
