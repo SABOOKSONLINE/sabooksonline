@@ -349,7 +349,7 @@ if (!empty($book['DATEPOSTED'])) {
     </div>
 </form>
 
-<div class="pop_bg">
+<div class="pop_bg" id="audiobook_info">
     <div class="pop_form">
         <form method="POST"
             action="/dashboards/listings/insertAudioChapter"
@@ -443,7 +443,7 @@ if (!empty($book['DATEPOSTED'])) {
                         </div>
                         <div>
                             <?php if ($narrator): ?>
-                                <a href="/dashboards/listings/deleteAudio/<?= $bookId ?>" class="btn btn-outline-danger btn-sm"
+                                <a href="/dashboards/listings/deleteAudio/<?= $bookId ?>?content_id=<?= $contentId ?>" class="btn btn-outline-danger btn-sm"
                                     onclick="return confirm('Are you sure you want to delete this audiobook?');">
                                     Delete
                                     <i class="fas fa-trash"></i>

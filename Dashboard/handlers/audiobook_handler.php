@@ -34,7 +34,7 @@ function insertAudiobookHandler($audiobookController)
 
     try {
         $audiobookController->insertAudiobook($data);
-        header("Location: /dashboards/listings/{$_POST['content_id']}?status=success");
+        header("Location: /dashboards/listings/{$_POST['content_id']}?status=success#audiobook_info");
     } catch (Exception $e) {
         die("Insert failed: " . $e->getMessage());
     }
@@ -43,15 +43,15 @@ function insertAudiobookHandler($audiobookController)
 function updateAudiobookHandler($audiobookController)
 {
     $data = formAudiobookDataArray();
-    $bookId = $_GET["q"] ?? '';
+    $bookId = $_GET["id"] ?? '';
 
     if (!$bookId) {
-        die("Invalid audiobook ID.");
+        die("Invalid audiobook ID $bookId.");
     }
 
     try {
         $audiobookController->updateAudiobook($bookId, $data);
-        header("Location: /dashboards/listings/{$_POST['content_id']}?update=success");
+        header("Location: /dashboards/listings/{$_POST['content_id']}?update=success#audiobook_info");
     } catch (Exception $e) {
         error_log("Update failed: " . $e->getMessage());
         die();
@@ -62,9 +62,10 @@ function deleteAudioBookHandler($audiobookController)
 {
     try {
         $bookId = $_GET["id"];
+        $bookContentId = $_GET["content_id"];
 
         $audiobookController->deleteAudiobookByBookId($bookId);
-        header("Location: /dashboards/listings?delete=success");
+        header("Location: /dashboards/listings/{$bookContentId}?delete=success");
     } catch (Exception $e) {
         error_log("Delete failed: " . $e->getMessage());
         die();
