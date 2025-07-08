@@ -1,4 +1,37 @@
 <?php
+
+function formatDateComponents($inputDate)
+{
+    // Clean input (remove "st", "nd", "rd", "th")
+    $cleanedDate = preg_replace('/(\d+)(st|nd|rd|th)/i', '$1', $inputDate);
+
+    try {
+        $date = new DateTime($cleanedDate);
+    } catch (Exception $e) {
+
+        $date2 = DateTime::createFromFormat('l j \o\f F Y', $cleanedDate);
+
+        if ($date2) {
+
+            $day = $date2->format('j');      // e.g. 8
+            $month = $date2->format('F');    // e.g. July
+            $year = $date2->format('Y');
+        }
+        return [
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+        ];
+    }
+
+    return [
+        'year' => $date->format('Y'),
+        'month' => $date->format('F'),
+        'day' => $date->format('j'), // no leading zero
+    ];
+}
+
+
 $contentId = strtolower($book['USERID']);
 $Id = strtolower($book['ID']);
 
@@ -11,21 +44,32 @@ $authors = html_entity_decode($book['AUTHORS']);
 $description = html_entity_decode($book['DESCRIPTION']);
 $isbn = html_entity_decode($book['ISBN']);
 $website = html_entity_decode($book['WEBSITE']);
-// $retailPrice = html_entity_decode($book['RETAILPRICE']);
 $retailPrice = $book['RETAILPRICE'];
+$language = $book['LANGUAGES'];
 $eBookPrice = $book['EBOOKPRICE'] ?? '0';
 $aBookPrice = $book['ABOOKPRICE'] ?? '0';
+$date = $book['DATEPOSTED'];
 
-
+$date = formatDateComponents($date);
 $ebook = $book['PDFURL'] ?? '';
 
 $bookId = $_GET['q'] ?? null;
-
 $audiobookId = $book['a_id'] ?? null;
 
 require __DIR__ . "/../../models/UserModel.php";
+require __DIR__ . "/../../models/ActionModel.php";
 require __DIR__ . "/../../Config/connection.php";
 
+$actionModel = new ActionModel($conn);
+$userId = $_SESSION['ADMIN_USERKEY'] ?? null;
+
+if ($userId) {
+    $liked = $actionModel->hasAction($userId, $bookId, 'like');
+    $wishlisted = $actionModel->hasAction($userId, $bookId, 'wishlist');
+    $inLibrary = $actionModel->hasAction($userId, $bookId, 'library');
+} else {
+    $liked = $wishlisted = $inLibrary = false;
+}
 
 $bookModel = new UserModel($conn);
 
@@ -94,168 +138,256 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     </div>
 </div>
 
-<div class="container pt-4 pb-5">
-    <div class="row">
+<div class="container">
+    <div class="bk-view row">
         <!-- Book Cover -->
-        <div class="col-md-3 book-view-cover mb-3">
-            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" class="img-fluid" alt="Book Cover">
+        <div class="bv-img">
+            <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
         </div>
 
-        <!-- Book Info -->
-        <div class="col-md-9">
-            <h2 class="fw-bold text-capitalize"><?= $title ?></h2>
-            <?php if ($publisher): ?>
-                <p class="mb-1 text-capitalize">
-                    <span class="muted">Published by:</span>
-                    <a href="/creators/creator/<?= $contentId ?>" class="fw-semibold"><?= $publisher ?></a>
-                </p>
-            <?php endif; ?>
 
-            <?php if ($authors): ?>
-                <p class="mb-1 text-capitalize">
-                    <span class="muted">Author/s:</span>
-                    <span class="fw-semibold"><?= $authors ?></span>
-                </p>
-            <?php endif; ?>
-
-            <p class="mb-3 text-capitalize">
-                <span class="muted">Category:</span>
-                <a href="/library?category=<?= $category ?>" class="fw-semibold"><?= $category ?></a>
-            </p>
-
-            <h6 class="mb-2">Book Synopsis:</h6>
-            <p><?= $description ?></p>
-
-            <div class="category-container mb-3 py-3">
-                <div class="">
-                    <span class="category-link"><b>ISBN NUMBER:</b> <?= $isbn ?></span>
-                    <a href="/creators/creator/<?= $contentId ?>" class="category-link"><b>About</b> <?= $publisher ?></a>
-                    <button class="category-link" data-bs-toggle="modal" data-bs-target="#shareCard"><i class="fas fa-share"></i> Share</button>
-                </div>
-            </div>
-
-            <!-- Ratings Comming soon -->
-            <!-- <div class="mb-3">
-                Ratings:
-                <span class="text-warning">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </span>
-                <span class="ms-2 text-muted">4.0</span>
-            </div> -->
-
-            <!-- Action Buttons & Price -->
-            <div class="row gy-1">
-                <!-- READ EBOOK BUTTON -->
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h5><?= $title ?></h5>
-
-                        <?php if ((int)$retailPrice === 0): ?>
-                            <!-- FREE BOOK -->
-                            <?php if (!empty($ebook)): ?>
-                                <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
-                                    <i class="fas fa-book-open"></i> READ E-BOOK NOW (Free)
-                                </a>
-                            <?php endif; ?>
-                        <?php elseif ($userOwnsThisBook): ?>
-                            <!-- PAID BOOK: USER OWNS IT -->
-                            <?php if (!empty($ebook)): ?>
-                                <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success">
-                                    <i class="fas fa-book-open"></i> READ E-BOOK NOW
-                                </a>
-                            <?php endif; ?>
-                        <?php endif; ?>
-
-
-                    </div>
-
-
-
-
-                <!-- LISTEN TO AUDIOBOOK -->
-                <?php if ($audiobookId): ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-yellow me-2">
-                            <i class="fas fa-headphones"></i> LISTEN TO AUDIOBOOK
-                        </a>
-                        <span class="fw-bold align-content-end text-end">
-                            <small class="text-muted fw-normal">
-                                Price
-                            </small><br>R<?= number_format($aBookPrice, 2) ?>
-                        </span>
-                    </div>
-                <?php else: ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <span class="btn btn-yellow me-2 disabled">
-                            <i class="fas fa-headphones"></i> AUDIOBOOK NOT AVAILABLE
-                        </span>
-                    </div>
+        <!-- Book Details -->
+        <div class="bv-details">
+            <div class="">
+                <h4 class="bv-heading"><?= $title ?></h4>
+                <?php if ($authors): ?>
+                    <p class="bv-text-meta">
+                        <b>Author:</b> <span class=""><?= $authors ?></span>
+                    </p>
+                <?php endif; ?>
+                <?php if ($publisher): ?>
+                    <p class="bv-text-meta"><b>Publisher:</b> <?= $publisher ?></p>
+                <?php endif; ?>
+                <?php if ($date): ?>
+                    <p class="bv-text-meta"><b>Released:</b> <?= $date['day'] ?> <?= $date['month'] ?> <?= $date['year'] ?></p>
+                <?php endif; ?>
+                <?php if ($isbn): ?>
+                    <p class="bv-text-meta"><b>ISBN:</b> <?= $isbn ?></p>
+                <?php endif; ?>
+                <?php if ($description): ?>
+                    <p class="bv-text-para"><?= $description ?></p>
                 <?php endif; ?>
 
-                <?php if ((float)$eBookPrice >= 10 && !empty($ebook)): ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <form method="POST" action="/checkout" id="buyEbookForm">
-                            <input type="hidden" name="bookId" value="<?= $bookId ?>">
-                            <button type="submit" class="btn btn-blue me-2" id="buyEbookButton">BUY Ebook</button>
-                        </form>
-                        <span class="fw-bold align-content-end">
-                            <small class="text-muted fw-normal">PRICE</small> <br>R<?= number_format($eBookPrice, 2) ?>
-                        </span>
-                    </div>
-
-                    <?php if (isset($_SESSION['buy']) && $_SESSION['buy'] === 'yes'): ?>
-                        <script>
-                            window.addEventListener('DOMContentLoaded', () => {
-                                const btn = document.getElementById('buyEbookButton');
-                                if (btn) btn.click();
-                            });
-                        </script>
-                        <?php unset($_SESSION['buy']); ?>
+                <div class="bk-tags mt-4">
+                    <?php if ($language): ?>
+                        <span class="bk-tag bk-tag-black"><?= $language ?></span>
                     <?php endif; ?>
-
-                <?php else: ?>
-                    <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <span class="btn btn-yellow me-2 disabled">
-                            <i class="fas fa-book"></i> EBOOK NOT AVAILABLE
-                        </span>
-                    </div>
-                <?php endif; ?>
-
-
-                <?php if ($website): ?>
-                <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                    <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-primary">
-                        Physical book – Purchase link
-                    </a>
-                    <span class="fw-bold align-content-end">
-                            <small class="text-muted fw-normal">PRICE</small> <br>R<?= number_format($retailPrice, 2) ?>
-                        </span>
+                    <?php if ($category): ?>
+                        <a href="/library?category=<?= $category ?>" class="bk-tag"><?= $category ?></a>
+                    <?php endif; ?>
+                    <button class="bk-tag" data-bs-toggle="modal" data-bs-target="#shareCard">
+                        <i class="fas fa-share"></i> Share
+                    </button>
                 </div>
-            <?php else: ?>
-             <div class="col-12 d-flex justify-content-between align-items-center p-3 py-2 rounded bg-light">
-                        <span class="btn btn-yellow me-2 disabled">
-                            <i class="fas fa-link"></i> Purchase LINK NOT AVAILABLE
-                        </span>
+
+
+                <!-- <div class="book-actions" data-book-id="<?= htmlspecialchars($bookId) ?>">
+                    <button type="button"
+                        class="btn px-2 action-like <?= $liked ? 'btn-danger active' : 'btn-outline-danger' ?>"
+                        <?= !$userId ? 'disabled' : '' ?>
+                        onclick="performAction(this, 'like')">
+                        <i class="fas fa-heart me-2"></i> Like
+                    </button>
+
+                    <button type="button"
+                        class="btn px-2 action-library <?= $inLibrary ? 'btn-primary active' : 'btn-outline-primary' ?>"
+                        <?= !$userId ? 'disabled' : '' ?>
+                        onclick="performAction(this, 'library')">
+                        <i class="fas fa-book me-2"></i> Add to Library
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#shareCard">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                </div> -->
+
+                <!-- <div class="container border-top pt-4 mt-4">
+                    <div class="row text-center align-items-center justify-content-between row-cols-2 row-cols-md-6 g-3">
+
+                        <div class="col">
+                            <div class="text-muted small">GENRE</div>
+                            <div class="fw-bold fs-5"><?= $category ?></div>
+                        </div>
+
+                        <div class="col">
+                            <div class="text-muted small">PUBLISHER</div>
+                            <div class="fw-bold fs-5"><?= implode('.', array_map(fn($w) => strtoupper($w[0]), explode(' ', trim($publisher)))) . '.' ?></div>
+                            <div class="small text-secondary">
+                                <a href="/creators/creator/<?= $contentId ?>" class="text-decoration-none text-secondary">
+                                    <?= $publisher ?>
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <div class="col">
+                            <div class="text-muted small">RELEASED</div>
+                            <div class="fw-bold fs-5"><?= $date['year'] ?></div>
+                            <div class="small text-secondary"><?= "{$date['month']} {$date['day']}" ?></div>
+                        </div>
+
+
+                        <div class="col">
+                            <div class="text-muted small">LANGUAGE</div>
+                            <div class="fw-bold fs-5">ZA</div>
+                            <div class="small text-secondary">English 🇿🇦</div>
+                        </div>
                     </div>
-                <?php endif; ?>
+                </div> -->
 
-
-                <span class="small text-muted mt-3 d-block">
-                    <small><span class="text-danger">Disclaimer: </span>Physical Book Purchases are the
-                        Responsibility of Third-Party Sellers.</small>
-                    <small class="d-block">SA Books Online serves as a digital platform facilitating the discovery and promotion of
-                        books. However, the responsibility for physical book sales—including monetary collection,
-                        warehousing, delivery, and quality control—rests solely with the third-party sellers (authors,
-                        publishers, or retailers). SA Books Online does not engage in or guarantee the ful lment,
-                        shipment, or condition of physical books purchased through or as a result of activity on our
-                        platform. Customers are encouraged to engage directly with the relevant seller for any
-                        enquiries or support related to their purchase.</small>
-                </span>
             </div>
         </div>
+
+        <div class="">
+            <div class="bv-purchase">
+                <span class="bv-purchase-select bv-active">
+                    <span class="bv-purchase-select-h">Hardcopy</span>
+                    <span class="bv-purchase-select-hL">R199<small>00</small></span>
+                </span>
+
+                <span class="bv-purchase-select">
+                    <span class="bv-purchase-select-h">E-Book</span>
+                    <span class="bv-purchase-select-hL">R149<small>00</small></span>
+                </span>
+
+                <span class="bv-purchase-select">
+                    <span class="bv-purchase-select-h">Audiobook</span>
+                    <span class="bv-purchase-select-hL">R299<small>00</small></span>
+                </span>
+
+                <div class="bv-purchase-details">
+                    <span class="bv-price">R149<small>00</small></span>
+                    <span class="bv-note-muted">This price applies to the format shown.</span>
+                    <a href="" class="btn btn-green bv-buy-btn">Buy Now</a>
+                    <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
+                </div>
+            </div>
+
+            <div class="card-body d-grid gap-3">
+
+                <!-- ✅ Read E-Book -->
+                <!-- <?php if ((int)$eBookPrice === 0 && !empty($ebook)): ?>
+                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
+                            <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
+                            <span class="text-white fw-semibold">Free</span>
+                        </a>
+                    <?php elseif ($userOwnsThisBook && !empty($ebook)): ?>
+                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
+                            <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
+                            <span class="text-white fw-semibold">Owned</span>
+                        </a>
+                    <?php endif; ?> -->
+
+                <!-- ✅ Buy E-Book -->
+                <!-- <?php if ((int)$eBookPrice !== 0): ?>
+                        <?php if ((float)$eBookPrice >= 10 && !empty($ebook)): ?>
+                            <form method="POST" action="/checkout" id="buyEbookForm" class="w-100">
+                                <input type="hidden" name="bookId" value="<?= $bookId ?>">
+
+                                <button type="submit" id="buyEbookButton" class="btn btn-primary w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
+                                    <span><i class="fas fa-shopping-cart me-2"></i> Buy E-Book</span>
+                                    <span class="fw-semibold">R<?= number_format($eBookPrice, 2) ?></span>
+                                </button>
+                            </form>
+                            <?php if (isset($_SESSION['buy']) && $_SESSION['buy'] === 'yes'): ?>
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', () => {
+                                        const btn = document.getElementById('buyEbookButton');
+                                        if (btn) btn.click();
+                                    });
+                                </script>
+                                <?php unset($_SESSION['buy']); ?>
+                            <?php endif; ?>
+                        <?php elseif ((int)$eBookPrice !== 0 || empty($eBookPrice)): ?>
+                            <button class="btn btn-outline-secondary w-100 rounded-pill disabled">
+                                <i class="fas fa-book me-2"></i> E-Book Not Available
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?> -->
+
+
+                <!-- ✅ Audiobook -->
+                <!-- <?php if ($audiobookId): ?>
+                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-secondary w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
+                            <span><i class="fas fa-headphones me-2"></i> Listen to Audiobook</span>
+                            <span class="fw-semibold">R<?= number_format($aBookPrice, 2) ?></span>
+                        </a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-secondary w-100 rounded-pill disabled">
+                            <i class="fas fa-headphones me-2"></i> Audiobook Not Available
+                        </button>
+                    <?php endif; ?> -->
+
+                <!-- ✅ Physical Book -->
+                <!-- <?php if ($website): ?>
+                        <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-dark w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
+                            <span><i class="fas fa-store me-2"></i> Buy Physical Book</span>
+                            <span class="fw-semibold">R<?= number_format($retailPrice, 2) ?></span>
+                        </a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-secondary w-30 rounded-pill disabled">
+                            <i class="fas fa-link me-2"></i> Purchase Link Not Available
+                        </button>
+                    <?php endif; ?> -->
+
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <!-- <div class="col-12">
+            <div class="alert alert-warning mt-3 small shadow-sm">
+                <strong class="text-danger">Disclaimer:</strong> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.
+            </div>
+        </div> -->
     </div>
 </div>
-</div>
+
+<script>
+    function performAction(button, actionType) {
+        const bookId = button.closest('.book-actions').dataset.bookId;
+
+        fetch('/api/book-action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `book_id=${encodeURIComponent(bookId)}&action_type=${encodeURIComponent(actionType)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove active class and filled btn styles from all buttons of the same type
+                    const allButtons = document.querySelectorAll(`.action-${actionType}`);
+                    allButtons.forEach(btn => {
+                        btn.classList.remove('active', 'btn-danger', 'btn-warning', 'btn-primary');
+                        // Add back outline styles
+                        if (actionType === 'like') btn.classList.add('btn-outline-danger');
+                        if (actionType === 'wishlist') btn.classList.add('btn-outline-warning');
+                        if (actionType === 'library') btn.classList.add('btn-outline-primary');
+                    });
+
+                    if (data.action === 'added') {
+                        button.classList.add('active');
+                        // Remove outline, add filled style
+                        if (actionType === 'like') {
+                            button.classList.remove('btn-outline-danger');
+                            button.classList.add('btn-danger');
+                        }
+                        if (actionType === 'wishlist') {
+                            button.classList.remove('btn-outline-warning');
+                            button.classList.add('btn-warning');
+                        }
+                        if (actionType === 'library') {
+                            button.classList.remove('btn-outline-primary');
+                            button.classList.add('btn-primary');
+                        }
+                    }
+                    // If removed, button remains outlined and inactive (already handled above)
+                } else {
+                    alert(data.message || 'Something went wrong');
+                }
+            })
+            .catch(err => {
+                alert('Network error: ' + err.message);
+            });
+    }
+</script>
