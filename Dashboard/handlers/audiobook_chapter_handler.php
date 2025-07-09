@@ -103,6 +103,7 @@ function deleteAudiobookChapterHandler($audiobookController)
 {
     $data = formAudiobookChapterDataArray();
     $chapterId = $_GET["id"] ?? '';
+    $bookContentId = $_GET["content_id"];
 
     if (!$chapterId) {
         die("Invalid chapter ID.");
@@ -110,7 +111,7 @@ function deleteAudiobookChapterHandler($audiobookController)
 
     try {
         $audiobookController->deleteAudiobookChapter($chapterId);
-        header("Location: /dashboards/listings?delete=success");
+        header("Location: /dashboards/listings/{$bookContentId}?delete=success");
     } catch (Exception $e) {
         error_log("Delete failed: " . $e->getMessage());
         die();

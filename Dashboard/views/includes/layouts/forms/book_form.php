@@ -322,7 +322,7 @@ if (!empty($book['DATEPOSTED'])) {
                                             <i class="fas fa-edit"></i>
                                         </span>
                                         <a class="btn btn-sm btn-outline-danger edit_chapter"
-                                            href="/dashboards/listings/deleteAudioChapter/<?= $chapter['chapter_id'] ?>">
+                                            href="/dashboards/listings/deleteAudioChapter/<?= $chapter['chapter_id'] ?>?content_id=<?= $contentId ?>">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
