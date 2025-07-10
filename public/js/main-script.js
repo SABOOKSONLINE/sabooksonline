@@ -153,6 +153,9 @@ const selectFirstBvBtn = () => {
         updatePrice(price);
         updateBvBuyBtn(bvSelectBtn[i]);
         removePriceDetail(bvSelectBtn[i]);
+        showPurchaseOption(
+            bvSelectBtn[i].firstElementChild.innerText.toLowerCase() + ""
+        );
         // showClickedBtn(bvSelectBtn[i]);
         break;
     }

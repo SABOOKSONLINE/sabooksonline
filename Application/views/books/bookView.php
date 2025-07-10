@@ -234,77 +234,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                 </div>
             </div>
-
-            <div class="card-body d-grid gap-3">
-
-                <!-- ✅ Read E-Book -->
-                <!-- <?php if ((int)$eBookPrice === 0 && !empty($ebook)): ?>
-                    <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
-                        <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
-                        <span class="text-white fw-semibold">Free</span>
-                    </a>
-                <?php elseif ($userOwnsThisBook && !empty($ebook)): ?>
-                    <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
-                        <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
-                        <span class="text-white fw-semibold">Owned</span>
-                    </a>
-                <?php endif; ?> -->
-
-                <!-- ✅ Buy E-Book -->
-                <!-- <?php if ((int)$eBookPrice !== 0): ?>
-                        <?php if ((float)$eBookPrice >= 10 && !empty($ebook)): ?>
-                            <form method="POST" action="/checkout" id="buyEbookForm" class="w-100">
-                                <input type="hidden" name="bookId" value="<?= $bookId ?>">
-
-                                <button type="submit" id="buyEbookButton" class="btn btn-primary w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
-                                    <span><i class="fas fa-shopping-cart me-2"></i> Buy E-Book</span>
-                                    <span class="fw-semibold">R<?= number_format($eBookPrice, 2) ?></span>
-                                </button>
-                            </form>
-                            <?php if (isset($_SESSION['buy']) && $_SESSION['buy'] === 'yes'): ?>
-                                <script>
-                                    window.addEventListener('DOMContentLoaded', () => {
-                                        const btn = document.getElementById('buyEbookButton');
-                                        if (btn) btn.click();
-                                    });
-                                </script>
-                                <?php unset($_SESSION['buy']); ?>
-                            <?php endif; ?>
-                        <?php elseif ((int)$eBookPrice !== 0 || empty($eBookPrice)): ?>
-                            <button class="btn btn-outline-secondary w-100 rounded-pill disabled">
-                                <i class="fas fa-book me-2"></i> E-Book Not Available
-                            </button>
-                        <?php endif; ?>
-                    <?php endif; ?> -->
-
-
-                <!-- ✅ Audiobook -->
-                <!-- <?php if ($audiobookId): ?>
-                        <a href="/library/audiobook/<?= $bookId ?>" target="_blank" class="btn btn-secondary w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
-                            <span><i class="fas fa-headphones me-2"></i> Listen to Audiobook</span>
-                            <span class="fw-semibold">R<?= number_format($aBookPrice, 2) ?></span>
-                        </a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-secondary w-100 rounded-pill disabled">
-                            <i class="fas fa-headphones me-2"></i> Audiobook Not Available
-                        </button>
-                    <?php endif; ?> -->
-
-                <!-- ✅ Physical Book -->
-                <!-- <?php if ($website): ?>
-                        <a href="<?= htmlspecialchars($website) ?>" target="_blank" class="btn btn-dark w-100 rounded-pill d-flex justify-content-between align-items-center px-5">
-                            <span><i class="fas fa-store me-2"></i> Buy Physical Book</span>
-                            <span class="fw-semibold">R<?= number_format($retailPrice, 2) ?></span>
-                        </a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-secondary w-30 rounded-pill disabled">
-                            <i class="fas fa-link me-2"></i> Purchase Link Not Available
-                        </button>
-                    <?php endif; ?> -->
-
-            </div>
         </div>
-
     </div>
 </div>
 
