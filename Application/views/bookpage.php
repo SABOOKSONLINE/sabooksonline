@@ -23,10 +23,8 @@ require_once __DIR__ . "/layout/sectionHeading.php";
     ?>
 
     <section class="section">
-        <div class="container-fluid">
-            <div class="container">
-                <?php renderSectionHeading("You might also like:", "Carefully selected for their depth, relevance, and lasting impact.", "Show more", "/library") ?>
-            </div>
+        <div class="container">
+            <?php renderSectionHeading("You might also like:", "Carefully selected for their depth, relevance, and lasting impact.", "Show more", "/library") ?>
 
             <div class="book-cards mt-4" id="editors_choice">
                 <div class="book-card-slide">
