@@ -123,3 +123,107 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
+const bvDetails = document.querySelector(".bv-purchase-details");
+
+const print = (value) => {
+    console.log(value);
+};
+
+let selectedPrice = document.querySelector(".bv-price");
+let bvBuyBtn = document.querySelector(".bv-buy-btn");
+
+const updatePrice = (value) => {
+    const price = parseInt(value);
+
+    if (price == 0) {
+        selectedPrice.innerHTML = "FREE";
+        selectedPrice.classList.add("bv-text-green");
+    } else {
+        selectedPrice.innerText = "R" + price;
+    }
+};
+
+const selectFirstBvBtn = () => {
+    for (let i = 0; i < bvSelectBtn.length; i++) {
+        bvSelectBtn[i].classList.add("bv-active");
+
+        const price = bvSelectBtn[i].getAttribute("price");
+        updatePrice(price);
+        updateBvBuyBtn(bvSelectBtn[i]);
+        removePriceDetail(bvSelectBtn[i]);
+        // showClickedBtn(bvSelectBtn[i]);
+        break;
+    }
+};
+
+const removePriceDetail = (btn) => {
+    const contentAvailable = btn.getAttribute("available");
+    if (!contentAvailable) {
+        bvDetails.style.display = "none";
+    } else {
+        bvDetails.style.display = "grid";
+    }
+};
+
+const updateBvBuyBtn = (btn) => {
+    bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
+};
+
+// const bvMainBtns = document.querySelectorAll(".bv-main-btn");
+// const resetBvMainBtn = () => {
+//     bvMainBtns.forEach((btn) => {
+//         if (!btn.classList.contains("bv-main-btn")) {
+//             btn.classList.add("bv-main-btn");
+//         }
+//     });
+// };
+
+// const showClickedBtn = (btn) => {
+//     resetBvMainBtn();
+//     const bvMainBtn = document.querySelector(
+//         "#" + btn.firstElementChild.innerText.toLowerCase()
+//     );
+//     // bvMainBtn.classList.remove("bv-main-btn");
+//     print(bvMainBtn);
+// };
+
+const resetBvBuyBtn = () => {
+    const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
+
+    bvBuyBtns.forEach((btn) => {
+        btn.classList.add("hide");
+    });
+};
+
+const showPurchaseOption = (optionId) => {
+    const btn = document.getElementById(optionId);
+
+    resetBvBuyBtn();
+
+    if (btn && btn.parentElement.classList.contains("hide")) {
+        btn.parentElement.classList.remove("hide");
+    }
+};
+
+selectFirstBvBtn();
+
+const removeBvActive = () => {
+    bvSelectBtn.forEach((otherBtns) => {
+        otherBtns.classList.remove("bv-active");
+    });
+};
+
+bvSelectBtn.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        removeBvActive();
+        btn.classList.add("bv-active");
+
+        removePriceDetail(btn);
+        updatePrice(btn.getAttribute("price"));
+        updateBvBuyBtn(btn);
+        showPurchaseOption(btn.firstElementChild.innerText.toLowerCase() + "");
+        // showBtn(btn);
+    });
+});

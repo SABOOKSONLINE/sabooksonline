@@ -139,10 +139,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 </div>
 
 <div class="container">
-    <div class="bk-view row">
+    <div class="bv-view row">
         <!-- Book Cover -->
         <div class="bv-img">
-            <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
+            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
         </div>
 
 
@@ -179,85 +179,58 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <i class="fas fa-share"></i> Share
                     </button>
                 </div>
-
-
-                <!-- <div class="book-actions" data-book-id="<?= htmlspecialchars($bookId) ?>">
-                    <button type="button"
-                        class="btn px-2 action-like <?= $liked ? 'btn-danger active' : 'btn-outline-danger' ?>"
-                        <?= !$userId ? 'disabled' : '' ?>
-                        onclick="performAction(this, 'like')">
-                        <i class="fas fa-heart me-2"></i> Like
-                    </button>
-
-                    <button type="button"
-                        class="btn px-2 action-library <?= $inLibrary ? 'btn-primary active' : 'btn-outline-primary' ?>"
-                        <?= !$userId ? 'disabled' : '' ?>
-                        onclick="performAction(this, 'library')">
-                        <i class="fas fa-book me-2"></i> Add to Library
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#shareCard">
-                        <i class="fas fa-share"></i> Share
-                    </button>
-                </div> -->
-
-                <!-- <div class="container border-top pt-4 mt-4">
-                    <div class="row text-center align-items-center justify-content-between row-cols-2 row-cols-md-6 g-3">
-
-                        <div class="col">
-                            <div class="text-muted small">GENRE</div>
-                            <div class="fw-bold fs-5"><?= $category ?></div>
-                        </div>
-
-                        <div class="col">
-                            <div class="text-muted small">PUBLISHER</div>
-                            <div class="fw-bold fs-5"><?= implode('.', array_map(fn($w) => strtoupper($w[0]), explode(' ', trim($publisher)))) . '.' ?></div>
-                            <div class="small text-secondary">
-                                <a href="/creators/creator/<?= $contentId ?>" class="text-decoration-none text-secondary">
-                                    <?= $publisher ?>
-                                </a>
-                            </div>
-                        </div>
-
-
-                        <div class="col">
-                            <div class="text-muted small">RELEASED</div>
-                            <div class="fw-bold fs-5"><?= $date['year'] ?></div>
-                            <div class="small text-secondary"><?= "{$date['month']} {$date['day']}" ?></div>
-                        </div>
-
-
-                        <div class="col">
-                            <div class="text-muted small">LANGUAGE</div>
-                            <div class="fw-bold fs-5">ZA</div>
-                            <div class="small text-secondary">English 🇿🇦</div>
-                        </div>
-                    </div>
-                </div> -->
-
             </div>
         </div>
 
         <div class="">
             <div class="bv-purchase">
-                <span class="bv-purchase-select bv-active">
-                    <span class="bv-purchase-select-h">Hardcopy</span>
-                    <span class="bv-purchase-select-hL">R199<small>00</small></span>
-                </span>
-
-                <span class="bv-purchase-select">
+                <span class="bv-purchase-select" price="<?= $eBookPrice ?>" available="<?= !empty($ebook) ?>">
                     <span class="bv-purchase-select-h">E-Book</span>
-                    <span class="bv-purchase-select-hL">R149<small>00</small></span>
+                    <?php if ((int)$eBookPrice !== 0 && $ebook): ?>
+                        <span class="bv-purchase-select-hL">R<?= $eBookPrice ?><small>.00</small></span>
+                    <?php elseif ((int)$eBookPrice === 0 && $ebook): ?>
+                        <span class="bv-purchase-select-hL">FREE</span>
+                    <?php endif; ?>
                 </span>
 
-                <span class="bv-purchase-select">
+                <span class="bv-purchase-select" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
                     <span class="bv-purchase-select-h">Audiobook</span>
-                    <span class="bv-purchase-select-hL">R299<small>00</small></span>
+                    <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">R<?= isset($aBookPrice) ?><small>.00</small></span>
+                    <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">FREE</span>
+                    <?php endif; ?>
+                </span>
+
+                <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
+                    <span class="bv-purchase-select-h">Hardcopy</span>
+                    <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
+                        <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
+                    <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
+                        <span class="bv-purchase-select-hL">FREE</span>
+                    <?php endif; ?>
                 </span>
 
                 <div class="bv-purchase-details">
-                    <span class="bv-price">R149<small>00</small></span>
-                    <span class="bv-note-muted">This price applies to the format shown.</span>
-                    <a href="" class="btn btn-green bv-buy-btn">Buy Now</a>
+                    <span class="bv-price"><span></span><small>00</small></span>
+                    <span class="bv-note-muted">This price applies to the format shown..</span>
+
+
+                    <!-- ebook button -->
+                    <div class="hide">
+                        <a href="/library/readBook/<?= $bookId ?>" id="e-book" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                    </div>
+
+                    <!-- audiobook button -->
+                    <div class="hide">
+                        <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                    </div>
+
+                    <!-- hardcopy button -->
+                    <div class="hide">
+                        <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                    </div>
+
                     <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                 </div>
             </div>
@@ -266,16 +239,16 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                 <!-- ✅ Read E-Book -->
                 <!-- <?php if ((int)$eBookPrice === 0 && !empty($ebook)): ?>
-                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
-                            <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
-                            <span class="text-white fw-semibold">Free</span>
-                        </a>
-                    <?php elseif ($userOwnsThisBook && !empty($ebook)): ?>
-                        <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
-                            <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
-                            <span class="text-white fw-semibold">Owned</span>
-                        </a>
-                    <?php endif; ?> -->
+                    <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
+                        <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
+                        <span class="text-white fw-semibold">Free</span>
+                    </a>
+                <?php elseif ($userOwnsThisBook && !empty($ebook)): ?>
+                    <a href="/library/readBook/<?= $bookId ?>" class="btn btn-success w-30 rounded-pill d-flex justify-content-between align-items-center px-5">
+                        <span><i class="fas fa-book-open me-2"></i> Read E-Book</span>
+                        <span class="text-white fw-semibold">Owned</span>
+                    </a>
+                <?php endif; ?> -->
 
                 <!-- ✅ Buy E-Book -->
                 <!-- <?php if ((int)$eBookPrice !== 0): ?>
@@ -332,12 +305,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             </div>
         </div>
 
-        <!-- Disclaimer -->
-        <!-- <div class="col-12">
-            <div class="alert alert-warning mt-3 small shadow-sm">
-                <strong class="text-danger">Disclaimer:</strong> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.
-            </div>
-        </div> -->
     </div>
 </div>
 
