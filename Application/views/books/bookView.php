@@ -184,6 +184,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
+                <!-- E-Book -->
                 <span class="bv-purchase-select" price="<?= $eBookPrice ?>" available="<?= !empty($ebook) ?>">
                     <span class="bv-purchase-select-h">E-Book</span>
                     <?php if ((int)$eBookPrice !== 0 && $ebook): ?>
@@ -193,15 +194,17 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <?php endif; ?>
                 </span>
 
+                <!-- Audiobook -->
                 <span class="bv-purchase-select" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
                     <span class="bv-purchase-select-h">Audiobook</span>
                     <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
-                        <span class="bv-purchase-select-hL">R<?= isset($aBookPrice) ?><small>.00</small></span>
+                        <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
                     <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
                     <?php endif; ?>
                 </span>
 
+                <!-- Hardcopy -->
                 <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
                     <span class="bv-purchase-select-h">Hardcopy</span>
                     <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
@@ -210,6 +213,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-hL">FREE</span>
                     <?php endif; ?>
                 </span>
+
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"><span></span><small>00</small></span>
