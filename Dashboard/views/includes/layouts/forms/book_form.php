@@ -353,7 +353,7 @@ if (!empty($book['DATEPOSTED'])) {
     </div>
 </form>
 
-<?php if (isset($book['chapters'])): ?>
+<?php if ($narrator): ?>
     <div class="pop_bg" id="audiobook_info">
         <div class="pop_form">
             <form method="POST"
