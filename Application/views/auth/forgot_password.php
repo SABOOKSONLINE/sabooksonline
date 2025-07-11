@@ -41,7 +41,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                                     autofocus
                                     value="">
                             </div>
-                            <button type="submit" class="btn btn-warning w-100">Send Reset Link</button>
+                            <button type="submit" class="btn btn-red w-100">Send Reset Link</button>
                         </form>
 
                         <div class="text-center mb-3 mt-3">
@@ -49,10 +49,10 @@ require_once __DIR__ . "/../../Config/connection.php";
                         </div>
 
                         <div class="text-center mb-3">
-                            <small>Remember your password? <a href="/login" class="text-decoration-none">Login</a></small>
+                            <small>Remember your password? <a href="/login" class="">Login</a></small>
                         </div>
                         <div class="text-center">
-                            <small>Don’t have an account? <a href="/signup" class="text-decoration-none">Sign Up</a></small>
+                            <small>Don’t have an account? <a href="/signup" class="">Sign Up</a></small>
                         </div>
                     </div>
                 </div>

@@ -31,6 +31,10 @@ if (!empty($narrator)) {
     $chapters = $book['chapters'];
 }
 
+// echo "<pre>";
+// print_r($narrator);
+// echo "</pre>";
+
 $datePosted = null;
 if (!empty($book['DATEPOSTED'])) {
     $formats = ['l jS \o\f F Y', 'Y-m-d', 'd-m-Y', 'm/d/Y'];
@@ -349,59 +353,61 @@ if (!empty($book['DATEPOSTED'])) {
     </div>
 </form>
 
-<div class="pop_bg" id="audiobook_info">
-    <div class="pop_form">
-        <form method="POST"
-            action="/dashboards/listings/insertAudioChapter"
-            enctype="multipart/form-data" id="chapter_form">
+<?php if (isset($book['chapters'])): ?>
+    <div class="pop_bg" id="audiobook_info">
+        <div class="pop_form">
+            <form method="POST"
+                action="/dashboards/listings/insertAudioChapter"
+                enctype="multipart/form-data" id="chapter_form">
 
 
-            <input type="hidden" name="content_id" value="<?= $contentId ?>">
-            <input type="hidden" name="audiobook_id" value="<?= $book['audiobook_id'] ?>">
-            <input type="hidden" name="chapter_id" id="chapter_id" value="<?= $chapter['chapter_id'] ?>">
+                <input type="hidden" name="content_id" value="<?= $contentId ?>">
+                <input type="hidden" name="audiobook_id" value="<?= $book['audiobook_id'] ?>">
+                <input type="hidden" name="chapter_id" id="chapter_id" value="<?= $chapter['chapter_id'] ?>">
 
-            <div class="card border-0 p-4">
-                <span class="close_pop_form">
-                    <i class="fas fa-times"></i>
-                </span>
+                <div class="card border-0 p-4">
+                    <span class="close_pop_form">
+                        <i class="fas fa-times"></i>
+                    </span>
 
-                <div class="row g-3">
-                    <h4 class="fw-bold mb-3">Audiobook Chapter Information</h4>
+                    <div class="row g-3">
+                        <h4 class="fw-bold mb-3">Audiobook Chapter Information</h4>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Chapter Number <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="chapter_number" id="chapter_number" required>
-                    </div>
-
-                    <div class="col-md-8">
-                        <label class="form-label fw-semibold">Chapter Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="chapter_title" id="chapter_title" required>
-                    </div>
-
-                    <div class="col-md-12">
-                        <label class="form-label fw-semibold">Audio File <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" name="audio_url" accept=".mp3">
-                    </div>
-
-                    <?php if (count($book['chapters'])): ?>
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold">Current Audio:</label> <br>
-                            <audio id="audio_url" controls>
-                                <source src="" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Chapter Number <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="chapter_number" id="chapter_number" required>
                         </div>
-                    <?php endif; ?>
 
-                    <div class="col-12">
-                        <button class="btn btn-success" type="submit" id="chapter_btn">Add Chapter</button>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Chapter Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="chapter_title" id="chapter_title" required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Audio File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="audio_url" accept=".mp3">
+                        </div>
+
+                        <?php if (count($book['chapters'])): ?>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Current Audio:</label> <br>
+                                <audio id="audio_url" controls>
+                                    <source src="" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="col-12">
+                            <button class="btn btn-success" type="submit" id="chapter_btn">Add Chapter</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <div class="ab_pop_bg">
     <div class="row">

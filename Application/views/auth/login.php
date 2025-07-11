@@ -51,7 +51,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                                 </div>
                                 <small><a href="/forgot-password" class="text-decoration-none text-muted">Forgot Password?</a></small>
                             </div>
-                            <button type="submit" class="btn btn-warning w-100">Login</button>
+                            <button type="submit" class="btn btn-red w-100">Login</button>
                         </form>
 
                         <div class="text-center mb-3 mt-3">
@@ -60,13 +60,13 @@ require_once __DIR__ . "/../../Config/connection.php";
 
                         <!-- Google Login Button -->
                         <div class="text-center mb-4">
-                            <a href="<?php echo $authUrl; ?>" class="btn btn-outline-dark">
+                            <a href="<?php echo $authUrl; ?>" class="btn btn-outline-red">
                                 Login with <i class="fab fa-google"></i> Google
                             </a>
                         </div>
 
                         <div class="text-center mb-2">
-                            <small>Don't have an account? <a href="/signup" class="text-decoration-none">Sign Up</a></small>
+                            <small>Don't have an account? <a href="/signup" class="">Sign Up</a></small>
                         </div>
                     </div>
                 </div>

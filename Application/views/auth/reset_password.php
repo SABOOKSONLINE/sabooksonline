@@ -38,7 +38,7 @@ require_once __DIR__ . "/../../Config/connection.php";
                                 <label for="password" class="form-label">Confirm Password</label>
                                 <input type="password" name="confirm_password" class="form-control" required>
                             </div>
-                            <button type="submit" class="btn btn-warning w-100">Reset Password</button>
+                            <button type="submit" class="btn btn-red w-100">Reset Password</button>
                         </form>
                     </div>
                 </div>

@@ -23,6 +23,7 @@
     --text-transform-upper: uppercase;
 
     /* ========== Size Scale (rem) ========== */
+    --size-3xs: calc(0.125rem / 2);
     --size-2xs: 0.125rem; /* 2px */
     --size-xs: 0.25rem; /* 4px */
     --size-sm: 0.5rem; /* 8px */
@@ -49,7 +50,7 @@
     --btn-min-width: 6.25rem; /* 100px */
     --btn-opacity: 0.75;
     --btn-opacity-hover: 1;
-    --btn-border-width: var(--size-xxs);
+    --btn-border-width: var(--size-2xs);
 }
 
 /* ========== Base Styles ========== */
@@ -93,15 +94,16 @@ body {
     --color: var(--white);
 }
 
-/* ========== Button Component ========== */
+/* ========== Base Button Component ========== */
 .btn {
     font-weight: var(--font-weight-normal);
     font-size: var(--btn-font-size);
     padding: var(--btn-padding);
     border-radius: var(--btn-border-radius);
+    border-width: var(--btn-border-width);
+    border-style: solid;
     transition: var(--btn-transition);
-    text-transform: capitalize; /* Fixed: Only one transform property */
-    border: var(--btn-border-width) solid transparent;
+    text-transform: capitalize;
     cursor: pointer;
     display: inline-flex;
     gap: var(--size-sm);
@@ -110,18 +112,44 @@ body {
     position: relative;
     overflow: hidden;
     z-index: 1;
+
+    color: var(--btn-color, inherit);
+    background: var(--btn-bg, transparent);
+    border-color: var(--btn-border, currentColor);
 }
 
-/* Button Variants - Color Logic */
-.btn-outline-red {
-    --btn-color: var(--red);
-    --btn-bg: transparent;
-    --btn-border: var(--red);
-    --btn-hover-bg: var(--deep-red);
-    --btn-hover-color: var(--white);
-    --btn-hover-border: var(--deep-red);
+/* ========== Hover + Active States ========== */
+.btn:hover {
+    color: var(--btn-hover-color, var(--btn-color));
+    background: var(--btn-hover-bg, var(--btn-bg));
+    border-color: var(--btn-hover-border, var(--btn-border));
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* ========== Hover Effect Layer ========== */
+.btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.btn:hover::after {
+    opacity: 1;
+}
+
+/* ========== Variant Generator ========== */
+
+/* -- Solid Variants -- */
 .btn-red {
     --btn-color: var(--white);
     --btn-bg: var(--red);
@@ -130,35 +158,30 @@ body {
     --btn-hover-color: var(--white);
     --btn-hover-border: var(--deep-red);
 }
-
 .btn-green {
     --btn-color: var(--white);
     --btn-bg: var(--green);
     --btn-border: var(--green);
     --btn-hover-bg: var(--brown);
 }
-
 .btn-blue {
     --btn-color: var(--white);
     --btn-bg: var(--blue);
     --btn-border: var(--blue);
     --btn-hover-bg: var(--brown);
 }
-
 .btn-yellow {
     --btn-color: var(--white);
     --btn-bg: var(--yellow);
     --btn-border: var(--yellow);
     --btn-hover-bg: var(--brown);
 }
-
 .btn-white {
     --btn-color: var(--black);
     --btn-bg: var(--white);
     --btn-border: var(--white);
     --btn-hover-bg: var(--gray-200);
 }
-
 .btn-black {
     --btn-color: var(--white);
     --btn-bg: var(--black);
@@ -168,42 +191,54 @@ body {
     --btn-hover-border: var(--black-hover);
 }
 
-/* Button State Management */
-.btn {
-    color: var(--btn-color, inherit);
-    background: var(--btn-bg, transparent);
-    border-color: var(--btn-border, transparent);
+/* -- Outline Variants -- */
+.btn-outline-red {
+    --btn-color: var(--red);
+    --btn-bg: transparent;
+    --btn-border: var(--red);
+    --btn-hover-bg: var(--deep-red);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--deep-red);
 }
-
-.btn:hover {
-    color: var(--btn-hover-color, var(--btn-color));
-    background: var(--btn-hover-bg, var(--btn-bg));
-    border-color: var(--btn-hover-border, var(--btn-border));
-    transform: translateY(-1px); /* Subtle lift effect */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Depth indicator */
+.btn-outline-green {
+    --btn-color: var(--green);
+    --btn-bg: transparent;
+    --btn-border: var(--green);
+    --btn-hover-bg: var(--brown);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--brown);
 }
-
-.btn:active {
-    transform: translateY(0);
-    box-shadow: none;
+.btn-outline-blue {
+    --btn-color: var(--blue);
+    --btn-bg: transparent;
+    --btn-border: var(--blue);
+    --btn-hover-bg: var(--brown);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--brown);
 }
-
-/* Pseudo-element for smooth hover transition */
-.btn::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+.btn-outline-yellow {
+    --btn-color: var(--yellow);
+    --btn-bg: transparent;
+    --btn-border: var(--yellow);
+    --btn-hover-bg: var(--brown);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--brown);
 }
-
-.btn:hover::after {
-    opacity: 1;
+.btn-outline-white {
+    --btn-color: var(--white);
+    --btn-bg: transparent;
+    --btn-border: var(--white);
+    --btn-hover-bg: var(--gray-200);
+    --btn-hover-color: var(--black);
+    --btn-hover-border: var(--gray-200);
+}
+.btn-outline-black {
+    --btn-color: var(--black);
+    --btn-bg: transparent;
+    --btn-border: var(--black);
+    --btn-hover-bg: var(--black-hover);
+    --btn-hover-color: var(--white);
+    --btn-hover-border: var(--black-hover);
 }
 
 /* ===============================
