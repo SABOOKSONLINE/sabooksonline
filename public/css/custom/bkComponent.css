@@ -457,6 +457,31 @@
     display: none;
 }
 
+.bv-review {
+    display: grid;
+    gap: var(--bk-space-sm);
+    border-bottom: 1px solid var(--bk-color-border);
+    padding: var(--bk-space-md);
+}
+
+.bv-review-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--bk-space-md);
+}
+
+.bv-review-details {
+    display: grid;
+    gap: var(--bk-space-sm);
+}
+
+.bv-review-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--bk-space-md);
+    color: var(--yellow);
+}
+
 /* ------------------------------------------------------------------------------------------------------------------------------------------- */
 
 .book-cards {

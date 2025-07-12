@@ -12,11 +12,13 @@ function renderSectionHeading($heading, $subheading, $button, $path)
         </div>
 
         <!-- Right Button -->
-        <div class="col-md-auto col-12 text-md-end">
-            <a href="<?= $path ?>" class="typo-link">
-                <?= $button ?>
-                <div class="fas fa-arrow-right"></div>
-            </a>
-        </div>
+        <?php if (!empty($button)): ?>
+            <div class="col-md-auto col-12 text-md-end">
+                <a href="<?= $path ?>" class="typo-link">
+                    <?= $button ?>
+                    <div class="fas fa-arrow-right"></div>
+                </a>
+            </div>
+        <?php endif; ?>
     </div>
 <?php } ?>
