@@ -46,8 +46,8 @@ $isbn = html_entity_decode($book['ISBN']);
 $website = html_entity_decode($book['WEBSITE']);
 $retailPrice = $book['RETAILPRICE'];
 $language = $book['LANGUAGES'];
-$eBookPrice = $book['EBOOKPRICE'] ?? '0';
-$aBookPrice = $book['ABOOKPRICE'] ?? '0';
+$eBookPrice = $book['EBOOKPRICE'];
+$aBookPrice = $book['ABOOKPRICE'];
 $date = $book['DATEPOSTED'];
 
 $date = formatDateComponents($date);
@@ -199,6 +199,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-hL">R<?= $eBookPrice ?><small>.00</small></span>
                     <?php elseif ((int)$eBookPrice === 0 && $ebook): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
+                    <?php else: ?>
+                        <span>Not available</span>
                     <?php endif; ?>
                 </span>
 
@@ -209,6 +211,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
                     <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
+                    <?php else: ?>
+                        <span>Not available</span>
                     <?php endif; ?>
                 </span>
 
@@ -219,36 +223,175 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
                     <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
+                    <?php else: ?>
+                        <span>Not available</span>
                     <?php endif; ?>
                 </span>
-
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"><span></span><small>00</small></span>
                     <span class="bv-note-muted">This price applies to the format shown..</span>
 
-
                     <!-- ebook button -->
                     <div class="hide">
-                        <a href="/library/readBook/<?= $bookId ?>" id="e-book" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                        <?php if (((int)$eBookPrice > 0) && !$userOwnsThisBook): ?>
+                            <!-- BUY FORM -->
+                            <form method="POST" action="/checkout" id="e-book" class="w-100 mt-3">
+                                <input type="hidden" name="bookId" value="<?= $bookId ?>">
+                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-shopping-cart me-2"></i> Buy
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <!-- READ BUTTON -->
+                            <a href="/library/readBook/<?= $bookId ?>" id="e-book" class="btn btn-green bv-buy-btn">
+                                <span>Read</span>
+                            </a>
+                        <?php endif; ?>
                     </div>
 
                     <!-- audiobook button -->
                     <div class="hide">
-                        <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                        <?php if (((int)$aBookPrice > 0) && !$userOwnsThisBook): ?>
+                            <!-- BUY FORM -->
+                            <form method="POST" action="https://www.sabooksonline.co.za/checkout" id="audiobook" class="w-100 mt-3">
+                                <input type="hidden" name="audiobookId" value="<?= $bookId ?>">
+                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-shopping-cart me-2"></i> Buy
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <!-- READ BUTTON -->
+                            <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green bv-buy-btn">
+                                <span>listen</span>
+                            </a>
+                        <?php endif; ?>
                     </div>
 
                     <!-- hardcopy button -->
                     <div class="hide">
-                        <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">Read<span></span></a>
+                        <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">purchase Link<span></span></a>
+                        <span class="bv-note-muted" id="hardcopy"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
+
                     </div>
 
-                    <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
+    const bvDetails = document.querySelector(".bv-purchase-details");
+
+    const print = (value) => {
+        console.log(value);
+    };
+
+    let selectedPrice = document.querySelector(".bv-price");
+    let bvBuyBtn = document.querySelector(".bv-buy-btn");
+
+    const updatePrice = (value) => {
+        const price = parseInt(value);
+
+        if (price == 0) {
+            selectedPrice.innerHTML = "FREE";
+            selectedPrice.classList.add("bv-text-green");
+        } else {
+            selectedPrice.innerText = "R" + price;
+        }
+    };
+
+    const selectFirstBvBtn = () => {
+        for (let i = 0; i < bvSelectBtn.length; i++) {
+            bvSelectBtn[i].classList.add("bv-active");
+
+            const price = bvSelectBtn[i].getAttribute("price");
+            updatePrice(price);
+            updateBvBuyBtn(bvSelectBtn[i]);
+            removePriceDetail(bvSelectBtn[i]);
+            showPurchaseOption(
+                bvSelectBtn[i].firstElementChild.innerText.toLowerCase() + ""
+            );
+            // showClickedBtn(bvSelectBtn[i]);
+            break;
+        }
+    };
+
+    const removePriceDetail = (btn) => {
+        const contentAvailable = btn.getAttribute("available");
+        if (!contentAvailable) {
+            bvDetails.style.display = "none";
+        } else {
+            bvDetails.style.display = "grid";
+        }
+    };
+
+    const updateBvBuyBtn = (btn) => {
+        bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
+    };
+
+    // const bvMainBtns = document.querySelectorAll(".bv-main-btn");
+    // const resetBvMainBtn = () => {
+    //     bvMainBtns.forEach((btn) => {
+    //         if (!btn.classList.contains("bv-main-btn")) {
+    //             btn.classList.add("bv-main-btn");
+    //         }
+    //     });
+    // };
+
+    // const showClickedBtn = (btn) => {
+    //     resetBvMainBtn();
+    //     const bvMainBtn = document.querySelector(
+    //         "#" + btn.firstElementChild.innerText.toLowerCase()
+    //     );
+    //     // bvMainBtn.classList.remove("bv-main-btn");
+    //     print(bvMainBtn);
+    // };
+
+    const resetBvBuyBtn = () => {
+        const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
+
+        bvBuyBtns.forEach((btn) => {
+            btn.classList.add("hide");
+        });
+    };
+
+    const showPurchaseOption = (optionId) => {
+        const btn = document.getElementById(optionId);
+
+        resetBvBuyBtn();
+
+        if (btn && btn.parentElement.classList.contains("hide")) {
+            btn.parentElement.classList.remove("hide");
+        }
+    };
+
+    selectFirstBvBtn();
+
+    const removeBvActive = () => {
+        bvSelectBtn.forEach((otherBtns) => {
+            otherBtns.classList.remove("bv-active");
+        });
+    };
+
+    bvSelectBtn.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            removeBvActive();
+            btn.classList.add("bv-active");
+
+            removePriceDetail(btn);
+            updatePrice(btn.getAttribute("price"));
+            updateBvBuyBtn(btn);
+            showPurchaseOption(btn.firstElementChild.innerText.toLowerCase() + "");
+            // showBtn(btn);
+        });
+    });
+</script>
+
+</script>
+
 
 <script>
     function performAction(button, actionType) {
