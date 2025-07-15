@@ -230,3 +230,23 @@ bvSelectBtn.forEach((btn) => {
         // showBtn(btn);
     });
 });
+
+const ratingStars = document.querySelectorAll(".rating-star");
+
+ratingStars.forEach((star) => {
+    star.addEventListener("click", function () {
+        const rating = parseInt(this.getAttribute("data-rating"));
+        document.getElementById("rating_value").value = rating;
+        console.log(document.getElementById("rating_value").value);
+
+        document.querySelectorAll(".rating-star").forEach((s, index) => {
+            if (index < rating) {
+                s.classList.remove("far");
+                s.classList.add("fas", "text-warning");
+            } else {
+                s.classList.remove("fas", "text-warning");
+                s.classList.add("far");
+            }
+        });
+    });
+});

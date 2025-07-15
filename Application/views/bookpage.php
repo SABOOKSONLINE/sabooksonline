@@ -17,9 +17,14 @@ require_once __DIR__ . "/layout/sectionHeading.php";
     require __DIR__ . "/../../database/connection.php";
     require __DIR__ . "/../models/BookModel.php";
     require __DIR__ . "/../controllers/BookController.php";
+    require __DIR__ . "/../models/ReviewsModel.php";
+    require __DIR__ . "/../controllers/ReviewsController.php";
 
     $controller = new BookController($conn);
     $controller->renderBookView();
+
+    $reviewsController = new ReviewsController($conn);
+    $reviewsController->renderReviews($_GET['q']);
     ?>
 
     <section class="section">
@@ -42,7 +47,6 @@ require_once __DIR__ . "/layout/sectionHeading.php";
                         $category = $bookData['category'];
                     }
 
-                    // $controller = new BookController($conn);
                     $controller->renderBooksByCategory($category, 10);
                     ?>
                 </div>
@@ -56,7 +60,10 @@ require_once __DIR__ . "/layout/sectionHeading.php";
         </div>
     </section>
 
-    <?php require_once __DIR__ . "/includes/footer.php" ?>
 
-    <?php require_once __DIR__ .  "/includes/scripts.php" ?>
+    <?php
+    include __DIR__ . "/layout/reviewForm.php";
+    require_once __DIR__ . "/includes/footer.php";
+    require_once __DIR__ .  "/includes/scripts.php";
+    ?>
 </body>

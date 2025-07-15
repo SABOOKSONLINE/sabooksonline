@@ -168,17 +168,25 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <p class="bv-text-para"><?= $description ?></p>
                 <?php endif; ?>
 
-                <div class="bk-tags mt-4">
-                    <?php if ($language): ?>
-                        <span class="bk-tag bk-tag-black"><?= $language ?></span>
-                    <?php endif; ?>
-                    <?php if ($category): ?>
-                        <a href="/library?category=<?= $category ?>" class="bk-tag"><?= $category ?></a>
-                    <?php endif; ?>
-                    <button class="bk-tag" data-bs-toggle="modal" data-bs-target="#shareCard">
-                        <i class="fas fa-share"></i> Share
+                <div class="bk-tags mt-4 justify-content-between">
+                    <div class="bk-tags">
+                        <?php if ($language): ?>
+                            <span class="bk-tag bk-tag-black"><?= $language ?></span>
+                        <?php endif; ?>
+                        <?php if ($category): ?>
+                            <a href="/library?category=<?= $category ?>" class="bk-tag"><?= $category ?></a>
+                        <?php endif; ?>
+                        <button class="bk-tag" data-bs-toggle="modal" data-bs-target="#shareCard">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                    </div>
+
+                    <button type="button" class="bk-tag text-md-end" data-bs-toggle="modal" data-bs-target="#commentModal">
+                        <i class="fas fa-plus"></i>
+                        Add Review
                     </button>
                 </div>
+
             </div>
         </div>
 
@@ -241,39 +249,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         </div>
     </div>
 </div>
-
-<section class="section">
-    <div class="container">
-        <?php renderSectionHeading("Reviews", "Every Book Has a Story, So Does Every Reader.", "", "") ?>
-
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="bv-review">
-                    <div class="bv-review-profile">
-                        <img src="/public/images/user-3296.png" alt="" width="40px">
-                        <p class="bv-text-para">Tebogo M.</p>
-                    </div>
-                    <div class="bv-review-details">
-                        <div class="bv-review-rating">
-                            <div class="bv-review-stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <p class="bv-text-para">4 Stars</p>
-                        </div>
-                        <p class="bv-text-para">Absolutely powerful! I saw my own story in Thando's journey. A beautiful blend of culture, emotion, and truth.</p>
-                        <p class="bv-text-meta"><b>Reviewed:</b> 28 October 2023</p>
-                        <div class="bk-tags">
-                            <span class="bk-tag bk-tag-black">Verified Purchase</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <script>
     function performAction(button, actionType) {

@@ -367,9 +367,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require __DIR__ . "/API/read_remote_data.php";
     });
 
-    // =================== Google OAuth Callback ===================
+    // =================== NewsLetter Handler ===================
     $r->addRoute('POST', '/newsletter-handler', function () {
         require __DIR__ . "/Application/handlers/newsletterHandler.php";
+    });
+
+    // =================== Review Handler ===================
+    $r->addRoute('POST', '/reviews-handler', function () {
+        require __DIR__ . "/Application/handlers/reviewsHandler.php";
     });
 });
 
