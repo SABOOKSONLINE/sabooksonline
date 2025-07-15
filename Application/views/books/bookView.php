@@ -156,7 +156,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     </p>
                 <?php endif; ?>
                 <?php if ($publisher): ?>
-                    <p class="bv-text-meta"><b>Publisher:</b> <?= $publisher ?></p>
+                    <p class="bv-text-meta"><b>Publisher:</b> <a class="bv-text-meta" href="/creators/creator/<?= $contentId ?>"><?= $publisher ?></a></p>
                 <?php endif; ?>
                 <?php if ($date): ?>
                     <p class="bv-text-meta"><b>Released:</b> <?= $date['day'] ?> <?= $date['month'] ?> <?= $date['year'] ?></p>
