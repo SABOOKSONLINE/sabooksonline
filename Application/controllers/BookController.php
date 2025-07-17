@@ -18,181 +18,148 @@ class BookController
     /**
      * Render the view for a single book by its ID.
      */
-    public function renderBookView()    {
-    $contentId = $_GET['q'] ?? null;
+    public function renderBookView()
+    {
+        $contentId = $_GET['q'] ?? null;
 
-    if (!$contentId) {
-        header("Location: /404");
-        exit;
-    }
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
 
-    $contentId = htmlspecialchars(trim($contentId));
-    $book = $this->bookModel->getBookById($contentId);
+        $contentId = htmlspecialchars(trim($contentId));
+        $book = $this->bookModel->getBookById($contentId);
 
-    if ($book) {
-        include __DIR__ . '/../views/books/bookView.php';
-    } else {
-        echo "Book not found.";
-    }
+        if ($book) {
+            include __DIR__ . '/../views/books/bookView.php';
+        } else {
+            echo "Book not found.";
+        }
     }
 
 
     public function readBook($contentId)
-{
-    require_once __DIR__ . '/../models/UserModel.php';
+    {
+        require_once __DIR__ . '/../models/UserModel.php';
 
-    if (!$contentId) {
-        header("Location: /404");
-        exit;
-    }
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    // 🚧 Redirect if user not logged in
-    if (empty($_SESSION['ADMIN_EMAIL'])) {
-        include_once __DIR__ . '/../views/403.php';
-        exit;
-    }
+        // 🚧 Redirect if user not logged in
+        if (empty($_SESSION['ADMIN_EMAIL'])) {
+            include_once __DIR__ . '/../views/403.php';
+            exit;
+        }
 
-    $email = $_SESSION['ADMIN_EMAIL'];
-    $contentId = htmlspecialchars(trim($contentId));
-    $book = $this->bookModel->getBookById($contentId);
+        $email = $_SESSION['ADMIN_EMAIL'];
+        $contentId = htmlspecialchars(trim($contentId));
+        $book = $this->bookModel->getBookById($contentId);
 
-    if (!$book) {
-        header("Location: /404");
-        exit;
-    }
+        if (!$book) {
+            header("Location: /404");
+            exit;
+        }
 
-    $userModel = new UserModel($this->conn);
-    $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+        $userModel = new UserModel($this->conn);
+        $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
 
-    $userOwnsThisBook = false;
-    foreach ($userBooks as $purchasedBook) {
-        if ($purchasedBook['ID'] == $book['ID']) {
-            $userOwnsThisBook = true;
-            break;
+        $userOwnsThisBook = false;
+        foreach ($userBooks as $purchasedBook) {
+            if ($purchasedBook['ID'] == $book['ID']) {
+                $userOwnsThisBook = true;
+                break;
+            }
+        }
+
+        if ($userOwnsThisBook && $book['PDFURL']) {
+            include __DIR__ . '/../views/books/ebook/bookReader.php';
+        } else {
+            include_once __DIR__ . '/../views/401.php';
+            exit;
         }
     }
-
-    if ($userOwnsThisBook && $book['PDFURL']) {
-        include __DIR__ . '/../views/books/ebook/bookReader.php';
-    } else {
-        include_once __DIR__ . '/../views/401.php';
-        exit;
-
-    }
-}
 
 
     /**
      * Render the view for a single book by its ID.
      */
     public function renderAudioBookView()
-{
-    $contentId = $_GET['q'] ?? null;
+    {
+        $contentId = $_GET['q'] ?? null;
 
-    require_once __DIR__ . '/../models/UserModel.php';
+        require_once __DIR__ . '/../models/UserModel.php';
 
-    if (!$contentId) {
-        header("Location: /404");
-        exit;
-    }
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    if (empty($_SESSION['ADMIN_EMAIL'])) {
-        include __DIR__ . '/../views/403.php';
-        exit;
-    }
+        if (empty($_SESSION['ADMIN_EMAIL'])) {
+            include __DIR__ . '/../views/403.php';
+            exit;
+        }
 
-    $contentId = htmlspecialchars(trim($contentId));
-    $book = $this->bookModel->getBookById($contentId);
+        $contentId = htmlspecialchars(trim($contentId));
+        $book = $this->bookModel->getBookById($contentId);
 
-    // Ensure the book exists before continuing
-    if (!$book) {
-        include __DIR__ . '/../views/404.php';
-        exit;
-    }
+        // Ensure the book exists before continuing
+        if (!$book) {
+            include __DIR__ . '/../views/404.php';
+            exit;
+        }
 
-    $audiobookChapters = $this->bookModel->getChaptersByAudiobookId($book['a_id'] ?? null);
+        $audiobookChapters = $this->bookModel->getChaptersByAudiobookId($book['a_id'] ?? null);
 
-    $email = $_SESSION['ADMIN_EMAIL'];
-    $userModel = new UserModel($this->conn);
-    $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+        $email = $_SESSION['ADMIN_EMAIL'];
+        $userModel = new UserModel($this->conn);
+        $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
 
-    $userOwnsThisBook = false;
-    foreach ($userBooks as $purchasedBook) {
-        if ($purchasedBook['ID'] == $book['ID']) {
-            $userOwnsThisBook = true;
-            break;
+        $userOwnsThisBook = false;
+        foreach ($userBooks as $purchasedBook) {
+            if ($purchasedBook['ID'] == $book['ID']) {
+                $userOwnsThisBook = true;
+                break;
+            }
+        }
+
+        if ($userOwnsThisBook) {
+            include __DIR__ . '/../views/books/audio/audiobook_details.php';
+
+            // Optional: show warning if no chapters found
+            if (empty($audiobookChapters)) {
+                echo "<p>No audiobook chapters found.</p>";
+            }
+        } else {
+            include_once __DIR__ . '/../views/401.php';
+            exit;
         }
     }
-
-    if ($userOwnsThisBook) {
-        include __DIR__ . '/../views/books/audio/audiobook_details.php';
-
-        // Optional: show warning if no chapters found
-        if (empty($audiobookChapters)) {
-            echo "<p>No audiobook chapters found.</p>";
-        }
-    } else {
-        include_once __DIR__ . '/../views/401.php';
-        exit;
-    }
-}
 
 
     /**
      * Render a list of books filtered by category.
      */
     public function renderBooksByCategory($category, $limit)
-{
-    $category = htmlspecialchars(trim($category)); // Sanitize category input
+    {
+        $category = htmlspecialchars(trim($category)); // Sanitize category input
+        $books = $this->bookModel->getBooksByCategory($category, $limit);
 
-    // Cache folder - adjust if needed
-    $cacheDir = __DIR__ . '/../cache';
-
-    // Create cache folder if missing
-    if (!is_dir($cacheDir)) {
-        mkdir($cacheDir, 0775, true);
+        if ($books) {
+            include __DIR__ . '/../views/books/bookCategory.php';
+        } else {
+            echo "No books found in this category.";
+        }
     }
-
-    // Cache file name: use category + limit to uniquely identify cache
-    // Replace spaces with underscores and lowercase for safety
-    $safeCategory = strtolower(str_replace(' ', '_', $category));
-    $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
-
-    $cacheTime = 3600; // Cache duration in seconds (1 hour)
-
-    // Serve cached file if it exists and fresh
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
-        echo file_get_contents($cacheFile);
-        return;
-    }
-
-    // Otherwise fetch fresh books data
-    $books = $this->bookModel->getBooksByCategory($category, $limit);
-
-    if ($books) {
-        // Start output buffering to capture included HTML
-        ob_start();
-        include __DIR__ . '/../views/books/bookCategory.php';
-        $html = ob_get_clean();
-
-        // Save generated HTML to cache file
-        file_put_contents($cacheFile, $html);
-
-        // Output the fresh HTML
-        echo $html;
-    } else {
-        echo "No books found in this category.";
-    }
-}
-
 
 
     /**
@@ -210,47 +177,47 @@ class BookController
     }
 
     public function renderListingsByCategory($category, $limit)
-{
-    $category = htmlspecialchars(trim($category)); // Sanitize category input
+    {
+        $category = htmlspecialchars(trim($category)); // Sanitize category input
 
-    // Cache directory path
-    $cacheDir = __DIR__ . '/../cache';
+        // Cache directory path
+        $cacheDir = __DIR__ . '/../cache';
 
-    // Create cache directory if it doesn't exist
-    if (!is_dir($cacheDir)) {
-        mkdir($cacheDir, 0775, true);
+        // Create cache directory if it doesn't exist
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0775, true);
+        }
+
+        // Safe cache file name based on category and limit
+        $safeCategory = strtolower(str_replace(' ', '_', $category));
+        $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
+
+        $cacheTime = 3600; // Cache duration in seconds (1 hour)
+
+        // Serve cached content if available and fresh
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
+            echo file_get_contents($cacheFile);
+            return;
+        }
+
+        // Fetch fresh book listings
+        $books = $this->bookModel->getBookListingsByCategory($category, $limit);
+
+        if ($books) {
+            // Capture the output of the included view
+            ob_start();
+            include __DIR__ . '/../views/books/bookCategory.php';
+            $html = ob_get_clean();
+
+            // Save the generated HTML to the cache file
+            file_put_contents($cacheFile, $html);
+
+            // Output the generated HTML
+            echo $html;
+        } else {
+            echo "<div class='container'>No books found in this category.</div>";
+        }
     }
-
-    // Safe cache file name based on category and limit
-    $safeCategory = strtolower(str_replace(' ', '_', $category));
-    $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
-
-    $cacheTime = 3600; // Cache duration in seconds (1 hour)
-
-    // Serve cached content if available and fresh
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
-        echo file_get_contents($cacheFile);
-        return;
-    }
-
-    // Fetch fresh book listings
-    $books = $this->bookModel->getBookListingsByCategory($category, $limit);
-
-    if ($books) {
-        // Capture the output of the included view
-        ob_start();
-        include __DIR__ . '/../views/books/bookCategory.php';
-        $html = ob_get_clean();
-
-        // Save the generated HTML to the cache file
-        file_put_contents($cacheFile, $html);
-
-        // Output the generated HTML
-        echo $html;
-    } else {
-        echo "<div class='container'>No books found in this category.</div>";
-    }
-}
 
 
 
