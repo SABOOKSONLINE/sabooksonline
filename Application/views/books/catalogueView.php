@@ -25,7 +25,7 @@ function booksByPage($books, $page)
             <div class="library-book-card">
                 <div class="library-book-card-img">
                     <a href="/library/book/<?= $contentId ?>">
-                        <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= strtolower($title) ?>">
+                        <img src="/cms-data/book-covers/<?= $cover ?>" alt="<?= strtolower($title) ?>">
                     </a>
                 </div>
                 <div class="w-100">

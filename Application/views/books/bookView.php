@@ -142,7 +142,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     <div class="bv-view row">
         <!-- Book Cover -->
         <div class="bv-img">
-            <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
+            <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
         </div>
 
 

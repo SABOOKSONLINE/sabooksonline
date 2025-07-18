@@ -45,7 +45,7 @@
             </div>
             <div class="bk-img">
                 <a href="/library/book/<?= $contentId ?>">
-                    <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
+                    <img src="/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
                 </a>
             </div>
         </div>
@@ -53,7 +53,7 @@
         <div class="bk-card bk-card-lg">
             <div class="bk-img">
                 <a href="/library/book/<?= $contentId ?>">
-                    <img src="https://sabooksonline.co.za/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
+                    <img src="/cms-data/book-covers/<?= $cover ?>" alt="<?= $title ?>">
                 </a>
             </div>
             <div class="bk-details">
