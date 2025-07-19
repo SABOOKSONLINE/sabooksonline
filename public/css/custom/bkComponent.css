@@ -486,6 +486,37 @@
     margin: 0;
 }
 
+@media (max-width: 1200px) {
+    .bv-view {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .bv-img {
+        grid-column: 1 / -1;
+        min-height: 500px;
+        padding: 0 var(--bk-space-lg);
+    }
+}
+
+@media (max-width: 991px) {
+    .bv-view {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+
+    .bv-details {
+        padding: 0 var(--bk-space-md);
+    }
+
+    .bv-img {
+        grid-column: 1;
+        width: calc(100% - var(--bk-space-lg) - var(--bk-space-lg));
+        padding: 0 var(--bk-space-lg);
+        margin-left: var(--bk-space-lg);
+    }
+}
+
 /* ------------------------------------------------------------------------------------------------------------------------------------------- */
 
 .book-cards {

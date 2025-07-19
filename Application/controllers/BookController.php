@@ -181,24 +181,24 @@ class BookController
         $category = htmlspecialchars(trim($category)); // Sanitize category input
 
         // Cache directory path
-        $cacheDir = __DIR__ . '/../cache';
+        // $cacheDir = __DIR__ . '/../cache';
 
-        // Create cache directory if it doesn't exist
-        if (!is_dir($cacheDir)) {
-            mkdir($cacheDir, 0775, true);
-        }
+        // // Create cache directory if it doesn't exist
+        // if (!is_dir($cacheDir)) {
+        //     mkdir($cacheDir, 0775, true);
+        // }
 
-        // Safe cache file name based on category and limit
-        $safeCategory = strtolower(str_replace(' ', '_', $category));
-        $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
+        // // Safe cache file name based on category and limit
+        // $safeCategory = strtolower(str_replace(' ', '_', $category));
+        // $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
 
-        $cacheTime = 3600; // Cache duration in seconds (1 hour)
+        // $cacheTime = 3600; // Cache duration in seconds (1 hour)
 
-        // Serve cached content if available and fresh
-        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
-            echo file_get_contents($cacheFile);
-            return;
-        }
+        // // Serve cached content if available and fresh
+        // if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
+        //     echo file_get_contents($cacheFile);
+        //     return;
+        // }
 
         // Fetch fresh book listings
         $books = $this->bookModel->getBookListingsByCategory($category, $limit);

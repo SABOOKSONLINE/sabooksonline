@@ -1,45 +1,5 @@
-const bookCardsNextBtn = document.querySelectorAll(".btn-right");
-
-// bookCardsNextBtn.forEach((btn) => {
-//     btn.addEventListener("click", () => {
-//         const current_slider_id = btn.parentElement.id;
-//         const book_slider = document.querySelector("#" + current_slider_id);
-
-//         const cardContainer = book_slider.querySelector(".book-card-slide");
-//         const firstCard = cardContainer.firstElementChild;
-
-//         const cardStyle = getComputedStyle(firstCard);
-//         const cardWidth =
-//             firstCard.offsetWidth +
-//             parseInt(cardStyle.marginLeft) +
-//             parseInt(cardStyle.marginRight);
-
-//         cardContainer.scrollBy({
-//             left: cardWidth,
-//             behavior: "smooth",
-//         });
-//     });
-// });
-
-const stylishBookNumber = document.querySelectorAll(
-    "#stylish-section .book-card-num"
-);
-let counter = 1;
-stylishBookNumber.forEach((card) => {
-    card.innerHTML = counter++;
-});
-
-const categoryCollapseBtn = document.querySelector(".category-collapse-btn");
-const categoryContainer = document.querySelector(".category-container");
-
-if (categoryCollapseBtn && categoryContainer) {
-    categoryCollapseBtn.addEventListener("click", () => {
-        categoryContainer.classList.toggle("category-all");
-        categoryCollapseBtn.firstElementChild.classList.toggle("fa-angle-up");
-    });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
+    // ===== Auto Scrolling Book Cards =====
     function setupAutoScroll(container, direction = "right") {
         const cards = Array.from(container.children);
 
@@ -90,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setupAutoScroll(el, "left");
     });
 
+    // ===== Book Slide Button Behavior =====
     document.querySelectorAll(".book-card-btn.btn-right").forEach((btn) => {
         btn.addEventListener("click", () => {
             const cardSlide = btn.previousElementSibling;
@@ -101,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // ===== Stylish Book Number =====
     const stylishBookNumber = document.querySelectorAll(
         "#stylish-section .book-card-num"
     );
@@ -109,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         card.innerHTML = counter++;
     });
 
+    // ===== Category Collapse Button =====
     const categoryCollapseBtn = document.querySelector(
         ".category-collapse-btn"
     );
@@ -122,131 +85,97 @@ document.addEventListener("DOMContentLoaded", function () {
             );
         });
     }
-});
 
-const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
-const bvDetails = document.querySelector(".bv-purchase-details");
+    // ===== Purchase Price Buttons =====
+    const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
+    const bvDetails = document.querySelector(".bv-purchase-details");
+    const selectedPrice = document.querySelector(".bv-price");
+    const bvBuyBtn = document.querySelector(".bv-buy-btn");
 
-const print = (value) => {
-    console.log(value);
-};
+    const updatePrice = (value) => {
+        const price = parseInt(value);
+        if (price === 0) {
+            selectedPrice.innerHTML = "FREE";
+            selectedPrice.classList.add("bv-text-green");
+        } else {
+            selectedPrice.innerText = "R" + price;
+            selectedPrice.classList.remove("bv-text-green");
+        }
+    };
 
-let selectedPrice = document.querySelector(".bv-price");
-let bvBuyBtn = document.querySelector(".bv-buy-btn");
+    const removePriceDetail = (btn) => {
+        const contentAvailable = btn.getAttribute("available");
+        bvDetails.style.display = contentAvailable ? "grid" : "none";
+    };
 
-const updatePrice = (value) => {
-    const price = parseInt(value);
+    const updateBvBuyBtn = (btn) => {
+        bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
+    };
 
-    if (price == 0) {
-        selectedPrice.innerHTML = "FREE";
-        selectedPrice.classList.add("bv-text-green");
-    } else {
-        selectedPrice.innerText = "R" + price;
-    }
-};
-
-const selectFirstBvBtn = () => {
-    for (let i = 0; i < bvSelectBtn.length; i++) {
-        bvSelectBtn[i].classList.add("bv-active");
-
-        const price = bvSelectBtn[i].getAttribute("price");
-        updatePrice(price);
-        updateBvBuyBtn(bvSelectBtn[i]);
-        removePriceDetail(bvSelectBtn[i]);
-        showPurchaseOption(
-            bvSelectBtn[i].firstElementChild.innerText.toLowerCase() + ""
+    const resetBvBuyBtn = () => {
+        const bvBuyBtns = document.querySelectorAll(
+            ".bv-purchase-details > div"
         );
-        // showClickedBtn(bvSelectBtn[i]);
-        break;
-    }
-};
+        bvBuyBtns.forEach((btn) => btn.classList.add("hide"));
+    };
 
-const removePriceDetail = (btn) => {
-    const contentAvailable = btn.getAttribute("available");
-    if (!contentAvailable) {
-        bvDetails.style.display = "none";
-    } else {
-        bvDetails.style.display = "grid";
-    }
-};
+    const showPurchaseOption = (optionId) => {
+        const btn = document.getElementById(optionId);
+        resetBvBuyBtn();
+        if (btn && btn.parentElement.classList.contains("hide")) {
+            btn.parentElement.classList.remove("hide");
+        }
+    };
 
-const updateBvBuyBtn = (btn) => {
-    bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
-};
+    const removeBvActive = () => {
+        bvSelectBtn.forEach((btn) => btn.classList.remove("bv-active"));
+    };
 
-// const bvMainBtns = document.querySelectorAll(".bv-main-btn");
-// const resetBvMainBtn = () => {
-//     bvMainBtns.forEach((btn) => {
-//         if (!btn.classList.contains("bv-main-btn")) {
-//             btn.classList.add("bv-main-btn");
-//         }
-//     });
-// };
+    const selectFirstBvBtn = () => {
+        if (bvSelectBtn.length > 0) {
+            const firstBtn = bvSelectBtn[0];
+            firstBtn.classList.add("bv-active");
+            const price = firstBtn.getAttribute("price");
+            updatePrice(price);
+            updateBvBuyBtn(firstBtn);
+            removePriceDetail(firstBtn);
+            showPurchaseOption(
+                firstBtn.firstElementChild.innerText.toLowerCase()
+            );
+        }
+    };
 
-// const showClickedBtn = (btn) => {
-//     resetBvMainBtn();
-//     const bvMainBtn = document.querySelector(
-//         "#" + btn.firstElementChild.innerText.toLowerCase()
-//     );
-//     // bvMainBtn.classList.remove("bv-main-btn");
-//     print(bvMainBtn);
-// };
+    selectFirstBvBtn();
 
-const resetBvBuyBtn = () => {
-    const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
-
-    bvBuyBtns.forEach((btn) => {
-        btn.classList.add("hide");
+    bvSelectBtn.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            removeBvActive();
+            btn.classList.add("bv-active");
+            updatePrice(btn.getAttribute("price"));
+            updateBvBuyBtn(btn);
+            removePriceDetail(btn);
+            showPurchaseOption(btn.firstElementChild.innerText.toLowerCase());
+        });
     });
-};
 
-const showPurchaseOption = (optionId) => {
-    const btn = document.getElementById(optionId);
+    // ===== Rating Star Behavior =====
+    const ratingStars = document.querySelectorAll(".rating-star");
 
-    resetBvBuyBtn();
+    ratingStars.forEach((star) => {
+        star.addEventListener("click", function () {
+            const rating = parseInt(this.getAttribute("data-rating"));
+            const ratingInput = document.getElementById("rating_value");
+            ratingInput.value = rating;
 
-    if (btn && btn.parentElement.classList.contains("hide")) {
-        btn.parentElement.classList.remove("hide");
-    }
-};
-
-selectFirstBvBtn();
-
-const removeBvActive = () => {
-    bvSelectBtn.forEach((otherBtns) => {
-        otherBtns.classList.remove("bv-active");
-    });
-};
-
-bvSelectBtn.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        removeBvActive();
-        btn.classList.add("bv-active");
-
-        removePriceDetail(btn);
-        updatePrice(btn.getAttribute("price"));
-        updateBvBuyBtn(btn);
-        showPurchaseOption(btn.firstElementChild.innerText.toLowerCase() + "");
-        // showBtn(btn);
-    });
-});
-
-const ratingStars = document.querySelectorAll(".rating-star");
-
-ratingStars.forEach((star) => {
-    star.addEventListener("click", function () {
-        const rating = parseInt(this.getAttribute("data-rating"));
-        document.getElementById("rating_value").value = rating;
-        console.log(document.getElementById("rating_value").value);
-
-        document.querySelectorAll(".rating-star").forEach((s, index) => {
-            if (index < rating) {
-                s.classList.remove("far");
-                s.classList.add("fas", "text-warning");
-            } else {
-                s.classList.remove("fas", "text-warning");
-                s.classList.add("far");
-            }
+            ratingStars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.remove("far");
+                    s.classList.add("fas", "text-warning");
+                } else {
+                    s.classList.remove("fas", "text-warning");
+                    s.classList.add("far");
+                }
+            });
         });
     });
 });
