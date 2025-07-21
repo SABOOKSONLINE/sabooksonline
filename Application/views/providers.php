@@ -9,7 +9,7 @@ require_once __DIR__ . "/includes/header.php";
         <h1 class="fw-bold mb-0">Service Providers</h1>
 
         <div class="container my-4">
-            <div class="d-flex justify-content-between align-items-center p-4 bg-red text-white rounded">
+            <div class="d-flex justify-content-between align-items-center p-4 text-white rounded bg-danger">
                 <div>
                     <h4 class="mb-1">Become a service provider today!</h4>
                     <p class="mb-0">Join Our Network of Providers, & Unlock Opportunities as a Service Provider.</p>
