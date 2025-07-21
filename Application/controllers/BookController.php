@@ -205,15 +205,15 @@ class BookController
 
         if ($books) {
             // Capture the output of the included view
-            ob_start();
+            // ob_start();
             include __DIR__ . '/../views/books/bookCategory.php';
-            $html = ob_get_clean();
+            // $html = ob_get_clean();
 
             // Save the generated HTML to the cache file
-            file_put_contents($cacheFile, $html);
+            // file_put_contents($cacheFile, $html);
 
             // Output the generated HTML
-            echo $html;
+            // echo $html;
         } else {
             echo "<div class='container'>No books found in this category.</div>";
         }
