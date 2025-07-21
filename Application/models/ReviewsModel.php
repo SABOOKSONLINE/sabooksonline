@@ -15,7 +15,7 @@ class ReviewsModel
 
     public function insertReview($data)
     {
-        $sql = "INSERT INTO reviews (name, user_img_url, rating, comment, user_id, book_id) 
+        $sql = "INSERT INTO book_reviews (name, user_img_url, rating, comment, user_id, book_id) 
             VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -46,7 +46,7 @@ class ReviewsModel
 
     public function getReviewsByBookId($bookId)
     {
-        $sql = "SELECT * FROM reviews WHERE book_id = ?";
+        $sql = "SELECT * FROM book_reviews WHERE book_id = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -74,7 +74,7 @@ class ReviewsModel
 
     public function updateReview($data)
     {
-        $sql = "UPDATE reviews SET comment = ? WHERE user_id = ? AND book_id = ?";
+        $sql = "UPDATE book_reviews SET comment = ? WHERE user_id = ? AND book_id = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {

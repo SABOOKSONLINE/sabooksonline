@@ -26,8 +26,6 @@ if (isset($userKey) && !empty($userKey)) {
 }
 ?>
 
-
-
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>
 
 <nav class="navbar navbar-expand-xl navbar-light bg-light">
