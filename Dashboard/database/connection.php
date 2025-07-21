@@ -4,13 +4,13 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $serverName = "localhost";
-$username = "root";
+$username = "sabookso_db";
 $primaryDb = "sabookso_db";
 
-$username2nd = "root";
+$username2nd = "sabookso_plesk_acc";
 $secondaryDb = "sabookso_plesk_acc";
 
-$password = "root";
+$password = "slTFvaj07dNY6Ke";
 
 // Enable exceptions for mysqli
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
