@@ -140,7 +140,7 @@ if (isset($userKey) && !empty($userKey)) {
 </nav>
 
 <div class="collapse container-fluid bg-light p-3" id="mobileSearch">
-    <form class="d-flex">
+    <form class="d-flex" action="/library" method="GET">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
     </form>
 </div>
