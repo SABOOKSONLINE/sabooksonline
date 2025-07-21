@@ -38,11 +38,11 @@ class BookModel
         return $books;
     }
 
-    public function getBookListingsByCategory($category, $limit = 6)
+    public function getBookListingsByCategory($category, $limit = 10)
     {
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
-                WHERE l.CATEGORY = ? AND p.STATUS = 'active'
+                WHERE l.CATEGORY = ?
                 ORDER BY RAND() LIMIT ?";
 
         // prepared statements for executing the quesry
