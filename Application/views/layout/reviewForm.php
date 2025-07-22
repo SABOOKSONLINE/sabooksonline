@@ -36,7 +36,7 @@ if (isset($_SESSION['ADMIN_ID'])) {
                                 <i class="far fa-star rating-star" data-rating="4"></i>
                                 <i class="far fa-star rating-star" data-rating="5"></i>
                             </div>
-                            <input type="hidden" name="rating_value" id="rating_value" value="0">
+                            <input type="hidden" name="rating_value" id="rating_value" required>
                         </div>
 
                         <div class="mb-3">
