@@ -16,48 +16,32 @@ class CheckoutController {
         $this->bookModel = new BookModel($conn);
     }
 
-   public function purchaseBook($bookId, $userId) {
-    if (empty($bookId) || empty($userId)) {
-        die("Invalid book or user ID.");
+   public function purchaseBook($bookId, $userId, $format = 'ebook') {
+
+        if (empty($bookId) || empty($userId)) {
+            die("Invalid book or user ID.");
+        }
+
+        $book = $this->bookModel->getBookById($bookId);
+        $user = $this->userModel->getUserByNameOrKey($userId);
+
+        $this->generatePaymentForm($book, $user, $format);
     }
 
-    $book = $this->bookModel->getBookById($bookId);
-    $user = $this->userModel->getUserByNameOrKey($userId);
-
-    if (!$book) {
-        die("Book not found.");
-    }
-    if (!$user) {
-        die("User not found.");
-    }
-
-    $this->generatePaymentForm($book, $user);    
-}
 
     public function subscribe($planType, $paymentOption, $userId) {
-    if (empty($userId)) {
-        die("Invalid user ID.");
-    }
 
     $user = $this->userModel->getUserByNameOrKey($userId);
-    if (!$user) {
-        die("User not found.");
-    }
-
-    // Extract plan details from the planType
     $billingModel = new BillingModel();
     $planDetails = $billingModel->getPlanDetails($planType); // returns ['name' => 'Pro', 'billing' => 'Monthly', 'amount' => 199]
 
-    if (!$planDetails) {
-        die("Invalid plan type.");
-    }
 
     if ($paymentOption === "later") {
-        // Save to DB or update user record as Pay Later
+
         $this->userModel->updateUserPlanRoyalties($userId, $planDetails['name'], $planDetails['billing']);
         $_SESSION['ADMIN_SUBSCRIPTION'] = $planDetails['name'];
-
         header('Location: /dashboards');
+
     } else {
         // Pay now → redirect to PayFast with correct amount
         $this->generatePaymentFormPlan(
@@ -71,20 +55,29 @@ class CheckoutController {
 }
 
 
-    public function generatePaymentForm($book, $user) {
+   public function generatePaymentForm($book, $user, $format = 'Ebook') {
     if (!$book || !$user) {
         die("Invalid book or user data.");
     }
 
     $bookId = $book['ID'] ?? '';
-    $cover = $book['COVER'] ?? '';
     $title = html_entity_decode($book['TITLE']) ?? 'Untitled Book';
-    $publisher = $book['PUBLISHER'] ?? 'Unknown';
-    $description = $book['DESCRIPTION'] ?? 'No description.';
-    $retailPrice = $book['RETAILPRICE'] ?? 0;
 
+    $userKey = $user['ADMIN_USERKEY'] ?? '';
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
+
+    // Choose correct price based on format
+    $price = 0;
+    switch (strtolower($format)) {
+        case 'audiobook':
+            $price = $book['ABOOKPRICE'] ?? 0;
+            break;
+        case 'ebook':
+        default:
+            $price = $book['EBOOKPRICE'] ?? 0;
+            break;
+    }
 
     if (empty($bookId) || empty($userEmail)) {
         die("Missing book ID or user email.");
@@ -99,18 +92,17 @@ class CheckoutController {
         'name_first'      => $userName,
         'email_address'   => $userEmail,
         'm_payment_id'    => uniqid(),
-        'amount'          => number_format($retailPrice, 2, '.', ''),
+        'amount'          => number_format($price, 2, '.', ''),
         'item_name'       => $title,
         'custom_str1'     => $bookId,
+        'custom_str2'     => $userKey,
+        'custom_str3'     => ucfirst($format), // Format (Ebook, Audiobook, etc.)
     ];
-
-    
 
     $signature = $this->generateSignature($data, 'SABooksOnline2021');
     $data['signature'] = $signature;
 
-
-        $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
+    $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
     foreach ($data as $name => $value) {
         $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
     }
@@ -123,26 +115,23 @@ class CheckoutController {
     </script>';
 
     echo $htmlForm;
-
 }
+
     public function generatePaymentFormPlan($plan, $planPrice, $subscriptionType, $planName, $user) {
-    if (!$plan || !$user) {
-        die("Invalid plan or user data.");
-    }
+        if (!$plan || !$user) {
+            die("Invalid plan or user data.");
+        }
 
-    $userName = $user['ADMIN_NAME'] ?? 'Customer';
-    $userEmail = $user['ADMIN_EMAIL'] ?? '';
+        $userName = $user['ADMIN_NAME'] ?? 'Customer';
+        $userEmail = $user['ADMIN_EMAIL'] ?? '';
 
-    if (empty($userEmail)) {
-        die("Missing user email.");
-    }
+        if (empty($userEmail)) {
+            die("Missing user email.");
+        }
 
-    // Default PayFast parameters
-    $formattedAmount = number_format($planPrice, 2, '.', '');
-    $amount = number_format( sprintf( '%.2f', $planPrice ), 2, '.', '' );
 
     $data = array(
-    // Merchant details
+        
     'merchant_id' => '18172469',//18172469   test: 10030247
     'merchant_key' => 'gwkk16pbxdd8m',//gwkk16pbxdd8m    test: g84pzvwrmr8rj
     'return_url' => 'https://www.sabooksonline.co.za/payment/return',
