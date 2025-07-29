@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             'message' => 'Passwords do not match. Please try again.',
         ];
         header("Location: /reset_password/$token");
+        exit;
     }
 
 

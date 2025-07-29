@@ -30,9 +30,12 @@ require_once __DIR__ . "/../../Config/connection.php";
 
                         <form method="POST" action="/auth/reset-password-handler">
                             <input type="hidden" name="token" value="<?= isset($_GET['token']) ? $_GET['token'] : '' ?>" required>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="password" class="form-label">New Password</label>
-                                <input type="password" name="new_password" class="form-control" required>
+                                <input type="password" name="new_password" id="password" class="form-control" required>
+                                <button type="button" class="btn" id="togglePassword" tabindex="-1">
+                                    <i class="fa fa-eye" id="toggleIcon"></i>
+                                </button>
                             </div>
                             <div class="mb-4">
                                 <label for="password" class="form-label">Confirm Password</label>
@@ -47,4 +50,19 @@ require_once __DIR__ . "/../../Config/connection.php";
     </section>
 
     <?php require_once __DIR__ .  "/../includes/scripts.php" ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            const passwordField = form.querySelector("input[name='new_password']");
+            const confirmPasswordField = form.querySelector("input[name='confirm_password']");
+
+            form.addEventListener("submit", function(e) {
+                if (passwordField.value !== confirmPasswordField.value) {
+                    e.preventDefault(); // stop form from submitting
+                    alert("Passwords do not match. Please try again.");
+                    confirmPasswordField.focus();
+                }
+            });
+        });
+    </script>
 </body>

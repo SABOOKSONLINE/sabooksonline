@@ -43,9 +43,12 @@ require_once __DIR__ . "/../../Config/connection.php";
                                 <label for="confirm_mail" class="form-label">Confirm Email</label>
                                 <input type="email" name="confirm_mail" placeholder="example@mail.com" class="form-control" required">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" required>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                                <button type="button" class="btn" id="togglePassword" tabindex="-1">
+                                    <i class="fa fa-eye" id="toggleIcon"></i>
+                                </button>
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirm Password</label>

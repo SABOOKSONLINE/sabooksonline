@@ -765,3 +765,20 @@ footer {
 .card:hover .card-img img {
     transform: translate(-50%, -50%) scale(1.1) rotate(15deg);
 }
+
+#togglePassword {
+    color: var(--black);
+    position: absolute;
+    border: none;
+    border-left: 1px solid var(--off-white);
+    right: 1px;
+    margin-top: -35px;
+    width: 35px;
+    background: var(--white);
+}
+
+#togglePassword:hover {
+    color: var(--red);
+    transform: none;
+    box-shadow: none;
+}

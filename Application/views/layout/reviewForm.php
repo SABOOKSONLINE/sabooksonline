@@ -24,7 +24,7 @@ if (isset($_SESSION['ADMIN_ID'])) {
 
                         <div class="mb-3">
                             <label class="form-label">Your Name</label>
-                            <input type="text" class="form-control" name="name" placeholder="e.g John Cena" required>
+                            <input type="text" class="form-control" name="name" placeholder="e.g John Williams" required>
                         </div>
 
                         <div class="mb-3">

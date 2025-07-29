@@ -38,9 +38,12 @@ require_once __DIR__ . "/../../Config/connection.php";
                                     autofocus
                                     value="">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" name="log_pwd2" class="form-control" required>
+                                <input type="password" id="password" name="log_pwd2" class="form-control" required>
+                                <button type="button" class="btn" id="togglePassword" tabindex="-1">
+                                    <i class="fa fa-eye" id="toggleIcon"></i>
+                                </button>
                             </div>
                             <div class="form-check mb-3 d-flex justify-content-between align-content-center">
                                 <div>
