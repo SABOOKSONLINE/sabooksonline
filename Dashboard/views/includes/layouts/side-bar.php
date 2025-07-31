@@ -33,6 +33,11 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                     <a href="/dashboards/reviews" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/reviews') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-star me-2"></i> Reviews
                     </a>
+                    <?php if ($_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>
+                        <a href="/dashboards/reset_password" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/reset_password') === 0) ? 'active' : ''; ?>">
+                            <i class="fas fa-lock me-2"></i> Reset Users Passwords
+                        </a>
+                    <?php } ?>
                 </div>
             <?php endif; ?>
 

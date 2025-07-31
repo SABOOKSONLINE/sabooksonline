@@ -774,7 +774,7 @@ footer {
     right: 1px;
     margin-top: -35px;
     width: 35px;
-    background: var(--white);
+    background: transparent;
 }
 
 #togglePassword:hover {

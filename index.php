@@ -255,6 +255,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/audiobook_chapter_handler.php";
     });
 
+    // --- Reset Users Password Routes ---> note this is temp and will be deleted
+    $r->addRoute('GET', '/dashboards/reset_password', function () {
+        require "Dashboard/views/reset_user_password.php";
+    });
+    $r->addRoute('POST', '/dashboards/reset_password/handler/{adminId}', function ($adminId) {
+        $_GET['adminId'] = $adminId;
+        require "Dashboard/handlers/reset_users_pass.php";
+    });
+
     // =================== Creator, Provider, Gallery, Services, Events (Public) ===================
     $r->addRoute('GET', '/creators/creator/{id}', function ($id) {
         $_GET['q'] = $id;
