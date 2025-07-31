@@ -124,12 +124,10 @@ class BookListingsModel
      */
     public function insertBook($data)
     {
-        $data['contentid'] = uniqid('', true);
-
         $sql = "INSERT INTO posts (
-                    TITLE, CATEGORY, WEBSITE, DESCRIPTION, COVER, CONTENTID, USERID, TYPE, DATEPOSTED,
-                    STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS, PDFURL, EBOOKPRICE, ABOOKPRICE
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                TITLE, CATEGORY, WEBSITE, DESCRIPTION, COVER, CONTENTID, USERID, TYPE, DATEPOSTED,
+                STATUS, ISBN, RETAILPRICE, KEYWORDS, PUBLISHER, LANGUAGES, STOCK, AUTHORS, PDFURL, EBOOKPRICE, ABOOKPRICE
+            ) VALUES (?, ?, ?, ?, ?, UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -140,13 +138,12 @@ class BookListingsModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "ssssssssssssssssssss",
+            "sssssssssssssssssss",
             $data['title'],
             $data['category'],
             $data['website'],
             $data['description'],
             $cover,
-            $data['contentid'],
             $data['userid'],
             $data['type'],
             $data['dateposted'],
@@ -161,8 +158,6 @@ class BookListingsModel
             $data['pdf'],
             $data['Eprice'],
             $data['Aprice']
-
-
         );
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -172,6 +167,7 @@ class BookListingsModel
         mysqli_stmt_close($stmt);
         return true;
     }
+
 
     /**
      * Update an existing book
