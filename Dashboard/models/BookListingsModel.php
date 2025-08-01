@@ -66,12 +66,17 @@ class BookListingsModel
                 c.chapter_number,
                 c.chapter_title,
                 c.audio_url,
-                c.duration_minutes AS chapter_duration
+                c.duration_minutes AS chapter_duration,
+                s.id AS audiobook_sample_id,
+                s.book_id,
+                s.url AS sample_url
             FROM posts AS p
             LEFT JOIN audiobooks AS a 
                 ON a.book_id = p.ID
             LEFT JOIN audiobook_chapters AS c 
                 ON a.id = c.audiobook_id
+            LEFT JOIN audiobook_samples AS s
+                ON s.book_id = p.ID
             WHERE p.USERID = ? AND p.CONTENTID = ?
             ORDER BY c.chapter_number ASC
         ";
@@ -580,5 +585,77 @@ class BookListingsModel
         mysqli_stmt_close($stmt);
 
         return $user['ADMIN_NAME'];
+    }
+
+    public function insertAudiobookSample($data)
+    {
+
+        $sql = "INSERT INTO audiobook_samples (url, book_id) VALUES (?, ?)";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "ss",
+            $data['sample_file'],
+            $data['book_id'],
+        );
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $insertId = mysqli_insert_id($this->conn);
+        mysqli_stmt_close($stmt);
+        return $insertId;
+    }
+
+    public function updateAudiobookSample($data)
+    {
+        $sql = "UPDATE audiobook_samples SET url = ? WHERE book_id = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "ss",
+            $data['sample_file'],
+            $data['book_id']
+        );
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+        mysqli_stmt_close($stmt);
+        return $affectedRows;
+    }
+
+    public function deleteAudiobookSample($book_id)
+    {
+        $sql = "DELETE FROM audiobook_samples WHERE book_id = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "s", $book_id);
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Failed to execute delete: " . mysqli_stmt_error($stmt));
+        }
+
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+        mysqli_stmt_close($stmt);
+
+        return $affectedRows;
     }
 }

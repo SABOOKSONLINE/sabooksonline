@@ -86,4 +86,19 @@ class BookListingController
         $book = $this->booksModel->selectAudiobookByContentId($contentId);
         return $book;
     }
+
+    public function insertAudiobookSample($data)
+    {
+        $this->booksModel->insertAudiobookSample($data);
+    }
+
+    public function updateAudiobookSample($data)
+    {
+        $this->booksModel->updateAudiobookSample($data);
+    }
+
+    public function deleteAudiobookSample($data)
+    {
+        $this->booksModel->deleteAudiobookSample($data);
+    }
 }

@@ -216,7 +216,8 @@ h5.most-viewed-title {
 }
 
 .pop_form,
-.ab_pop_form {
+.ab_pop_form,
+.sample_pop_form {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -228,7 +229,8 @@ h5.most-viewed-title {
 }
 
 .pop_bg,
-.ab_pop_bg {
+.ab_pop_bg,
+.sample_pop_bg {
     content: "";
     background: rgba(0, 0, 0, 0.5);
     position: fixed;
@@ -241,7 +243,8 @@ h5.most-viewed-title {
 }
 
 .close_pop_form,
-.close_ab_pop_form {
+.close_ab_pop_form,
+.close_sample_pop_form {
     position: fixed;
     background: transparent;
     color: #ddd;
@@ -257,7 +260,8 @@ h5.most-viewed-title {
 }
 
 .close_pop_form:hover,
-.close_ab_pop_form:hover {
+.close_ab_pop_form:hover,
+.close_sample_pop_form:hover {
     background: rgba(0, 0, 0, 0.1);
     color: #888;
     border: 1px solid #888;

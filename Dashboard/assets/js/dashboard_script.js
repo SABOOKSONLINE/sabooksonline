@@ -41,6 +41,24 @@ if (abNarrator.value) {
     const popForm = document.querySelector(".pop_form");
     const closePop = document.querySelector(".close_pop_form");
 
+    const popSampleButton = document.querySelector("#sample_pop_btn");
+    const popSampleBg = document.querySelector(".sample_pop_bg");
+    const popSampleForm = document.querySelector(".sample_pop_form");
+    const closeSampleForm = document.querySelector(".close_sample_pop_form");
+
+    const openSamplePopForm = () => {
+        popSampleBg.classList.toggle("pop_form_active");
+        popSampleForm.classList.toggle("pop_form_active");
+    };
+
+    popSampleButton.addEventListener("click", () => {
+        openSamplePopForm();
+    });
+
+    closeSampleForm.addEventListener("click", () => {
+        openSamplePopForm();
+    });
+
     const editChapterBtns = document.querySelectorAll(".edit_chapter");
 
     const chapterForm = document.querySelector("#chapter_form");

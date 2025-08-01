@@ -27,12 +27,15 @@ $pdf = html_entity_decode($book['PDFURL'] ?? '');
 $narrator = htmlspecialchars_decode($book['narrator'] ?? '');
 $releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
 
+$audiobookSampleId = htmlspecialchars_decode($book['audiobook_sample_id'] ?? '');
+$audiobookSampleUrl = htmlspecialchars_decode($book['sample_url'] ?? '');
+
 if (!empty($narrator)) {
     $chapters = $book['chapters'];
 }
 
 // echo "<pre>";
-// print_r($narrator);
+// print_r($book);
 // echo "</pre>";
 
 $datePosted = null;
@@ -297,6 +300,18 @@ if (!empty($book['DATEPOSTED'])) {
                 value="<?= $releaseDate ?>" readonly id="release_date">
         </div>
 
+
+        <?php if ($audiobookSampleUrl): ?>
+            <section id="Audio_sample">
+                <label class="fw-semi-bold mb-3 form-label">
+                    Audiobook Sample
+                </label>
+                <audio controls class="w-100">
+                    <source src="/<?= htmlspecialchars($audiobookSampleUrl) ?>" type="audio/mpeg">
+                </audio>
+            </section>
+        <?php endif; ?>
+
         <?php if (!empty($narrator)): ?>
             <?php if (count($chapters) > 0): ?>
                 <div class="table-responsive mt-4">
@@ -339,8 +354,20 @@ if (!empty($book['DATEPOSTED'])) {
         <?php endif; ?>
 
         <?php if ($narrator): ?>
-            <div class="col">
-                <span class="btn btn-dark" id="pop_form_btn"><i class="fas fa-plus"></i> Add Chapter</span>
+            <div class="d-flex gap-2">
+                <div class="">
+                    <span class="btn btn-dark" id="sample_pop_btn">
+                        <?php if (!$audiobookSampleUrl):  ?>
+                            <i class="fas fa-plus"></i> Add Sample
+                        <?php else: ?>
+                            <i class="fas fa-pen"></i> Edit Sample
+                        <?php endif; ?>
+                    </span>
+                </div>
+
+                <div class="">
+                    <span class="btn btn-dark" id="pop_form_btn"><i class="fas fa-plus"></i> Add Chapter</span>
+                </div>
             </div>
         <?php endif; ?>
     </div>
@@ -463,3 +490,62 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 </div>
+
+<?php if ($narrator): ?>
+    <div class="sample_pop_bg">
+        <div class="row">
+            <div class="sample_pop_form p-4 pb-2 bg-white col-lg-6">
+                <form method="POST"
+                    action="<?= $audiobookSampleId ? "/dashboards/listings/updateSampleAudio/$audiobookSampleId" : "/dashboards/listings/insertSampleAudio" ?>"
+                    enctype="multipart/form-data">
+
+                    <span class="close_sample_pop_form">
+                        <i class="fas fa-times"></i>
+                    </span>
+
+                    <input type="text" class="form-control" name="content_id" id="content_id" value="<?= $contentId ?>" hidden>
+                    <input type="hidden" class="form-control" name="book_id" id="book_id" value="<?= $bookId ?>">
+
+                    <h4 class="fw-bold mb-3">Audiobook Sample Information</h4>
+
+                    <div class="row mb-3">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-semibold">Sample Audio File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="sample_file" accept=".mp3" required>
+                        </div>
+
+                        <?php if ($audiobookSampleId): ?>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Current Sample Audio:</label> <br>
+                                <audio id="audio_url" controls>
+                                    <source src="" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="d-flex align-content-center justify-content-between mt-3">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-success">
+                                    <?= $audiobookSampleId ? "Update Sample" : "Upload Sample" ?>
+                                </button>
+                            </div>
+
+                            <div>
+                                <?php if ($audiobookSampleId): ?>
+                                    <a href="/dashboards/listings/deleteSampleAudio/<?= $bookId ?>?content_id=<?= $contentId ?>" class="btn btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to delete this Audiobook Sample?');">
+                                        Delete
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
