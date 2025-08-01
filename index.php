@@ -255,6 +255,21 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/audiobook_chapter_handler.php";
     });
 
+    // --- Audiobook chapter Handling Routes ---
+    $r->addRoute('POST', '/dashboards/listings/insertSampleAudio', function () {
+        require "Dashboard/handlers/audiobook_sample_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/listings/updateSampleAudio/{id}', function ($id) {
+        $_GET['id'] = $id;
+        $_GET['action'] = 'update';
+        require "Dashboard/handlers/audiobook_sample_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/listings/deleteSampleAudio/{id}', function ($id) {
+        $_GET['id'] = $id;
+        $_GET['action'] = 'delete';
+        require "Dashboard/handlers/audiobook_sample_handler.php";
+    });
+
     // --- Reset Users Password Routes ---> note this is temp and will be deleted
     $r->addRoute('GET', '/dashboards/reset_password', function () {
         require "Dashboard/views/reset_user_password.php";
