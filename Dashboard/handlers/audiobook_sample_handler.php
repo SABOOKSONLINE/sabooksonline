@@ -18,6 +18,12 @@ function formAudioSampleDataArray()
     if (isset($_FILES['sample_file']) && $_FILES['sample_file']['error'] === UPLOAD_ERR_OK) {
         $fileInfo = $_FILES['sample_file'];
 
+        $maxSize = 5 * 1024 * 1024;
+        if ($fileInfo['size'] > $maxSize) {
+            throw new Exception("File size must be less than 5MB.");
+            die();
+        }
+
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $fileInfo['tmp_name']);
         finfo_close($finfo);
@@ -43,7 +49,7 @@ function formAudioSampleDataArray()
             throw new Exception("Failed to move uploaded file.");
         }
 
-        $sample_file = 'cms-data/audiobooks/samples/' . $newFileName;
+        $sample_file = $newFileName;
     }
 
     return [

@@ -80,9 +80,15 @@ class BookModel
                     a.narrator AS a_narrator,
                     a.duration_minutes AS a_duration_minutes,
                     a.release_date AS a_release_date,
-                    a.created_at AS a_created_at
+                    a.created_at AS a_created_at,
+                    s.id AS audiobook_sample_id,
+                    s.book_id,
+                    s.url AS sample_url
                 FROM posts AS p
-                LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+                LEFT JOIN audiobooks AS a 
+                    ON a.book_id = p.ID
+                LEFT JOIN audiobook_samples AS s 
+                    ON s.book_id = p.ID
                 WHERE p.CONTENTID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);

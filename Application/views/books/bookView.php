@@ -56,6 +56,8 @@ $ebook = $book['PDFURL'] ?? '';
 $bookId = $_GET['q'] ?? null;
 $audiobookId = $book['a_id'] ?? null;
 
+$audiobook_sample = html_entity_decode($book['sample_url'] ?? "");
+
 require __DIR__ . "/../../models/UserModel.php";
 require __DIR__ . "/../../models/ActionModel.php";
 require __DIR__ . "/../../Config/connection.php";
@@ -205,15 +207,35 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 </span>
 
                 <!-- Audiobook -->
-                <span class="bv-purchase-select" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
-                    <span class="bv-purchase-select-h">Audiobook</span>
-                    <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
-                        <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
-                    <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
-                        <span class="bv-purchase-select-hL">FREE</span>
-                    <?php else: ?>
-                        <span>Not available</span>
+                <span class="bv-purchase-select d-flex justify-content-between align-items-center" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
+                    <div class="d-block position-relative">
+                        <span class="bv-purchase-select-h d-block mb-1">Audiobook</span>
+                        <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
+                            <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
+                        <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
+                            <span class="bv-purchase-select-hL">FREE</span>
+                        <?php else: ?>
+                            <span>Not available</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php if ($audiobook_sample): ?>
+                        <!-- Audio Element (hidden) -->
+                        <audio id="bg-music">
+                            <source src="/cms-data/audiobooks/samples/<?= $audiobook_sample ?>" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+
+                        <!-- Play Button -->
+                        <div class="position-relative">
+                            <div class="bk-tags">
+                                <button class="bk-tag play-sample" onclick="playMusic()">
+                                    <i class="fas fa-play"></i> Play Sample
+                                </button>
+                            </div>
+                        </div>
                     <?php endif; ?>
+
                 </span>
 
                 <!-- Hardcopy -->
@@ -230,7 +252,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"><span></span><small>00</small></span>
-                    <span class="bv-note-muted">This price applies to the format shown..</span>
+                    <span class="bv-note-muted">This price applies to the format shown.</span>
 
                     <!-- ebook button -->
                     <div class="hide">
@@ -248,6 +270,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 <span>Read</span>
                             </a>
                         <?php endif; ?>
+
+                        <span class="bv-note-muted">
+                            Sample Audio: We recommend listening to the available sample (if provided) before purchase to confirm quality and narrator style.
+                        </span>
                     </div>
 
                     <!-- audiobook button -->
@@ -441,5 +467,27 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             .catch(err => {
                 alert('Network error: ' + err.message);
             });
+    }
+
+    let samplePlaying = false;
+
+    function playMusic() {
+        const sampleAudio = document.getElementById('bg-music');
+        const playSampleIcon = document.querySelector('.play-sample i');
+
+        if (!samplePlaying) {
+            sampleAudio.play().then(() => {
+                samplePlaying = true;
+                playSampleIcon.classList.remove("fa-play");
+                playSampleIcon.classList.add("fa-pause");
+            }).catch(error => {
+                console.log("User interaction required:", error);
+            });
+        } else {
+            sampleAudio.pause();
+            samplePlaying = false;
+            playSampleIcon.classList.remove("fa-pause");
+            playSampleIcon.classList.add("fa-play");
+        }
     }
 </script>

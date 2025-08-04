@@ -307,7 +307,7 @@ if (!empty($book['DATEPOSTED'])) {
                     Audiobook Sample
                 </label>
                 <audio controls class="w-100">
-                    <source src="/<?= htmlspecialchars($audiobookSampleUrl) ?>" type="audio/mpeg">
+                    <source src="/cms-data/audiobooks/samples/<?= htmlspecialchars($audiobookSampleUrl) ?>" type="audio/mpeg">
                 </audio>
             </section>
         <?php endif; ?>
@@ -510,7 +510,7 @@ if (!empty($book['DATEPOSTED'])) {
 
                     <div class="row mb-3">
                         <div class="col-12 mb-3">
-                            <label class="form-label fw-semibold">Sample Audio File <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Sample Audio File <small class="text-muted">(< 5MB)</small><span class="text-danger">*</span></label>
                             <input type="file" class="form-control" name="sample_file" accept=".mp3" required>
                         </div>
 
@@ -518,7 +518,7 @@ if (!empty($book['DATEPOSTED'])) {
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold">Current Sample Audio:</label> <br>
                                 <audio id="audio_url" controls>
-                                    <source src="" type="audio/mpeg">
+                                    <source src="/cms-data/audiobooks/samples/<?= htmlspecialchars($audiobookSampleUrl) ?>" type="audio/mpeg">
                                     Your browser does not support the audio element.
                                 </audio>
                                 <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
