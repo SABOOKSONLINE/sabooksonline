@@ -1,16 +1,31 @@
-## Hi there 👋
+# SA Books Online
 
-<!--
-**SABOOKSONLINE/sabooksonline** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+[![Website](https://img.shields.io/website?url=https://www.sabooksonline.co.za)]
 
-Here are some ideas to get you started:
+Welcome to **SA Books Online**, the premier platform empowering South African authors and publishers. We strive to bring literature that reflects the heart and soul of South Africa further into the world.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## Features
+
+-   Inclusive catalogue of South African literature
+-   Marketing support for visibility and sales growth
+-   Weekly author highlights and community engagement across social media
+
+## About Us
+
+-   **Established:** 2021
+-   **Headquarters:** Sandton, Gauteng
+-   **Ownership:** 100% black youth-owned (B‑BBEE Level 1)
+-   **Team:** Small, dedicated team of literary and tech professionals
+
+## Contact
+
+-   📍 68 Melville Road, Sandton, Gauteng
+-   🌐 [sabooksonline.co.za](https://www.sabooksonline.co.za)
+
+## Join Us
+
+If you’re a South African author, publisher, or literary advocate:
+
+-   Submit your work for inclusion
+-   Contact us about marketing opportunities
+-   Stay up to date via LinkedIn, Instagram, and Facebook
