@@ -76,19 +76,20 @@ if ($userId) {
 $bookModel = new UserModel($conn);
 
 // Use logged-in user's email (assumes session is set)
+$_SESSION['action'] = $_SERVER['REQUEST_URI'];
+
 $email = $_SESSION['ADMIN_EMAIL'] ?? '';
 
-$_SESSION['action'] = $_SERVER['REQUEST_URI'];
 
 
 $userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
 
 // Check if the user purchased this book
-$userOwnsThisBook = false;
+$format = ' ';
 
 foreach ($userBooks as $purchasedBook) {
     if ($purchasedBook['ID'] == $Id) {
-        $userOwnsThisBook = true;
+        $format = $purchasedBook['FORMAT'];
         break;
     }
 }
@@ -207,31 +208,30 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 </span>
 
                 <!-- Audiobook -->
-                <span class="bv-purchase-select d-flex justify-content-between align-items-center" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
-                    <div class="d-block position-relative">
-                        <span class="bv-purchase-select-h d-block mb-1">Audiobook</span>
-                        <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
-                            <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
-                        <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
-                            <span class="bv-purchase-select-hL">FREE</span>
-                        <?php else: ?>
-                            <span>Not available</span>
-                        <?php endif; ?>
-                    </div>
+                <span class="bv-purchase-select" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
+                    <span class="bv-purchase-select-h d-block mb-1">Audiobook</span>
+                    <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
+                    <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">FREE</span>
+                    <?php else: ?>
+                        <span>Not available</span>
+                    <?php endif; ?>
+
 
                     <?php if ($audiobook_sample): ?>
-                        <!-- Audio Element (hidden) -->
-                        <audio id="bg-music">
-                            <source src="/cms-data/audiobooks/samples/<?= $audiobook_sample ?>" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
+                        <div class="position-absolute top-50 end-0 translate-middle-y me-3">
+                            <audio id="bg-music">
+                                <source src="/cms-data/audiobooks/samples/<?= $audiobook_sample ?>" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
 
-                        <!-- Play Button -->
-                        <div class="position-relative">
-                            <div class="bk-tags">
-                                <button class="bk-tag play-sample" onclick="playMusic()">
-                                    <i class="fas fa-play"></i> Play Sample
-                                </button>
+                            <div class="position-relative">
+                                <div class="bk-tags">
+                                    <button class="bk-tag play-sample" onclick="playMusic()">
+                                        <i class="fas fa-play"></i> Play Sample
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -252,11 +252,11 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"><span></span><small>00</small></span>
-                    <span class="bv-note-muted">This price applies to the format shown.</span>
+                    <span class="bv-note-muted">This price applies to the format shown..</span>
 
                     <!-- ebook button -->
                     <div class="hide">
-                        <?php if (((int)$eBookPrice > 0) && !$userOwnsThisBook): ?>
+                        <?php if (((int)$eBookPrice > 0) &&  $format !== 'Ebook'): ?>
                             <!-- BUY FORM -->
                             <form method="POST" action="/checkout" id="e-book" class="w-100 mt-3">
                                 <input type="hidden" name="bookId" value="<?= $bookId ?>">
@@ -266,19 +266,15 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             </form>
                         <?php else: ?>
                             <!-- READ BUTTON -->
-                            <a href="/library/readBook/<?= $bookId ?>" id="e-book" class="btn btn-green bv-buy-btn">
-                                <span>Read</span>
+                            <a href="/read/<?= $bookId ?>" id="e-book" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">Read
                             </a>
                         <?php endif; ?>
-
-                        <span class="bv-note-muted">
-                            Sample Audio: We recommend listening to the available sample (if provided) before purchase to confirm quality and narrator style.
-                        </span>
                     </div>
 
                     <!-- audiobook button -->
                     <div class="hide">
-                        <?php if (((int)$aBookPrice > 0) && !$userOwnsThisBook): ?>
+
+                        <?php if (((int)$aBookPrice > 0) &&  $format !== 'Audiobook') : ?>
                             <!-- BUY FORM -->
                             <form method="POST" action="https://www.sabooksonline.co.za/checkout" id="audiobook" class="w-100 mt-3">
                                 <input type="hidden" name="audiobookId" value="<?= $bookId ?>">
@@ -288,9 +284,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             </form>
                         <?php else: ?>
                             <!-- READ BUTTON -->
-                            <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green bv-buy-btn">
-                                <span>listen</span>
-                            </a>
+                            <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">play</a>
                         <?php endif; ?>
                     </div>
 
@@ -357,6 +351,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     const updateBvBuyBtn = (btn) => {
         bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
     };
+
+
 
     // const bvMainBtns = document.querySelectorAll(".bv-main-btn");
     // const resetBvMainBtn = () => {
@@ -490,4 +486,48 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             playSampleIcon.classList.add("fa-play");
         }
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const buyFormat = getQueryParam('buy_format');
+
+        if (buyFormat) {
+            let targetFormId = null;
+
+            if (buyFormat === 'ebook') {
+                targetFormId = 'e-book'; // Matches the ID of your Ebook form
+            } else if (buyFormat === 'audiobook') {
+                targetFormId = 'audiobook'; // Matches the ID of your Audiobook form
+            }
+
+            if (targetFormId) {
+                const targetForm = document.getElementById(targetFormId);
+
+                // Ensure the element is a form and it exists
+                if (targetForm && targetForm.tagName === 'FORM') {
+                    // Temporarily remove the 'hide' class if it's there
+                    // (assuming 'hide' makes it display: none; or similar)
+                    targetForm.closest('.hide')?.classList.remove('hide');
+
+                    // Submit the form
+                    targetForm.submit();
+
+                    // Optional: Provide immediate user feedback, though the page will redirect quickly
+                    console.log('Initiating purchase for ' + buyFormat + '. Redirecting to payment gateway...');
+                } else {
+                    console.warn('Could not find a purchasable form for buy_format: ' + buyFormat + '. The item might be already owned or unavailable.');
+                    // You might want to display a user-friendly message here if the form isn't found
+                    // e.g., alert("This item is already in your library or not available for purchase.");
+                }
+            }
+            // Optional: Remove the query parameter from the URL to clean it up for the user
+            // history.replaceState(null, '', window.location.pathname);
+        }
+    });
 </script>
