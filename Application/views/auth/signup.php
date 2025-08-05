@@ -52,9 +52,20 @@ require_once __DIR__ . "/../../Config/connection.php";
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control" required>
+                                <input type="password" name="confirm_password" class="form-control" required">
                             </div>
-                            <button type="submit" class="btn btn-red w-100">Sign Up</button>
+
+                            <!-- Terms and Conditions Checkbox -->
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="terms_accepted" id="terms_accepted" required>
+                                    <label class="form-check-label" for="terms_accepted">
+                                        I agree to the <a href="/terms-and-conditions" target="_blank" class="">Terms and Conditions</a> and <a href="/privacy-policy" target="_blank" class="">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-red w-100" id="signupBtn" disabled>Sign Up</button>
                         </form>
 
                         <div class="text-center mb-3 mt-3">

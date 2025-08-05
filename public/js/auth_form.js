@@ -102,3 +102,23 @@ document
             icon.classList.add("fa-eye");
         }
     });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const termsCheckbox = document.getElementById("terms_accepted");
+    const signupBtn = document.getElementById("signupBtn");
+
+    function toggleButtons() {
+        if (termsCheckbox.checked) {
+            signupBtn.disabled = false;
+            signupBtn.classList.remove("btn-secondary");
+            signupBtn.classList.add("btn-red");
+        } else {
+            signupBtn.disabled = true;
+            signupBtn.classList.remove("btn-red");
+            signupBtn.classList.add("btn-secondary");
+        }
+    }
+
+    termsCheckbox.addEventListener("change", toggleButtons);
+    toggleButtons();
+});
