@@ -32,6 +32,14 @@ jobs:
             - name: Install Composer dependencies
               run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
+            # FIX: Add artifact upload step
+            - name: Upload vendor artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: vendor
+                  path: vendor
+                  retention-days: 1
+
     deploy:
         name: Deploy to xneelo
         needs: install-composer
@@ -42,11 +50,12 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Download Composer artifacts
+            # FIX: Correct artifact download
+            - name: Download vendor artifact
               uses: actions/download-artifact@v4
               with:
                   name: vendor
-                  path: vendor
+                  path: ./ # Places vendor in root directory
 
             - name: FTP Deploy
               uses: SamKirkland/FTP-Deploy-Action@v4.3.4
