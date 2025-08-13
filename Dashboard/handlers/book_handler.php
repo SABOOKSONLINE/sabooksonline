@@ -159,6 +159,21 @@ function updateBookHandler($bookController)
     try {
         $bookData = formDataArray();
         $bookId = $bookData['bookId'];
+        $bookContentId = $_GET["id"];
+        $contentId = htmlspecialchars(trim($bookContentId));
+
+            // Server-side cache file
+
+            // Auto-create the folder if missing
+            if (!is_dir($cacheDir)) {
+                mkdir($cacheDir, 0775, true);
+            }
+
+        $cacheFile = __DIR__ . '/../../Application/cache/book_' . $contentId . '.html';
+            
+        if (file_exists($cacheFile)) {
+            unlink($cacheFile);
+        }
 
         $bookController->updateBookData($bookId, $bookData);
         header("Location: /dashboards/listings?update=success");
@@ -173,6 +188,11 @@ function deleteBookHandler($bookController)
 {
     try {
         $bookContentId = $_GET["id"];
+
+        $cacheFile = __DIR__ . '/../../Application/cache/book_' . $bookContentId . '.html';
+        if (file_exists($cacheFile)) {
+            unlink($cacheFile);
+        }
 
         $bookController->deleteBookListing($bookContentId);
         header("Location: /dashboards/listings?delete=success");

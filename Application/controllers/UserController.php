@@ -1,9 +1,9 @@
 <?php
 // Load dependencies
-require_once __DIR__ . '/../config/connection.php';
-include_once 'models/UserModel.php';
+// require_once __DIR__ . '/../Config/connection.php';
+// include_once 'models/UserModel.php';
 
-session_start();
+// session_start();
 
 /**
  * Class UserController
@@ -23,6 +23,20 @@ class UserController {
      */
     public function __construct($conn) {
         $this->userModel = new UserModel($conn);
+    }
+
+    public function getCreators($date = null)
+    {
+        $creator = $this->userModel->getCreators($date);
+
+        header('Content-Type: application/json');
+
+        if ($creator) {
+            echo json_encode($creator);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'creator not found']);
+        }
     }
 
     /**
@@ -71,6 +85,6 @@ class UserController {
     }
 }
 
-// Run the controller
-$controller = new UserController($conn);
-$controller->showUserProfile($_GET['q'] ?? null);
+// // Run the controller
+// $controller = new UserController($conn);
+// $controller->showUserProfile($_GET['q'] ?? null);

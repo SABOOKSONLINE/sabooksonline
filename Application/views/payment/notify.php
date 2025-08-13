@@ -7,12 +7,6 @@ define('SANDBOX_MODE', false);
 $pfHost = SANDBOX_MODE ? 'sandbox.payfast.co.za' : 'www.payfast.co.za';
 $pfPassphrase = 'SABooksOnline2021';
 
-// // Logging setup
-// $logFile = __DIR__ . '/pf_log.txt';
-// function logMessage($msg) {
-//     global $logFile;
-//     file_put_contents($logFile, date('[Y-m-d H:i:s] ') . $msg . PHP_EOL, FILE_APPEND | LOCK_EX);
-// }
 
 // Get posted PayFast data
 $pfData = $_POST ?? [];
@@ -109,29 +103,31 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     $bookId = isset($pfData['custom_str1']) ? (int)$pfData['custom_str1'] : null;
     $invoiceId = $pfData['m_payment_id'] ?? '';
     $plan = $pfData['custom_str2'] ?? '';
+    $format = $pfData['custom_str3'] ?? '';
     $email = $pfData['email_address'] ?? '';
     $type = $pfData['name_last'] ?? '';
     $paymentDate = date("Y-m-d");
+    $endDate = date("Y-m-d", strtotime("+30 days"));
     $status = 'COMPLETE';
 
     $logDetails = '';
 
     if ($bookId) {
-        // Book purchase
-        $sql = "INSERT INTO book_purchases (user_email, book_id, payment_id, amount, payment_status, payment_date)
-                VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sisdss", $email, $bookId, $invoiceId, $amount, $status, $paymentDate);
+    $sql = "INSERT INTO book_purchases (user_email, book_id, user_key, format, payment_id, amount, payment_status, payment_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sisssdss", $email, $bookId, $plan, $format, $invoiceId, $amount, $status, $paymentDate);
 
-        if ($stmt->execute()) {
-            echo "✅ Book purchase saved.\n";
-
-        } else {
-            echo "❌ Book purchase failed: " . $stmt->error . "\n";
-        }
-        $stmt->close();
+    if ($stmt->execute()) {
+        echo "✅ Book purchase saved.\n";
     } else {
-        // Subscription or site plan
+        echo "❌ Book purchase failed: " . $stmt->error . "\n";
+    }
+
+    $stmt->close();
+
+    } else {
         // Check for existing payment with token first
         $checkSql = "SELECT * FROM payment_plans WHERE token = ? AND status = 'COMPLETE'";
         $stmtCheck = $conn->prepare($checkSql);
@@ -141,7 +137,7 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
 
         if ($result->num_rows > 0) {
             // Update existing payment record
-            $updateSql = "UPDATE payment_plans SET invoice_id = ?, payment_date = ?, amount_paid = ? WHERE token = ?";
+            $updateSql = "UPDATE payment_plans SET invoice_id = ?, payment_date = ?, amount_paid = ?, updated_at = NOW() WHERE token = ?";
             $stmtUpdate = $conn->prepare($updateSql);
             $stmtUpdate->bind_param("ssds", $invoiceId, $paymentDate, $amount, $token);
 
@@ -151,18 +147,33 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
                 echo "❌ Payment update failed: " . $stmtUpdate->error . "\n";
             }
             $stmtUpdate->close();
+
         } else {
-            // Insert new payment record
-            $insertSql = "INSERT INTO payment_plans (invoice_id, payment_date, amount_paid, token, status)
-                        VALUES (?, ?, ?, ?, ?)";
+
+            $insertSql = "INSERT INTO payment_plans (
+                            user_email, 
+                            end_date,
+                            invoice_id, 
+                            payment_date, 
+                            amount_paid, 
+                            token, 
+                            status, 
+                            plan_name, 
+                            renewal_status, 
+                            is_recurring
+                        ) VALUES (?,?, ?, ?, ?, ?, ?, ?, 'active', ?)";
+            
+            $isRecurring = strtolower($type) === 'monthly' ? 1 : 0;
+
             $stmtInsert = $conn->prepare($insertSql);
-            $stmtInsert->bind_param("ssdss", $invoiceId, $paymentDate, $amount, $token, $status);
+            $stmtInsert->bind_param("ssssdsssi", $email, $endDate, $invoiceId, $paymentDate, $amount, $token, $status, $orderName, $isRecurring);
 
             if ($stmtInsert->execute()) {
                 echo "✅ Subscription payment recorded.\n";
             } else {
                 echo "❌ Failed to record subscription: " . $stmtInsert->error . "\n";
             }
+
             $stmtInsert->close();
             
             require_once __DIR__ . '/../../models/UserModel.php';
@@ -177,13 +188,8 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     }
 
     $conn->close();
-    // logMessage($logDetails);
-    echo "✅ Payment processed successfully.";
-
     http_response_code(200);
 } else {
-    // logMessage("❌ Payment validation failed.");
-    echo "❌ Payment validation failed.";
     http_response_code(400);
 }
 ?>

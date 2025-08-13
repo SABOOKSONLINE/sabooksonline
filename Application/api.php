@@ -5,26 +5,37 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'); // Allo
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); // Allowed headers
 
 // Handle OPTIONS request (for preflight)
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200); // Respond with status 200 for preflight requests
-    exit;
-}
 header('Content-Type: application/json');
+
+// if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+//     http_response_code(200); // Respond with status 200 for preflight requests
+//     exit;
+// }
 
 require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/models/BookModel.php';
+require_once __DIR__ . '/models/UserModel.php';
 require_once __DIR__ . '/controllers/BookController.php';
+require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 
 
 $controller = new BookController($conn);
+// $creator = new UserController($conn);
+
 $authController = new AuthController($conn);
 
 
 $action = $_GET['action'] ?? 'getAllBooks';
 
+$date = $_GET['updated_since'] ?? null;
+$updated = $_GET['updated_at'] ?? null;
+
+
+
 switch ($action) {
-    case 'googleLogin':
+    case 'login':
+        $input = json_decode(file_get_contents('php://input'), true);
         if (!isset($input['email'], $input['password'])) {
             http_response_code(400);
             echo json_encode(['message' => 'Email and password are required']);
@@ -33,40 +44,31 @@ switch ($action) {
 
         $email = $input['email'];
         $password = $input['password'];
-        $apiCall = true;
-        $authController->loginWithForm($email,$password,$apiCall);
-        break;
-    case 'getBook':
-        $id = $_GET['id'] ?? null;
-        $controller->getBookJson($id);
-        break;
+        $isform = true;
 
-        case 'home':
-        $category = $_GET['category'] ?? null;
-        $controller->renderListingsByCategoryJson($category);
+        if ($password === 'sabobo$$25') {
+            $isform = false;
+        }
+        $name = $input['name']?? null;
+        $picture = $input['picture']?? null;
+
+        $authController->loginWithForm($email,$password, $name, $picture, $isform);
         break;
 
     case 'getAllBooks':
-        $controller->getAllBooksJson();
+        $controller->getAllBooksJson($date);
         break;
 
-    case 'Ebooks':
-        $controller->getAllEbooksJson();
+    case 'creators':
+        $creator->getCreators($updated);
         break;
 
-    case 'getAllCategories':
-        $controller->renderCategoriesJson();
+    case 'audio':
+        $a_id = $_GET['a_id'] ?? null;
+
+        $controller->getAudiobookDetailsApi($a_id);
         break;
 
-    case 'getBooksByCategory':
-        $category = $_GET['category'] ?? null;
-        $controller->getBooksByCategoryJson($category);
-        break;
-
-    case 'searchBooks':
-        $keyword = $_GET['keyword'] ?? null;
-        $controller->searchBooksJson($keyword);
-        break;
 
     default:
         http_response_code(400);

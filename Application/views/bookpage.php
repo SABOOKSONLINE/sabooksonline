@@ -25,6 +25,7 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     $reviewsController = new ReviewsController($conn);
     $reviewsController->renderReviews($_GET['q']);
+
     ?>
 
     <section class="section">

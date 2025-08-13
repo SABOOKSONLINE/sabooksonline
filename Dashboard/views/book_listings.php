@@ -18,7 +18,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
 
                 <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
-                    renderHeading("Manage Book Listings", "You can manage, add or delete your book listings.", "/dashboards/add/listings", "Add New Book");
+                    renderHeading("Your Book Catalogue", "Easily view, edit, or remove books you’ve published.", "/dashboards/add/listings", "Publish New Book");
 
                     $deleteBook = $_GET["delete"] ?? null;
                     $addBookStatus = $_GET["status"] ?? null;

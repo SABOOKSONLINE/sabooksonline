@@ -10,6 +10,8 @@ require_once __DIR__ . "/includes/header.php";
         require_once __DIR__ . "/../Config/connection.php";
         require_once __DIR__ . "/../models/EventModel.php";
         require_once __DIR__ . "/../controllers/EventController.php";
+        $_SESSION['action'] = $_SERVER['REQUEST_URI'];
+
 
         $controller = new EventController($conn);
         $controller->renderEventByContentId();

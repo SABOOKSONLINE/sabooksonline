@@ -7,10 +7,14 @@ require_once __DIR__ . "/../../controllers/PageVisitsController.php";
 $tracker = new PageVisitsController($conn);
 $tracker->trackVisits();
 
-$cookieDomain = ".sabooksonline.co.za";
-session_set_cookie_params(0, '/', $cookieDomain);
+if (session_status() === PHP_SESSION_NONE) {
+    $cookieDomain = ".sabooksonline.co.za";
+    session_set_cookie_params(0, '/', $cookieDomain);
+    session_start();
+}
 
-session_start();
+
+
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
 
 if (isset($userKey) && !empty($userKey)) {

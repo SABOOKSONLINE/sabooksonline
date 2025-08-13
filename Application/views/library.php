@@ -9,10 +9,12 @@ $controller = new BookController($conn);
 $category = $_GET['category'] ?? null;
 $page = $_GET['page'] ?? 1;
 $keyword = $_GET['k'] ?? null;
+
 ?>
 
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
+    
 
     <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>

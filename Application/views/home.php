@@ -78,7 +78,7 @@ $bookController = new BookController($conn);
             <div class="book-cards mt-4" id="editors_choice">
                 <div class="book-card-slide scroll-left">
                     <?php
-                    $bookController->renderBookCardByCategory("editors choice", 10, true);
+                    $bookController->renderBookCardByCategory("editors choice", 6, true);
                     ?>
                 </div>
 

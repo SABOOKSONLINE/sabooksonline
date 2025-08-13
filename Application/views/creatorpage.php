@@ -15,6 +15,8 @@ require_once __DIR__ . "/includes/header.php";
         require __DIR__ . "/../../database/connection.php";
         require_once __DIR__ . "/../models/CreatorModel.php";
         require_once __DIR__ . "/../controllers/CreatorController.php";
+        $_SESSION['action'] = $_SERVER['REQUEST_URI'];
+
 
         $controller = new CreatorController($conn);
         $controller->renderCreatorView();

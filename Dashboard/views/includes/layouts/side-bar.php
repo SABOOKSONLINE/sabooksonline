@@ -13,27 +13,29 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                 strtolower($subscriptionPlan) === 'deluxe'
             ): ?>
                 <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
-                    <i class="fas fa-info-circle ms-1 me-1" data-bs-toggle="tooltip" data-bs-placement="right" title="Add books, events, services, and manage reviews"></i>
-                    Start Here
+                 <i class="fas fa-user-check me-2 text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="You are subscribed to this plan"></i>
+                <?= htmlspecialchars($subscriptionPlan) ?> Subscription
                 </p>
+
 
                 <div class="nav flex-column gap-1">
                     <a href="/dashboards" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/dashboards' || $current_path == '/dashboards/') ? 'active' : ''; ?>">
-                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        <i class="fas fa-tachometer-alt me-2"></i> Overview
                     </a>
                     <a href="/dashboards/listings" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/listings') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-book me-2"></i> Book Listings
+                        <i class="fas fa-book me-2"></i> Manage Books
                     </a>
                     <a href="/dashboards/events" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/events') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-alt me-2"></i> Manage Events
+                        <i class="fas fa-calendar-alt me-2"></i>  Event Planner
                     </a>
                     <a href="/dashboards/services" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/services') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-tools me-2"></i> Manage Services
+                        <i class="fas fa-tools me-2"></i> My Services
                     </a>
                     <a href="/dashboards/reviews" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/reviews') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-star me-2"></i> Reviews
+                        <i class="fas fa-star me-2"></i>  Book Reviews
                     </a>
-                    <?php if ($_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>
+
+                    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>
                         <a href="/dashboards/reset_password" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/reset_password') === 0) ? 'active' : ''; ?>">
                             <i class="fas fa-lock me-2"></i> Reset Users Passwords
                         </a>
@@ -64,7 +66,7 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
 
             <div class="nav flex-column gap-1">
                 <a href="/dashboards/billing" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/billing') === 0) ? 'active' : ''; ?>">
-                    <i class="fas fa-file-invoice-dollar me-2"></i> Account Billing
+                    <i class="fas fa-file-invoice-dollar me-2"></i> Billing & Payments
                 </a>
                 <a href="/membership" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/membership') === 0) ? 'active' : ''; ?>">
                     <i class="fas fa-credit-card me-2"></i> Sell Books

@@ -1,20 +1,28 @@
 <?php
 
-$cookieDomain = ".sabooksonline.co.za";
-session_set_cookie_params(0, '/', $cookieDomain);
+
 
 if (session_status() === PHP_SESSION_NONE) {
+    $cookieDomain = ".sabooksonline.co.za";
+    session_set_cookie_params(0, '/', $cookieDomain);
     session_start();
 }
 $userKey = $_SESSION['ADMIN_USERKEY'];
 
 if (isset($userKey)) {
-    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
+
+    if (isset($adminProfileImage)) {
 
     if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
         $profile = $adminProfileImage;
     } else {
+        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+
+    }
+    }else{
         $profile = "/public/images/user-3296.png";
+
     }
 } else {
     header("Location: /login");
@@ -26,7 +34,7 @@ if (isset($userKey)) {
         <button class="btn me-3 d-lg-none" type="button" id="sidebarToggle">
             <i class="fas fa-ellipsis-v"></i>
         </button>
-        <a class="navbar-brand pe-3" href="/">
+        <a class="navbar-brand pe-3 ms-3" href="/">
             <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
@@ -56,15 +64,16 @@ if (isset($userKey)) {
         </div>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/library">Library</a>
-                </li>
-            </ul>
-
+            <div class="d-none d-xl-flex ms-auto me-3">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library">Library</a>
+                    </li>
+                </ul>
+            </div>
             <div class="d-none d-xl-flex">
                 <div class="btn-group">
                     <div class="dropdown">

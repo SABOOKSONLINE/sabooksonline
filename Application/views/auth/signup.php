@@ -52,9 +52,9 @@ require_once __DIR__ . "/../../Config/connection.php";
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control" required">
+                                <input type="password" name="confirm_password" class="form-control" required>
                             </div>
-
+                            
                             <!-- Terms and Conditions Checkbox -->
                             <div class="mb-3">
                                 <div class="form-check">

@@ -26,6 +26,33 @@ function formDataArray()
     $adminStatus = htmlspecialchars($_POST["ADMIN_USER_STATUS"] ?? 'inactive');
     $adminType = htmlspecialchars($_POST["ADMIN_TYPE"] ?? 'user');
 
+    $adminProfileImage = "";
+    
+   if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
+    $uploadDir = __DIR__ . '/../../cms-data/profile-images/';
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    // Extract the original extension
+    $ext = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
+    // Create a clean, unique filename (e.g. 1720012345_abcd1234.jpeg)
+    $adminProfileImage = time() . '_' . uniqid() . '.' . strtolower($ext);
+
+    $targetPath = $uploadDir . $adminProfileImage;
+
+    if (!move_uploaded_file($_FILES['profile']['tmp_name'], $targetPath)) {
+        die("❌ Failed to upload profile image.");
+    }
+} else {
+    // Keep existing filename (not full path)
+    $adminProfileImage = htmlspecialchars($_POST['existing_profile'] ?? '');
+}
+
+
+
+
     $modified = date('Y-m-d H:i:s');
 
     $userData = [
@@ -41,6 +68,7 @@ function formDataArray()
         'ADMIN_TWITTER' => $adminTwitter,
         'ADMIN_LINKEDIN' => $adminLinkedin,
         'ADMIN_PASSWORD' => $adminPassword,
+        'ADMIN_PROFILE_IMAGE' => $adminProfileImage,
         'ADMIN_USER_STATUS' => $adminStatus,
         'ADMIN_TYPE' => $adminType,
         'MODIFIED' => $modified

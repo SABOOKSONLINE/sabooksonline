@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $newPassword = trim($_POST['user_new_password'] ?? '');
     $confirmPassword = trim($_POST['user_confrm_new_password'] ?? '');
 
-    $verified_emails = ["tebogo@sabooksonline.co.za", "pearl@sabooksonline.co.za", ""];
+    $verified_emails = ["tebogo@sabooksonline.co.za", "pearl@sabooksonline.co.za", "khumalopearl003@gmail.com"];
 
     session_start();
 

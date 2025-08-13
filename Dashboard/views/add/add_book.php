@@ -28,7 +28,7 @@ $bookListingController = new BookListingController($conn);
                         if (isset($_GET["id"]) && !empty($_GET["id"])) {
                             renderHeading("Manage Book", "You can manage, add or delete your book listings.");
                         } else {
-                            renderHeading("Add New Book", "You can manage, add or delete your book listings.");
+                            renderHeading("Publish New Book", "You can manage, add or delete your book listings.");
                         }
 
 

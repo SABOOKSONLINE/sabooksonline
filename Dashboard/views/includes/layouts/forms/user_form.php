@@ -17,11 +17,42 @@ $adminDate = htmlspecialchars($user['ADMIN_DATE'] ?? date('Y-m-d'));
 $adminWebsite = htmlspecialchars($user['ADMIN_WEBSITE'] ?? '');
 $adminAddress = htmlspecialchars($user['ADMIN_GOOGLE'] ?? '');
 $adminBio = htmlspecialchars($user['ADMIN_BIO'] ?? '');
+$adminProfileImage = htmlspecialchars($user['ADMIN_PROFILE_IMAGE'] ?? '');
+
 
 $adminFacebook = htmlspecialchars($user['ADMIN_FACEBOOK'] ?? '');
 $adminInstagram = htmlspecialchars($user['ADMIN_INSTAGRAM'] ?? '');
 $adminTwitter = htmlspecialchars($user['ADMIN_TWITTER'] ?? '');
 $adminLinkedin = htmlspecialchars($user['ADMIN_LINKEDIN'] ?? '');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
+
+if (!empty($userKey)) {
+    // $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? "";
+
+    if (!empty($adminProfileImage)) {
+        if (strpos($adminProfileImage, 'googleusercontent.com') === false) {
+            // Not a Google image, so prefix with sabooks URL
+            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
+
+        } else {
+            // Google image, use as is
+            $profile = $adminProfileImage;
+        }
+    } else {
+        // No image set
+        $profile = "/public/images/user-3296.png";
+    }
+} else {
+    // No admin logged in
+    $profile = null;
+}
+
+
 ?>
 
 <form method="POST"
@@ -34,6 +65,24 @@ $adminLinkedin = htmlspecialchars($user['ADMIN_LINKEDIN'] ?? '');
             </div>
 
             <input type="hidden" name="ADMIN_ID" value="<?= $adminId ?>">
+
+
+            <div class="col-sm-6">
+            <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 70px; height: 70px;">
+                <img src="<?= $profile ?>" alt="Admin Profile"
+                class="rounded-circle"
+                style="width: 100%; height: 100%; object-fit: cover;
+                border: 2px solid #dee2e6;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            </button>
+            </div>
+
+            <div class="col-md-6">
+            <label class="form-label"> Profile Image <span class="text-danger">*</span></label>
+            <input type="hidden" name="existing_profile" value="<?= $adminProfileImage?>">
+            <input type="file" name="profile" class="form-control" accept="image/*" <?= empty($adminProfileImage) ? 'required' : '' ?>>
+            </div>
+
 
             <div class="col-sm-6">
                 <div class="mb-3">

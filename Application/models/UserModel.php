@@ -19,6 +19,88 @@ class UserModel {
         $this->conn = $conn;
     }
 
+   public function getCreators($date = null) {
+    // Base SQL query
+    $sql = "SELECT c.* 
+            FROM users c
+            JOIN posts b ON c.ADMIN_USERKEY = b.USERID";
+
+    // If date is provided, apply delta sync condition
+    if ($date) {
+        // Convert milliseconds to seconds
+        $timestampInSeconds = intval($date / 1000);
+        $formattedDate = date('Y-m-d H:i:s', $timestampInSeconds);
+        $sql .= " WHERE c.updated_at > ?";
+    }
+
+    // Group and order
+    $sql .= " GROUP BY c.ADMIN_USERKEY ORDER BY c.updated_at ASC";
+
+    // Prepare and bind
+    $stmt = $this->conn->prepare($sql);
+
+    if ($date) {
+        $stmt->bind_param("s", $formattedDate);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $users = $result->fetch_all(MYSQLI_ASSOC);
+
+    return $users;
+}
+
+
+
+
+
+    public function getPublishedBookIds($userKey) {
+    $sql = "
+        SELECT 
+            id
+        FROM posts
+        WHERE USERID = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("s", $userKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $bookIds = [];
+    while ($row = $result->fetch_assoc()) {
+        $bookIds[] = $row['id'];
+    }
+
+    $stmt->close();
+    return $bookIds;
+}
+
+public function getPurchasedBookIdsAndFormats($email) {
+    $sql = "
+        SELECT 
+            book_id AS id,
+            format
+        FROM book_purchases
+        WHERE user_email = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $books = [];
+    while ($row = $result->fetch_assoc()) {
+        $books[] = $row;
+    }
+
+    $stmt->close();
+    return $books;
+}
+
+
+
 
     public function getPurchasedBooksByUserEmail($email) {
         $sql = "
@@ -29,7 +111,8 @@ class UserModel {
                 b.publisher AS PUBLISHER,
                 b.description AS DESCRIPTION,
                 b.retailprice AS RETAILPRICE,
-                b.pdfurl AS PDF_URL
+                b.pdfurl AS PDF_URL,
+                bp.format AS FORMAT
             FROM book_purchases bp
             JOIN posts b ON bp.book_id = b.id
             WHERE bp.user_email = ?
@@ -60,6 +143,13 @@ class UserModel {
     }
 
     public function startSession($userData) {
+        if (session_status() === PHP_SESSION_NONE) {
+            $cookieDomain = ".sabooksonline.co.za";
+            session_set_cookie_params(0, '/', $cookieDomain);
+            session_start();        
+    }
+
+
         $_SESSION['ADMIN_ID'] = $userData['ADMIN_ID'];
         $_SESSION['ADMIN_SUBSCRIPTION'] = $userData['ADMIN_SUBSCRIPTION'];
         $_SESSION['ADMIN_PROFILE_IMAGE'] = $userData['ADMIN_PROFILE_IMAGE'];
@@ -68,9 +158,7 @@ class UserModel {
         $_SESSION['ADMIN_EMAIL'] = $userData['ADMIN_EMAIL'];
     }
 
-     public function getApiToken($userData) {
-        $userData['ADMIN_USERKEY'];
-    }
+
 
 
     /**

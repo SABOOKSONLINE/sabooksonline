@@ -22,10 +22,12 @@ class UserModel
             b.publisher AS PUBLISHER,
             b.description AS DESCRIPTION,
             b.retailprice AS RETAILPRICE,
+            b.category AS CATEGORY,
             b.abookprice AS APRICE,
             b.ebookprice AS EPRICE,
             b.pdfurl AS PDFURL,
             bp.payment_date,
+            bp.format,
             bp.amount
         FROM book_purchases bp
         JOIN posts b ON bp.book_id = b.id
@@ -50,6 +52,36 @@ class UserModel
         return [];
     }
 }
+
+public function getUserBooksByAction($userId, $actionType = 'library') {
+    $query = "
+    SELECT p.CONTENTID, p.TITLE, p.COVER, p.DESCRIPTION
+    FROM user_book_actions AS uba
+    INNER JOIN posts AS p 
+        ON uba.book_id COLLATE utf8mb4_general_ci = p.CONTENTID COLLATE utf8mb4_general_ci
+    WHERE uba.user_id COLLATE utf8mb4_general_ci = ? 
+      AND uba.action_type COLLATE utf8mb4_general_ci = ?
+    ORDER BY uba.created_at DESC
+";
+
+
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        error_log("Prepare failed: " . $this->conn->error);
+        return [];
+    }
+
+    $stmt->bind_param("ss", $userId, $actionType);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $books = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    return $books;
+}
+
 
     /**
      * Get user by ID
@@ -135,7 +167,8 @@ class UserModel
                         ADMIN_INSTAGRAM = ?, 
                         ADMIN_TWITTER = ?, 
                         ADMIN_LINKEDIN = ?, 
-                        ADMIN_PASSWORD = ?, 
+                        ADMIN_PASSWORD = ?,
+                        ADMIN_PROFILE_IMAGE = ?,  
                         ADMIN_USER_STATUS = ?, 
                         ADMIN_TYPE = ?, 
                         ADMIN_DATE = NOW() 
@@ -149,7 +182,7 @@ class UserModel
 
             mysqli_stmt_bind_param(
                 $stmt,
-                "sssssssssssss",
+                "ssssssssssssss",
                 $data['ADMIN_NAME'],
                 $data['ADMIN_NUMBER'],
                 $data['ADMIN_WEBSITE'],
@@ -160,6 +193,7 @@ class UserModel
                 $data['ADMIN_TWITTER'],
                 $data['ADMIN_LINKEDIN'],
                 $data['ADMIN_PASSWORD'],
+                $data['ADMIN_PROFILE_IMAGE'],
                 $data['ADMIN_USER_STATUS'],
                 $data['ADMIN_TYPE'],
                 $userId

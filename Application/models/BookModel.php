@@ -129,17 +129,79 @@ class BookModel
         mysqli_stmt_close($stmt);
         return $chapters;
     }
+    public function getBooks()
+{
+    $sql = "SELECT
+                p.*,
+                a.id AS a_id
+            FROM posts AS p
+            LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+            ORDER BY RAND()";
+
+    $stmt = mysqli_prepare($this->conn, $sql);
+
+    if (!$stmt) {
+        error_log("SQL Prepare Error: " . mysqli_error($this->conn));
+        return [];
+    }
+
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result || mysqli_num_rows($result) === 0) {
+        return [];
+    }
+
+    $books = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $books[] = $row;
+    }
+
+    return $books;
+}
+
 
     /**
      * Fetch All books
      * @return array
      */
-    public function getBooks()
+    public function getAllBooks($updatedSince = null)
     {
-        $sql = "SELECT * FROM posts ORDER BY RAND()";
+        // Base SQL query with joins
+        $sql = "SELECT
+                    p.*,
+                    a.id AS a_id,
+                    a.book_id AS a_book_id,
+                    a.narrator AS a_narrator,
+                    l.CATEGORY AS listing_category
+                FROM posts AS p
+                LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+                LEFT JOIN listings AS l ON p.CONTENTID = l.CONTENTID";
 
-        // prepared statements for executing the query
+        // Add a conditional WHERE clause for delta syncing
+        if ($updatedSince) {
+            // ----- THE NEW LOGIC IS HERE -----
+            // Convert the millisecond timestamp from JavaScript into a PHP datetime format.
+            $timestampInSeconds = intval($updatedSince / 1000); // Convert milliseconds to seconds
+            $formattedDate = date('Y-m-d H:i:s', $timestampInSeconds);
+            // ------------------------------------
+
+            $sql .= " WHERE p.updated_at > ?";
+            $sql .= " ORDER BY p.updated_at ASC";
+        } else {
+            $sql .= " ORDER BY RAND()";
+        }
+
+        // Prepare the statement for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
+
+        // Bind the parameter if it exists
+        if ($updatedSince) {
+            // Bind the formatted date string instead of the original timestamp
+            mysqli_stmt_bind_param($stmt, "s", $formattedDate);
+        }
+
+        // Execute the statement and get the result
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 

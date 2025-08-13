@@ -51,7 +51,6 @@ class BookController
             session_start();
         }
 
-        // 🚧 Redirect if user not logged in
         if (empty($_SESSION['ADMIN_EMAIL'])) {
             include_once __DIR__ . '/../views/403.php';
             exit;
@@ -146,6 +145,19 @@ class BookController
     }
 
 
+    public function getAudiobookDetailsApi($a_id)
+{
+    header('Content-Type: application/json; charset=utf-8');
+
+    $chapters = $this->bookModel->getChaptersByAudiobookId($a_id ?? null);
+
+    echo json_encode([
+        'chapters' => $chapters,
+    ]);
+    exit;
+}
+
+
     /**
      * Render a list of books filtered by category.
      */
@@ -180,46 +192,15 @@ class BookController
     {
         $category = htmlspecialchars(trim($category)); // Sanitize category input
 
-        // Cache directory path
-        // $cacheDir = __DIR__ . '/../cache';
-
-        // // Create cache directory if it doesn't exist
-        // if (!is_dir($cacheDir)) {
-        //     mkdir($cacheDir, 0775, true);
-        // }
-
-        // // Safe cache file name based on category and limit
-        // $safeCategory = strtolower(str_replace(' ', '_', $category));
-        // $cacheFile = $cacheDir . "/books_category_{$safeCategory}_limit_{$limit}.html";
-
-        // $cacheTime = 3600; // Cache duration in seconds (1 hour)
-
-        // // Serve cached content if available and fresh
-        // if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
-        //     echo file_get_contents($cacheFile);
-        //     return;
-        // }
-
-        // Fetch fresh book listings
         $books = $this->bookModel->getBookListingsByCategory($category, $limit);
 
         if ($books) {
-            // Capture the output of the included view
-            // ob_start();
             include __DIR__ . '/../views/books/bookCategory.php';
-            // $html = ob_get_clean();
-
-            // Save the generated HTML to the cache file
-            // file_put_contents($cacheFile, $html);
-
-            // Output the generated HTML
-            // echo $html;
+           
         } else {
             echo "<div class='container'>No books found in this category.</div>";
         }
     }
-
-
 
 
     /**
@@ -296,89 +277,15 @@ class BookController
         }
     }
 
-    //  JSON version: Get single book by ID
-    public function getBookJson($id)
-    {
-        $book = $this->bookModel->getBookById($id);
-
-        header('Content-Type: application/json');
-
-        if ($book) {
-            echo json_encode($book);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'Book not found']);
-        }
-    }
-
-    public function renderListingsByCategoryJson($category)
-    {
-        $category = htmlspecialchars(urldecode(trim($category))); // Sanitize category input
-
-        $books = $this->bookModel->getBookListingsByCategory($category);
-
-        header('Content-Type: application/json');
-
-        if ($books) {
-            echo json_encode($books);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'Home categories not found']);
-        }
-    }
 
     // JSON version: Get all books
-    public function getAllBooksJson()
+    public function getAllBooksJson($date = null)
     {
-        $books = $this->bookModel->getBooks();
-
-
+        $books = $this->bookModel->getAllBooks($date);
         header('Content-Type: application/json');
         echo json_encode($books);
     }
 
-    public function getAllEbooksJson()
-    {
-        $books = $this->bookModel->getEbooks();
-
-
-        header('Content-Type: application/json');
-        echo json_encode($books);
-    }
-
-    public function renderCategoriesJson()
-    {
-        $categories = $this->bookModel->getBookCategories();
-
-        header('Content-Type: application/json');
-
-
-        if ($categories) {
-            echo json_encode($categories);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'No categories found']);
-        }
-    }
-    // JSON version: Get books by category
-    public function getBooksByCategoryJson($category)
-    {
-        $category = htmlspecialchars(trim($category));
-        $books = $this->bookModel->getBooksByCategory($category);
-
-        header('Content-Type: application/json');
-        echo json_encode($books);
-    }
-
-    // JSON version: Search books
-    public function searchBooksJson($keyword)
-    {
-        $keyword = htmlspecialchars(trim($keyword));
-        $books = $this->bookModel->searchBooks($keyword);
-
-        header('Content-Type: application/json');
-        echo json_encode($books);
-    }
 
     public function renderBookCardByCategory($category = null, $limit = null, $reverse = false)
     {

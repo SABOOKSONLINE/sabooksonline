@@ -1,60 +1,61 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: application/json');
 
-// Array of authorized API keys
+// Authorized API keys
 $authorizedKeys = [
     'nola1234',
     'bongo1234',
     // Add more authorized keys here
 ];
 
-// Get the provided API key from the request
-$providedApiKey = $_GET['api_key'];
-$userkey = $_GET['userkey'];
+// Get values from the request
+$providedApiKey = $_GET['api_key'] ?? null;
+$userkey = $_GET['userkey'] ?? null;
 
-// Check if the provided API key is authorized
+// Validate API key
 if (!in_array($providedApiKey, $authorizedKeys)) {
     http_response_code(401); // Unauthorized
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
 
-// Remote database connection parameters
-$remoteHost = 'localhost';
-$remoteUser = 'sabooks_library';
-$remotePass = '1m0g7mR3$';
-$remoteDb = 'Sibusisomanqa_website_plesk';
+// Use the same variables from your first script
+$serverName = "localhost";
+$username2nd = "sabookso_plesk_acc";
+$secondaryDb = "sabookso_plesk_acc";
+$password = "slTFvaj07dNY6Ke";
 
+// Enable mysqli exceptions
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Create connection
-$remoteConn = new mysqli($remoteHost, $remoteUser, $remotePass, $remoteDb);
+try {
+    // Connect to database
+    $mysqli = new mysqli($serverName, $username2nd, $password, $secondaryDb);
+    $mysqli->set_charset("utf8mb4");
 
-// Check connection
-if ($remoteConn->connect_error) {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['error' => 'Remote database connection failed']);
-    exit;
+    // Safe query using prepared statement
+    $stmt = $mysqli->prepare("SELECT * FROM plesk_accounts WHERE USERKEY = ?");
+    $stmt->bind_param("s", $userkey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Fetch and return results
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    $stmt->close();
+    $mysqli->close();
+
+    echo json_encode($data);
+
+} catch (mysqli_sql_exception $e) {
+    error_log("DB Error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection or query failed']);
 }
-
-// Query to fetch data from remote table
-$query = "SELECT * FROM plesk_accounts WHERE USERKEY = '$userkey'";
-$result = $remoteConn->query($query);
-
-if (!$result) {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['error' => 'Error fetching data from remote table']);
-    exit;
-}
-
-// Fetch data as an associative array
-$data = [];
-while ($row = $result->fetch_assoc()) {
-    $data[] = $row;
-}
-
-// Close remote connection
-$remoteConn->close();
-
-// Return fetched data as JSON response
-echo json_encode($data);
-?>

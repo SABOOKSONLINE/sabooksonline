@@ -38,94 +38,94 @@ class AnalyticsModel
 }
 
 
-    public function getBookViews($user_id) {
-    // Get book content IDs posted by user
-    $query = "SELECT CONTENTID FROM posts WHERE USERID = ?";
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) return ['unique_user_count' => 0];
+     public function getBookViews($user_id, $start_date = null, $end_date = null)
+    {
+        $contentIds = $this->getUserBookIds($user_id);
+        if (empty($contentIds)) return ['unique_user_count' => 0];
 
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $book_ids = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+        $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
+        $query = "SELECT COUNT(*) AS unique_user_count
+                  FROM page_visits AS pv
+                  INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
+                  WHERE pv.page_url LIKE ? AND p.CONTENTID IN ($placeholders)";
 
-    if (empty($book_ids)) return ['unique_user_count' => 0];
+        if ($start_date && $end_date) {
+            $query .= " AND pv.visit_time BETWEEN ? AND ?";
+        }
 
-    $contentIds = array_column($book_ids, 'CONTENTID');
+        $stmt = $this->conn->prepare($query);
+        $likePattern = "%book%";
+        $params = array_merge([$likePattern], $contentIds);
+        $types = str_repeat("s", count($params));
 
-    // Build placeholders for IN clause
-    $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
-    $query = "SELECT COUNT(DISTINCT user_ip) AS unique_user_count
-              FROM page_visits AS pv
-              INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-              WHERE pv.page_url LIKE ? AND p.CONTENTID IN ($placeholders)";
+        if ($start_date && $end_date) {
+            $params[] = $start_date;
+            $params[] = $end_date;
+            $types .= "ss";
+        }
 
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) return ['unique_user_count' => 0];
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $stmt->bind_result($unique_user_count);
+        $stmt->fetch();
+        $stmt->close();
 
-    $likePattern = "%book%";
-    $params = array_merge([$likePattern], $contentIds);
-    $types = str_repeat("s", count($params));
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $stmt->bind_result($unique_user_count);
-    $stmt->fetch();
-    $stmt->close();
+        return ['unique_user_count' => $unique_user_count];
+    }
 
-    return ['unique_user_count' => $unique_user_count];
-}
-
+    
 
 
-public function getUserMostViewedBooks($user_id) {
-    // Step 1: Get all books posted by the user
-    $query = "SELECT CONTENTID, TITLE, COVER FROM posts WHERE USERID = ?";
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) return [];
 
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $books = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+    public function getUserMostViewedBooks($user_id)
+    {
+        $query = "SELECT CONTENTID, TITLE, COVER FROM posts WHERE USERID = ? LIMIT 4";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $books = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
 
-    if (empty($books)) return [];
+        if (empty($books)) return [];
 
-    // Step 2: Build dynamic placeholders for content IDs
-    $contentIds = array_column($books, 'CONTENTID');
-    $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
+        $contentIds = array_column($books, 'CONTENTID');
+        $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
 
-    // Step 3: Query to count views per book
-    $query = "SELECT p.CONTENTID, p.TITLE, p.COVER, COUNT(DISTINCT pv.user_ip) AS view_count
-              FROM page_visits AS pv
-              INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-              WHERE p.CONTENTID IN ($placeholders)
-              GROUP BY p.CONTENTID
-              ORDER BY view_count DESC";
+        $query = "SELECT p.CONTENTID, p.TITLE, p.COVER, COUNT(DISTINCT pv.user_ip) AS view_count
+                  FROM page_visits AS pv
+                  INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
+                  WHERE p.CONTENTID IN ($placeholders)
+                  GROUP BY p.CONTENTID ORDER BY view_count DESC";
 
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) return [];
+        $stmt = $this->conn->prepare($query);
+        $types = str_repeat("s", count($contentIds));
+        $stmt->bind_param($types, ...$contentIds);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
 
-    // All params are strings
-    $types = str_repeat("s", count($contentIds));
-    $stmt->bind_param($types, ...$contentIds);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $viewedBooks = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    return $viewedBooks;
-}
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
 
-    public function getProfileViews($user_id) {
+    public function getProfileViews($user_id, $start_date = null, $end_date = null)
+    {
         $likePattern = "%$user_id%";
-        $sql = "SELECT COUNT(*) AS visit_count FROM page_visits WHERE page_url LIKE ?";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return ['visit_count' => 0];
+        $query = "SELECT COUNT(*) AS visit_count FROM page_visits WHERE page_url LIKE ?";
 
-        $stmt->bind_param("s", $likePattern);
+        if ($start_date && $end_date) {
+            $query .= " AND visit_time BETWEEN ? AND ?";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($start_date && $end_date) {
+            $stmt->bind_param("sss", $likePattern, $start_date, $end_date);
+        } else {
+            $stmt->bind_param("s", $likePattern);
+        }
+
         $stmt->execute();
         $stmt->bind_result($visit_count);
         $stmt->fetch();
@@ -134,85 +134,78 @@ public function getUserMostViewedBooks($user_id) {
         return ['visit_count' => $visit_count];
     }
 
-    public function getServiceViews($provider_id, $start_date = null, $end_date = null) {
-    $likePattern = "%provider%";
-    $providerPattern = "%$provider_id%";
+    public function getServiceViews($provider_id, $start_date = null, $end_date = null)
+    {
+        $likePattern = "%provider%";
+        $providerPattern = "%$provider_id%";
 
-    // If no date range is provided, remove BETWEEN clause
-    if ($start_date && $end_date) {
-        $query = "SELECT COUNT(*) AS visit_count
-                  FROM page_visits
-                  WHERE page_url LIKE ? AND page_url LIKE ? AND visit_time BETWEEN ? AND ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ssss", $likePattern, $providerPattern, $start_date, $end_date);
-    } else {
-        $query = "SELECT COUNT(*) AS visit_count
-                  FROM page_visits
-                  WHERE page_url LIKE ? AND page_url LIKE ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ss", $likePattern, $providerPattern);
-    }
-
-    if (!$stmt) return 0;
-
-    $stmt->execute();
-    $stmt->bind_result($visit_count);
-    $stmt->fetch();
-    $stmt->close();
-
-    return ['visit_count' => $visit_count];
-}
-
-
-public function getEventViews($user_id, $start_date = null, $end_date = null) {
-    // Get event CONTENTIDs
-    $query = "SELECT CONTENTID FROM events WHERE USERID = ?";
-    $stmt = $this->conn->prepare($query);
-
-    if (!$stmt) return ['visit_count' => 0];
-
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $event_ids = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    if (empty($event_ids)) return ['visit_count' => 0];
-
-    $event_ids = array_column($event_ids, 'CONTENTID');
-    $likePattern = "%event-details%";
-
-    $combined_visit_count = 0;
-    $query = "SELECT COUNT(*) AS visit_count
-              FROM page_visits AS pv
-              INNER JOIN events AS e ON pv.page_url LIKE CONCAT('%', e.CONTENTID, '%')
-              WHERE pv.page_url LIKE ? AND e.CONTENTID = ?";
-
-    // Append date filter if provided
-    if ($start_date && $end_date) {
-        $query .= " AND DATE(pv.visit_time) BETWEEN ? AND ?";
-    }
-
-    $stmt = $this->conn->prepare($query);
-
-    if (!$stmt) return ['visit_count' => 0];
-
-    foreach ($event_ids as $event_id) {
+        $query = "SELECT COUNT(*) AS visit_count FROM page_visits WHERE page_url LIKE ? AND page_url LIKE ?";
         if ($start_date && $end_date) {
-            $stmt->bind_param("ssss", $likePattern, $event_id, $start_date, $end_date);
+            $query .= " AND visit_time BETWEEN ? AND ?";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($start_date && $end_date) {
+            $stmt->bind_param("ssss", $likePattern, $providerPattern, $start_date, $end_date);
         } else {
-            $stmt->bind_param("ss", $likePattern, $event_id);
+            $stmt->bind_param("ss", $likePattern, $providerPattern);
         }
 
         $stmt->execute();
         $stmt->bind_result($visit_count);
         $stmt->fetch();
-        $combined_visit_count += $visit_count;
+        $stmt->close();
+
+        return ['visit_count' => $visit_count];
     }
 
-    $stmt->close();
-    return ['visit_count' => $combined_visit_count];
-}
+
+    public function getEventViews($user_id, $start_date = null, $end_date = null)
+    {
+        $event_ids = $this->getUserEventIds($user_id);
+        if (empty($event_ids)) return ['visit_count' => 0];
+
+        $query = "SELECT COUNT(*) AS visit_count FROM page_visits AS pv
+                  INNER JOIN events AS e ON pv.page_url LIKE CONCAT('%', e.CONTENTID, '%')
+                  WHERE pv.page_url LIKE ? AND e.CONTENTID = ?";
+
+        if ($start_date && $end_date) {
+            $query .= " AND DATE(pv.visit_time) BETWEEN ? AND ?";
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $likePattern = "%event-details%";
+
+        $combined_visit_count = 0;
+        foreach ($event_ids as $event_id) {
+            if ($start_date && $end_date) {
+                $stmt->bind_param("ssss", $likePattern, $event_id, $start_date, $end_date);
+            } else {
+                $stmt->bind_param("ss", $likePattern, $event_id);
+            }
+            $stmt->execute();
+            $stmt->bind_result($visit_count);
+            $stmt->fetch();
+            $combined_visit_count += $visit_count;
+        }
+        $stmt->close();
+
+        return ['visit_count' => $combined_visit_count];
+    }
+
+    public function getUserEventIds($user_id)
+    {
+        $query = "SELECT CONTENTID FROM events WHERE USERID = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $event_ids = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return array_column($event_ids, 'CONTENTID');
+    }
 
 
 
@@ -503,4 +496,5 @@ public function getEventViews($user_id, $start_date = null, $end_date = null) {
 
         return array_column($book_ids, 'CONTENTID');
     }
+    
 }

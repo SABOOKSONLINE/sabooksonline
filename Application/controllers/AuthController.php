@@ -12,66 +12,104 @@ class AuthController {
 
     public function loginWithGoogle($email,$reg_name,$profileImage) {
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return "<div class='alert alert-warning'>Your email is invalid!</div>";
-    }
 
     $result = $this->userModel->findUserByEmail($email);
 
     if (!mysqli_num_rows($result)) {
         $this->userModel->insertGoogleUser($reg_name, $email, $profileImage, $email);
-         // 🔁 Re-query after insertion
         $result = $this->userModel->findUserByEmail($email);
     }
 
     $userData = mysqli_fetch_assoc($result);
-    // $status = $userData['USER_STATUS'];
-
-    // if ($status !== "Verified") {
-    //     return "<center class='alert alert-warning'>Your account needs to be confirmed. Please check your email.</center>";
-    // }
-
     $this->userModel->startSession($userData);
-
-
-    // 👇 Confirm session is properly set
-    if (!isset($_SESSION['ADMIN_ID'])) {
-        return "<div class='alert alert-danger'>Failed to set session. Please try again.</div>";
-    }
 
     return true;
 }
 
-    public function loginWithForm($email, $password, $api = false) {
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return "<div class='alert alert-warning'>Your email is invalid!</div>";
-        }
+    public function loginWithForm($email, $password, $name = null, $picture = null, $isform = true) {
+    header('Content-Type: application/json');
 
-        $result = $this->userModel->findUserByEmail($email);
-
-        if (!mysqli_num_rows($result)) {
-            return "<center class='alert alert-warning'>Email Not Found!</center>";
-
-        } else {
-            $userData = mysqli_fetch_assoc($result);
-            $status = $userData['USER_STATUS'];
-
-            if ($status != "Verified") {
-                return "<center class='alert alert-warning'>Your account needs to be confirmed before you can login. Please check your emails for a confirmation email with a verification link.</center>";
-            } else {
-                if (!$this->userModel->verifyPassword($password, $userData['ADMIN_PASSWORD'])) {
-                    return "<center class='alert alert-warning'>Password Incorrect!</center>";
-                } else {
-                    if ($api) {
-                        header('Content-Type: application/json');
-                        echo json_encode(['success' => true, 'adminKey' => $userData['ADMIN_USERKEY']]);
-                        exit;
-                    }else{
-                        $this->userModel->startSession($userData);
-                        header('Location: /dashboard');}
-
-                }
-            }
-        }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid email address.',
+        ]);
+        exit;
     }
+
+    $result = $this->userModel->findUserByEmail($email);
+
+   if (!mysqli_num_rows($result)) {
+    if ($isform) {
+        http_response_code(404); // 400 Bad Request is more accurate for missing data
+        echo json_encode([
+            'success' => false,
+            'message' => 'email not found.',
+        ]);
+        exit;
+    }
+
+    $this->userModel->insertGoogleUser($name, $email, $picture, $email);
+    $result = $this->userModel->findUserByEmail($email);
+}
+
+
+    $userData = mysqli_fetch_assoc($result);
+
+    if ($isform) {
+    if (!$this->userModel->verifyPassword($password, $userData['ADMIN_PASSWORD'])) {
+        http_response_code(401); // 401 Unauthorized is correct
+        echo json_encode([
+            'success' => false,
+            'message' => 'Incorrect password.',
+        ]);
+        exit;
+    }
+}
+
+
+    $subscriptionStatus = strtolower($userData['subscription_status'] ?? '');
+    $adminSub = $userData['ADMIN_SUBSCRIPTION'] ?? '';
+    $billingCycle = $userData['billing_cycle'] ?? '';
+
+    switch ($subscriptionStatus) {
+        case 'free':
+            $subscriptionText = ''; // No label for free plan
+            break;
+
+        case 'royalties':
+            $subscriptionText = $adminSub . '  Royalties';
+            break;
+
+        case 'pro':
+        case 'premium':
+            $subscriptionText = ucfirst($subscriptionStatus) . ' ' . ucfirst($billingCycle);
+            break;
+
+        default:
+            $subscriptionText = 'Unknown Plan';
+            break;
+    }
+    
+    $purchasedBooks = $this->userModel->getPurchasedBookIdsAndFormats($email);
+    $publishedBooks = $this->userModel->getPublishedBookIds($userData['ADMIN_USERKEY']);
+
+    // Login success
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'adminKey' => $userData['ADMIN_USERKEY'],
+        'email' => $userData['ADMIN_EMAIL'],
+        'profile' => $userData['ADMIN_PROFILE_IMAGE'],
+        'name' => $userData['ADMIN_NAME'],
+        'subscription' => $subscriptionText,
+        'number' => $userData['ADMIN_NUMBER'],
+        'purchasedBooks' => $purchasedBooks,
+        'publishedBooks' => $publishedBooks,
+
+    ]);
+    exit;
+}
+
 }

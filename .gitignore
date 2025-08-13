@@ -1,3 +1,4 @@
 bin/
 cms-data/
 vendor/
+.vscode/

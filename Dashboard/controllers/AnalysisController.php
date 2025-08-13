@@ -20,24 +20,24 @@ class AnalysisController
         return $this->model->viewSubscription($userId);
     }
 
-    public function getBookViews($user_id) {
-        return $this->model->getBookViews($user_id);
+    public function getBookViews($user_id,$start,$end) {
+        return $this->model->getBookViews($user_id,$start,$end);
     }
 
     public function getTopBooks($user_id) {
         return $this->model->getUserMostViewedBooks($user_id);
     }
 
-    public function getProfileViews($user_id) {
-        return $this->model->getProfileViews($user_id);
+    public function getProfileViews($user_id, $start, $end) {
+        return $this->model->getProfileViews($user_id, $start, $end);
     }
     
-    public function getServiceViews($user_id) {
-        return $this->model->getServiceViews($user_id);
+    public function getServiceViews($user_id ,$start, $end) {
+        return $this->model->getServiceViews($user_id, $start, $end);
     }
 
-    public function getEventViews($user_id) {
-        return $this->model->getEventViews($user_id);
+    public function getEventViews($user_id ,$start, $end) {
+        return $this->model->getEventViews($user_id, $start, $end);
     }
 
     public function getDownloadsByEmail($email) {

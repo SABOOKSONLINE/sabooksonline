@@ -48,7 +48,7 @@ require_once __DIR__ . "/includes/header.php";
                             <p><b>Monthly Subscription</b></p>
                         </div>
                         <div class="yearly-price d-none">
-                            <p class="plan-price">R1908</p>
+                            <p class="plan-price">R1911</p>
                             <p><b>Yearly Subscription (Save R480)</b></p>
                         </div>
 
@@ -105,7 +105,7 @@ require_once __DIR__ . "/includes/header.php";
                             <p><b>Monthly Subscription</b></p>
                         </div>
                         <div class="yearly-price d-none">
-                            <p class="plan-price">R4788</p>
+                            <p class="plan-price">R4791</p>
                             <p><b>Yearly Subscription (Save R1200)</b></p>
                         </div>
 

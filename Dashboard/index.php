@@ -15,8 +15,26 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                 <?php include __DIR__ . "/views/includes/layouts/side-bar.php" ?>
 
                 <div id="pdfContent" class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
-                    <?php renderHeading("Dashboard", "A Comprehensive Overview of Your Dashboard Metrics and Insights", "", "Print to PDF",true) ?>
+                    <?php renderHeading("Dashboard", "Your Publishing Insights & Performance Data", "", "Print to PDF",true) ?>
 
+                    <form method="GET" class="mb-4 d-flex gap-3 align-items-end">
+                        <div>
+                            <label for="start_date">Start Date</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>">
+                        </div>
+
+                        <div>
+                            <label for="end_date">End Date</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control"
+                                value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>">
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="?" class="btn btn-secondary">Reset</a>
+                        </div>
+                    </form>
 
                     <div class="row">
                         <?php
@@ -29,13 +47,20 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $userKey = $_SESSION["ADMIN_USERKEY"];
                         $email = $_SESSION["ADMIN_EMAIL"];
 
+                        $start = $_GET['start_date'] ?? null;
+                        $end = $_GET['end_date'] ?? null;
+
+                        $start_date = $start ? $start . ' 00:00:00' : null;
+                        $end_date = $end ? $end . ' 23:59:59' : null;
+
+        
 
                         $titlesCount = $analysisController->getTitlesCount($userKey);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
-                        $bookView = $analysisController->getBookViews($userKey);
-                        $profileView = $analysisController->getProfileViews($userKey);
-                        $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID']);
-                        $eventView = $analysisController->getEventViews($userKey);
+                        $bookView = $analysisController->getBookViews($userKey,$start_date,$end_date);
+                        $profileView = $analysisController->getProfileViews($userKey,$start_date, $end_date);
+                        $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'],$start_date, $end_date);
+                        $eventView = $analysisController->getEventViews($userKey,$start_date, $end_date);
                         $downloads = $analysisController->getDownloadsByEmail($email);
                         $topBooks = $analysisController->getTopBooks($userKey);
 
@@ -52,10 +77,10 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
 
 
-                        renderAnalysisCard("Ebooks Downloaded", $downloads, "fas fa-cloud-download-alt"); 
-                        renderAnalysisCard("Audio Listens", "0", "fas fa-headphones-alt");       
-                        renderAnalysisCard("Revenue", "0", "fas fa-coins");                 
-                        renderAnalysisCard("Titles", $titlesCount, "fas fa-book-open");     
+                        renderAnalysisCard("eBook Downloads", $downloads, "fas fa-cloud-download-alt"); 
+                        renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");       
+                        renderAnalysisCard("Total Revenue", "0", "fas fa-coins");                 
+                        renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");     
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");  
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
                         renderAnalysisCard("Services Views", $serviceView['visit_count'], "fas fa-user-tie");
@@ -65,7 +90,9 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
                     <?php if (!empty($topBooks)): ?>
                         <div class="row">
-                            <h2 class="most-viewed-title">Your Most Viewed Books</h2>                            
+                            <h5 class="display-6 small fw-semibold">
+                            <small>Top Performing Books</small>
+                            </h5>                         
                             <?php foreach ($topBooks as $index => $book): ?>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
                                     <div class="book-card position-relative text-center">
@@ -82,21 +109,6 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         <p class="text-muted">No views yet. Share your books to get more readers!</p>
                     <?php endif; ?>
 
-
-
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div class="card p-4 shadow-sm border-0">
-                                <?php if (!empty($subscriptionDetails)): ?>
-                                    <p><strong>Plan:</strong> <?= htmlspecialchars($subscriptionDetails['admin_subscription']) ?></p>
-                                    <p><strong>Status:</strong> <?= htmlspecialchars($subscriptionDetails['subscription_status']) ?></p>
-                                <?php else: ?>
-                                    <p>No subscription data available.</p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-
                     <hr class="my-3">
 
                     <div class="row">
@@ -105,29 +117,12 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         </h5>
                         <!-- Time-based charts -->
                         <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-                            <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
-                                <h5 class="fw-semibold text-muted text-capitalize small mb-1">Monthly and Yearly Book Views</h5>
-                                <canvas id="bookViewsChart" height="100"></canvas>
+                            <div class="card analysis-card rounded-4 shadow-sm h-200 p-3 p-4">
+                                <h5 class="fw-semibold text-muted text-capitalize small mb-1">Overall Views</h5>
+                                <canvas id="combinedDonutChart" height="100"></canvas>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-                            <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
-                                <h5 class="fw-semibold text-muted text-capitalize small mb-1">Monthly and Yearly Profile Views</h5>
-                                <canvas id="profileViewsChart" height="100"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-                            <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
-                                <h5 class="fw-semibold text-muted text-capitalize small mb-1">Monthly and Yearly Service Views</h5>
-                                <canvas id="serviceViewsChart" height="100"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-                            <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
-                                <h5 class="fw-semibold text-muted text-capitalize small mb-1">Monthly and Yearly Event Views</h5>
-                                <canvas id="eventViewsChart" height="100"></canvas>
-                            </div>
-                        </div>
+                    
 
                         <!-- Geographic charts -->
                         <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4 mb-3">
@@ -137,6 +132,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                     <span class="text-muted">by Country</span>
                                     <small class="text-muted">(Top 10)</small>
                                 </h5>
+                                <div id="totalCountryViews" class="text-muted small mb-2"></div>
                                 <canvas id="bookViewsByCountryChart" height="200"></canvas>
                             </div>
                         </div>
@@ -147,6 +143,8 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                     <span class="text-muted">by Region</span>
                                     <small class="text-muted">(Top 10)</small>
                                 </h5>
+
+                                <div id="totalProvinceViews" class="text-muted small mb-2"></div>
                                 <canvas id="bookViewsByProvinceChart" height="200"></canvas>
                             </div>
                         </div>
@@ -157,6 +155,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                     <span class="text-muted">by City</span>
                                     <small class="text-muted">(Top 10)</small>
                                 </h5>
+                                <div id="totalCityViews" class="text-muted small mb-2"></div>
                                 <canvas id="bookViewsByCityChart" height="200"></canvas>
                             </div>
                         </div>
@@ -170,10 +169,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
     <script>
         // Time-based charts
-        const bookCtx = document.getElementById('bookViewsChart')?.getContext('2d');
-        const profileCtx = document.getElementById('profileViewsChart')?.getContext('2d');
-        const serviceCtx = document.getElementById('serviceViewsChart')?.getContext('2d');
-        const eventCtx = document.getElementById('eventViewsChart')?.getContext('2d');
+        
 
         // Geographic charts
         const countryCtx = document.getElementById('bookViewsByCountryChart')?.getContext('2d');
@@ -181,78 +177,108 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
         const cityCtx = document.getElementById('bookViewsByCityChart')?.getContext('2d');
 
         // Helper function for time-based charts
-        const generateTimeChart = (ctx, label, rawData) => {
-            if (!ctx || !Array.isArray(rawData)) return;
 
-            const labels = rawData.map(d => `${d.month_year}`);
-            const data = rawData.map(d => parseInt(d.views) || 0);
+    const combinedCtx = document.getElementById('combinedDonutChart').getContext('2d');
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label,
-                        data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+    const bookViews = <?= json_encode($bookViewsByMonthYear) ?>;
+    const profileViews = <?= json_encode($profileViewsByMonthYear) ?>;
+    const serviceViews = <?= json_encode($serviceViewsByMonthYear) ?>;
+    const eventViews = <?= json_encode($eventViewsByMonthYear) ?>;
+
+    const sumViews = (data) =>
+        Array.isArray(data) ? data.reduce((total, item) => total + parseInt(item.views || 0), 0) : 0;
+
+    const labels = ['Book Views', 'Profile Views', 'Service Views', 'Event Views'];
+    const data = [
+        sumViews(bookViews),
+        sumViews(profileViews),
+        sumViews(serviceViews),
+        sumViews(eventViews)
+    ];
+
+    new Chart(combinedCtx, {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Total Views Breakdown',
+                data,
+                backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2'],
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const value = context.parsed;
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${context.label}: ${value} views (${percentage}%)`;
                         }
                     }
+                },
+                legend: {
+                    position: 'bottom'
                 }
-            });
-        };
+            }
+        }
+    });
+
+
+        const calculateTotalViews = (rawData) => {
+    if (!Array.isArray(rawData)) return 0;
+    return rawData.reduce((sum, item) => sum + (parseInt(item.views) || 0), 0);
+};
 
         // Helper function for geographic charts (horizontal bar charts)
-        const generateGeoChart = (ctx, label, rawData, limit = 10) => {
-            if (!ctx || !Array.isArray(rawData)) return;
+        const generateGeoChart = (ctx, label, rawData, limit = 10, totalElementId = null) => {
+    if (!ctx || !Array.isArray(rawData)) return;
 
-            // Sort and limit the data
-            const sortedData = [...rawData].sort((a, b) => b.views - a.views).slice(0, limit);
-            const labels = sortedData.map(d => d.country || d.province || d.city);
-            const data = sortedData.map(d => parseInt(d.views) || 0);
+    const sortedData = [...rawData].sort((a, b) => b.views - a.views).slice(0, limit);
+    const labels = sortedData.map(d => d.country || d.province || d.city);
+    const data = sortedData.map(d => parseInt(d.views) || 0);
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label,
-                        data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    scales: {
-                        x: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        };
+    // ✅ Show total views if an element ID is provided
+    if (totalElementId) {
+        const total = calculateTotalViews(sortedData);
+        const totalEl = document.getElementById(totalElementId);
+        if (totalEl) totalEl.innerText = `Total: ${total.toLocaleString()}`;
+    }
 
-        // Generate time-based charts
-        generateTimeChart(bookCtx, 'Book Views', <?= json_encode($bookViewsByMonthYear) ?>);
-        generateTimeChart(profileCtx, 'Profile Views', <?= json_encode($profileViewsByMonthYear) ?>);
-        generateTimeChart(serviceCtx, 'Service Views', <?= json_encode($serviceViewsByMonthYear) ?>);
-        generateTimeChart(eventCtx, 'Event Views', <?= json_encode($eventViewsByMonthYear) ?>);
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label,
+                data,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    });
+};
+
+
 
         // Generate geographic charts
-        generateGeoChart(countryCtx, 'Views by Country', <?= json_encode($bookViewsByCountry) ?>);
-        generateGeoChart(provinceCtx, 'Views by Province', <?= json_encode($bookViewsByProvince) ?>);
-        generateGeoChart(cityCtx, 'Views by City', <?= json_encode($bookViewsByCity) ?>);
+
+        generateGeoChart(countryCtx, 'Views by Country', <?= json_encode($bookViewsByCountry) ?>, 10, 'totalCountryViews');
+        generateGeoChart(provinceCtx, 'Views by Province', <?= json_encode($bookViewsByProvince) ?>, 10, 'totalProvinceViews');
+        generateGeoChart(cityCtx, 'Views by City', <?= json_encode($bookViewsByCity) ?>, 10, 'totalCityViews');
+
     </script>
     <script>
             document.getElementById('printPDF')?.addEventListener('click', async () => {

@@ -3,14 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$serverName = "localhost";
-$username = "sabookso_db";
-$primaryDb = "sabookso_db";
-
-$username2nd = "sabookso_plesk_acc";
-$secondaryDb = "sabookso_plesk_acc";
-
+$serverName = "sql58.jnb1.host-h.net";
+$username = "sabooksonline";
 $password = "slTFvaj07dNY6Ke";
+$primaryDb = "sabookso_db";
 
 // Enable exceptions for mysqli
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -19,10 +15,6 @@ try {
     // create connection to primaryDb
     $conn = new mysqli($serverName, $username, $password, $primaryDb);
     $conn->set_charset("utf8mb4");
-
-    // Create connection to secondaryDB
-    $mysqli = new mysqli($serverName, $username2nd, $password, $secondaryDb);
-    $mysqli->set_charset("utf8mb4");
 } catch (mysqli_sql_exception $e) {
     // Centralized error logging
     error_log("Database Connection Error: " . $e->getMessage());

@@ -36,7 +36,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['q'] = $id;
         require "Application/views/books/audio/audiobook_view.php";
     });
-    $r->addRoute('GET', '/library/readBook/{id}', function ($id) {
+    $r->addRoute('GET', '/read/{id}', function ($id) {
         $_GET['q'] = $id;
         require "Application/views/readBook.php";
     });
@@ -65,49 +65,23 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/api/books', function () {
         require "Application/api.php";
     });
-    $r->addRoute('GET', '/api/Ebooks', function () {
-        $_GET['action'] = 'Ebooks';
+
+    $r->addRoute('GET', '/api/creators', function () {
+        $_GET['action'] = 'creators';
         require "Application/api.php";
     });
-    $r->addRoute('GET', '/api/categories', function () {
-        $_GET['action'] = 'getAllCategories';
+
+    $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
+        $_GET['action'] = 'audio';
+        $_GET['a_id'] = $a_id;
         require "Application/api.php";
     });
-    $r->addRoute('GET', '/api/home/{category}', function ($category) {
-        $_GET['action'] = 'home';
-        $_GET['category'] = $category;
+   
+    $r->addRoute('POST', '/api/login', function () {
+        $_GET['action'] = 'login';
         require "Application/api.php";
     });
-    $r->addRoute('GET', '/api/book/{id}', function ($id) {
-        $_GET['action'] = 'getBook';
-        $_GET['id'] = $id;
-        require "Application/api.php";
-    });
-    $r->addRoute('GET', '/api/category/{category}', function ($category) {
-        $_GET['action'] = 'getBooksByCategory';
-        $_GET['category'] = $category;
-        require "Application/api.php";
-    });
-    $r->addRoute('GET', '/api/search/{keyword}', function ($keyword) {
-        $_GET['action'] = 'searchBooks';
-        $_GET['keyword'] = $keyword;
-        require "Application/api.php";
-    });
-    $r->addRoute('POST', '/api/login', function ($keyword) {
-        $_GET['action'] = 'google login';
-        $_GET['keyword'] = $keyword;
-        require "Application/api.php";
-    });
-    $r->addRoute('GET', '/api/user/books', function ($keyword) {
-        $_GET['action'] = 'userBooks';
-        $_GET['keyword'] = $keyword;
-        require "Application/api.php";
-    });
-    $r->addRoute('GET', '/api/user/purchasedBooks', function ($keyword) {
-        $_GET['action'] = 'userPurchasedBooks';
-        $_GET['keyword'] = $keyword;
-        require "Application/api.php";
-    });
+    
 
     // =================== Dashboard Routes ===================
     // --- Main Dashboard ---
@@ -255,6 +229,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/audiobook_chapter_handler.php";
     });
 
+
+    // --- Reset Users Password Routes ---> note this is temp and will be deleted
+    $r->addRoute('GET', '/dashboards/reset_password', function () {
+        require "Dashboard/views/reset_user_password.php";
+    });
+    $r->addRoute('POST', '/dashboards/reset_password/handler/{adminId}', function ($adminId) {
+        $_GET['adminId'] = $adminId;
+        require "Dashboard/handlers/reset_users_pass.php";
+    });
+
     // --- Audiobook chapter Handling Routes ---
     $r->addRoute('POST', '/dashboards/listings/insertSampleAudio', function () {
         require "Dashboard/handlers/audiobook_sample_handler.php";
@@ -268,15 +252,6 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['id'] = $id;
         $_GET['action'] = 'delete';
         require "Dashboard/handlers/audiobook_sample_handler.php";
-    });
-
-    // --- Reset Users Password Routes ---> note this is temp and will be deleted
-    $r->addRoute('GET', '/dashboards/reset_password', function () {
-        require "Dashboard/views/reset_user_password.php";
-    });
-    $r->addRoute('POST', '/dashboards/reset_password/handler/{adminId}', function ($adminId) {
-        $_GET['adminId'] = $adminId;
-        require "Dashboard/handlers/reset_users_pass.php";
     });
 
     // =================== Creator, Provider, Gallery, Services, Events (Public) ===================

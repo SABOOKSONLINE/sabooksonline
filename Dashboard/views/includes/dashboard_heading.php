@@ -15,7 +15,7 @@ function renderHeading($heading, $lead, $buttonUrl = "", $buttonInnerText = "", 
 
             <?php if ($printToPdf): ?>
                 <button id="printPDF" class="btn btn-outline-dark shadow-sm">
-                    <i class="fas fa-file-pdf me-2"></i> Print Screen                
+                     Print Screen                
                 </button>
             <?php endif; ?>
     </div>
