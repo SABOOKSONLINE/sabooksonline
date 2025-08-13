@@ -3,14 +3,10 @@ name: Install Composer and Deploy to xneelo
 on:
     push:
         branches: [main]
-    pull_request:
-        branches: [main]
 
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -39,8 +35,11 @@ jobs:
                   server: ${{ secrets.FTP_SERVER }}
                   username: ${{ secrets.FTP_USERNAME }}
                   password: ${{ secrets.FTP_PASSWORD }}
+                  protocol: "ftps" # Explicit FTPS
+                  port: 21 # Standard FTPS port
                   local-dir: ./
                   server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+                  security: strict # Force encrypted connection
                   exclude: |
                       .git*
                       .github*
@@ -50,7 +49,3 @@ jobs:
                       **/README.md
                       **/.gitignore
                       **/.env
-                  # Add retry logic
-                  retry: true
-                  retry-count: 5
-                  retry-wait-time: 15
