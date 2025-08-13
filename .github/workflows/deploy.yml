@@ -32,30 +32,18 @@ jobs:
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
-            - name: Deploy via Explicit FTPS (FTPES)
+            - name: Test FTP Connection
               env:
                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
                   FTP_USER: ${{ secrets.FTP_USERNAME }}
                   FTP_PASS: ${{ secrets.FTP_PASSWORD }}
-                  REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
                   lftp -e "
-                    set ftp:ssl-auth TLS;          # Explicit FTPS (matches FileZilla)
-                    set ftp:ssl-force true;        # Force SSL/TLS
-                    set ftp:ssl-protect-data true; # Encrypt data channel
-                    set ssl:verify-certificate no; # Bypass cert verification
-                    set ftp:passive-mode true;     # Use passive mode
+                    set ftp:ssl-auth TLS;
+                    set ftp:ssl-force true;
+                    set ssl:verify-certificate no;
+                    set ftp:passive-mode true;
                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
-                    mirror --reverse --delete \
-                           --verbose \
-                           --exclude-glob .git* \
-                           --exclude .github/ \
-                           --exclude tests/ \
-                           --exclude '*.md' \
-                           --exclude composer.* \
-                           --exclude README.md \
-                           --exclude .gitignore \
-                           --exclude .env \
-                           ./ $REMOTE_DIR;
+                    ls;
                     bye
                   "
