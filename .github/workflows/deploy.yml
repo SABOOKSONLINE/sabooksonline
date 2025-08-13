@@ -40,20 +40,20 @@ jobs:
                   REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
                   lftp -e "
-                    set ftp:ssl-force false;       # Disable forcing TLS
+                    set ftp:ssl-force false;
                     set ftp:ssl-protect-data false;
-                    set ftp:passive-mode true;     # Passive mode
+                    set ftp:passive-mode true;
                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
                     mirror --reverse \
                           --verbose \
-                          --exclude-glob=.git* \
-                          --exclude-glob=.github/* \
-                          --exclude-glob=tests/* \
-                          --exclude-glob=*.md \
-                          --exclude-glob=composer.* \
-                          --exclude-glob=README.md \
-                          --exclude-glob=.gitignore \
-                          --exclude-glob=.env \
+                          --exclude-glob .git* \
+                          --exclude-glob .github/* \
+                          --exclude-glob tests/* \
+                          --exclude-glob *.md \
+                          --exclude-glob composer.* \
+                          --exclude-glob README.md \
+                          --exclude-glob .gitignore \
+                          --exclude-glob .env \
                           ./ $REMOTE_DIR;
                     bye
                   "
