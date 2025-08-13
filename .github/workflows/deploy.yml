@@ -45,15 +45,15 @@ jobs:
                     set ftp:passive-mode true;     # Passive mode
                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
                     mirror --reverse \
-                           --verbose \
-                           --exclude-glob .git* \
-                           --exclude .github/ \
-                           --exclude tests/ \
-                           --exclude '*.md' \
-                           --exclude composer.* \
-                           --exclude README.md \
-                           --exclude .gitignore \
-                           --exclude .env \
-                           ./ $REMOTE_DIR;
+                          --verbose \
+                          --exclude-glob=.git* \
+                          --exclude-glob=.github/* \
+                          --exclude-glob=tests/* \
+                          --exclude-glob=*.md \
+                          --exclude-glob=composer.* \
+                          --exclude-glob=README.md \
+                          --exclude-glob=.gitignore \
+                          --exclude-glob=.env \
+                          ./ $REMOTE_DIR;
                     bye
                   "
