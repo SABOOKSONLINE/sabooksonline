@@ -32,18 +32,28 @@ jobs:
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
-            - name: Test FTP Connection
+            - name: Deploy via FTP (safe for existing static files)
               env:
                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
                   FTP_USER: ${{ secrets.FTP_USERNAME }}
                   FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+                  REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
                   lftp -e "
-                    set ftp:ssl-auth TLS;
-                    set ftp:ssl-force true;
-                    set ssl:verify-certificate no;
-                    set ftp:passive-mode true;
+                    set ftp:ssl-force false;       # Disable forcing TLS
+                    set ftp:ssl-protect-data false;
+                    set ftp:passive-mode true;     # Passive mode
                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
-                    ls;
+                    mirror --reverse \
+                           --verbose \
+                           --exclude-glob .git* \
+                           --exclude .github/ \
+                           --exclude tests/ \
+                           --exclude '*.md' \
+                           --exclude composer.* \
+                           --exclude README.md \
+                           --exclude .gitignore \
+                           --exclude .env \
+                           ./ $REMOTE_DIR;
                     bye
                   "
