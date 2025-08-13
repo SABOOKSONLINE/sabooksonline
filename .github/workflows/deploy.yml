@@ -1,12 +1,10 @@
-name: Install Composer Dependencies
+name: Install Composer and Deploy to xneelo
 
 on:
     push:
-        branches:
-            - main
+        branches: [main]
     pull_request:
-        branches:
-            - main
+        branches: [main]
 
 jobs:
     install-composer:
@@ -16,7 +14,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Setup PHP 8.4.7
+            - name: Setup PHP 8.4
               uses: shivammathur/setup-php@v2
               with:
                   php-version: "8.4"
@@ -33,3 +31,37 @@ jobs:
 
             - name: Install Composer dependencies
               run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+
+    deploy:
+        name: Deploy to xneelo
+        needs: install-composer
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Download Composer artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: vendor
+                  path: vendor
+
+            - name: FTP Deploy
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+              with:
+                  server: ${{ secrets.FTP_SERVER }}
+                  username: ${{ secrets.FTP_USERNAME }}
+                  password: ${{ secrets.FTP_PASSWORD }}
+                  local-dir: ./
+                  server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+                  exclude: |
+                      .git*
+                      .github*
+                      **/tests*
+                      **/*.md
+                      **/composer.*
+                      **/README.md
+                      **/.gitignore
+                      **/.env
