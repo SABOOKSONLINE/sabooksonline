@@ -7,8 +7,9 @@ on:
         branches: [main]
 
 jobs:
-    install-composer:
+    build-and-deploy:
         runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
         steps:
             - name: Checkout code
@@ -32,31 +33,6 @@ jobs:
             - name: Install Composer dependencies
               run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
-            # FIX: Add artifact upload step
-            - name: Upload vendor artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: vendor
-                  path: vendor
-                  retention-days: 1
-
-    deploy:
-        name: Deploy to xneelo
-        needs: install-composer
-        runs-on: ubuntu-latest
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            # FIX: Correct artifact download
-            - name: Download vendor artifact
-              uses: actions/download-artifact@v4
-              with:
-                  name: vendor
-                  path: ./ # Places vendor in root directory
-
             - name: FTP Deploy
               uses: SamKirkland/FTP-Deploy-Action@v4.3.4
               with:
@@ -74,3 +50,7 @@ jobs:
                       **/README.md
                       **/.gitignore
                       **/.env
+                  # Add retry logic
+                  retry: true
+                  retry-count: 5
+                  retry-wait-time: 15
