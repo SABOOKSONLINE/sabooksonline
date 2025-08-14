@@ -21,7 +21,7 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 
 $controller = new BookController($conn);
-// $creator = new UserController($conn);
+$creator = new UserController($conn);
 
 $authController = new AuthController($conn);
 
