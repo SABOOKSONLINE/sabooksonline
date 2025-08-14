@@ -2,3 +2,4 @@ bin/
 cms-data/
 vendor/
 .vscode/
+sessions/

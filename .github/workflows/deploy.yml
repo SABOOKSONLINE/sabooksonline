@@ -47,6 +47,7 @@ jobs:
                     mirror --reverse \
                           --verbose \
                           --exclude-glob .git* \
+                          --exclude-glob img/* \
                           --exclude-glob .github/* \
                           --exclude-glob tests/* \
                           --exclude-glob *.md \
