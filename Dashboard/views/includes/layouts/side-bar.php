@@ -13,8 +13,8 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                 strtolower($subscriptionPlan) === 'deluxe'
             ): ?>
                 <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
-                 <i class="fas fa-user-check me-2 text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="You are subscribed to this plan"></i>
-                <?= htmlspecialchars($subscriptionPlan) ?> Subscription
+                    <i class="fas fa-user-check me-2 text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="You are subscribed to this plan"></i>
+                    <?= htmlspecialchars($subscriptionPlan) ?> Subscription
                 </p>
 
 
@@ -25,14 +25,17 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                     <a href="/dashboards/listings" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/listings') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-book me-2"></i> Manage Books
                     </a>
+                    <a href="/dashboards/media" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/media') === 0) ? 'active' : ''; ?>">
+                        <i class="fas fa-book me-2"></i> Manage Media
+                    </a>
                     <a href="/dashboards/events" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/events') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-alt me-2"></i>  Event Planner
+                        <i class="fas fa-calendar-alt me-2"></i> Event Planner
                     </a>
                     <!-- <a href="/dashboards/services" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/services') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-tools me-2"></i> My Services
                     </a> -->
                     <a href="/dashboards/reviews" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/reviews') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-star me-2"></i>  Book Reviews
+                        <i class="fas fa-star me-2"></i> Book Reviews
                     </a>
 
                     <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>

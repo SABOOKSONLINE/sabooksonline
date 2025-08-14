@@ -96,6 +96,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/includes/save-pdf-url', function () {
         require __DIR__ . "/Dashboard/views/includes/save-pdf-url.php";
     });
+
     // --- Book Listings ---
     $r->addRoute('GET', '/dashboards/add/listings', function () {
         require "Dashboard/views/add/add_book.php";
@@ -117,6 +118,30 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/views/add/add_book.php";
     });
     $r->addRoute('GET', '/dashboards/listings/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/book_handler.php";
+    });
+
+    // --- Media ---
+    $r->addRoute('GET', '/dashboards/media', function () {
+        require "Dashboard/views/manage_media.php";
+    });
+    $r->addRoute('GET', '/dashboards/add/media', function () {
+        require "Dashboard/views/add/add_media.php";
+    });
+    $r->addRoute('POST', '/dashboards/media/insert', function () {
+        $_GET['action'] = 'insert';
+        $_GET['type'] = 'type';
+        require "Dashboard/handlers/media_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/media/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['type'] = 'type';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/media_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/media/delete/{id}', function ($id) {
         $_GET['action'] = 'delete';
         $_GET['id'] = $id;
         require "Dashboard/handlers/book_handler.php";
