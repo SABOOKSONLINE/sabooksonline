@@ -40,6 +40,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['q'] = $id;
         require "Application/views/readBook.php";
     });
+    $r->addRoute('GET', '/media', function () {
+        require "Application/views/media.php";
+    });
 
     // =================== Payment Routes ===================
     $r->addRoute('POST', '/payment/notify', function () {

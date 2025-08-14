@@ -67,6 +67,9 @@ if (isset($userKey) && !empty($userKey)) {
                     </ul>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/media">Media</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/services">Our Services</a>
                 </li>
                 <li class="nav-item">
