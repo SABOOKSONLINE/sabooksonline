@@ -62,7 +62,7 @@ if (isset($userKey) && !empty($userKey)) {
                     </a>
                     <ul class="dropdown-menu" data-bs-popper="static">
                         <li><a class="dropdown-item" href="/events">Events</a></li>
-                        <li><a class="dropdown-item" href="/providers">Service Providers</a></li>
+                        <!-- <li><a class="dropdown-item" href="/providers">Service Providers</a></li> -->
                         <li><a class="dropdown-item" href="/membership">Membership Pricing</a></li>
                     </ul>
                 </li>

@@ -15,7 +15,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                 <?php include __DIR__ . "/views/includes/layouts/side-bar.php" ?>
 
                 <div id="pdfContent" class="col offset-lg-3 offset-xl-2 p-5 hv-100 overflow-y-scroll mt-5">
-                    <?php renderHeading("Dashboard", "Your Publishing Insights & Performance Data", "", "Print to PDF",true) ?>
+                    <?php renderHeading("Dashboard", "Your Publishing Insights & Performance Data", "", "Print to PDF", true) ?>
 
                     <form method="GET" class="mb-4 d-flex gap-3 align-items-end">
                         <div>
@@ -53,14 +53,14 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $start_date = $start ? $start . ' 00:00:00' : null;
                         $end_date = $end ? $end . ' 23:59:59' : null;
 
-        
+
 
                         $titlesCount = $analysisController->getTitlesCount($userKey);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
-                        $bookView = $analysisController->getBookViews($userKey,$start_date,$end_date);
-                        $profileView = $analysisController->getProfileViews($userKey,$start_date, $end_date);
-                        $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'],$start_date, $end_date);
-                        $eventView = $analysisController->getEventViews($userKey,$start_date, $end_date);
+                        $bookView = $analysisController->getBookViews($userKey, $start_date, $end_date);
+                        $profileView = $analysisController->getProfileViews($userKey, $start_date, $end_date);
+                        // $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'], $start_date, $end_date);
+                        $eventView = $analysisController->getEventViews($userKey, $start_date, $end_date);
                         $downloads = $analysisController->getDownloadsByEmail($email);
                         $topBooks = $analysisController->getTopBooks($userKey);
 
@@ -77,22 +77,22 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
 
 
-                        renderAnalysisCard("eBook Downloads", $downloads, "fas fa-cloud-download-alt"); 
-                        renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");       
-                        renderAnalysisCard("Total Revenue", "0", "fas fa-coins");                 
-                        renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");     
-                        renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");  
+                        renderAnalysisCard("eBook Downloads", $downloads, "fas fa-cloud-download-alt");
+                        renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");
+                        renderAnalysisCard("Total Revenue", "0", "fas fa-coins");
+                        renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
+                        renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
-                        renderAnalysisCard("Services Views", $serviceView['visit_count'], "fas fa-user-tie");
-                        renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt"); 
+                        // renderAnalysisCard("Services Views", $serviceView['visit_count'], "fas fa-user-tie");
+                        renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt");
                         ?>
                     </div>
 
                     <?php if (!empty($topBooks)): ?>
                         <div class="row">
                             <h5 class="display-6 small fw-semibold">
-                            <small>Top Performing Books</small>
-                            </h5>                         
+                                <small>Top Performing Books</small>
+                            </h5>
                             <?php foreach ($topBooks as $index => $book): ?>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
                                     <div class="book-card position-relative text-center">
@@ -122,7 +122,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                 <canvas id="combinedDonutChart" height="100"></canvas>
                             </div>
                         </div>
-                    
+
 
                         <!-- Geographic charts -->
                         <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4 mb-3">
@@ -169,7 +169,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
     <script>
         // Time-based charts
-        
+
 
         // Geographic charts
         const countryCtx = document.getElementById('bookViewsByCountryChart')?.getContext('2d');
@@ -178,98 +178,100 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
         // Helper function for time-based charts
 
-    const combinedCtx = document.getElementById('combinedDonutChart').getContext('2d');
+        const combinedCtx = document.getElementById('combinedDonutChart').getContext('2d');
 
-    const bookViews = <?= json_encode($bookViewsByMonthYear) ?>;
-    const profileViews = <?= json_encode($profileViewsByMonthYear) ?>;
-    const serviceViews = <?= json_encode($serviceViewsByMonthYear) ?>;
-    const eventViews = <?= json_encode($eventViewsByMonthYear) ?>;
+        const bookViews = <?= json_encode($bookViewsByMonthYear) ?>;
+        const profileViews = <?= json_encode($profileViewsByMonthYear) ?>;
+        // const serviceViews = <?= json_encode($serviceViewsByMonthYear) ?>;
+        const eventViews = <?= json_encode($eventViewsByMonthYear) ?>;
 
-    const sumViews = (data) =>
-        Array.isArray(data) ? data.reduce((total, item) => total + parseInt(item.views || 0), 0) : 0;
+        const sumViews = (data) =>
+            Array.isArray(data) ? data.reduce((total, item) => total + parseInt(item.views || 0), 0) : 0;
 
-    const labels = ['Book Views', 'Profile Views', 'Service Views', 'Event Views'];
-    const data = [
-        sumViews(bookViews),
-        sumViews(profileViews),
-        sumViews(serviceViews),
-        sumViews(eventViews)
-    ];
+        const labels = ['Book Views', 'Profile Views', 'Service Views', 'Event Views'];
+        const data = [
+            sumViews(bookViews),
+            sumViews(profileViews),
+            // sumViews(serviceViews),
+            sumViews(eventViews)
+        ];
 
-    new Chart(combinedCtx, {
-        type: 'doughnut',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Total Views Breakdown',
-                data,
-                backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2'],
-                borderColor: '#fff',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const value = context.parsed;
-                            const percentage = ((value / total) * 100).toFixed(1);
-                            return `${context.label}: ${value} views (${percentage}%)`;
+        new Chart(combinedCtx, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Total Views Breakdown',
+                    data,
+                    backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const value = context.parsed;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${value} views (${percentage}%)`;
+                            }
                         }
+                    },
+                    legend: {
+                        position: 'bottom'
                     }
-                },
-                legend: {
-                    position: 'bottom'
                 }
             }
-        }
-    });
+        });
 
 
         const calculateTotalViews = (rawData) => {
-    if (!Array.isArray(rawData)) return 0;
-    return rawData.reduce((sum, item) => sum + (parseInt(item.views) || 0), 0);
-};
+            if (!Array.isArray(rawData)) return 0;
+            return rawData.reduce((sum, item) => sum + (parseInt(item.views) || 0), 0);
+        };
 
         // Helper function for geographic charts (horizontal bar charts)
         const generateGeoChart = (ctx, label, rawData, limit = 10, totalElementId = null) => {
-    if (!ctx || !Array.isArray(rawData)) return;
+            if (!ctx || !Array.isArray(rawData)) return;
 
-    const sortedData = [...rawData].sort((a, b) => b.views - a.views).slice(0, limit);
-    const labels = sortedData.map(d => d.country || d.province || d.city);
-    const data = sortedData.map(d => parseInt(d.views) || 0);
+            const sortedData = [...rawData].sort((a, b) => b.views - a.views).slice(0, limit);
+            const labels = sortedData.map(d => d.country || d.province || d.city);
+            const data = sortedData.map(d => parseInt(d.views) || 0);
 
-    // ✅ Show total views if an element ID is provided
-    if (totalElementId) {
-        const total = calculateTotalViews(sortedData);
-        const totalEl = document.getElementById(totalElementId);
-        if (totalEl) totalEl.innerText = `Total: ${total.toLocaleString()}`;
-    }
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [{
-                label,
-                data,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            scales: {
-                x: { beginAtZero: true }
+            // ✅ Show total views if an element ID is provided
+            if (totalElementId) {
+                const total = calculateTotalViews(sortedData);
+                const totalEl = document.getElementById(totalElementId);
+                if (totalEl) totalEl.innerText = `Total: ${total.toLocaleString()}`;
             }
-        }
-    });
-};
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label,
+                        data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        };
 
 
 
@@ -278,15 +280,18 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
         generateGeoChart(countryCtx, 'Views by Country', <?= json_encode($bookViewsByCountry) ?>, 10, 'totalCountryViews');
         generateGeoChart(provinceCtx, 'Views by Province', <?= json_encode($bookViewsByProvince) ?>, 10, 'totalProvinceViews');
         generateGeoChart(cityCtx, 'Views by City', <?= json_encode($bookViewsByCity) ?>, 10, 'totalCityViews');
-
     </script>
     <script>
-            document.getElementById('printPDF')?.addEventListener('click', async () => {
-            const { jsPDF } = window.jspdf;
+        document.getElementById('printPDF')?.addEventListener('click', async () => {
+            const {
+                jsPDF
+            } = window.jspdf;
 
             const content = document.getElementById("pdfContent");
 
-            html2canvas(content, { scale: 2 }).then((canvas) => {
+            html2canvas(content, {
+                scale: 2
+            }).then((canvas) => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
 
@@ -318,34 +323,34 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
         });
     </script>
     <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const counters = document.querySelectorAll(".count-up");
+        document.addEventListener("DOMContentLoaded", () => {
+            const counters = document.querySelectorAll(".count-up");
 
-    counters.forEach(counter => {
-      const target = +counter.getAttribute("data-target");
-      const duration = 4000; // Total animation time in ms
-      const frameRate = 60; // Frames per second
-      const totalFrames = Math.round(duration / (1000 / frameRate));
-      let currentFrame = 0;
+            counters.forEach(counter => {
+                const target = +counter.getAttribute("data-target");
+                const duration = 4000; // Total animation time in ms
+                const frameRate = 60; // Frames per second
+                const totalFrames = Math.round(duration / (1000 / frameRate));
+                let currentFrame = 0;
 
-      const countUp = () => {
-        currentFrame++;
-        const progress = currentFrame / totalFrames;
-        const currentValue = Math.round(target * progress);
+                const countUp = () => {
+                    currentFrame++;
+                    const progress = currentFrame / totalFrames;
+                    const currentValue = Math.round(target * progress);
 
-        counter.innerText = currentValue;
+                    counter.innerText = currentValue;
 
-        if (currentFrame < totalFrames) {
-          requestAnimationFrame(countUp);
-        } else {
-          counter.innerText = target;
-        }
-      };
+                    if (currentFrame < totalFrames) {
+                        requestAnimationFrame(countUp);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
 
-      countUp();
-    });
-  });
-</script>
+                countUp();
+            });
+        });
+    </script>
 
 
     <!-- jsPDF & html2canvas -->

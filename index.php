@@ -76,12 +76,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['a_id'] = $a_id;
         require "Application/api.php";
     });
-   
+
     $r->addRoute('POST', '/api/login', function () {
         $_GET['action'] = 'login';
         require "Application/api.php";
     });
-    
+
 
     // =================== Dashboard Routes ===================
     // --- Main Dashboard ---
@@ -145,31 +145,31 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/views/add/add_event.php";
     });
 
-    // --- Services ---
-    $r->addRoute('GET', '/dashboards/add/service', function () {
-        require "Dashboard/views/add/add_services.php";
-    });
-    $r->addRoute('GET', '/dashboards/services', function () {
-        require "Dashboard/views/manage_services.php";
-    });
-    $r->addRoute('POST', '/dashboards/services/insert', function () {
-        $_GET['action'] = 'insert';
-        require "Dashboard/handlers/service_handler.php";
-    });
-    $r->addRoute('POST', '/dashboards/services/update/{id}', function ($id) {
-        $_GET['action'] = 'update';
-        $_GET['id'] = $id;
-        require "Dashboard/handlers/service_handler.php";
-    });
-    $r->addRoute('GET', '/dashboards/services/delete/{id}', function ($id) {
-        $_GET['action'] = 'delete';
-        $_GET['id'] = $id;
-        require "Dashboard/handlers/service_handler.php";
-    });
-    $r->addRoute('GET', '/dashboards/services/{id}', function ($id) {
-        $_GET['id'] = $id;
-        require "Dashboard/views/add/add_services.php";
-    });
+    // --- Services --- 
+    // $r->addRoute('GET', '/dashboards/add/service', function () {
+    //     require "Dashboard/views/add/add_services.php";
+    // });
+    // $r->addRoute('GET', '/dashboards/services', function () {
+    //     require "Dashboard/views/manage_services.php";
+    // });
+    // $r->addRoute('POST', '/dashboards/services/insert', function () {
+    //     $_GET['action'] = 'insert';
+    //     require "Dashboard/handlers/service_handler.php";
+    // });
+    // $r->addRoute('POST', '/dashboards/services/update/{id}', function ($id) {
+    //     $_GET['action'] = 'update';
+    //     $_GET['id'] = $id;
+    //     require "Dashboard/handlers/service_handler.php";
+    // });
+    // $r->addRoute('GET', '/dashboards/services/delete/{id}', function ($id) {
+    //     $_GET['action'] = 'delete';
+    //     $_GET['id'] = $id;
+    //     require "Dashboard/handlers/service_handler.php";
+    // });
+    // $r->addRoute('GET', '/dashboards/services/{id}', function ($id) {
+    //     $_GET['id'] = $id;
+    //     require "Dashboard/views/add/add_services.php";
+    // });
 
     // --- Reviews, Profile, Billing ---
     $r->addRoute('GET', '/dashboards/reviews', function () {
@@ -259,9 +259,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['q'] = $id;
         require "Application/views/creatorpage.php";
     });
-    $r->addRoute('GET', '/providers', function () {
-        require "Application/views/providers.php";
-    });
+    // $r->addRoute('GET', '/providers', function () {
+    //     require "Application/views/providers.php";
+    // });
     $r->addRoute('GET', '/gallery', function () {
         require "Application/views/gallery.php";
     });
