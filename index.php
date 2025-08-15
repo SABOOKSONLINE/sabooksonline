@@ -130,19 +130,40 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboards/add/media', function () {
         require "Dashboard/views/add/add_media.php";
     });
-    $r->addRoute('POST', '/dashboards/media/insert', function () {
+
+    $r->addRoute('POST', '/dashboards/media/magazine/insert', function () {
         $_GET['action'] = 'insert';
-        $_GET['type'] = 'type';
+        $_GET['type'] = 'magazine';
         require "Dashboard/handlers/media_handler.php";
     });
-    $r->addRoute('POST', '/dashboards/media/update/{id}', function ($id) {
+    $r->addRoute('POST', '/dashboards/media/newspaper/insert', function () {
+        $_GET['action'] = 'insert';
+        $_GET['type'] = 'newspaper';
+        require "Dashboard/handlers/media_handler.php";
+    });
+
+    $r->addRoute('POST', '/dashboards/media/magazine/update/{id}', function ($id) {
         $_GET['action'] = 'update';
-        $_GET['type'] = 'type';
+        $_GET['type'] = 'magazine';
         $_GET['id'] = $id;
         require "Dashboard/handlers/media_handler.php";
     });
-    $r->addRoute('GET', '/dashboards/media/delete/{id}', function ($id) {
+    $r->addRoute('POST', '/dashboards/media/newspaper/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['type'] = 'newspaper';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/media_handler.php";
+    });
+
+    $r->addRoute('GET', '/dashboards/media/magazine/delete/{id}', function ($id) {
         $_GET['action'] = 'delete';
+        $_GET['type'] = 'magazine';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/book_handler.php";
+    });
+    $r->addRoute('GET', '/dashboards/media/newspaper/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['type'] = 'newspaper';
         $_GET['id'] = $id;
         require "Dashboard/handlers/book_handler.php";
     });
