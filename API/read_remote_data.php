@@ -24,8 +24,8 @@ if (!in_array($providedApiKey, $authorizedKeys)) {
 }
 
 // Use the same variables from your first script
-$serverName = "localhost";
-$username2nd = "sabookso_plesk_acc";
+$serverName = "sql7.jnb3.host-h.net";
+$username2nd = "sabookso_db";
 $secondaryDb = "sabookso_plesk_acc";
 $password = "slTFvaj07dNY6Ke";
 
@@ -53,7 +53,6 @@ try {
     $mysqli->close();
 
     echo json_encode($data);
-
 } catch (mysqli_sql_exception $e) {
     error_log("DB Error: " . $e->getMessage());
     http_response_code(500);
