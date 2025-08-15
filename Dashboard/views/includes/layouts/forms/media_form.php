@@ -1,31 +1,96 @@
-<div class="d-flex justify-content-center mb-4">
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-dark" id="magazineBtn">
-            <i class="fas fa-book me-2"></i> Magazine
-        </button>
-        <button type="button" class="btn btn-outline-dark" id="newspaperBtn">
-            <i class="fas fa-newspaper me-2"></i> Newspaper
-        </button>
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . "/../../../../database/connection.php";
+require_once __DIR__ . "/../../../../models/MediaModel.php";
+require_once __DIR__ . "/../../../../controllers/MediaController.php";
+
+$action = $_GET['action'] ?? '';
+$type = $_GET['type'] ?? '';
+$mediaId = $_GET['id'] ?? '';
+
+$mediaController = new MediaController($conn);
+$magazine = [];
+
+function clean($data): string
+{
+    if ($data === null) {
+        return '';
+    }
+    $data = (string)$data;
+    $data = trim($data);
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+}
+
+
+function getDefaultMagazine(): array
+{
+    return [
+        'public_key' => '',
+        'title' => '',
+        'editor' => '',
+        'category' => '',
+        'issn' => '',
+        'price' => '',
+        'frequency' => '',
+        'language' => '',
+        'country' => '',
+        'publish_date' => '',
+        'description' => '',
+        'cover_image_path' => '',
+        'pdf_path' => ''
+    ];
+}
+
+$magazine = getDefaultMagazine();
+
+if ($type === 'magazine' && $mediaId) {
+    $fetchedMagazine = $mediaController->getMagazineById($mediaId, $userId);
+
+    if ($fetchedMagazine) {
+        $magazine = array_merge($magazine, $fetchedMagazine);
+    }
+
+    // echo "<pre>";
+    // print_r($magazine);
+    // echo "</pre>";
+}
+
+?>
+
+<?php if (!$type): ?>
+    <div class="d-flex justify-content-center mb-4">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-dark" id="magazineBtn">
+                <i class="fas fa-book me-2"></i> Magazine
+            </button>
+            <button type="button" class="btn btn-outline-dark" id="newspaperBtn">
+                <i class="fas fa-newspaper me-2"></i> Newspaper
+            </button>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <div id="formsContainer">
-    <form method="POST" action="/dashboards/media/magazine/insert" class="bg-white rounded shadow-sm p-4 mb-4 magazine-form" enctype="multipart/form-data">
+    <form method="POST" action="<?= $mediaId ? "/dashboards/media/magazine/update/$mediaId" : "/dashboards/media/magazine/insert" ?>" class="bg-white rounded shadow-sm p-4 mb-4 magazine-form" enctype="multipart/form-data">
         <h4 class="fw-bold mb-4">Basic Magazine Information</h4>
         <div class="row g-3">
 
-            <input type="text" name="publisher_id" class="form-control" value="0" hidden required>
+            <input type="text" name="publisher_id" class="form-control" value="<?= $userId ?>" hidden required>
+            <input type="text" name="public_key" class="form-control" value="<?= $magazine['public_key'] ?>" hidden>
 
             <!-- Magazine Title -->
             <div class="col-md-12">
                 <label class="form-label">Magazine Title <span class="text-danger">*</span></label>
-                <input type="text" name="title" class="form-control" placeholder="e.g. Tech Today" required>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Tech Today" value="<?= clean($magazine['title']) ?>" required>
             </div>
 
             <!-- Magazine Editor -->
             <div class="col-md-6">
                 <label class="form-label">Magazine Editor <span class="text-danger">*</span></label>
-                <input type="text" name="editor" class="form-control" placeholder="e.g. Lindiwe Zwane" required>
+                <input type="text" name="editor" class="form-control" placeholder="e.g. Lindiwe Zwane" value="<?= clean($magazine['editor']) ?>" required>
             </div>
 
             <!-- Category -->
@@ -56,8 +121,13 @@
                         "History & Literature",
                         "Environmental & Sustainability"
                     ];
+
+                    $selectedCategory = clean($magazine['category'] ?? '');
+
                     foreach ($categories as $cat) {
-                        echo "<option value='" . htmlspecialchars($cat) . "'>" . htmlspecialchars($cat) . "</option>";
+                        $selected = ($cat === $selectedCategory) ? 'selected' : '';
+                        echo "<option value=\"" . htmlspecialchars($cat) . "\" $selected>" .
+                            htmlspecialchars($cat) . "</option>";
                     }
                     ?>
                 </select>
@@ -67,26 +137,37 @@
             <!-- ISSN -->
             <div class="col-md-6">
                 <label class="form-label">ISSN Number</label>
-                <input type="text" name="issn" class="form-control" placeholder="e.g. 1234-5678">
+                <input type="text" name="issn" class="form-control" placeholder="e.g. 1234-5678" value="<?= clean($magazine['issn']) ?>">
             </div>
 
-            <!-- ISSN -->
+            <!-- Price -->
             <div class="col-md-6">
                 <label class="form-label">Price <span class="text-secondary">(ZAR)</span></label>
-                <input type="text" name="price" class="form-control" placeholder="e.g. 19">
+                <input type="text" name="price" class="form-control" placeholder="e.g. 19" value="<?= clean($magazine['price']) ?>">
             </div>
 
             <!-- Frequency -->
             <div class="col-md-6">
                 <label class="form-label">Frequency <span class="text-danger">*</span></label>
-                <select name="frequency" class="form-select" required>
+                <select class="form-select" name="frequency" required>
                     <option value="">Choose frequency</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="biweekly">Biweekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="bimonthly">Bimonthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="annual">Annual</option>
+                    <?php
+                    $frequencies = [
+                        "weekly" => "Weekly",
+                        "biweekly" => "Biweekly",
+                        "monthly" => "Monthly",
+                        "bimonthly" => "Bimonthly",
+                        "quarterly" => "Quarterly",
+                        "annual" => "Annual"
+                    ];
+
+                    $currentFrequency = clean($magazine['frequency'] ?? '');
+
+                    foreach ($frequencies as $value => $label) {
+                        $selected = ($value == $currentFrequency) ? 'selected' : '';
+                        echo "<option value=\"$value\" $selected>$label</option>";
+                    }
+                    ?>
                 </select>
             </div>
 
@@ -107,10 +188,15 @@
                         "Xitsonga",
                         "siSwati",
                         "Tshivenda",
-                        "isiNdebele",
+                        "isiNdebele"
                     ];
+
+                    $selectedLanguage = clean($magazine['language']) ?? '';
+
                     foreach ($languages as $lang) {
-                        echo "<option value='" . htmlspecialchars($lang) . "'>" . htmlspecialchars($lang) . "</option>";
+                        $safeLang = htmlspecialchars($lang, ENT_QUOTES);
+                        $selected = ($lang === $selectedLanguage) ? 'selected' : '';
+                        echo "<option value=\"$safeLang\" $selected>$safeLang</option>";
                     }
                     ?>
                 </select>
@@ -119,31 +205,45 @@
             <!-- Country -->
             <div class="col-md-6">
                 <label class="form-label">Country</label>
-                <input type="text" name="country" class="form-control" placeholder="e.g. South Africa">
+                <input type="text" name="country" class="form-control" placeholder="e.g. South Africa" value="<?= clean($magazine['country']) ?>">
             </div>
 
             <!-- Publish Date -->
             <div class="col-md-6">
                 <label class="form-label">Publish Date</label>
-                <input type="date" name="publish_date" class="form-control">
+                <input type="date" name="publish_date" class="form-control" value="<?= clean($magazine['publish_date']) ?>">
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <label class="form-label">Description <small class="text-muted">(Max 600 characters)</small></label>
+                <textarea name="description" class="form-control" rows="4" maxlength="600" placeholder="Brief summary of the magazine..."><?= clean($magazine['description']) ?></textarea>
             </div>
 
             <!-- Cover Image -->
             <div class="col-md-6">
                 <label class="form-label">Cover Image</label>
                 <input type="file" name="cover" class="form-control">
+                <input type="text" name="existing_cover" class="form-control" value="<?= $magazine['cover_image_path'] ?>" hidden>
+                <?php if (!empty($magazine['cover_image_path'])): ?>
+                    <div class="mt-2">
+                        <small class="text-muted">Current Cover:</small><br>
+                        <img src="/cms-data/magazine/covers/<?= $magazine['cover_image_path'] ?>" class="img-thumbnail" style="max-height: 150px;">
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- PDF Upload -->
             <div class="col-md-6">
                 <label class="form-label">PDF Upload</label>
                 <input type="file" name="pdf" class="form-control">
-            </div>
-
-            <!-- Description -->
-            <div class="col-12">
-                <label class="form-label">Description <small class="text-muted">(Max 600 characters)</small></label>
-                <textarea name="description" class="form-control" rows="4" maxlength="600" placeholder="Brief summary of the magazine..."></textarea>
+                <input type="text" name="existing_pdf" class="form-control" value="<?= $magazine['cover_image_path'] ?>" hidden>
+                <?php if (!empty($magazine['pdf_path'])): ?>
+                    <div class="mt-2">
+                        <small class="text-muted">Current PDF:</small><br>
+                        <a href="/cms-data/magazine/pdfs/<?= $magazine['pdf_path'] ?>" target="_blank" class="btn btn-outline-primary btn-sm">View Current PDF</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -156,7 +256,11 @@
 
             <div class="text-end">
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-paper-plane me-2"></i> Publish Magazine
+                    <?php if (empty($mediaId)): ?>
+                        <i class="fas fa-paper-plane me-2"></i> Publish Magazine
+                    <?php else: ?>
+                        <i class="fas fa-paper-plane me-2"></i> Save Magazine
+                    <?php endif; ?>
                 </button>
             </div>
         </div>

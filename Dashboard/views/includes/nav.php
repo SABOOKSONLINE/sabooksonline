@@ -8,21 +8,20 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $userKey = $_SESSION['ADMIN_USERKEY'];
+$userId = $_SESSION['ADMIN_ID'];
 
 if (isset($userKey)) {
     $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
 
     if (isset($adminProfileImage)) {
 
-    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
-        $profile = $adminProfileImage;
+        if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } else {
+            $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+        }
     } else {
-        $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
-
-    }
-    }else{
         $profile = "/public/images/user-3296.png";
-
     }
 } else {
     header("Location: /login");

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../database/connection.php";
-require_once __DIR__ . "/../models/BookListingsModel.php";
-require_once __DIR__ . "/../controllers/BookListingsController.php";
+require_once __DIR__ . "/../models/MediaModel.php";
+require_once __DIR__ . "/../controllers/MediaController.php";
 
 include __DIR__ . "/includes/header.php";
 include __DIR__ . "/includes/dashboard_heading.php";
@@ -25,6 +25,11 @@ include __DIR__ . "/includes/dashboard_heading.php";
                         "/dashboards/add/media",
                         "Publish New Publication"
                     );
+
+                    $mediaController = new MediaController($conn);
+                    $magazines = $mediaController->getAllMagazines($userId);
+
+                    include __DIR__ . "/includes/layouts/tables/media_table.php";
 
                     ?>
                 </div>

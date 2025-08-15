@@ -3,6 +3,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once __DIR__ . "/../database/connection.php";
+require_once __DIR__ . "/../models/MediaModel.php";
+require_once __DIR__ . "/../controllers/MediaController.php";
+
+$mediaController = new MediaController($conn);
+
+
+// echo "<pre>";
+// print_r($magazine);
+// echo "</pre>";
+
 function clean($data): string
 {
     return htmlspecialchars(trim($data));
@@ -38,43 +49,102 @@ function fileProcessor(string $path, string $formFileName, array $allowedFileTyp
     return $uniqueName;
 }
 
-function magazineFormDataArray(): array
+function magazineFormDataArray(bool $isUpdate = false): array
 {
-    $publisher_id   = clean($_POST['publisher_id'] ?? '');
-    $title          = clean($_POST['title'] ?? '');
-    $editor         = clean($_POST['editor'] ?? '');
-    $category       = clean($_POST['category'] ?? '');
-    $issn           = clean($_POST['issn'] ?? '');
-    $price          = clean($_POST['price'] ?? '');
-    $frequency      = clean($_POST['frequency'] ?? '');
-    $language       = clean($_POST['language'] ?? '');
-    $country        = clean($_POST['country'] ?? '');
-    $publish_date   = clean($_POST['publish_date'] ?? '');
-    $description    = clean($_POST['description'] ?? '');
+    $public_key = $isUpdate ? $_POST['public_key'] : bin2hex(random_bytes(16));
 
-    $cover = fileProcessor("/../../cms-data/magazine/covers/", "cover", ["jpg", "png", "gif"]);
-    $pdf_upload = fileProcessor("/../../cms-data/magazine/pdfs/", "pdf", ["pdf"]);
+    $cover_path = null;
+    $pdf_path = null;
+
+    if (!empty($_FILES['cover']['name'])) {
+        $cover_path = fileProcessor("/../../cms-data/magazine/covers/", "cover", ["jpg", "jpeg", "png", "gif"]);
+    } elseif ($isUpdate) {
+        $cover_path = $_POST['existing_cover'] ?? null;
+    } else {
+        throw new Exception("Cover image is required");
+    }
+
+    if (!empty($_FILES['pdf']['name'])) {
+        $pdf_path = fileProcessor("/../../cms-data/magazine/pdfs/", "pdf", ["pdf"]);
+    } elseif ($isUpdate) {
+        $pdf_path = $_POST['existing_pdf'] ?? null;
+    } else {
+        throw new Exception("PDF file is required");
+    }
 
     return [
-        'publisher_id'  => $publisher_id,
-        'title'         => $title,
-        'editor'        => $editor,
-        'category'      => $category,
-        'issn'          => $issn,
-        'price'         => $price,
-        'frequency'     => $frequency,
-        'language'      => $language,
-        'country'       => $country,
-        'publish_date'  => $publish_date,
-        'description'   => $description,
-        'cover'         => $cover,
-        'pdf_upload'    => $pdf_upload
+        'publisher_id'  => clean($_POST['publisher_id'] ?? ''),
+        'title'         => clean($_POST['title'] ?? ''),
+        'editor'        => clean($_POST['editor'] ?? ''),
+        'category'      => clean($_POST['category'] ?? ''),
+        'issn'          => clean($_POST['issn'] ?? ''),
+        'price'         => (float)($_POST['price'] ?? 0.00),
+        'frequency'     => clean($_POST['frequency'] ?? ''),
+        'language'      => clean($_POST['language'] ?? ''),
+        'country'       => clean($_POST['country'] ?? ''),
+        'publish_date'  => clean($_POST['publish_date'] ?? ''),
+        'description'   => clean($_POST['description'] ?? ''),
+        'cover_image_path' => $cover_path,
+        'pdf_path'      => $pdf_path,
+        'public_key'    => $public_key
     ];
 }
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine") {
+    $action = $_GET["action"] ?? '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "<pre>";
-    print_r(magazineFormDataArray());
-    echo "</pre>";
+    if ($action === "insert") {
+        try {
+            $data = magazineFormDataArray();
+            $success = $mediaController->insertMagazine($data);
+
+            if ($success) {
+                echo "Magazine inserted successfully!";
+            } else {
+                echo "Failed to insert magazine. Please check the data or try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    } elseif ($action === "update") {
+        try {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                throw new Exception("Invalid magazine ID");
+            }
+
+            $data = magazineFormDataArray(true);
+            $data['id'] = (int)$_GET['id'];
+
+            $success = $mediaController->updateMagazine($data);
+
+            if ($success) {
+                echo "Magazine updated successfully!";
+            } else {
+                echo "Failed to update magazine. Please check the data or try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+} else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "magazine") {
+    $action = $_GET["action"] ?? '';
+
+    if ($action === "delete") {
+        try {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                throw new Exception("Invalid magazine ID");
+            }
+
+            $id = (int)$_GET['id'];
+            $success = $mediaController->deleteMagazine($id);
+
+            if ($success) {
+                echo "Magazine deleted successfully!";
+            } else {
+                echo "Failed to delete magazine. Please try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
 }
