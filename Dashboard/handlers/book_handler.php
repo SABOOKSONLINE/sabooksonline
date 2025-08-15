@@ -45,7 +45,7 @@ function formDataArray()
 
     // Generate a unique, safe filename
     $ext = pathinfo($_FILES['book_cover']['name'], PATHINFO_EXTENSION);
-    $cover = uniqid('', true) . '.' . $ext;
+    $cover = bin2hex(random_bytes(16)) . '.' . $ext;
 
     if (!move_uploaded_file($_FILES['book_cover']['tmp_name'], $uploadDir . $cover)) {
         die("Failed to upload book cover.");

@@ -10,26 +10,28 @@
 </div>
 
 <div id="formsContainer">
-    <form method="POST" action="" class="bg-white rounded shadow-sm p-4 mb-4 magazine-form" enctype="multipart/form-data">
+    <form method="POST" action="/dashboards/media/magazine/insert" class="bg-white rounded shadow-sm p-4 mb-4 magazine-form" enctype="multipart/form-data">
         <h4 class="fw-bold mb-4">Basic Magazine Information</h4>
         <div class="row g-3">
 
+            <input type="text" name="publisher_id" class="form-control" value="0" hidden required>
+
             <!-- Magazine Title -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label class="form-label">Magazine Title <span class="text-danger">*</span></label>
                 <input type="text" name="title" class="form-control" placeholder="e.g. Tech Today" required>
             </div>
 
-            <!-- Publisher -->
+            <!-- Magazine Editor -->
             <div class="col-md-6">
-                <label class="form-label">Publisher <span class="text-danger">*</span></label>
-                <input type="text" name="publisher_name" class="form-control" placeholder="e.g. Global Magazines Ltd." required>
+                <label class="form-label">Magazine Editor <span class="text-danger">*</span></label>
+                <input type="text" name="editor" class="form-control" placeholder="e.g. Lindiwe Zwane" required>
             </div>
 
             <!-- Category -->
             <div class="col-md-6">
                 <label class="form-label">Category</label>
-                <select name="category_id" class="form-select">
+                <select name="category" class="form-select">
                     <option value="">Choose a category</option>
                     <?php
                     $categories = [
@@ -68,6 +70,12 @@
                 <input type="text" name="issn" class="form-control" placeholder="e.g. 1234-5678">
             </div>
 
+            <!-- ISSN -->
+            <div class="col-md-6">
+                <label class="form-label">Price <span class="text-secondary">(ZAR)</span></label>
+                <input type="text" name="price" class="form-control" placeholder="e.g. 19">
+            </div>
+
             <!-- Frequency -->
             <div class="col-md-6">
                 <label class="form-label">Frequency <span class="text-danger">*</span></label>
@@ -85,7 +93,27 @@
             <!-- Language -->
             <div class="col-md-6">
                 <label class="form-label">Language</label>
-                <input type="text" name="language" class="form-control" placeholder="e.g. English">
+                <select name="language" class="form-select">
+                    <option value="">Choose a language</option>
+                    <?php
+                    $languages = [
+                        "Afrikaans",
+                        "English",
+                        "isiZulu",
+                        "isiXhosa",
+                        "Sesotho",
+                        "Setswana",
+                        "Sepedi",
+                        "Xitsonga",
+                        "siSwati",
+                        "Tshivenda",
+                        "isiNdebele",
+                    ];
+                    foreach ($languages as $lang) {
+                        echo "<option value='" . htmlspecialchars($lang) . "'>" . htmlspecialchars($lang) . "</option>";
+                    }
+                    ?>
+                </select>
             </div>
 
             <!-- Country -->
@@ -103,22 +131,13 @@
             <!-- Cover Image -->
             <div class="col-md-6">
                 <label class="form-label">Cover Image</label>
-                <input type="file" name="cover_image_url" class="form-control">
+                <input type="file" name="cover" class="form-control">
             </div>
 
             <!-- PDF Upload -->
             <div class="col-md-6">
                 <label class="form-label">PDF Upload</label>
-                <input type="file" name="mag_pdf_url" class="form-control">
-            </div>
-
-            <!-- Active Status -->
-            <div class="col-md-6">
-                <label class="form-label">Active</label>
-                <select name="is_active" class="form-select">
-                    <option value="1" selected>Yes</option>
-                    <option value="0">No</option>
-                </select>
+                <input type="file" name="pdf" class="form-control">
             </div>
 
             <!-- Description -->
