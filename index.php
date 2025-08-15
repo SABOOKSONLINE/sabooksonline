@@ -159,13 +159,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['action'] = 'delete';
         $_GET['type'] = 'magazine';
         $_GET['id'] = $id;
-        require "Dashboard/handlers/book_handler.php";
+        require "Dashboard/handlers/media_handler.php";
     });
     $r->addRoute('GET', '/dashboards/media/newspaper/delete/{id}', function ($id) {
         $_GET['action'] = 'delete';
         $_GET['type'] = 'newspaper';
         $_GET['id'] = $id;
-        require "Dashboard/handlers/book_handler.php";
+        require "Dashboard/handlers/media_handler.php";
     });
 
     // --- Events ---
