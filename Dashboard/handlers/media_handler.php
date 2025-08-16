@@ -9,11 +9,6 @@ require_once __DIR__ . "/../controllers/MediaController.php";
 
 $mediaController = new MediaController($conn);
 
-
-// echo "<pre>";
-// print_r($magazine);
-// echo "</pre>";
-
 function clean($data): string
 {
     return htmlspecialchars(trim($data));
@@ -142,6 +137,106 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine
                 echo "Magazine deleted successfully!";
             } else {
                 echo "Failed to delete magazine. Please try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+}
+
+// ... [existing magazine processing code] ...
+
+// NEWSPAPER PROCESSING FUNCTIONS
+function newspaperFormDataArray(bool $isUpdate = false): array
+{
+    $public_key = $isUpdate ? ($_POST['public_key'] ?? '') : bin2hex(random_bytes(16));
+
+    // Process cover image
+    $cover_path = null;
+    if (!empty($_FILES['cover']['name'])) {
+        $cover_path = fileProcessor("/../../cms-data/newspaper/covers/", "cover", ["jpg", "jpeg", "png", "gif"]);
+    } elseif ($isUpdate) {
+        $cover_path = $_POST['existing_cover'] ?? null;
+    } else {
+        throw new Exception("Front page image is required");
+    }
+
+    // Process PDF file
+    $pdf_path = null;
+    if (!empty($_FILES['pdf']['name'])) {
+        $pdf_path = fileProcessor("/../../cms-data/newspaper/pdfs/", "pdf", ["pdf"]);
+    } elseif ($isUpdate) {
+        $pdf_path = $_POST['existing_pdf'] ?? null;
+    } else {
+        throw new Exception("PDF file is required");
+    }
+
+    return [
+        'publisher_id'  => clean($_POST['publisher_id'] ?? ''),
+        'title'         => clean($_POST['title'] ?? ''),
+        'description'   => clean($_POST['description'] ?? ''),
+        'cover_image_path' => $cover_path,
+        'pdf_path'      => $pdf_path,
+        'category'      => clean($_POST['category'] ?? ''),
+        'price'         => (float)($_POST['price'] ?? 0.00),
+        'publish_date'  => clean($_POST['publish_date'] ?? ''),
+        'public_key'    => $public_key
+    ];
+}
+
+// NEWSPAPER FORM PROCESSING
+if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "newspaper") {
+    $action = $_GET["action"] ?? '';
+
+    if ($action === "insert") {
+        try {
+            $data = newspaperFormDataArray();
+            $success = $mediaController->insertNewspaper($data);
+
+            if ($success) {
+                echo "Newspaper published successfully!";
+            } else {
+                echo "Failed to publish newspaper. Please check the data or try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    } elseif ($action === "update") {
+        try {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                throw new Exception("Invalid newspaper ID");
+            }
+
+            $data = newspaperFormDataArray(true);
+            $data['id'] = (int)$_GET['id'];
+
+            $success = $mediaController->updateNewspaper($data);
+
+            if ($success) {
+                echo "Newspaper updated successfully!";
+            } else {
+                echo "Failed to update newspaper. Please check the data or try again.";
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+} else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "newspaper") {
+    $action = $_GET["action"] ?? '';
+
+    if ($action === "delete") {
+        try {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                throw new Exception("Invalid newspaper ID");
+            }
+
+            $id = (int)$_GET['id'];
+            $success = $mediaController->deleteNewspaper($id);
+
+            if ($success) {
+                echo "Newspaper deleted successfully!";
+            } else {
+                echo "Failed to delete newspaper. Please try again.";
             }
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();

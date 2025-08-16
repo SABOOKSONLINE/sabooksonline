@@ -73,4 +73,67 @@ class MediaController
             return null;
         }
     }
+
+    // NEWSPAPER METHODS
+    public function insertNewspaper(array $data): bool
+    {
+        try {
+            $result = $this->mediaModel->insertNewspaper($data);
+            if (!$result) {
+                error_log("Newspaper insert failed - Model returned false");
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log("Newspaper insert error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateNewspaper(array $data): bool
+    {
+        try {
+            $result = $this->mediaModel->updateNewspaper($data);
+            if (!$result) {
+                error_log("Newspaper update failed - Model returned false");
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log("Newspaper update error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteNewspaper(int $id): bool
+    {
+        try {
+            $result = $this->mediaModel->deleteNewspaper($id);
+            if (!$result) {
+                error_log("Newspaper delete failed - Model returned false");
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log("Newspaper delete error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getAllNewspapers(int $publisher_id): array
+    {
+        try {
+            return $this->mediaModel->selectNewspapers($publisher_id);
+        } catch (Exception $e) {
+            error_log("Get all newspapers error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getNewspaperById(int $id, int $publisher_id): ?array
+    {
+        try {
+            return $this->mediaModel->selectNewspaperById($id, $publisher_id);
+        } catch (Exception $e) {
+            error_log("Get newspaper by ID error: " . $e->getMessage());
+            return null;
+        }
+    }
 }

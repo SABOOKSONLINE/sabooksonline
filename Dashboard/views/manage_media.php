@@ -22,12 +22,11 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     renderHeading(
                         "Your Publication Catalogue",
                         "Easily view, edit, or remove magazines and newspapers you’ve published.",
-                        "/dashboards/add/media",
-                        "Publish New Publication"
                     );
 
                     $mediaController = new MediaController($conn);
                     $magazines = $mediaController->getAllMagazines($userId);
+                    $newspapers = $mediaController->getAllNewspapers($userId);
 
                     include __DIR__ . "/includes/layouts/tables/media_table.php";
 

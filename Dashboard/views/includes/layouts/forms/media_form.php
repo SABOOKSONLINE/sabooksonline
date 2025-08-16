@@ -13,6 +13,7 @@ $mediaId = $_GET['id'] ?? '';
 
 $mediaController = new MediaController($conn);
 $magazine = [];
+$newspaper = [];
 
 function clean($data): string
 {
@@ -24,49 +25,92 @@ function clean($data): string
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
+// Initialize default values
+$magazine = [
+    'public_key' => '',
+    'title' => '',
+    'editor' => '',
+    'category' => '',
+    'issn' => '',
+    'price' => '',
+    'frequency' => '',
+    'language' => '',
+    'country' => '',
+    'publish_date' => '',
+    'description' => '',
+    'cover_image_path' => '',
+    'pdf_path' => ''
+];
 
-function getDefaultMagazine(): array
-{
-    return [
-        'public_key' => '',
-        'title' => '',
-        'editor' => '',
-        'category' => '',
-        'issn' => '',
-        'price' => '',
-        'frequency' => '',
-        'language' => '',
-        'country' => '',
-        'publish_date' => '',
-        'description' => '',
-        'cover_image_path' => '',
-        'pdf_path' => ''
-    ];
-}
+$newspaper = [
+    'public_key' => '',
+    'title' => '',
+    'description' => '',
+    'cover_image_path' => '',
+    'pdf_path' => '',
+    'category' => '',
+    'price' => '',
+    'publish_date' => ''
+];
 
-$magazine = getDefaultMagazine();
+$categories = [
+    "News & Politics",
+    "Business & Finance",
+    "Technology & Gadgets",
+    "Science & Nature",
+    "Health & Fitness",
+    "Lifestyle & Culture",
+    "Travel & Adventure",
+    "Fashion & Beauty",
+    "Food & Cooking",
+    "Sports & Recreation",
+    "Arts & Entertainment",
+    "Photography & Design",
+    "Education & Learning",
+    "Parenting & Family",
+    "Automotive & Motorcycles",
+    "Music & Performing Arts",
+    "Gaming & Comics",
+    "Hobbies & DIY",
+    "History & Literature",
+    "Environmental & Sustainability"
+];
 
+// Fetch data based on media type
 if ($type === 'magazine' && $mediaId) {
     $fetchedMagazine = $mediaController->getMagazineById($mediaId, $userId);
-
     if ($fetchedMagazine) {
         $magazine = array_merge($magazine, $fetchedMagazine);
     }
-
-    // echo "<pre>";
-    // print_r($magazine);
-    // echo "</pre>";
+} elseif ($type === 'newspaper' && $mediaId) {
+    $fetchedNewspaper = $mediaController->getNewspaperById($mediaId, $userId);
+    if ($fetchedNewspaper) {
+        $newspaper = array_merge($newspaper, $fetchedNewspaper);
+    }
 }
 
+// Determine initial form visibility
+$magazineFormClass = ($type === 'newspaper') ? 'd-none' : '';
+$newspaperFormClass = ($type === 'newspaper') ? '' : 'd-none';
+
+// If no type is specified, default to magazine form visible
+if (!$type) {
+    $magazineFormClass = '';
+    $newspaperFormClass = 'd-none';
+}
+
+// Set button styles based on active form
+$magazineBtnClass = ($type !== 'newspaper') ? 'btn-dark' : 'btn-outline-dark';
+$newspaperBtnClass = ($type === 'newspaper') ? 'btn-dark' : 'btn-outline-dark';
 ?>
 
 <?php if (!$type): ?>
     <div class="d-flex justify-content-center mb-4">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-dark" id="magazineBtn">
+            <button type="button" class="btn <?= $magazineBtnClass ?>" id="magazineBtn">
                 <i class="fas fa-book me-2"></i> Magazine
             </button>
-            <button type="button" class="btn btn-outline-dark" id="newspaperBtn">
+            <button type="button" class="btn <?= $newspaperBtnClass ?>" id="newspaperBtn">
                 <i class="fas fa-newspaper me-2"></i> Newspaper
             </button>
         </div>
@@ -74,7 +118,10 @@ if ($type === 'magazine' && $mediaId) {
 <?php endif; ?>
 
 <div id="formsContainer">
-    <form method="POST" action="<?= $mediaId ? "/dashboards/media/magazine/update/$mediaId" : "/dashboards/media/magazine/insert" ?>" class="bg-white rounded shadow-sm p-4 mb-4 magazine-form" enctype="multipart/form-data">
+    <form method="POST"
+        action="<?= $mediaId ? "/dashboards/media/magazine/update/$mediaId" : "/dashboards/media/magazine/insert" ?>"
+        class="bg-white rounded shadow-sm p-4 mb-4 magazine-form <?= $magazineFormClass ?>"
+        enctype="multipart/form-data">
         <h4 class="fw-bold mb-4">Basic Magazine Information</h4>
         <div class="row g-3">
 
@@ -95,37 +142,15 @@ if ($type === 'magazine' && $mediaId) {
 
             <!-- Category -->
             <div class="col-md-6">
-                <label class="form-label">Category</label>
-                <select name="category" class="form-select">
+                <label class="form-label">Category <span class="text-danger">*</span></label>
+                <select name="category" class="form-select" required>
                     <option value="">Choose a category</option>
                     <?php
-                    $categories = [
-                        "News & Politics",
-                        "Business & Finance",
-                        "Technology & Gadgets",
-                        "Science & Nature",
-                        "Health & Fitness",
-                        "Lifestyle & Culture",
-                        "Travel & Adventure",
-                        "Fashion & Beauty",
-                        "Food & Cooking",
-                        "Sports & Recreation",
-                        "Arts & Entertainment",
-                        "Photography & Design",
-                        "Education & Learning",
-                        "Parenting & Family",
-                        "Automotive & Motorcycles",
-                        "Music & Performing Arts",
-                        "Gaming & Comics",
-                        "Hobbies & DIY",
-                        "History & Literature",
-                        "Environmental & Sustainability"
-                    ];
-
-                    $selectedCategory = clean($magazine['category'] ?? '');
+                    // FIX: Changed from $newspaper to $magazine
+                    $selectedCategory = $magazine['category'] ?? '';
 
                     foreach ($categories as $cat) {
-                        $selected = ($cat === $selectedCategory) ? 'selected' : '';
+                        $selected = (strcasecmp(trim($cat), trim($selectedCategory)) === 0) ? 'selected' : '';
                         echo "<option value=\"" . htmlspecialchars($cat) . "\" $selected>" .
                             htmlspecialchars($cat) . "</option>";
                     }
@@ -267,95 +292,100 @@ if ($type === 'magazine' && $mediaId) {
     </form>
 
     <form method="POST"
-        action=""
-        class="bg-white rounded shadow-sm p-4 mb-4 newspaper-form d-none"
+        action="<?= $mediaId ? "/dashboards/media/newspaper/update/$mediaId" : "/dashboards/media/newspaper/insert" ?>"
+        class="bg-white rounded shadow-sm p-4 mb-4 newspaper-form <?= $newspaperFormClass ?>"
         enctype="multipart/form-data">
 
-        <h4 class="fw-bold mb-4">Newspaper Upload Information</h4>
+        <h4 class="fw-bold mb-4">Newspaper Information</h4>
         <div class="row g-3">
 
-            <!-- Newspaper Basic Info -->
+            <!-- Hidden Fields -->
+            <input type="hidden" name="publisher_id" value="<?= $userId ?>">
+            <input type="hidden" name="public_key" value="<?= $newspaper['public_key'] ?>">
+
+            <!-- Newspaper Title -->
             <div class="col-md-6">
                 <label class="form-label">Newspaper Title <span class="text-danger">*</span></label>
-                <input type="text" name="newspaper_title" class="form-control" placeholder="e.g. Daily News" required>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Daily News"
+                    value="<?= clean($newspaper['title']) ?>" required>
             </div>
 
+            <!-- Category -->
             <div class="col-md-6">
-                <label class="form-label">Publisher <span class="text-danger">*</span></label>
-                <input type="text" name="newspaper_publisher" class="form-control" placeholder="e.g. National Press Ltd." required>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Language <span class="text-danger">*</span></label>
-                <select class="form-select" name="newspaper_language" required>
-                    <option value="">Choose language</option>
+                <label class="form-label">Category <span class="text-danger">*</span></label>
+                <select name="category" class="form-select" required>
+                    <option value="">Choose a category</option>
                     <?php
-                    $languagesList = [
-                        "Afrikaans",
-                        "English",
-                        "IsiNdebele",
-                        "IsiXhosa",
-                        "IsiZulu",
-                        "Sesotho",
-                        "Sesotho sa Leboa",
-                        "Setswana",
-                        "SiSwati",
-                        "Tshivenda",
-                        "Xitsonga"
-                    ];
-                    foreach ($languagesList as $lang) {
-                        echo "<option value=\"$lang\">$lang</option>";
+                    $rawCategory = $newspaper['category'] ?? '';
+                    foreach ($categories as $cat) {
+                        $selected = (strcasecmp(trim($cat), trim($rawCategory)) === 0) ? 'selected' : '';
+                        $escapedCat = htmlspecialchars($cat, ENT_QUOTES, 'UTF-8');
+                        echo "<option value=\"$escapedCat\" $selected>$escapedCat</option>";
                     }
                     ?>
                 </select>
             </div>
 
+            <!-- Price -->
             <div class="col-md-6">
-                <label class="form-label">Edition <span class="text-danger">*</span></label>
-                <input type="text" name="newspaper_edition" class="form-control" placeholder="e.g. Morning Edition, Evening Edition" required>
+                <label class="form-label">Price <span class="text-secondary">(ZAR)</span></label>
+                <input type="number" name="price" class="form-control" placeholder="e.g. 15.00"
+                    step="0.01" value="<?= clean($newspaper['price']) ?>">
             </div>
 
+            <!-- Publish Date -->
             <div class="col-md-6">
                 <label class="form-label">Publication Date <span class="text-danger">*</span></label>
-                <input type="date" name="newspaper_date" class="form-control" required>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Price <span class="text-danger">*</span></label>
-                <input type="number" name="newspaper_price" class="form-control" placeholder="e.g. 5.00" step="0.01" required>
-            </div>
-
-            <!-- File Uploads -->
-            <div class="col-md-6">
-                <label class="form-label">Front Page Image</label>
-                <input type="file" name="newspaper_cover_image" class="form-control" accept="image/*">
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Full Newspaper File (PDF)</label>
-                <input type="file" name="newspaper_file" class="form-control" accept=".pdf">
+                <input type="date" name="publish_date" class="form-control"
+                    value="<?= clean($newspaper['publish_date']) ?>" required>
             </div>
 
             <!-- Description -->
             <div class="col-12">
                 <label class="form-label">Description <small class="text-muted">(Max 600 characters)</small></label>
-                <textarea name="newspaper_description" class="form-control" rows="4" maxlength="600" placeholder="Brief summary of the newspaper..."></textarea>
+                <textarea name="description" class="form-control" rows="4" maxlength="600"
+                    placeholder="Brief summary of the newspaper..."><?= clean($newspaper['description']) ?></textarea>
+            </div>
+
+            <!-- Cover Image -->
+            <div class="col-md-6">
+                <label class="form-label">Front Page Image</label>
+                <input type="file" name="cover" class="form-control">
+                <input type="hidden" name="existing_cover" value="<?= $newspaper['cover_image_path'] ?>">
+                <?php if (!empty($newspaper['cover_image_path'])): ?>
+                    <div class="mt-2">
+                        <small class="text-muted">Current Cover:</small><br>
+                        <img src="/cms-data/newspaper/covers/<?= $newspaper['cover_image_path'] ?>"
+                            class="img-thumbnail" style="max-height: 150px;">
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- PDF Upload -->
+            <div class="col-md-6">
+                <label class="form-label">PDF File <span class="text-danger">*</span></label>
+                <input type="file" name="pdf" class="form-control" <?= $mediaId ? "" : "required" ?>>
+                <input type="hidden" name="existing_pdf" value="<?= $newspaper['pdf_path'] ?>">
+                <?php if (!empty($newspaper['pdf_path'])): ?>
+                    <div class="mt-2">
+                        <small class="text-muted">Current PDF:</small><br>
+                        <a href="/cms-data/newspaper/pdfs/<?= $newspaper['pdf_path'] ?>" target="_blank"
+                            class="btn btn-outline-primary btn-sm">View Current PDF</a>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="d-flex gap-2 mt-4">
-                <!-- <div class="text-end">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-2"></i> Save Magazine
-            </button>
-        </div> -->
-
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-paper-plane me-2"></i> Publish Newspapers
+                        <?php if (empty($mediaId)): ?>
+                            <i class="fas fa-paper-plane me-2"></i> Publish Newspaper
+                        <?php else: ?>
+                            <i class="fas fa-paper-plane me-2"></i> Save Newspaper
+                        <?php endif; ?>
                     </button>
                 </div>
             </div>
-
         </div>
     </form>
 </div>
@@ -367,26 +397,65 @@ if ($type === 'magazine' && $mediaId) {
         const magazineForm = document.querySelector('.magazine-form');
         const newspaperForm = document.querySelector('.newspaper-form');
 
-        // Magazine button click handler
-        magazineBtn.addEventListener('click', function() {
-            magazineBtn.classList.remove('btn-outline-dark');
-            magazineBtn.classList.add('btn-dark', 'active');
-            newspaperBtn.classList.remove('btn-dark', 'active');
-            newspaperBtn.classList.add('btn-outline-dark');
+        // Only add event listeners if buttons exist (when no type specified)
+        if (magazineBtn && newspaperBtn) {
+            // Magazine button click handler
+            magazineBtn.addEventListener('click', function() {
+                magazineBtn.classList.remove('btn-outline-dark');
+                magazineBtn.classList.add('btn-dark');
+                newspaperBtn.classList.remove('btn-dark');
+                newspaperBtn.classList.add('btn-outline-dark');
 
-            magazineForm.classList.remove('d-none');
-            newspaperForm.classList.add('d-none');
-        });
+                magazineForm.classList.remove('d-none');
+                newspaperForm.classList.add('d-none');
 
-        // Newspaper button click handler
-        newspaperBtn.addEventListener('click', function() {
-            newspaperBtn.classList.remove('btn-outline-dark');
-            newspaperBtn.classList.add('btn-dark', 'active');
-            magazineBtn.classList.remove('btn-dark', 'active');
-            magazineBtn.classList.add('btn-outline-dark');
+                // Update URL parameter
+                const url = new URL(window.location);
+                url.searchParams.set('type', 'magazine');
+                window.history.replaceState(null, null, url);
+            });
 
-            newspaperForm.classList.remove('d-none');
-            magazineForm.classList.add('d-none');
-        });
+            // Newspaper button click handler
+            newspaperBtn.addEventListener('click', function() {
+                newspaperBtn.classList.remove('btn-outline-dark');
+                newspaperBtn.classList.add('btn-dark');
+                magazineBtn.classList.remove('btn-dark');
+                magazineBtn.classList.add('btn-outline-dark');
+
+                newspaperForm.classList.remove('d-none');
+                magazineForm.classList.add('d-none');
+
+                // Update URL parameter
+                const url = new URL(window.location);
+                url.searchParams.set('type', 'newspaper');
+                window.history.replaceState(null, null, url);
+            });
+        }
+
+        // Set initial state based on URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const mediaType = urlParams.get('type');
+
+        if (mediaType === 'newspaper') {
+            if (newspaperBtn && magazineBtn) {
+                newspaperBtn.classList.remove('btn-outline-dark');
+                newspaperBtn.classList.add('btn-dark');
+                magazineBtn.classList.remove('btn-dark');
+                magazineBtn.classList.add('btn-outline-dark');
+            }
+
+            if (newspaperForm) newspaperForm.classList.remove('d-none');
+            if (magazineForm) magazineForm.classList.add('d-none');
+        } else {
+            if (magazineBtn && newspaperBtn) {
+                magazineBtn.classList.remove('btn-outline-dark');
+                magazineBtn.classList.add('btn-dark');
+                newspaperBtn.classList.remove('btn-dark');
+                newspaperBtn.classList.add('btn-outline-dark');
+            }
+
+            if (magazineForm) magazineForm.classList.remove('d-none');
+            if (newspaperForm) newspaperForm.classList.add('d-none');
+        }
     });
 </script>
