@@ -16,29 +16,30 @@ class AnalyticsModel
         $this->conn = $conn;
     }
 
-    public function getDownloadsByEmail($email) {
-    $sql = "
+    public function getDownloadsByEmail($email)
+    {
+        $sql = "
         SELECT COUNT(*) AS book_count
         FROM book_purchases
         WHERE user_email = ?
     ";
 
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("s", $email);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
 
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        return (int)$row['book_count'];
-    } else {
-        error_log("❌ Failed to count purchased books: " . $stmt->error);
-        return 0;
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $stmt->close();
+            return (int)$row['book_count'];
+        } else {
+            error_log("❌ Failed to count purchased books: " . $stmt->error);
+            return 0;
+        }
     }
-}
 
 
-     public function getBookViews($user_id, $start_date = null, $end_date = null)
+    public function getBookViews($user_id, $start_date = null, $end_date = null)
     {
         $contentIds = $this->getUserBookIds($user_id);
         if (empty($contentIds)) return ['unique_user_count' => 0];
@@ -73,7 +74,7 @@ class AnalyticsModel
         return ['unique_user_count' => $unique_user_count];
     }
 
-    
+
 
 
 
@@ -93,10 +94,11 @@ class AnalyticsModel
         $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
 
         $query = "SELECT p.CONTENTID, p.TITLE, p.COVER, COUNT(DISTINCT pv.user_ip) AS view_count
-                  FROM page_visits AS pv
-                  INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                  WHERE p.CONTENTID IN ($placeholders)
-                  GROUP BY p.CONTENTID ORDER BY view_count DESC";
+                    FROM page_visits AS pv
+                    INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
+                    WHERE p.CONTENTID IN ($placeholders)
+                    GROUP BY p.CONTENTID, p.TITLE, p.COVER
+                    ORDER BY view_count DESC";
 
         $stmt = $this->conn->prepare($query);
         $types = str_repeat("s", count($contentIds));
@@ -209,7 +211,8 @@ class AnalyticsModel
 
 
 
-    public function viewSubscription($userId) {
+    public function viewSubscription($userId)
+    {
         $sql = "SELECT admin_subscription, billing_cycle, subscription_status 
                 FROM users 
                 WHERE ADMIN_USERKEY = ?";
@@ -246,7 +249,7 @@ class AnalyticsModel
         return $count;
     }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     public function getBookViewsByMonthYear($user_id)
     {
@@ -496,5 +499,4 @@ class AnalyticsModel
 
         return array_column($book_ids, 'CONTENTID');
     }
-    
 }
