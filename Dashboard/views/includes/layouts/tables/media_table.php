@@ -1,10 +1,32 @@
 <?php
 $activeTab = $_GET['tab'] ?? 'magazines';
+
+$alerts = [];
+if (isset($_SESSION['alerts']) && is_array($_SESSION['alerts'])) {
+    $alerts = $_SESSION['alerts'];
+    unset($_SESSION['alerts']);
+}
 ?>
+
+<?php if (!empty($alerts)): ?>
+    <div class="mb-4">
+        <?php foreach ($alerts as $alert): ?>
+            <?php
+            $alertClass = 'alert-success';
+            if ($alert['type'] === 'error') {
+                $alertClass = 'alert-danger';
+            }
+            ?>
+            <div class="alert <?= $alertClass ?> alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($alert['message']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center">
-        <!-- Tab buttons -->
         <div class="btn-group me-3" role="group">
             <a href="?tab=magazines"
                 class="btn btn-<?= $activeTab === 'magazines' ? 'dark' : 'outline-dark' ?>">
@@ -15,12 +37,8 @@ $activeTab = $_GET['tab'] ?? 'magazines';
                 <i class="fas fa-newspaper me-2"></i> Newspapers
             </a>
         </div>
-
-        <!-- Heading based on active tab -->
         <h4 class="fw-bold mb-0">Manage <?= ucfirst($activeTab) ?></h4>
     </div>
-
-    <!-- Add New Button -->
     <a href="/dashboards/add/media?type=<?= substr($activeTab, 0, -1) ?>"
         class="btn btn-outline-dark">
         <i class="fas fa-plus me-2"></i> Add New
@@ -28,7 +46,6 @@ $activeTab = $_GET['tab'] ?? 'magazines';
 </div>
 
 <?php if ($activeTab === 'magazines'): ?>
-    <!-- Magazine Table -->
     <?php if (empty($magazines)): ?>
         <div class="alert alert-info">No magazines found. <a href="/dashboards/add/media?type=magazine">Add</a> your first magazine!</div>
     <?php else: ?>
@@ -50,14 +67,14 @@ $activeTab = $_GET['tab'] ?? 'magazines';
                         <tr>
                             <td>
                                 <?php if (!empty($magazine['cover_image_path'])): ?>
-                                    <img src="/cms-data/magazine/covers/<?= htmlspecialchars($magazine['cover_image_path']) ?>"
+                                    <img src="/cms-data/magazine/covers/<?= html_entity_decode($magazine['cover_image_path']) ?>"
                                         alt="Cover" class="img-thumbnail" style="max-width: 80px;">
                                 <?php else: ?>
                                     <span class="text-muted">No cover</span>
                                 <?php endif; ?>
                             </td>
-                            <td><?= htmlspecialchars($magazine['title']) ?></td>
-                            <td><?= htmlspecialchars($magazine['category']) ?></td>
+                            <td><?= html_entity_decode($magazine['title']) ?></td>
+                            <td><?= html_entity_decode($magazine['category']) ?></td>
                             <td>R <?= number_format($magazine['price'] ?? 0.00, 2) ?></td>
                             <td><?= !empty($magazine['publish_date']) ? date('M d, Y', strtotime($magazine['publish_date'])) : 'N/A' ?></td>
                             <td>
@@ -92,7 +109,6 @@ $activeTab = $_GET['tab'] ?? 'magazines';
     <?php endif; ?>
 
 <?php elseif ($activeTab === 'newspapers'): ?>
-    <!-- Newspaper Table -->
     <?php if (empty($newspapers)): ?>
         <div class="alert alert-info">No newspapers found. <a href="/dashboards/add/media?type=newspaper">Add</a> your first newspaper!</div>
     <?php else: ?>
@@ -114,14 +130,14 @@ $activeTab = $_GET['tab'] ?? 'magazines';
                         <tr>
                             <td>
                                 <?php if (!empty($newspaper['cover_image_path'])): ?>
-                                    <img src="/cms-data/newspaper/covers/<?= htmlspecialchars($newspaper['cover_image_path']) ?>"
+                                    <img src="/cms-data/newspaper/covers/<?= html_entity_decode($newspaper['cover_image_path']) ?>"
                                         alt="Cover" class="img-thumbnail" style="max-width: 80px;">
                                 <?php else: ?>
                                     <span class="text-muted">No cover</span>
                                 <?php endif; ?>
                             </td>
-                            <td><?= htmlspecialchars($newspaper['title']) ?></td>
-                            <td><?= htmlspecialchars($newspaper['category']) ?></td>
+                            <td><?= html_entity_decode($newspaper['title']) ?></td>
+                            <td><?= html_entity_decode($newspaper['category']) ?></td>
                             <td>R <?= number_format($newspaper['price'] ?? 0.00, 2) ?></td>
                             <td><?= !empty($newspaper['publish_date']) ? date('M d, Y', strtotime($newspaper['publish_date'])) : 'N/A' ?></td>
                             <td>

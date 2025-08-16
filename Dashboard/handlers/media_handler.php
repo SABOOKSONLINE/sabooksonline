@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -6,6 +10,8 @@ error_reporting(E_ALL);
 require_once __DIR__ . "/../database/connection.php";
 require_once __DIR__ . "/../models/MediaModel.php";
 require_once __DIR__ . "/../controllers/MediaController.php";
+
+require_once __DIR__ . "/alert_utils.php";
 
 $mediaController = new MediaController($conn);
 
@@ -85,8 +91,10 @@ function magazineFormDataArray(bool $isUpdate = false): array
     ];
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine") {
     $action = $_GET["action"] ?? '';
+    $redirect = "/dashboards/media?tab=magazines";
 
     if ($action === "insert") {
         try {
@@ -94,13 +102,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine
             $success = $mediaController->insertMagazine($data);
 
             if ($success) {
-                echo "Magazine inserted successfully!";
+                setAlert('success', 'Magazine inserted successfully!');
             } else {
-                echo "Failed to insert magazine. Please check the data or try again.";
+                setAlert('error', 'Failed to insert magazine. Please check the data or try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     } elseif ($action === "update") {
         try {
             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -113,16 +123,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine
             $success = $mediaController->updateMagazine($data);
 
             if ($success) {
-                echo "Magazine updated successfully!";
+                setAlert('success', 'Magazine updated successfully!');
             } else {
-                echo "Failed to update magazine. Please check the data or try again.";
+                setAlert('error', 'Failed to update magazine. Please check the data or try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     }
 } else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "magazine") {
     $action = $_GET["action"] ?? '';
+    $redirect = "/dashboards/media?tab=magazines";
 
     if ($action === "delete") {
         try {
@@ -134,24 +147,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "magazine
             $success = $mediaController->deleteMagazine($id);
 
             if ($success) {
-                echo "Magazine deleted successfully!";
+                setAlert('success', 'Magazine deleted successfully!');
             } else {
-                echo "Failed to delete magazine. Please try again.";
+                setAlert('error', 'Failed to delete magazine. Please try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     }
 }
 
-// ... [existing magazine processing code] ...
-
-// NEWSPAPER PROCESSING FUNCTIONS
+// NEWSPAPER 
 function newspaperFormDataArray(bool $isUpdate = false): array
 {
     $public_key = $isUpdate ? ($_POST['public_key'] ?? '') : bin2hex(random_bytes(16));
 
-    // Process cover image
     $cover_path = null;
     if (!empty($_FILES['cover']['name'])) {
         $cover_path = fileProcessor("/../../cms-data/newspaper/covers/", "cover", ["jpg", "jpeg", "png", "gif"]);
@@ -161,7 +173,6 @@ function newspaperFormDataArray(bool $isUpdate = false): array
         throw new Exception("Front page image is required");
     }
 
-    // Process PDF file
     $pdf_path = null;
     if (!empty($_FILES['pdf']['name'])) {
         $pdf_path = fileProcessor("/../../cms-data/newspaper/pdfs/", "pdf", ["pdf"]);
@@ -184,9 +195,10 @@ function newspaperFormDataArray(bool $isUpdate = false): array
     ];
 }
 
-// NEWSPAPER FORM PROCESSING
+// NEWSPAPER
 if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "newspaper") {
     $action = $_GET["action"] ?? '';
+    $redirect = "/dashboards/media?tab=newspapers";
 
     if ($action === "insert") {
         try {
@@ -194,13 +206,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "newspape
             $success = $mediaController->insertNewspaper($data);
 
             if ($success) {
-                echo "Newspaper published successfully!";
+                setAlert('success', 'Newspaper published successfully!');
             } else {
-                echo "Failed to publish newspaper. Please check the data or try again.";
+                setAlert('error', 'Failed to publish newspaper. Please check the data or try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     } elseif ($action === "update") {
         try {
             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -213,16 +227,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "newspape
             $success = $mediaController->updateNewspaper($data);
 
             if ($success) {
-                echo "Newspaper updated successfully!";
+                setAlert('success', 'Newspaper updated successfully!');
             } else {
-                echo "Failed to update newspaper. Please check the data or try again.";
+                setAlert('error', 'Failed to update newspaper. Please check the data or try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     }
 } else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "newspaper") {
     $action = $_GET["action"] ?? '';
+    $redirect = "/dashboards/media?tab=newspapers";
 
     if ($action === "delete") {
         try {
@@ -234,12 +251,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "newspape
             $success = $mediaController->deleteNewspaper($id);
 
             if ($success) {
-                echo "Newspaper deleted successfully!";
+                setAlert('success', 'Newspaper deleted successfully!');
             } else {
-                echo "Failed to delete newspaper. Please try again.";
+                setAlert('error', 'Failed to delete newspaper. Please try again.');
             }
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            setAlert('error', "Error: " . $e->getMessage());
         }
+        header("Location: $redirect");
+        exit();
     }
 }
