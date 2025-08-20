@@ -147,7 +147,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-note-muted">This price applies to the digital version.</span>
 
                         <!-- Digital purchase button -->
-                        <div class="hide">
+                        <div class="">
                             <?php if ((float)$price > 0): ?>
                                 <!-- BUY FORM -->
                                 <form method="POST" action="/checkout" id="digital-version" class="w-100 mt-3">
