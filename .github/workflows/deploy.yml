@@ -1,60 +1,60 @@
-name: Install Composer and Deploy to xneelo
+# name: Install Composer and Deploy to xneelo
 
-on:
-    push:
-        branches: [main]
+# on:
+#     push:
+#         branches: [main]
 
-jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+# jobs:
+#     build-and-deploy:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Checkout code
+#               uses: actions/checkout@v4
 
-            - name: Setup PHP 8.4
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "8.4"
-                  coverage: none
+#             - name: Setup PHP 8.4
+#               uses: shivammathur/setup-php@v2
+#               with:
+#                   php-version: "8.4"
+#                   coverage: none
 
-            - name: Cache Composer dependencies
-              id: composer-cache
-              uses: actions/cache@v4
-              with:
-                  path: vendor
-                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-php-
+#             - name: Cache Composer dependencies
+#               id: composer-cache
+#               uses: actions/cache@v4
+#               with:
+#                   path: vendor
+#                   key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+#                   restore-keys: |
+#                       ${{ runner.os }}-php-
 
-            - name: Install Composer dependencies
-              run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+#             - name: Install Composer dependencies
+#               run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
-            - name: Install LFTP
-              run: sudo apt-get update && sudo apt-get install -y lftp
+#             - name: Install LFTP
+#               run: sudo apt-get update && sudo apt-get install -y lftp
 
-            - name: Deploy via FTP (safe for existing static files)
-              env:
-                  FTP_SERVER: ${{ secrets.FTP_SERVER }}
-                  FTP_USER: ${{ secrets.FTP_USERNAME }}
-                  FTP_PASS: ${{ secrets.FTP_PASSWORD }}
-                  REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
-              run: |
-                  lftp -e "
-                    set ftp:ssl-force false;
-                    set ftp:ssl-protect-data false;
-                    set ftp:passive-mode true;
-                    open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
-                    mirror --reverse \
-                          --verbose \
-                          --exclude-glob .git* \
-                          --exclude-glob img/* \
-                          --exclude-glob .github/* \
-                          --exclude-glob tests/* \
-                          --exclude-glob *.md \
-                          --exclude-glob composer.* \
-                          --exclude-glob README.md \
-                          --exclude-glob .gitignore \
-                          --exclude-glob .env \
-                          ./ $REMOTE_DIR;
-                    bye
-                  "
+#             - name: Deploy via FTP (safe for existing static files)
+#               env:
+#                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
+#                   FTP_USER: ${{ secrets.FTP_USERNAME }}
+#                   FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+#                   REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+#               run: |
+#                   lftp -e "
+#                     set ftp:ssl-force false;
+#                     set ftp:ssl-protect-data false;
+#                     set ftp:passive-mode true;
+#                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
+#                     mirror --reverse \
+#                           --verbose \
+#                           --exclude-glob .git* \
+#                           --exclude-glob img/* \
+#                           --exclude-glob .github/* \
+#                           --exclude-glob tests/* \
+#                           --exclude-glob *.md \
+#                           --exclude-glob composer.* \
+#                           --exclude-glob README.md \
+#                           --exclude-glob .gitignore \
+#                           --exclude-glob .env \
+#                           ./ $REMOTE_DIR;
+#                     bye
+#                   "

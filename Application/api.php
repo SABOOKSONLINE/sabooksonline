@@ -29,7 +29,6 @@ $authController = new AuthController($conn);
 $action = $_GET['action'] ?? 'getAllBooks';
 
 $date = $_GET['updated_since'] ?? null;
-$updated = $_GET['updated_at'] ?? null;
 
 
 
@@ -60,7 +59,7 @@ switch ($action) {
         break;
 
     case 'creators':
-        $creator->getCreators($updated);
+        $creator->getCreators($date);
         break;
 
     case 'audio':

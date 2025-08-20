@@ -19,17 +19,17 @@ class UserModel {
         $this->conn = $conn;
     }
 
-   public function getCreators($date = null) {
+    public function getCreators($updatedSince = null) {
     // Base SQL query
-    $sql = "SELECT c.* 
-            FROM users c
+    $sql = "SELECT c.* FROM users c
             JOIN posts b ON c.ADMIN_USERKEY = b.USERID";
 
-    // If date is provided, apply delta sync condition
-    if ($date) {
-        // Convert milliseconds to seconds
-        $timestampInSeconds = intval($date / 1000);
-        $formattedDate = date('Y-m-d H:i:s', $timestampInSeconds);
+    // If a date is provided, apply the delta sync condition
+    if ($updatedSince) {
+        // Convert the ISO 8601 string from the client into a PHP DateTime object
+        $lastUpdatedDateTime = new DateTime($updatedSince);
+        $formattedDate = $lastUpdatedDateTime->format('Y-m-d H:i:s');
+        
         $sql .= " WHERE c.updated_at > ?";
     }
 
@@ -39,15 +39,27 @@ class UserModel {
     // Prepare and bind
     $stmt = $this->conn->prepare($sql);
 
-    if ($date) {
+    if ($updatedSince) {
         $stmt->bind_param("s", $formattedDate);
     }
 
     $stmt->execute();
     $result = $stmt->get_result();
-    $users = $result->fetch_all(MYSQLI_ASSOC);
 
-    return $users;
+    // Check if there are any results to return
+    if ($result->num_rows === 0) {
+        return [];
+    }
+
+    $creators = [];
+    while ($row = $result->fetch_assoc()) {
+        // Important: Convert the database timestamp to a universal ISO 8601 string
+        // before returning it to the app
+        $row['updated_at'] = (new DateTime($row['updated_at']))->format(DateTime::ISO8601);
+        $creators[] = $row;
+    }
+
+    return $creators;
 }
 
 

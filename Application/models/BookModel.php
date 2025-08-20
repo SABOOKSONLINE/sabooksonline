@@ -161,61 +161,62 @@ class BookModel
 }
 
 
-    /**
+      /**
      * Fetch All books
      * @return array
      */
     public function getAllBooks($updatedSince = null)
-    {
-        // Base SQL query with joins
-        $sql = "SELECT
-                    p.*,
-                    a.id AS a_id,
-                    a.book_id AS a_book_id,
-                    a.narrator AS a_narrator,
-                    l.CATEGORY AS listing_category
-                FROM posts AS p
-                LEFT JOIN audiobooks AS a ON a.book_id = p.ID
-                LEFT JOIN listings AS l ON p.CONTENTID = l.CONTENTID";
+{
+    // Base SQL query with joins
+    $sql = "SELECT
+                p.*,
+                a.id AS a_id,
+                a.book_id AS a_book_id,
+                a.narrator AS a_narrator,
+                l.CATEGORY AS listing_category
+            FROM posts AS p
+            LEFT JOIN audiobooks AS a ON a.book_id = p.ID
+            LEFT JOIN listings AS l ON p.CONTENTID = l.CONTENTID";
 
-        // Add a conditional WHERE clause for delta syncing
-        if ($updatedSince) {
-            // ----- THE NEW LOGIC IS HERE -----
-            // Convert the millisecond timestamp from JavaScript into a PHP datetime format.
-            $timestampInSeconds = intval($updatedSince / 1000); // Convert milliseconds to seconds
-            $formattedDate = date('Y-m-d H:i:s', $timestampInSeconds);
-            // ------------------------------------
+    // Add a conditional WHERE clause for delta syncing
+    if ($updatedSince) {
+        // Create a DateTime object from the ISO 8601 string
+        // This is the correct way to handle dates from the client
+        $lastUpdatedDateTime = new DateTime($updatedSince);
+        $formattedDate = $lastUpdatedDateTime->format('Y-m-d H:i:s');
 
-            $sql .= " WHERE p.updated_at > ?";
-            $sql .= " ORDER BY p.updated_at ASC";
-        } else {
-            $sql .= " ORDER BY RAND()";
-        }
-
-        // Prepare the statement for executing the query
-        $stmt = mysqli_prepare($this->conn, $sql);
-
-        // Bind the parameter if it exists
-        if ($updatedSince) {
-            // Bind the formatted date string instead of the original timestamp
-            mysqli_stmt_bind_param($stmt, "s", $formattedDate);
-        }
-
-        // Execute the statement and get the result
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($result) == 0) {
-            return [];
-        }
-
-        $books = [];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $books[] = $row;
-        }
-
-        return $books;
+        $sql .= " WHERE p.updated_at > ?";
+        $sql .= " ORDER BY p.updated_at ASC";
+    } else {
+        $sql .= " ORDER BY RAND()";
     }
+
+    // Prepare the statement for executing the query
+    $stmt = mysqli_prepare($this->conn, $sql);
+
+    // Bind the parameter if it exists
+    if ($updatedSince) {
+        // Bind the formatted date string
+        mysqli_stmt_bind_param($stmt, "s", $formattedDate);
+    }
+
+    // Execute the statement and get the result
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($result) == 0) {
+        return [];
+    }
+
+    $books = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Important: Return the date in ISO 8601 format to the client
+        $row['updated_at'] = (new DateTime($row['updated_at']))->format(DateTime::ISO8601);
+        $books[] = $row;
+    }
+
+    return $books;
+}
 
     /**
      * Fetch All Ebooks
