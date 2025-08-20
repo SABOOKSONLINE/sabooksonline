@@ -31,12 +31,8 @@ class UserController {
 
         header('Content-Type: application/json');
 
-        if ($creator) {
-            echo json_encode($creator);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'creator not found']);
-        }
+        echo json_encode($creator);
+       
     }
 
     /**
@@ -85,6 +81,3 @@ class UserController {
     }
 }
 
-// // Run the controller
-// $controller = new UserController($conn);
-// $controller->showUserProfile($_GET['q'] ?? null);
