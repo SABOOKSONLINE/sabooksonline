@@ -1,16 +1,9 @@
 <section class="section">
-    <div class="container-fluid">
-        <div class="container">
-            <?php renderSectionHeading(
-                "Featured Magazines",
-                "Discover the latest issues and trending publications.",
-                "",
-                ""
-            ); ?>
-        </div>
+    <div class="container">
+        <?php renderSectionHeading("Featured Magazines", "Discover the latest issues and trending publications.", "", "") ?>
 
-        <div class="book-cards mt-4" id="magazines">
-            <div class="book-card-slide scroll-right">
+        <div class="book-cards mt-4">
+            <div class="book-card-slide">
                 <?php foreach ($magazines as $magazine):
                     $publisherId = $magazine['publisher_id'];
                     $publicKey = $magazine['public_key'];
@@ -32,47 +25,29 @@
                     $publisher = $user['ADMIN_NAME'];
                     $publisherPublicKey = $user['ADMIN_USERKEY'];
                 ?>
-                    <div class="bk-card bk-card-lg">
+                    <div class="bk-card">
+                        <span class="book-card-num"></span>
                         <div class="bk-img">
                             <a href="/media/magazines/<?= $publicKey ?>">
-                                <img src="/cms-data/magazine/covers/<?= $cover ?>" alt="<?= $title ?>" loading="lazy">
+                                <img src="/cms-data/magazine/covers/<?= $cover ?>" alt="<?= $title ?>">
                             </a>
                         </div>
                         <div class="bk-details">
-                            <div>
-                                <a href="/media/magazines/<?= $publicKey ?>" class="text-decoration-none">
-                                    <p class="bk-heading-xl">
-                                        <?= $shortTitle ?>
-                                    </p>
-                                </a>
-                                <p class="bk-text-meta">
-                                    Published by: <a class="text-lowercase text-capitalize" href="/creators/creator/<?= $publisherPublicKey ?>"><?= $publisher ?></a>
-                                </p>
-                                <p class="bk-text-para">
-                                    <?= $description ?>
-                                </p>
-                            </div>
-
-                            <div class="bk-tags">
-                                <?php if ($category): ?>
-                                    <span class="bk-tag bk-tag-black">
-                                        <?= $category ?>
-                                    </span>
-                                <?php endif; ?>
-
-                                <?php if ($magazine['frequency']): ?>
-                                    <span class="bk-tag bk-tag-gray"><?= ucfirst($magazine['frequency']) ?></span>
-                                <?php endif; ?>
-                            </div>
+                            <p class="bk-heading-md">
+                                <?= $shortTitle ?>
+                            </p>
+                            <p class="bk-text-meta">
+                                Published by: <a class="text-muted text-lowercase text-capitalize" href="/creators/creator/<?= $publisherPublicKey ?>"><?= $publisher ?></a>
+                            </p>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
-        </div>
 
-        <div class="book-card-btn btn-right">
-            <div>
-                <i class="fas fa-arrow-right"></i>
+            <div class="book-card-btn btn-right">
+                <div>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
             </div>
         </div>
     </div>
