@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/BookModel.php';
 require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../models/MediaModel.php';
 require_once __DIR__ . '/../models/BillingModel.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -8,12 +9,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 class CheckoutController {
     private $bookModel;
     private $userModel;
+    private $mediaModel;
     private $conn;
 
     public function __construct($conn) {
         $this->conn = $conn;
         $this->userModel = new userModel($conn);
         $this->bookModel = new BookModel($conn);
+        $this->mediaModel = new MediaModel($conn);
+
     }
 
    public function purchaseBook($bookId, $userId, $format = 'ebook') {
@@ -27,6 +31,34 @@ class CheckoutController {
 
         $this->generatePaymentForm($book, $user, $format);
     }
+
+    public function purchaseMedia($bookId, $userId, $format) {
+    if (empty($bookId) || empty($userId) || empty($format)) {
+        die("Invalid book ID, user ID, or media format.");
+    }
+
+    $user = $this->userModel->getUserByNameOrKey($userId);
+    if (empty($user)) {
+        die("User not found.");
+    }
+    $media = null;
+    switch ($format) {
+        case "Magazine":
+            $media = $this->mediaModel->selectMagazineById($bookId);
+            break;
+        case "Newspaper":
+            $media = $this->mediaModel->selectNewspaperById($bookId);
+            break;
+        default:
+            die("Unsupported media format.");
+    }
+
+    if (empty($media)) {
+        die("$format with ID $bookId not found.");
+    }
+    
+    $this->generatePaymentForm($media, $user, $format);
+}
 
 
     public function subscribe($planType, $paymentOption, $userId) {
@@ -74,9 +106,16 @@ class CheckoutController {
             $price = $book['ABOOKPRICE'] ?? 0;
             break;
         case 'ebook':
-        default:
+        // default:
             $price = $book['EBOOKPRICE'] ?? 0;
             break;
+        case 'magazine':
+            $price = $book['PRICE'] ?? 0;
+            break;
+        case 'newspaper':
+        // default:
+            $price = $book['PRICE'] ?? 0;
+            break;    
     }
 
     if (empty($bookId) || empty($userEmail)) {

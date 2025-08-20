@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check for either bookId or audiobookId
     $bookId = $_POST['bookId'] ?? null;
     $audiobookId = $_POST['audiobookId'] ?? null;
+    $magazineId = $_POST['magazineId'] ?? null;
+    $newspaperId = $_POST['newspaperId'] ?? null;
+
 
     // Redirect to login if not authenticated
     if (!$userId) {
@@ -28,6 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle Audiobook
     elseif ($audiobookId) {
         $checkout->purchaseBook($audiobookId, $userId, 'Audiobook');
+    }
+
+    elseif ($magazineId) {
+        $checkout->purchaseMedia($magazineId, $userId, 'Magazine');
+    }
+    elseif ($newspaperId) {
+        $checkout->purchaseMedia($newspaperId, $userId, 'Newspaper');
     }
 }
 
