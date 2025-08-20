@@ -68,6 +68,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/api/books', function () {
         require "Application/api.php";
     });
+    
+    $r->addRoute('GET', '/api/userinfo', function () {
+        $_GET['action'] = 'user';
+        require "Application/api.php";
+    });
 
     $r->addRoute('GET', '/api/creators', function () {
         $_GET['action'] = 'creators';

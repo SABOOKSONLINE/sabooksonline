@@ -25,6 +25,56 @@ class AuthController {
 
     return true;
 }
+public function getUserInfo($email) {
+    header('Content-Type: application/json');
+
+    $result = $this->userModel->findUserByEmail($email);
+
+    $userData = mysqli_fetch_assoc($result);
+
+
+    $subscriptionStatus = strtolower($userData['subscription_status'] ?? '');
+    $adminSub = $userData['ADMIN_SUBSCRIPTION'] ?? '';
+    $billingCycle = $userData['billing_cycle'] ?? '';
+
+    switch ($subscriptionStatus) {
+        case 'free':
+            $subscriptionText = ''; // No label for free plan
+            break;
+
+        case 'royalties':
+            $subscriptionText = $adminSub . '  Royalties';
+            break;
+
+        case 'pro':
+        case 'premium':
+            $subscriptionText = ucfirst($subscriptionStatus) . ' ' . ucfirst($billingCycle);
+            break;
+
+        default:
+            $subscriptionText = 'Unknown Plan';
+            break;
+    }
+    
+    $purchasedBooks = $this->userModel->getPurchasedBookIdsAndFormats($email);
+    $publishedBooks = $this->userModel->getPublishedBookIds($userData['ADMIN_USERKEY']);
+
+    // Login success
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'adminKey' => $userData['ADMIN_USERKEY'],
+        'email' => $userData['ADMIN_EMAIL'],
+        'profile' => $userData['ADMIN_PROFILE_IMAGE'],
+        'name' => $userData['ADMIN_NAME'],
+        'subscription' => $subscriptionText,
+        'number' => $userData['ADMIN_NUMBER'],
+        'purchasedBooks' => $purchasedBooks,
+        'publishedBooks' => $publishedBooks,
+
+    ]);
+    exit;
+}
 
     public function loginWithForm($email, $password, $name = null, $picture = null, $isform = true) {
     header('Content-Type: application/json');

@@ -22,7 +22,6 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 $controller = new BookController($conn);
 $creator = new UserController($conn);
-
 $authController = new AuthController($conn);
 
 
@@ -30,7 +29,7 @@ $action = $_GET['action'] ?? 'getAllBooks';
 
 $date = $_GET['updated_since'] ?? null;
 
-
+$email = $_GET['email'] ?? null;
 
 switch ($action) {
     case 'login':
@@ -62,12 +61,15 @@ switch ($action) {
         $creator->getCreators($date);
         break;
 
+     case 'user':
+        $creator->getUserInfo($email);
+        break;
+
     case 'audio':
         $a_id = $_GET['a_id'] ?? null;
 
         $controller->getAudiobookDetailsApi($a_id);
         break;
-
 
     default:
         http_response_code(400);
