@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
         container.addEventListener("mouseenter", () => {
             isPaused = true;
         });
+
         container.addEventListener("mouseleave", () => {
             isPaused = false;
         });
@@ -72,13 +73,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ===== Category Collapse Button =====
-    const categoryCollapseBtn = document.querySelector(".category-collapse-btn");
+    const categoryCollapseBtn = document.querySelector(
+        ".category-collapse-btn"
+    );
     const categoryContainer = document.querySelector(".category-container");
 
     if (categoryCollapseBtn && categoryContainer) {
         categoryCollapseBtn.addEventListener("click", () => {
             categoryContainer.classList.toggle("category-all");
-            categoryCollapseBtn.firstElementChild.classList.toggle("fa-angle-up");
+            categoryCollapseBtn.firstElementChild.classList.toggle(
+                "fa-angle-up"
+            );
         });
     }
 
@@ -109,7 +114,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const resetBvBuyBtn = () => {
-        const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
+        const bvBuyBtns = document.querySelectorAll(
+            ".bv-purchase-details > div"
+        );
         bvBuyBtns.forEach((btn) => btn.classList.add("hide"));
     };
 
@@ -133,7 +140,9 @@ document.addEventListener("DOMContentLoaded", function () {
             updatePrice(price);
             updateBvBuyBtn(firstBtn);
             removePriceDetail(firstBtn);
-            showPurchaseOption(firstBtn.firstElementChild.innerText.toLowerCase());
+            showPurchaseOption(
+                firstBtn.firstElementChild.innerText.toLowerCase()
+            );
         }
     };
 
@@ -178,7 +187,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const ratingValue = document.getElementById("rating_value").value;
             if (!ratingValue || parseInt(ratingValue) < 1) {
                 e.preventDefault();
-                alert("Please select a star rating before submitting your review.");
+                alert(
+                    "Please select a star rating before submitting your review."
+                );
             }
         });
     }

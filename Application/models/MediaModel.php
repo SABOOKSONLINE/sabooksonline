@@ -106,4 +106,26 @@ class MediaModel
         mysqli_stmt_close($stmt);
         return $newspaper ?: null;
     }
+
+    public function selectUserById($id): ?array
+    {
+        $sql = "SELECT * FROM users WHERE ADMIN_ID = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $id);
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+        $user = mysqli_fetch_assoc($result);
+
+        mysqli_stmt_close($stmt);
+        return $user ?: null;
+    }
 }

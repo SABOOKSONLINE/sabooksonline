@@ -22,7 +22,7 @@ class MediaController
         }
     }
 
-    public function getMagazineById(string $publicKey): ?array
+    public function getMagazineByPublicKey(string $publicKey): ?array
     {
         try {
             return $this->mediaModel->selectMagazineById($publicKey);
@@ -43,12 +43,22 @@ class MediaController
         }
     }
 
-    public function getNewspaperById(string $publicKey): ?array
+    public function getNewspaperByPublicKey(string $publicKey): ?array
     {
         try {
             return $this->mediaModel->selectNewspaperById($publicKey);
         } catch (Exception $e) {
             error_log("Get newspaper by public key error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function getUserById($id): ?array
+    {
+        try {
+            return $this->mediaModel->selectUserById($id);
+        } catch (Exception $e) {
+            error_log("Get user by id error: " . $e->getMessage());
             return null;
         }
     }
