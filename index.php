@@ -168,6 +168,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Dashboard/handlers/media_handler.php";
     });
 
+    $r->addRoute('GET', '/media/magazines/{publicKey}', function ($publicKey) {
+        $_GET['publicKey'] = $publicKey;
+        require "Application/views/media/magazineView.php";
+    });
+    $r->addRoute('GET', '/media/newspapers/{publicKey}', function ($publicKey) {
+        $_GET['publicKey'] = $publicKey;
+        require "Application/views/media/newspaperView.php";
+    });
+
     // --- Events ---
     $r->addRoute('GET', '/dashboards/add/event', function () {
         require "Dashboard/views/add/add_event.php";
