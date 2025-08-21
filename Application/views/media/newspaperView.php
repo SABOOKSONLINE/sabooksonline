@@ -12,8 +12,9 @@ $controller = new MediaController($conn);
 $newspaperData = $controller->getNewspaperByPublicKey($_GET['publicKey']);
 
 
-
 $id = $newspaperData['id'];
+$newspaperId = $magazineData['public_key'];
+
 $title = $newspaperData['title'];
 $description = $newspaperData['description'];
 $cover_image_path = $newspaperData['cover_image_path'];
@@ -151,7 +152,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             <?php if ((float)$price > 0): ?>
                                 <!-- BUY FORM -->
                                 <form method="POST" action="/checkout" id="digital-version" class="w-100 mt-3">
-                                    <input type="hidden" name="magazineId" value="<?= $id ?>">
+                                    <input type="hidden" name="newspaperId" value="<?= $newspaperId ?>">
                                     <input type="hidden" name="format" value="digital">
                                     <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
                                         <i class="fas fa-shopping-cart me-2"></i> Purchase Digital Issue

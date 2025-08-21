@@ -92,8 +92,8 @@ class CheckoutController {
         die("Invalid book or user data.");
     }
 
-    $bookId = $book['ID'] ?? '';
-    $title = html_entity_decode($book['TITLE']) ?? 'Untitled Book';
+    $bookId = $book['ID'] ?? $book['id'] ?? '';
+    $title = html_entity_decode($book['TITLE'] ?? $book['title'] ?? 'Untitled Book');
 
     $userKey = $user['ADMIN_USERKEY'] ?? '';
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
@@ -106,15 +106,15 @@ class CheckoutController {
             $price = $book['ABOOKPRICE'] ?? 0;
             break;
         case 'ebook':
-        // default:
+        // default:PRICE
             $price = $book['EBOOKPRICE'] ?? 0;
             break;
         case 'magazine':
-            $price = $book['PRICE'] ?? 0;
+            $price = $book['price'] ?? 0;
             break;
         case 'newspaper':
         // default:
-            $price = $book['PRICE'] ?? 0;
+            $price = $book['price'] ?? 0;
             break;    
     }
 
