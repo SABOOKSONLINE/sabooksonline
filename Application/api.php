@@ -62,7 +62,7 @@ switch ($action) {
         break;
 
      case 'user':
-        $creator->getUserInfo($email);
+        $authController->getUserInfo($email);
         break;
 
     case 'audio':
