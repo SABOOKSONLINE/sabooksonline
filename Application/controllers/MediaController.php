@@ -21,6 +21,19 @@ class MediaController
             return [];
         }
     }
+    public function getMagazines($date): array
+    {
+        $magazines =  $this->mediaModel->getMagazines($date);
+        header('Content-Type: application/json');
+        echo json_encode($magazines);
+    }
+
+    public function getNewspapers($date): array
+    {
+        $newsPapers =  $this->mediaModel->getNewspapers($date);
+        header('Content-Type: application/json');
+        echo json_encode($newsPapers);
+    }
 
     public function getMagazineByPublicKey(string $publicKey): ?array
     {
@@ -32,7 +45,6 @@ class MediaController
         }
     }
 
-    // NEWSPAPER METHODS
     public function getAllNewspapers(): array
     {
         try {

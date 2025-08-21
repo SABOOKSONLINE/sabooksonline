@@ -187,8 +187,6 @@ class BookModel
 
         $sql .= " WHERE p.updated_at > ?";
         $sql .= " ORDER BY p.updated_at ASC";
-    } else {
-        $sql .= " ORDER BY RAND()";
     }
 
     // Prepare the statement for executing the query

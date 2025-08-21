@@ -59,13 +59,20 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // =================== API Routes ===================
-    $r->addRoute('POST', '/api/book-action', function () {
-        require "Application/API/ActionApi.php";
-    });
     $r->addRoute('GET', '/api/onix', function () {
         require "Application/onix.php";
     });
     $r->addRoute('GET', '/api/books', function () {
+        require "Application/api.php";
+    });
+
+    $r->addRoute('GET', '/api/magazines', function () {
+        $_GET['action'] = 'magazine';
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/newspapers', function () {
+        $_GET['action'] = 'newspaper';
         require "Application/api.php";
     });
     

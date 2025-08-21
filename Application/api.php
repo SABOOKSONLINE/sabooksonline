@@ -1,10 +1,8 @@
 <?php
-// CORS headers - Allow cross-origin requests
-header('Access-Control-Allow-Origin: *'); // Allows requests from any domain. Change this to a specific domain if needed
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'); // Allowed HTTP methods
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); // Allowed headers
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); 
 
-// Handle OPTIONS request (for preflight)
 header('Content-Type: application/json');
 
 // if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -15,14 +13,19 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/models/UserModel.php';
+require_once __DIR__ . '/models/MediaModel.php';
+
 require_once __DIR__ . '/controllers/BookController.php';
 require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/MediaController.php';
 
 
 $controller = new BookController($conn);
 $creator = new UserController($conn);
 $authController = new AuthController($conn);
+$media = new MediaController($conn);
+
 
 
 $action = $_GET['action'] ?? 'getAllBooks';
@@ -59,6 +62,14 @@ switch ($action) {
 
     case 'creators':
         $creator->getCreators($date);
+        break;
+
+    case 'magazine':
+        $media->getMagazines($date);
+        break;
+
+    case 'newspaper':
+        $media->getNewspapers($date);
         break;
 
      case 'user':
