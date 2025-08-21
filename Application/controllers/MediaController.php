@@ -21,14 +21,14 @@ class MediaController
             return [];
         }
     }
-    public function getMagazines($date): array
+    public function getMagazines($date)
     {
         $magazines =  $this->mediaModel->getMagazines($date);
         header('Content-Type: application/json');
         echo json_encode($magazines);
     }
 
-    public function getNewspapers($date): array
+    public function getNewspapers($date)
     {
         $newsPapers =  $this->mediaModel->getNewspapers($date);
         header('Content-Type: application/json');
