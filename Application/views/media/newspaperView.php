@@ -13,7 +13,7 @@ $newspaperData = $controller->getNewspaperByPublicKey($_GET['publicKey']);
 
 
 $id = $newspaperData['id'];
-$newspaperId = $magazineData['public_key'];
+$newspaperId = $newspaperData['public_key'];
 
 $title = $newspaperData['title'];
 $description = $newspaperData['description'];
