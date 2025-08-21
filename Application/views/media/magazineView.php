@@ -188,6 +188,36 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             </div>
         </div>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const buyFormat = getQueryParam('buy');
+
+        if (buyFormat) {
+            let targetFormId = "digital-version";
+
+
+            if (targetFormId) {
+                const targetForm = document.getElementById(targetFormId);
+
+                if (targetForm && targetForm.tagName === 'FORM') {
+                    targetForm.closest('.hide')?.classList.remove('hide');
+
+                    targetForm.submit();
+
+                    console.log('Initiating purchase for ' + buyFormat + '. Redirecting to payment gateway...');
+                } else {
+                    console.warn('Could not find a purchasable form for buy_format: ' + buyFormat + '. The item might be already owned or unavailable.');
+                }
+            }
+        }
+    });
+</script>
 
     <?php
     include __DIR__ . "/../includes/footer.php";
