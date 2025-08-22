@@ -32,29 +32,31 @@ jobs:
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
-            - name: Get changed files
-              id: changed-files
-              uses: tj-actions/changed-files@v45
-
-            - name: Deploy only changed files via FTP
-              if: steps.changed-files.outputs.any_changed == 'true'
+            - name: Deploy via FTP (only changed files, safe)
               env:
                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
                   FTP_USER: ${{ secrets.FTP_USERNAME }}
                   FTP_PASS: ${{ secrets.FTP_PASSWORD }}
                   REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
-                  # Generate list of lftp commands
-                  FILE_COMMANDS=$(for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-                    echo "put -O $REMOTE_DIR $file"
-                  done)
-
-                  # Run lftp with those commands
-                  lftp -u $FTP_USER,$FTP_PASS $FTP_SERVER <<EOF
-                    set ftp:ssl-force false
-                    set ftp:ssl-protect-data false
-                    set ftp:passive-mode true
-                    cd $REMOTE_DIR
-                    $FILE_COMMANDS
+                  lftp -e "
+                    set ftp:ssl-force false;
+                    set ftp:ssl-protect-data false;
+                    set ftp:passive-mode true;
+                    open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
+                    mirror --reverse \
+                          --verbose \
+                          --only-newer \
+                          --ignore-time \
+                          --exclude-glob .git* \
+                          --exclude-glob img/* \
+                          --exclude-glob .github/* \
+                          --exclude-glob tests/* \
+                          --exclude-glob *.md \
+                          --exclude-glob composer.* \
+                          --exclude-glob README.md \
+                          --exclude-glob .gitignore \
+                          --exclude-glob .env \
+                          ./ $REMOTE_DIR;
                     bye
-                  EOF
+                  "
