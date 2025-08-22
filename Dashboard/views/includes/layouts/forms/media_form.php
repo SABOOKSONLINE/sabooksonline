@@ -262,7 +262,7 @@ $newspaperBtnClass = ($type === 'newspaper') ? 'btn-dark' : 'btn-outline-dark';
             <div class="col-md-6">
                 <label class="form-label">PDF Upload</label>
                 <input type="file" name="pdf" class="form-control">
-                <input type="text" name="existing_pdf" class="form-control" value="<?= $magazine['cover_image_path'] ?>" hidden>
+                <input type="text" name="existing_pdf" class="form-control" value="<?= $magazine['pdf_path'] ?>" hidden>
                 <?php if (!empty($magazine['pdf_path'])): ?>
                     <div class="mt-2">
                         <small class="text-muted">Current PDF:</small><br>
