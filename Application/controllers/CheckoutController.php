@@ -135,7 +135,7 @@ class CheckoutController {
         'item_name'       => $title,
         'custom_str1'     => $bookId,
         'custom_str2'     => $userKey,
-        'custom_str3'     => ucfirst($format), // Format (Ebook, Audiobook, etc.)
+        'custom_str3'     => ucfirst($format),
     ];
 
     $signature = $this->generateSignature($data, 'SABooksOnline2021');

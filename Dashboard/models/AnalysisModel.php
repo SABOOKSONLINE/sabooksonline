@@ -38,6 +38,50 @@ class AnalyticsModel
         }
     }
 
+     public function getBooksByUserKey($userKey) {
+        $stmt = $this->conn->prepare("
+            SELECT id, title 
+            FROM posts 
+            WHERE userid = ?
+        ");
+        $stmt->execute([$userKey]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRevenueByBooks(array $bookIds) {
+        if (empty($bookIds)) {
+            return 0;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($bookIds), '?'));
+
+        $stmt = $this->dconnb->prepare("
+            SELECT COALESCE(SUM(amount), 0) AS total_revenue
+            FROM book_purchases
+            WHERE book_id IN ($placeholders)
+              AND payment_status = 'COMPLETE'
+        ");
+        $stmt->execute($bookIds);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (float)$row['total_revenue'] : 0;
+    }
+
+    public function getUserRevenue($userKey) {
+        // Fetch all books for this user
+        $books = $this->getBooksByUserKey($userKey);
+
+        // Extract book IDs
+        $bookIds = array_column($books, 'id');
+
+        // Calculate revenue
+        $revenue = $this->getRevenueByBooks($bookIds);
+
+        return [
+            'books' => $books,
+            'total_revenue' => $revenue
+        ];
+    }
 
     public function getBookViews($user_id, $start_date = null, $end_date = null)
     {
