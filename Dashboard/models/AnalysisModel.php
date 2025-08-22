@@ -38,34 +38,60 @@ class AnalyticsModel
         }
     }
 
-     public function getBooksByUserKey($userKey) {
-        $stmt = $this->conn->prepare("
-            SELECT id, title 
-            FROM posts 
-            WHERE userid = ?
-        ");
-        $stmt->execute([$userKey]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getBooksByUserKey($userKey)
+{
+    $sql = "
+        SELECT id, title 
+        FROM posts 
+        WHERE userid = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $userKey);
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $books = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $books;
+    } else {
+        error_log("❌ Failed to fetch books: " . $stmt->error);
+        return [];
+    }
+}
+
+public function getRevenueByBooks(array $bookIds)
+{
+    if (empty($bookIds)) {
+        return 0;
     }
 
-    public function getRevenueByBooks(array $bookIds) {
-        if (empty($bookIds)) {
-            return 0;
-        }
+    // Dynamically generate placeholders (?,?,?)
+    $placeholders = implode(',', array_fill(0, count($bookIds), '?'));
+    $types = str_repeat('i', count($bookIds)); // assuming book_id is INT
 
-        $placeholders = implode(',', array_fill(0, count($bookIds), '?'));
+    $sql = "
+        SELECT COALESCE(SUM(amount), 0) AS total_revenue
+        FROM book_purchases
+        WHERE book_id IN ($placeholders)
+          AND payment_status = 'COMPLETE'
+    ";
 
-        $stmt = $this->dconnb->prepare("
-            SELECT COALESCE(SUM(amount), 0) AS total_revenue
-            FROM book_purchases
-            WHERE book_id IN ($placeholders)
-              AND payment_status = 'COMPLETE'
-        ");
-        $stmt->execute($bookIds);
+    $stmt = $this->conn->prepare($sql);
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    // bind_param needs references, so we use unpacking with call_user_func_array
+    $stmt->bind_param($types, ...$bookIds);
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
         return $row ? (float)$row['total_revenue'] : 0;
+    } else {
+        error_log("❌ Failed to calculate revenue: " . $stmt->error);
+        return 0;
     }
+}
 
     public function getUserRevenue($userKey) {
         // Fetch all books for this user
