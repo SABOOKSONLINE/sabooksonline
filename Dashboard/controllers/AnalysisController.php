@@ -16,6 +16,11 @@ class AnalysisController
         return $this->model->getTitlesCount($user_id);
     }
 
+    // revenue analyticssss
+    public function getUserRevenue($user_id){
+        return $this->model->getUserRevenue($user_id);
+    }
+
     public function viewSubscription($userId) {
         return $this->model->viewSubscription($userId);
     }
