@@ -28,6 +28,8 @@ if (isset($userKey) && !empty($userKey)) {
 } else {
     $profile = null;
 }
+
+require_once __DIR__ . "/../util/urlRedirect.php";
 ?>
 
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>

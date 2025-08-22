@@ -95,7 +95,11 @@ try {
         'message' => 'Login successful! Welcome back.',
         'title' => 'Welcome'
     ];
-    header("Location: /dashboards");
+    if (!empty($_SESSION['current_page'])) {
+        header("Location: " . $_SESSION['current_page']);
+    } else {
+        header("Location: /dashboards");
+    }
     exit;
 } catch (Exception $e) {
     error_log("Login error: " . $e->getMessage());
