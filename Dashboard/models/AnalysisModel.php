@@ -83,7 +83,6 @@ class AnalyticsModel
         ];
     }
 
-
     public function getBookViews($user_id, $start_date = null, $end_date = null)
     {
         $contentIds = $this->getUserBookIds($user_id);
