@@ -9,12 +9,12 @@ function sendEmail($from, $to, $message, $link = "", $name = "")
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'da7.host-ww.net';
+        $mail->Host = 'ns1.host-h.net';
         $mail->SMTPAuth = true;
         $mail->Username = $from;
-        $mail->Password = 'Sabo_365+';
+        $mail->Password = '75o783F0O4L79o';
         $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+        $mail->Port = 465;
 
         $mail->setFrom($from, $name);
         $mail->addAddress($to);
