@@ -32,12 +32,10 @@ jobs:
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
-            # 👇 Detect only changed files in this push
             - name: Get changed files
               id: changed-files
               uses: tj-actions/changed-files@v45
 
-            # 👇 Deploy only those changed files
             - name: Deploy only changed files via FTP
               if: steps.changed-files.outputs.any_changed == 'true'
               env:
