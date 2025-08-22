@@ -44,14 +44,17 @@ jobs:
                   FTP_PASS: ${{ secrets.FTP_PASSWORD }}
                   REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
-                  lftp -e "
-                    set ftp:ssl-force false;
-                    set ftp:ssl-protect-data false;
-                    set ftp:passive-mode true;
-                    open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
-                    cd $REMOTE_DIR;
-                    $(for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-                      echo "put -O $REMOTE_DIR $file";
-                    done)
+                  # Generate list of lftp commands
+                  FILE_COMMANDS=$(for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+                    echo "put -O $REMOTE_DIR $file"
+                  done)
+
+                  # Run lftp with those commands
+                  lftp -u $FTP_USER,$FTP_PASS $FTP_SERVER <<EOF
+                    set ftp:ssl-force false
+                    set ftp:ssl-protect-data false
+                    set ftp:passive-mode true
+                    cd $REMOTE_DIR
+                    $FILE_COMMANDS
                     bye
-                  "
+                  EOF
