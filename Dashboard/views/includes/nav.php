@@ -27,6 +27,9 @@ if (isset($userKey)) {
     header("Location: /login");
     exit;
 }
+
+require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
+
 ?>
 <nav class="navbar navbar-expand-xl navbar-light fixed-top border-bottom bg-white">
     <div class="container-fluid">
