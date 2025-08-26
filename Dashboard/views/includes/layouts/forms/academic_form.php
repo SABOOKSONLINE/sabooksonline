@@ -1,48 +1,58 @@
 <?php
 $subjects = [
-    "News & Politics",
-    "Business & Finance",
-    "Technology & Gadgets",
-    "Science & Nature",
-    "Health & Fitness",
-    "Lifestyle & Culture",
-    "Travel & Adventure",
-    "Fashion & Beauty",
-    "Food & Cooking",
-    "Sports & Recreation",
-    "Arts & Entertainment",
-    "Photography & Design",
-    "Education & Learning",
-    "Parenting & Family",
-    "Automotive & Motorcycles",
-    "Music & Performing Arts",
-    "Gaming & Comics",
-    "Hobbies & DIY",
-    "History & Literature",
-    "Environmental & Sustainability"
+    // Foundation Phase
+    "Home Language",
+    "First Additional Language",
+    "Mathematics",
+    "Life Skills",
+
+    // Intermediate Phase
+    "Natural Sciences",
+    "Technology",
+    "Social Sciences (History & Geography)",
+    "Economic Management Sciences",
+    "Creative Arts",
+    "Physical Education",
+
+    // Senior Phase
+    "Mathematics",
+    "Natural Sciences",
+    "Technology",
+    "Social Sciences",
+    "Economic Management Sciences",
+    "Creative Arts",
+    "Life Orientation",
+
+    // FET Phase (Grade 10-12)
+    "Mathematics",
+    "Mathematical Literacy",
+    "Physical Sciences",
+    "Life Sciences",
+    "Geography",
+    "History",
+    "Accounting",
+    "Business Studies",
+    "Economics",
+    "Computer Applications Technology (CAT)",
+    "Information Technology (IT)",
+    "Engineering Graphics and Design (EGD)",
+    "Tourism",
+    "Hospitality Studies",
+    "Consumer Studies",
+    "Visual Arts",
+    "Music",
+    "Drama",
+    "Life Orientation"
 ];
 
+
 $academicLevel = [
-    "News & Politics",
-    "Business & Finance",
-    "Technology & Gadgets",
-    "Science & Nature",
-    "Health & Fitness",
-    "Lifestyle & Culture",
-    "Travel & Adventure",
-    "Fashion & Beauty",
-    "Food & Cooking",
-    "Sports & Recreation",
-    "Arts & Entertainment",
-    "Photography & Design",
-    "Education & Learning",
-    "Parenting & Family",
-    "Automotive & Motorcycles",
-    "Music & Performing Arts",
-    "Gaming & Comics",
-    "Hobbies & DIY",
-    "History & Literature",
-    "Environmental & Sustainability"
+    "Foundation Phase (Grade R-3)",
+    "Intermediate Phase (Grade 4-6)",
+    "Senior Phase (Grade 7-9)",
+    "FET Phase (Grade 10-12)",
+    "Undergraduate",
+    "Postgraduate"
 ];
 
 $languages = [
@@ -58,6 +68,7 @@ $languages = [
     "Tshivenda",
     "isiNdebele"
 ];
+
 ?>
 
 <form method="POST"
@@ -67,7 +78,7 @@ $languages = [
     <h4 class="fw-bold mb-4">Basic Academic Book Information</h4>
     <div class="row g-3">
 
-        <input type="text" name="publisher_id" class="form-control" value="" hidden required>
+        <input type="text" name="publisher_id" class="form-control" value="<?= $userId ?>" hidden required>
         <input type="text" name="public_key" class="form-control" value="" hidden>
 
         <!-- Book Title -->
