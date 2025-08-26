@@ -13,8 +13,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/', function () {
         require "Application/views/home.php";
     });
-    $r->addRoute('GET', '/home', function () {
+
+     $r->addRoute('GET', '/email', function () {
         require "Application/views/home.php";
+    });
+
+    $r->addRoute('GET', '/home', function () {
+        require "Application/views/auth/email.php";
     });
     $r->addRoute('GET', '/about', function () {
         require "Application/views/about.php";
