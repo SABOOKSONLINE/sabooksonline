@@ -71,11 +71,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/newspapers', function () {
+    $r->addRoute('GET', '/api/newspapers', function () {
         $_GET['action'] = 'newspaper';
         require "Application/api.php";
     });
-    
+
     $r->addRoute('GET', '/api/userinfo', function () {
         $_GET['action'] = 'user';
         require "Application/api.php";
@@ -188,6 +188,19 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['publicKey'] = $publicKey;
         require "Application/views/media/newspaperView.php";
     });
+
+    // --- Academic ---
+    $r->addRoute('GET', '/dashboards/academic', function () {
+        require "Dashboard/views/manage_academic.php";
+    });
+    $r->addRoute('GET', '/dashboards/add/academic', function () {
+        require "Dashboard/views/add/add_academic.php";
+    });
+    $r->addRoute('POST', '/dashboards/academic/book/insert', function () {
+        $_GET["action"] = "insert";
+        require "Dashboard/handlers/academic_book_handler.php";
+    });
+
 
     // --- Events ---
     $r->addRoute('GET', '/dashboards/add/event', function () {
