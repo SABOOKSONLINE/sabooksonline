@@ -190,17 +190,26 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // --- Academic ---
-    $r->addRoute('GET', '/dashboards/academic', function () {
+    $r->addRoute('GET', '/dashboards/academic/books', function () {
         require "Dashboard/views/manage_academic.php";
     });
     $r->addRoute('GET', '/dashboards/add/academic', function () {
         require "Dashboard/views/add/add_academic.php";
     });
-    $r->addRoute('POST', '/dashboards/academic/book/insert', function () {
-        $_GET["action"] = "insert";
-        require "Dashboard/handlers/academic_book_handler.php";
+
+    $r->addRoute('GET', '/dashboards/update/academic/{id}', function ($id) {
+        $_GET["id"] = $id;
+        require "Dashboard/views/add/add_academic.php";
     });
 
+    $r->addRoute('POST', '/dashboards/academic/book/insert', function () {
+        require "Dashboard/handlers/academic_book_handler.php";
+    });
+    $r->addRoute('POST', '/dashboards/academic/book/update/{id}', function ($id) {
+        $_GET['action'] = 'update';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/academic_book_handler.php";
+    });
 
     // --- Events ---
     $r->addRoute('GET', '/dashboards/add/event', function () {
