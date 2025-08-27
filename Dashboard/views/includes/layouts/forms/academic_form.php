@@ -7,10 +7,14 @@ require_once __DIR__ . "/../../../../database/connection.php";
 require_once __DIR__ . "/../../../../models/AcademicBookModel.php";
 require_once __DIR__ . "/../../../../controllers/AcademicBookController.php";
 
-$bookId = $_GET["id"];
+$bookId = $_GET["id"] ?? null;
 
 $academicBookController = new AcademicBookController($conn);
-$book = $academicBookController->getBookById($bookId, $userId);
+$book = [];
+
+if ($bookId) {
+    $book = $academicBookController->getBookById($bookId, $userId) ?? [];
+}
 
 // echo "<pre>";
 // print_r($book);
@@ -26,24 +30,30 @@ function clean($data): string
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
-$publisher_id = clean($book["publisher_id"]);
-$public_key = clean($book["public_key"]);
-$title = clean($book["title"]);
-$author = clean($book["author"]);
-$editor = clean($book["editor"]);
-$description = clean($book["description"]);
-$subject = clean($book["subject"]);
-$level = clean($book["level"]);
-$language = clean($book["language"]);
-$edition = clean($book["edition"]);
-$pages = clean($book["pages"]);
-$isbn = clean($book["ISBN"]);
-$publish_date = clean($book["publish_date"]);
-$cover_image_path = clean($book["cover_image_path"]);
-$pdf_path = ($book["pdf_path"] == 0) ? "" : clean($book["pdf_path"]);
-$ebook_price = ($book["ebook_price"] == 0) ? "" : clean($book["ebook_price"]);
-$physical_book_price = ($book["physical_book_price"] == 0) ? "" : clean($book["physical_book_price"]);
-$link = ($book["link"] == 0) ? "" : clean($book["link"]);
+function safeClean(array $arr, string $key, string $default = ''): string
+{
+    return isset($arr[$key]) ? clean($arr[$key]) : $default;
+}
+
+$publisher_id         = safeClean($book, "publisher_id");
+$public_key           = safeClean($book, "public_key");
+$title                = safeClean($book, "title");
+$author               = safeClean($book, "author");
+$editor               = safeClean($book, "editor");
+$description          = safeClean($book, "description");
+$subject              = safeClean($book, "subject");
+$level                = safeClean($book, "level");
+$language             = safeClean($book, "language");
+$edition              = safeClean($book, "edition");
+$pages                = safeClean($book, "pages");
+$isbn                 = safeClean($book, "ISBN");
+$publish_date         = safeClean($book, "publish_date");
+$cover_image_path     = safeClean($book, "cover_image_path");
+
+$pdf_path             = !empty($book["pdf_path"]) ? clean($book["pdf_path"]) : "";
+$ebook_price          = !empty($book["ebook_price"]) ? clean($book["ebook_price"]) : "";
+$physical_book_price  = !empty($book["physical_book_price"]) ? clean($book["physical_book_price"]) : "";
+$link                 = !empty($book["link"]) ? clean($book["link"]) : "";
 
 
 $subjects = [

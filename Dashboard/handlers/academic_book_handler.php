@@ -98,8 +98,10 @@ function academicBookFormDataArray(bool $isUpdate = false): array
 }
 
 // echo "<pre>";
-// print_r(academicBookFormDataArray(true));
+// print_r(academicBookFormDataArray(false));
 // echo "</pre>";
+// echo $_GET["action"];
+// die();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $action = $_GET["action"] ?? '';
@@ -107,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($action === "insert") {
         try {
-            $data = academicBookFormDataArray();
+            $data = academicBookFormDataArray(false);
             $success = $academicController->insertBook($data);
 
             if ($success) {
