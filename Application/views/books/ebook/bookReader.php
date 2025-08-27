@@ -130,14 +130,14 @@ require_once __DIR__ . "/../../includes/header.php";
 
 
 <div class="container">
-  <button onclick="toggleMode()">mode</button>
+  <!-- <button onclick="toggleMode()">mode</button>
   <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
 
   <div class="toolbar">
     <button onclick="zoomOut()">-</button>
     <span id="zoom-level">Zoom: 150%</span>
     <button onclick="zoomIn()">+</button>
-  </div>
+  </div> -->
 
   <div id="chapterNav">
     <ul id="chapters-list"></ul>
