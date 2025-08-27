@@ -90,7 +90,7 @@ $booksForPage = array_slice($books, ($currentPage - 1) * $perPage, $perPage);
                                     class="btn btn-sm btn-outline-info">
                                     <i class="bi bi-eye"></i> View
                                 </a>
-                                <a href="<?= $magazine['id'] ?>"
+                                <a href="/dashboards/academic/book/delete/<?= $book['id'] ?>"
                                     class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Are you sure you want to delete this magazine?')">
                                     <i class="bi bi-trash"></i> Delete

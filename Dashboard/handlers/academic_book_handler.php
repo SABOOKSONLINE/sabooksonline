@@ -97,9 +97,9 @@ function academicBookFormDataArray(bool $isUpdate = false): array
     ];
 }
 
-echo "<pre>";
-print_r(academicBookFormDataArray(true));
-echo "</pre>";
+// echo "<pre>";
+// print_r(academicBookFormDataArray(true));
+// echo "</pre>";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $action = $_GET["action"] ?? '';
@@ -142,29 +142,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header("Location: $redirect");
         exit();
     }
+} else if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    $action = $_GET["action"] ?? '';
+    $redirect = "/dashboards/academic/books";
+
+    if ($action === "delete") {
+        try {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                throw new Exception("Invalid academic book ID.");
+            }
+
+            $id = (int)$_GET['id'];
+            $success = $academicController->deleteBook($id);
+
+            if ($success) {
+                setAlert('success', 'Academic book deleted successfully!');
+            } else {
+                setAlert('error', 'Failed to delete academic book. Please try again.');
+            }
+        } catch (Exception $e) {
+            setAlert('error', "Error: " . $e->getMessage());
+        }
+        header("Location: $redirect");
+        exit();
+    }
 }
-// } else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "academic") {
-//     $action = $_GET["action"] ?? '';
-//     $redirect = "/dashboards/academic/books";
-
-//     if ($action === "delete") {
-//         try {
-//             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-//                 throw new Exception("Invalid academic book ID.");
-//             }
-
-//             $id = (int)$_GET['id'];
-//             $success = $academicController->deleteBook($id);
-
-//             if ($success) {
-//                 setAlert('success', 'Academic book deleted successfully!');
-//             } else {
-//                 setAlert('error', 'Failed to delete academic book. Please try again.');
-//             }
-//         } catch (Exception $e) {
-//             setAlert('error', "Error: " . $e->getMessage());
-//         }
-//         header("Location: $redirect");
-//         exit();
-//     }
-// }
