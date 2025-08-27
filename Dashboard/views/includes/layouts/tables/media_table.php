@@ -90,7 +90,7 @@ if (isset($_SESSION['alerts']) && is_array($_SESSION['alerts'])) {
                                         class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
-                                    <a href="/view/magazine/<?= $magazine['id'] ?>"
+                                    <a href="/media/magazine/<?= $magazine['id'] ?>"
                                         class="btn btn-sm btn-outline-info">
                                         <i class="bi bi-eye"></i> View
                                     </a>
@@ -153,7 +153,7 @@ if (isset($_SESSION['alerts']) && is_array($_SESSION['alerts'])) {
                                         class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
-                                    <a href="/view/newspaper/<?= $newspaper['id'] ?>"
+                                    <a href="/media/newspapers/<?= $newspaper['public_key'] ?>"
                                         class="btn btn-sm btn-outline-info">
                                         <i class="bi bi-eye"></i> View
                                     </a>
