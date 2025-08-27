@@ -210,6 +210,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['id'] = $id;
         require "Dashboard/handlers/academic_book_handler.php";
     });
+    $r->addRoute('GET', '/dashboards/academic/book/delete/{id}', function ($id) {
+        $_GET['action'] = 'delete';
+        $_GET['id'] = $id;
+        require "Dashboard/handlers/academic_book_handler.php";
+    });
 
     // --- Events ---
     $r->addRoute('GET', '/dashboards/add/event', function () {
