@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../database/connection.php";
-require_once __DIR__ . "/../models/MediaModel.php";
-require_once __DIR__ . "/../controllers/MediaController.php";
+require_once __DIR__ . "/../models/AcademicBookModel.php";
+require_once __DIR__ . "/../controllers/AcademicBookController.php";
 
 include __DIR__ . "/includes/header.php";
 include __DIR__ . "/includes/dashboard_heading.php";
@@ -22,6 +22,9 @@ include __DIR__ . "/includes/dashboard_heading.php";
                         "Manage Academic Books",
                         "Easily view, edit, or remove Academic books you’ve published.",
                     );
+
+                    $academicBooksController = new AcademicBookController($conn);
+                    $books = $academicBooksController->getAllBooks($userId);
 
                     include __DIR__ . "/includes/layouts/tables/academic_table.php";
                     ?>
