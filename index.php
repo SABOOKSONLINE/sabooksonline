@@ -203,6 +203,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('POST', '/dashboards/academic/book/insert', function () {
+        $_GET['action'] = 'insert';
         require "Dashboard/handlers/academic_book_handler.php";
     });
     $r->addRoute('POST', '/dashboards/academic/book/update/{id}', function ($id) {
