@@ -12,20 +12,20 @@ function renderPurchaseCard($purchases)
         <?php if (empty($purchases)): ?>
             <p class="text-muted mb-0">No purchases yet.</p>
         <?php else: ?>
-            <div class="list-group list-group-flush">
+            <div class="row g-3">
                 <?php foreach ($preview as $purchase): ?>
-                    <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
-                        <div>
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded p-3 h-100">
                             <p class="mb-1 fw-semibold text-truncate" style="max-width: 200px;">
                                 <?= htmlspecialchars($purchase['title']) ?>
                             </p>
-                            <small class="text-muted">
+                            <small class="text-muted d-block mb-1">
                                 Format: <?= htmlspecialchars(ucfirst($purchase['format'])) ?> |
-                                Bought on: <?= date("d M Y", strtotime($purchase['payment_date'])) ?>
+                                <?= date("d M Y", strtotime($purchase['payment_date'])) ?>
                             </small>
-                        </div>
-                        <div class="fw-bold">
-                            <?= $purchase['amount'] == 0 ? "Free" : "R" . number_format($purchase['amount'], 2) ?>
+                            <div class="fw-bold">
+                                <?= $purchase['amount'] == 0 ? "Free" : "R" . number_format($purchase['amount'], 2) ?>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -41,25 +41,25 @@ function renderPurchaseCard($purchases)
 
     <!-- Modal -->
     <div class="modal fade" id="purchasesModal" tabindex="-1" aria-labelledby="purchasesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable"> <!-- xl for wider modal -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="purchasesModalLabel">All Purchased Books</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="list-group list-group-flush">
+                    <div class="row g-3">
                         <?php foreach ($purchases as $purchase): ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
-                                <div>
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded p-3 h-100">
                                     <p class="mb-1 fw-semibold"><?= htmlspecialchars($purchase['title']) ?></p>
-                                    <small class="text-muted">
+                                    <small class="text-muted d-block mb-1">
                                         Format: <?= htmlspecialchars(ucfirst($purchase['format'])) ?> |
-                                        Bought on: <?= date("d M Y", strtotime($purchase['payment_date'])) ?>
+                                        <?= date("d M Y", strtotime($purchase['payment_date'])) ?>
                                     </small>
-                                </div>
-                                <div class="fw-bold">
-                                    <?= $purchase['amount'] == 0 ? "Free" : "R" . number_format($purchase['amount'], 2) ?>
+                                    <div class="fw-bold">
+                                        <?= $purchase['amount'] == 0 ? "Free" : "R" . number_format($purchase['amount'], 2) ?>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>

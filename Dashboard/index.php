@@ -22,13 +22,13 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         <div>
                             <label for="start_date">Start Date</label>
                             <input type="date" name="start_date" id="start_date" class="form-control"
-                                value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>">
+                                value="<?= htmlspecialchars($_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'))) ?>">
                         </div>
 
                         <div>
                             <label for="end_date">End Date</label>
                             <input type="date" name="end_date" id="end_date" class="form-control"
-                                value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>">
+                                value="<?= htmlspecialchars($_GET['end_date'] ?? date('Y-m-d')) ?>">
                         </div>
 
                         <div>
@@ -96,8 +96,8 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card");
                         renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
+                        renderAnalysisCard("Media Views", '0', "fas fa-newspaper");
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
-                        renderAnalysisCard("Media Views", '0', "fas fa-user-tie");
                         renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt");
                         renderPurchaseCard($purchasesWithTitle);
 
