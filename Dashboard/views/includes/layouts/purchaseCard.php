@@ -2,7 +2,7 @@
 function renderPurchaseCard($purchases)
 {
     // Limit items to show in card preview
-    $previewLimit = 5;
+    $previewLimit = 2;
     $preview = array_slice($purchases, 0, $previewLimit);
     $hasMore = count($purchases) > $previewLimit;
 ?>
@@ -55,7 +55,7 @@ function renderPurchaseCard($purchases)
                                     <p class="mb-1 fw-semibold"><?= htmlspecialchars($purchase['title']) ?></p>
                                     <small class="text-muted">
                                         Format: <?= htmlspecialchars(ucfirst($purchase['format'])) ?> |
-                                        Bought on: <?= date("d M Y", strtotime($purchase['date_bought'])) ?>
+                                        Bought on: <?= date("d M Y", strtotime($purchase['payment_date'])) ?>
                                     </small>
                                 </div>
                                 <div class="fw-bold">

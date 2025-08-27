@@ -109,7 +109,7 @@ public function getRevenueByBooks(array $bookIds)
             'book_id'    => (int)$purchase['book_id'],
             'amount'     => (float)$purchase['amount'],
             'format'     => $purchase['format'],
-            'date_bought'=> $purchase['date_bought']
+            'payment_date'=> $purchase['payment_date']
         ];
     }
     $stmt->close();
