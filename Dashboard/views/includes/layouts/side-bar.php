@@ -28,7 +28,7 @@ $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
                     <a href="/dashboards/media" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/media') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-book me-2"></i> Manage Media
                     </a>
-                    <a href="/dashboards/academic" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/academic') === 0) ? 'active' : ''; ?>">
+                    <a href="/dashboards/academic/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/academic') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-book me-2"></i> Manage Academic Books
                     </a>
                     <a href="/dashboards/events" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/events') === 0) ? 'active' : ''; ?>">

@@ -22,7 +22,6 @@ include __DIR__ . "/../includes/dashboard_heading.php";
                         } else {
                             renderHeading("Publish Academic Books", "You can manage, add or delete your book uploads.");
                         }
-
                         include __DIR__ . "/../includes/layouts/forms/academic_form.php";
                         ?>
                     </div>

@@ -12,7 +12,6 @@ class AcademicBookController
         $this->academicBookModel = new AcademicBookModel($conn);
     }
 
-    // ---------------- INSERT ----------------
     public function insertBook(array $data): bool
     {
         try {
@@ -23,7 +22,6 @@ class AcademicBookController
         }
     }
 
-    // ---------------- UPDATE ----------------
     public function updateBook(array $data): bool
     {
         try {
@@ -34,7 +32,6 @@ class AcademicBookController
         }
     }
 
-    // ---------------- DELETE ----------------
     public function deleteBook(int $id): bool
     {
         try {
@@ -45,7 +42,6 @@ class AcademicBookController
         }
     }
 
-    // ---------------- GET ALL ----------------
     public function getAllBooks(int $publisher_id): array
     {
         try {
@@ -56,7 +52,6 @@ class AcademicBookController
         }
     }
 
-    // ---------------- GET BY ID ----------------
     public function getBookById(int $id, int $publisher_id): ?array
     {
         try {

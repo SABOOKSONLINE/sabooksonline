@@ -20,10 +20,11 @@ function clean($data): string
     return htmlspecialchars(trim($data));
 }
 
+
 function fileProcessor(string $path, string $formFileName, array $allowedFileTypes): ?string
 {
     if (!isset($_FILES[$formFileName]) || $_FILES[$formFileName]['error'] === UPLOAD_ERR_NO_FILE) {
-        return null; // Optional file (e.g. PDF)
+        return null;
     }
 
     if ($_FILES[$formFileName]['error'] !== UPLOAD_ERR_OK) {
@@ -58,7 +59,6 @@ function academicBookFormDataArray(bool $isUpdate = false): array
 {
     $public_key = $isUpdate ? ($_POST['public_key'] ?? '') : bin2hex(random_bytes(16));
 
-    // Handle files
     $cover_path = null;
     if (!empty($_FILES['cover']['name'])) {
         $cover_path = fileProcessor("/../../cms-data/academic/covers/", "cover", ["jpg", "jpeg", "png"]);
@@ -76,27 +76,32 @@ function academicBookFormDataArray(bool $isUpdate = false): array
     }
 
     return [
-        'publisher_id'       => clean($_POST['publisher_id'] ?? ''),
-        'title'              => clean($_POST['title'] ?? ''),
-        'author'             => clean($_POST['author'] ?? ''),
-        'editor'             => clean($_POST['editor'] ?? ''),
-        'description'        => clean($_POST['description'] ?? ''),
-        'category'           => clean($_POST['category'] ?? ''),
-        'level'              => clean($_POST['level'] ?? ''),
-        'language'           => clean($_POST['language'] ?? ''),
-        'ISBN'               => clean($_POST['ISBN'] ?? ''),
-        'publish_date'       => clean($_POST['publish_date'] ?? ''),
+        'publisher_id' => clean($_POST['publisher_id'] ?? ''),
+        'public_key' => $public_key,
+        'title' => clean($_POST['title'] ?? ''),
+        'author' => clean($_POST['author'] ?? ''),
+        'editor' => clean($_POST['editor'] ?? ''),
+        'description' => clean($_POST['description'] ?? ''),
+        'subject' => clean($_POST['subject'] ?? ''),
+        'level' => clean($_POST['level'] ?? ''),
+        'language' => clean($_POST['language'] ?? ''),
+        'edition' => clean($_POST['edition'] ?? ''),
+        'pages' => clean($_POST['pages'] ?? ''),
+        'isbn' => clean($_POST['isbn'] ?? ''),
+        'cover_image_path' => $cover_path,
+        'publish_date' => clean($_POST['publish_date'] ?? ''),
         'ebook_price'        => (float)($_POST['ebook_price'] ?? 0.00),
+        'pdf_path' => $pdf_path,
+        'link' => clean($_POST['link'] ?? ''),
         'physical_book_price' => (float)($_POST['physical_book_price'] ?? 0.00),
-        'link'               => clean($_POST['link'] ?? ''),
-        'cover_image_path'   => $cover_path,
-        'pdf_path'           => $pdf_path,
-        'public_key'         => $public_key
     ];
 }
 
-// Handle insert/update/delete
-if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "academic") {
+echo "<pre>";
+print_r(academicBookFormDataArray(true));
+echo "</pre>";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $action = $_GET["action"] ?? '';
     $redirect = "/dashboards/academic/books";
 
@@ -137,28 +142,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["type"] ?? '') === "academic
         header("Location: $redirect");
         exit();
     }
-} else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "academic") {
-    $action = $_GET["action"] ?? '';
-    $redirect = "/dashboards/academic/books";
-
-    if ($action === "delete") {
-        try {
-            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-                throw new Exception("Invalid academic book ID.");
-            }
-
-            $id = (int)$_GET['id'];
-            $success = $academicController->deleteBook($id);
-
-            if ($success) {
-                setAlert('success', 'Academic book deleted successfully!');
-            } else {
-                setAlert('error', 'Failed to delete academic book. Please try again.');
-            }
-        } catch (Exception $e) {
-            setAlert('error', "Error: " . $e->getMessage());
-        }
-        header("Location: $redirect");
-        exit();
-    }
 }
+// } else if ($_SERVER["REQUEST_METHOD"] === "GET" && ($_GET["type"] ?? '') === "academic") {
+//     $action = $_GET["action"] ?? '';
+//     $redirect = "/dashboards/academic/books";
+
+//     if ($action === "delete") {
+//         try {
+//             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+//                 throw new Exception("Invalid academic book ID.");
+//             }
+
+//             $id = (int)$_GET['id'];
+//             $success = $academicController->deleteBook($id);
+
+//             if ($success) {
+//                 setAlert('success', 'Academic book deleted successfully!');
+//             } else {
+//                 setAlert('error', 'Failed to delete academic book. Please try again.');
+//             }
+//         } catch (Exception $e) {
+//             setAlert('error', "Error: " . $e->getMessage());
+//         }
+//         header("Location: $redirect");
+//         exit();
+//     }
+// }
