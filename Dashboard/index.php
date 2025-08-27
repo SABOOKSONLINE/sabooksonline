@@ -2,6 +2,7 @@
 include __DIR__ . "/views/includes/header.php";
 
 include __DIR__ . "/views/includes/layouts/card.php";
+include __DIR__ . "/views/includes/layouts/purchaseCard.php";
 include __DIR__ . "/views/includes/dashboard_heading.php";
 ?>
 
@@ -21,13 +22,13 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         <div>
                             <label for="start_date">Start Date</label>
                             <input type="date" name="start_date" id="start_date" class="form-control"
-                                value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>">
+                                value="<?= htmlspecialchars($_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'))) ?>">
                         </div>
 
                         <div>
                             <label for="end_date">End Date</label>
                             <input type="date" name="end_date" id="end_date" class="form-control"
-                                value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>">
+                                value="<?= htmlspecialchars($_GET['end_date'] ?? date('Y-m-d')) ?>">
                         </div>
 
                         <div>
@@ -53,7 +54,19 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $start_date = $start ? $start . ' 00:00:00' : null;
                         $end_date = $end ? $end . ' 23:59:59' : null;
 
+                        $revenue = $analysisController->getUserRevenue($userKey);
 
+                        $booksMap = [];
+                        foreach ($revenue['books'] as $book) {
+                            $booksMap[$book['id']] = $book['title'];
+                        }
+
+                        // Merge book title into purchases
+                        $purchasesWithTitle = array_map(function($purchase) use ($booksMap) {
+                            return array_merge($purchase, [
+                                'title' => $booksMap[$purchase['book_id']] ?? 'Unknown Book'
+                            ]);
+                        }, $revenue['purchases']);
 
                         $titlesCount = $analysisController->getTitlesCount($userKey);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
@@ -65,7 +78,6 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $topBooks = $analysisController->getTopBooks($userKey);
 
                         // revenue analyticssssss
-                        $revenue = $analysisController->getUserRevenue($userKey);
 
                         // Time-based analytics
                         $bookViewsByMonthYear = $analysisController->getBookViewsByMonthYear($userKey);
@@ -79,14 +91,16 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $bookViewsByCity = $analysisController->getBookViewsByCity($userKey);
 
 
-                        renderAnalysisCard("eBook Downloads", $downloads, "fas fa-cloud-download-alt");
+                        renderAnalysisCard("Downloads", $downloads, "fas fa-cloud-download-alt");
                         renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");
                         renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card");
                         renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
+                        renderAnalysisCard("Media Views", '0', "fas fa-newspaper");
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
-                        // renderAnalysisCard("Services Views", $serviceView['visit_count'], "fas fa-user-tie");
                         renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt");
+                        renderPurchaseCard($purchasesWithTitle);
+
                         ?>
                     </div>
 

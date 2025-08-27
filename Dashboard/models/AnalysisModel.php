@@ -63,51 +63,81 @@ class AnalyticsModel
 public function getRevenueByBooks(array $bookIds)
 {
     if (empty($bookIds)) {
-        return 0;
+        return [
+            'total_revenue' => 0,
+            'purchases' => []
+        ];
     }
 
-    // Dynamically generate placeholders (?,?,?)
+    // Placeholders (?, ?, ?)
     $placeholders = implode(',', array_fill(0, count($bookIds), '?'));
-    $types = str_repeat('i', count($bookIds)); // assuming book_id is INT
+    $types = str_repeat('i', count($bookIds));
 
-    $sql = "
+    // Fetch total revenue
+    $sqlRevenue = "
         SELECT COALESCE(SUM(amount), 0) AS total_revenue
         FROM book_purchases
         WHERE book_id IN ($placeholders)
           AND payment_status = 'COMPLETE'
     ";
 
-    $stmt = $this->conn->prepare($sql);
-
-    // bind_param needs references, so we use unpacking with call_user_func_array
+    $stmt = $this->conn->prepare($sqlRevenue);
     $stmt->bind_param($types, ...$bookIds);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $totalRevenue = $row ? (float)$row['total_revenue'] : 0;
+    $stmt->close();
 
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        return $row ? (float)$row['total_revenue'] : 0;
-    } else {
-        error_log("❌ Failed to calculate revenue: " . $stmt->error);
-        return 0;
-    }
-}
+    // Fetch purchase details (format + date)
+    $sqlPurchases = "
+        SELECT bp.book_id, bp.amount, bp.format, bp.payment_date
+        FROM book_purchases bp
+        WHERE bp.book_id IN ($placeholders)
+          AND bp.payment_status = 'COMPLETE'
+        ORDER BY bp.payment_date DESC
+    ";
 
-    public function getUserRevenue($userKey) {
-        // Fetch all books for this user
-        $books = $this->getBooksByUserKey($userKey);
+    $stmt = $this->conn->prepare($sqlPurchases);
+    $stmt->bind_param($types, ...$bookIds);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        // Extract book IDs
-        $bookIds = array_column($books, 'id');
-
-        // Calculate revenue
-        $revenue = $this->getRevenueByBooks($bookIds);
-
-        return [
-            'books' => $books,
-            'total_revenue' => $revenue
+    $purchases = [];
+    while ($purchase = $result->fetch_assoc()) {
+        $purchases[] = [
+            'book_id'    => (int)$purchase['book_id'],
+            'amount'     => (float)$purchase['amount'],
+            'format'     => $purchase['format'],
+            'payment_date'=> $purchase['payment_date']
         ];
     }
+    $stmt->close();
+
+    return [
+        'total_revenue' => $totalRevenue,
+        'purchases'     => $purchases
+    ];
+}
+
+public function getUserRevenue($userKey)
+{
+    // Fetch all books for this user
+    $books = $this->getBooksByUserKey($userKey);
+
+    // Extract book IDs
+    $bookIds = array_column($books, 'id');
+
+    // Get revenue + purchase details
+    $revenueData = $this->getRevenueByBooks($bookIds);
+
+    return [
+        'books'         => $books,
+        'total_revenue' => $revenueData['total_revenue'],
+        'purchases'     => $revenueData['purchases']
+    ];
+}
+
 
     public function getBookViews($user_id, $start_date = null, $end_date = null)
     {
@@ -143,10 +173,6 @@ public function getRevenueByBooks(array $bookIds)
 
         return ['unique_user_count' => $unique_user_count];
     }
-
-
-
-
 
     public function getUserMostViewedBooks($user_id)
     {
