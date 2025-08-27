@@ -64,6 +64,9 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $downloads = $analysisController->getDownloadsByEmail($email);
                         $topBooks = $analysisController->getTopBooks($userKey);
 
+                        // revenue analyticssssss
+                        $revenue = $analysisController->getUserRevenue($userKey);
+
                         // Time-based analytics
                         $bookViewsByMonthYear = $analysisController->getBookViewsByMonthYear($userKey);
                         $profileViewsByMonthYear = $analysisController->getProfileViewsByMonthYear($userKey);
@@ -76,10 +79,9 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $bookViewsByCity = $analysisController->getBookViewsByCity($userKey);
 
 
-
                         renderAnalysisCard("eBook Downloads", $downloads, "fas fa-cloud-download-alt");
                         renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");
-                        renderAnalysisCard("Total Revenue", "0", "fas fa-coins");
+                        renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card");
                         renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");

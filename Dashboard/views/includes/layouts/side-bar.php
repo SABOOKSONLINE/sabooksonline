@@ -1,13 +1,20 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
 $subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
+
+$allowedPlans = ['pro', 'premium', 'standard', 'deluxe'];
+
+if (!in_array(strtolower($subscriptionPlan), $allowedPlans) && $current_path === '/dashboards') {
+    header("Location: /dashboards/bookshelf");
+    exit;
+}
 ?>
+
 <div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
     <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3" id="dashboardSidebar">
         <div class=" mb-auto">
             <?php if (
                 strtolower($subscriptionPlan) === 'pro' ||
-                $subscriptionPlan === 'Pro' ||
                 strtolower($subscriptionPlan) === 'premium' ||
                 strtolower($subscriptionPlan) === 'standard' ||
                 strtolower($subscriptionPlan) === 'deluxe'
