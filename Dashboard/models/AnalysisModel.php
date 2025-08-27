@@ -91,11 +91,11 @@ public function getRevenueByBooks(array $bookIds)
 
     // Fetch purchase details (format + date)
     $sqlPurchases = "
-        SELECT bp.book_id, bp.amount, bp.format, bp.date_bought
+        SELECT bp.book_id, bp.amount, bp.format, bp.payment_date
         FROM book_purchases bp
         WHERE bp.book_id IN ($placeholders)
           AND bp.payment_status = 'COMPLETE'
-        ORDER BY bp.date_bought DESC
+        ORDER BY bp.payment_date DESC
     ";
 
     $stmt = $this->conn->prepare($sqlPurchases);
