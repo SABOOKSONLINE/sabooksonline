@@ -130,14 +130,14 @@ require_once __DIR__ . "/../../includes/header.php";
 
 
 <div class="container">
-  <!-- <button onclick="toggleMode()">mode</button>
-  <h2><?= htmlspecialchars($book['TITLE']) ?></h2>
+  <!-- <button onclick="toggleMode()">mode</button> -->
+  <!-- <h2><?= htmlspecialchars($book['TITLE']) ?></h2> -->
 
   <div class="toolbar">
     <button onclick="zoomOut()">-</button>
     <span id="zoom-level">Zoom: 150%</span>
     <button onclick="zoomIn()">+</button>
-  </div> -->
+  </div> 
 
   <div id="chapterNav">
     <ul id="chapters-list"></ul>
@@ -147,7 +147,7 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 <script>
-  const url = "https://www.sabooksonline.co.za/cms-data/book-pdfs/<?= htmlspecialchars($book['PDFURL'], ENT_QUOTES, 'UTF-8') ?>";
+  const url = $pdfUrl;
   let pdfDoc = null,
       zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
       chapterTitles = [];

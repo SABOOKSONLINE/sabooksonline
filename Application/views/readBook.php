@@ -9,10 +9,10 @@ require_once __DIR__ . "/../models/UserModel.php";
 // Check if the method is GET and bookId is set in the query string
 if (isset($_GET['q'])) {
 
-
-    $bookId = $_GET['q'];  // Retrieve the bookId from the query string
+    $bookId = $_GET['q'];
+    $category = $_GET['category']; 
     $controller = new BookController($conn);  // Initialize your controller with the DB connection
-    $controller->readBook($bookId);  // Call the method to read the book with the bookId
+    $controller->readBook($bookId,$category);  // Call the method to read the book with the bookId
 } else {
     http_response_code(400);  // Bad request if no bookId is specified
     echo "No book ID specified.";

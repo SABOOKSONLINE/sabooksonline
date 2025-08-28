@@ -3,16 +3,15 @@
 class BookController
 {
     private $bookModel;
+    private $mediaModel;
+
     private $conn;
-
-
 
     public function __construct($conn)
     {
         $this->bookModel = new BookModel($conn);
-        $this->conn = $conn; // Save connection for readBook
-
-
+        $this->mediaModel = new MediaModel($conn);
+        $this->conn = $conn;
     }
 
     /**
@@ -38,51 +37,76 @@ class BookController
     }
 
 
-    public function readBook($contentId)
-    {
-        require_once __DIR__ . '/../models/UserModel.php';
+ public function readBook($contentId, $category = 'book-pdfs')
+{
+    require_once __DIR__ . '/../models/UserModel.php';
+    require_once __DIR__ . '/../models/MediaModel.php';
 
-        if (!$contentId) {
-            header("Location: /404");
-            exit;
-        }
+    if (!$contentId) {
+        header("Location: /404");
+        exit;
+    }
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-        if (empty($_SESSION['ADMIN_EMAIL'])) {
-            include_once __DIR__ . '/../views/403.php';
-            exit;
-        }
+    if (empty($_SESSION['ADMIN_EMAIL'])) {
+        include_once __DIR__ . '/../views/403.php';
+        exit;
+    }
 
-        $email = $_SESSION['ADMIN_EMAIL'];
-        $contentId = htmlspecialchars(trim($contentId));
-        $book = $this->bookModel->getBookById($contentId);
+    $email = $_SESSION['ADMIN_EMAIL'];
+    $contentId = htmlspecialchars(trim($contentId));
 
-        if (!$book) {
-            header("Location: /404");
-            exit;
-        }
+    $content = null;
+    $pdf = null;
 
-        $userModel = new UserModel($this->conn);
-        $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+    // Pick the right content & assign URL based on category
+    switch (strtolower($category)) {
+        case 'magazine':
+            $content = $this->mediaModel->selectMagazineById($contentId);
+            $pdf = $content['pdf_path'] ?? null; // magazines use MEDIAURL
+            break;
 
-        $userOwnsThisBook = false;
-        foreach ($userBooks as $purchasedBook) {
-            if ($purchasedBook['ID'] == $book['ID']) {
-                $userOwnsThisBook = true;
-                break;
-            }
-        }
+        case 'newspaper':
+            $content = $this->mediaModel->selectNewspaperById($contentId);
+            $pdf = $content['pdf_path'] ?? null; // newspapers use MEDIAURL
+            break;
 
-        if ($userOwnsThisBook && $book['PDFURL']) {
-            include __DIR__ . '/../views/books/ebook/bookReader.php';
-        } else {
-            include_once __DIR__ . '/../views/401.php';
-            exit;
+        case 'book-pdfs':
+        default:
+            $content = $this->bookModel->getBookById($contentId);
+            $pdf = $content['PDFURL'] ?? null; // books use PDFURL
+            break;
+    }
+
+    if (!$content) {
+        header("Location: /404");
+        exit;
+    }
+
+    $userModel = new UserModel($this->conn);
+    $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+
+    $userOwnsThisContent = false;
+    foreach ($userBooks as $purchasedBook) {
+        if ($purchasedBook['ID'] == $content['ID']) {
+            $userOwnsThisContent = true;
+            break;
         }
     }
+
+    if ($pdf) {
+        $pdfUrl = "https://www.sabooksonline.co.za/cms-data/$category/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+        include __DIR__ . '/../views/books/ebook/bookReader.php';
+    } else {
+        include_once __DIR__ . '/../views/401.php';
+        exit;
+    }
+}
+
+
 
 
     /**
