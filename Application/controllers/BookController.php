@@ -3,14 +3,14 @@
 class BookController
 {
     private $bookModel;
-    private $mediaModel;
+    // private $mediaModel;
 
     private $conn;
 
     public function __construct($conn)
     {
         $this->bookModel = new BookModel($conn);
-        $this->mediaModel = new MediaModel($conn);
+        // $this->mediaModel = new MediaModel($conn);
         $this->conn = $conn;
     }
 
