@@ -178,7 +178,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 </form>
                             <?php else: ?>
                                 <!-- READ BUTTON -->
-                                <a href="/read/<?= $id ?>" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                <a href="/read?q=<?= urlencode($id) ?>&category=magazine"  id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
                                     <i class="fas fa-book-open me-2"></i> Read Now
                                 </a>
                             <?php endif; ?>
