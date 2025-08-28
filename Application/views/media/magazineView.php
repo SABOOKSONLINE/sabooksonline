@@ -114,7 +114,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <?php if ($publish_date):
                         $date = date_create($publish_date);
                     ?>
-                        <p class="bv-text-meta"><b>Published:</b> <?= date_format($date, 'd F Y') ?></p>
+                        <!-- <p class="bv-text-meta"><b>Published:</b> <?= date_format($date, 'd F Y') ?></p> -->
                     <?php endif; ?>
                     <?php if ($issn): ?>
                         <p class="bv-text-meta"><b>ISSN:</b> <?= $issn ?></p>

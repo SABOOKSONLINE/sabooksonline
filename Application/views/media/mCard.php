@@ -44,9 +44,9 @@
                                 <p class="bk-heading-md">
                                     <?= $shortTitle ?>
                                 </p>
-                                <p class="bk-text-meta">
+                                <!-- <p class="bk-text-meta">
                                     Published by: <a class="text-muted text-lowercase text-capitalize" href="/creators/creator/<?= $publisherPublicKey ?>"><?= $publisher ?></a>
-                                </p>
+                                </p> -->
                             </div>
                         </div>
                     <?php
