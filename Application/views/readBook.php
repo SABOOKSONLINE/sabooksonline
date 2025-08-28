@@ -3,6 +3,7 @@ require_once __DIR__ . "/../../database/connection.php";
 require_once __DIR__ . "/../models/BookModel.php";
 require_once __DIR__ . "/../controllers/BookController.php";
 require_once __DIR__ . "/../models/UserModel.php";
+require_once __DIR__ . "/../models/MediaModel.php";
 
 
 
