@@ -147,7 +147,7 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 <script>
-  const url = $pdfUrl;
+  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";  let pdfDoc = null,
   let pdfDoc = null,
       zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
       chapterTitles = [];

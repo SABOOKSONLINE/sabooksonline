@@ -11,7 +11,7 @@ require_once __DIR__ . "/../models/MediaModel.php";
 if (isset($_GET['q'])) {
 
     $bookId = $_GET['q'];
-    $category = $_GET['category']; 
+    $category = $_GET['category'] ?? "book"; 
     $controller = new BookController($conn);  // Initialize your controller with the DB connection
     $controller->readBook($bookId,$category);  // Call the method to read the book with the bookId
 } else {

@@ -37,7 +37,7 @@ class BookController
     }
 
 
- public function readBook($contentId, $category = 'book-pdfs')
+ public function readBook($contentId, $category = 'book')
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
@@ -62,22 +62,22 @@ class BookController
     $content = null;
     $pdf = null;
 
-    // Pick the right content & assign URL based on category
+    // Pick content & URL
     switch (strtolower($category)) {
         case 'magazine':
             $content = $this->mediaModel->selectMagazineById($contentId);
-            $pdf = $content['pdf_path'] ?? null; // magazines use MEDIAURL
+            $pdf = $content['pdf_path'] ?? null;
             break;
 
         case 'newspaper':
             $content = $this->mediaModel->selectNewspaperById($contentId);
-            $pdf = $content['pdf_path'] ?? null; // newspapers use MEDIAURL
+            $pdf = $content['pdf_path'] ?? null;
             break;
 
-        case 'book-pdfs':
+        case 'book':
         default:
             $content = $this->bookModel->getBookById($contentId);
-            $pdf = $content['PDFURL'] ?? null; // books use PDFURL
+            $pdf = $content['PDFURL'] ?? null;
             break;
     }
 
@@ -86,19 +86,31 @@ class BookController
         exit;
     }
 
-    $userModel = new UserModel($this->conn);
-    $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
-
+    // Ownership check only for books
     $userOwnsThisContent = false;
-    foreach ($userBooks as $purchasedBook) {
-        if ($purchasedBook['ID'] == $content['ID']) {
-            $userOwnsThisContent = true;
-            break;
+    if ($category === 'book') {
+        $userModel = new UserModel($this->conn);
+        $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+        foreach ($userBooks as $purchasedBook) {
+            if ($purchasedBook['ID'] == $content['ID']) {
+                $userOwnsThisContent = true;
+                break;
+            }
         }
     }
 
+    $canView = ($category === 'book') ? $userOwnsThisContent : true;
+
     if ($pdf) {
-        $pdfUrl = "https://www.sabooksonline.co.za/cms-data/$category/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+        // Map category to folder for URL
+        $folderMap = [
+            'book'      => 'book-pdfs',
+            'magazine'  => 'magazine',
+            'newspaper' => 'newspaper'
+        ];
+        $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
+        $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+
         include __DIR__ . '/../views/books/ebook/bookReader.php';
     } else {
         include_once __DIR__ . '/../views/401.php';
