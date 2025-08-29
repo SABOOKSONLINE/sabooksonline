@@ -88,6 +88,51 @@ class UserModel {
     return $bookIds;
 }
 
+public function getPublishedMagazines($userKey) {
+    $sql = "
+        SELECT 
+            id
+        FROM magazines
+        WHERE publisher_id = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $userKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $bookIds = [];
+    while ($row = $result->fetch_assoc()) {
+        $bookIds[] = $row['id'];
+    }
+
+    $stmt->close();
+    return $bookIds;
+}
+
+public function getPublishedNewspapers($userKey) {
+    $sql = "
+        SELECT 
+            id
+        FROM newspapers
+        WHERE publisher_id = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $userKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $bookIds = [];
+    while ($row = $result->fetch_assoc()) {
+        $bookIds[] = $row['id'];
+    }
+
+    $stmt->close();
+    return $bookIds;
+}
+
+
 public function getPurchasedBookIdsAndFormats($email) {
     $sql = "
         SELECT 
@@ -110,8 +155,6 @@ public function getPurchasedBookIdsAndFormats($email) {
     $stmt->close();
     return $books;
 }
-
-
 
 
     public function getPurchasedBooksByUserEmail($email) {
