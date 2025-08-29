@@ -109,12 +109,12 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         </p>
                     <?php endif; ?>
                     <?php if ($publisher_id): ?>
-                        <p class="bv-text-meta"><b>Publisher:</b> <a class="bv-text-meta text-lowercase text-capitalize" href="/creators/creator/<?= $publisherPublicKey ?>"><?= $publisher ?></a></p>
+                        <!-- <p class="bv-text-meta"><b>Publisher:</b> <a class="bv-text-meta text-lowercase text-capitalize" href="/creators/creator/<?= $publisherPublicKey ?>"><?= $publisher ?></a></p> -->
                     <?php endif; ?>
                     <?php if ($publish_date):
                         $date = date_create($publish_date);
                     ?>
-                        <!-- <p class="bv-text-meta"><b>Published:</b> <?= date_format($date, 'd F Y') ?></p> -->
+                        <p class="bv-text-meta"><b>Published:</b> <?= date_format($date, 'd F Y') ?></p>
                     <?php endif; ?>
                     <?php if ($issn): ?>
                         <p class="bv-text-meta"><b>ISSN:</b> <?= $issn ?></p>
