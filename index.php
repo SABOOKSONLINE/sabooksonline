@@ -13,7 +13,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/', function () {
         require "Application/views/home.php";
     });
-     $r->addRoute('GET', '/home', function () {
+    $r->addRoute('GET', '/home', function () {
         require "Application/views/home.php";
     });
     $r->addRoute('GET', '/about', function () {
@@ -45,6 +45,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
     $r->addRoute('GET', '/email', function () {
         require "Application/views/auth/email.php";
+    });
+    $r->addRoute('GET', '/library/academic', function () {
+        require "Application/views/academic.php";
     });
 
     // =================== Payment Routes ===================

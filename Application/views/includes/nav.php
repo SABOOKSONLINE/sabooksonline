@@ -69,6 +69,9 @@ require_once __DIR__ . "/../util/urlRedirect.php";
                     </ul>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/library/academic">Academic</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/media">Media</a>
                 </li>
                 <li class="nav-item">
