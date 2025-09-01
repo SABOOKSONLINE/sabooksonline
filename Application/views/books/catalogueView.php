@@ -2,6 +2,17 @@
 
 require_once __DIR__ . "/../util/helpers.php";
 
+
+function getPublisherById($id): ?array
+{
+    require_once __DIR__ . "/../../Config/connection.php";
+    require_once __DIR__ . "/../../models/MediaModel.php";
+    require_once __DIR__ . "/../../controllers/MediaController.php";
+
+    $controller = new MediaController($conn);
+    return $controller->getUserById($id);
+}
+
 function booksByPage($books, $page)
 {
     $paginatedBooks = paginatedBooks($books);
