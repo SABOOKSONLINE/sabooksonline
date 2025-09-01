@@ -133,6 +133,29 @@ public function getPublishedNewspapers($userKey) {
 }
 
 
+public function publishedAcademicBooks($userKey) {
+    $sql = "
+        SELECT 
+            id
+        FROM academic_books
+        WHERE publisher_id = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $userKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $bookIds = [];
+    while ($row = $result->fetch_assoc()) {
+        $bookIds[] = $row['id'];
+    }
+
+    $stmt->close();
+    return $bookIds;
+}
+
+
 public function getPurchasedBookIdsAndFormats($email) {
     $sql = "
         SELECT 
