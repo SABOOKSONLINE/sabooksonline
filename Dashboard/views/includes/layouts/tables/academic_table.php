@@ -71,7 +71,7 @@ $booksForPage = array_slice($books, ($currentPage - 1) * $perPage, $perPage);
                         </td>
                         <td><?= html_entity_decode($book['title']) ?></td>
                         <td><?= html_entity_decode($book['subject']) ?></td>
-                        <td>R <?= number_format($book['price'] ?? 0.00, 2) ?></td>
+                        <td>R <?= number_format($book['ebook_price'] ?? 0.00, 2) ?></td>
                         <td><?= !empty($book['publish_date']) ? date('M d, Y', strtotime($book['publish_date'])) : 'N/A' ?></td>
                         <td>
                             <?php if (!empty($book['pdf_path'])): ?>
