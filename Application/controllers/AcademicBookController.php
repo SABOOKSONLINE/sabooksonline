@@ -12,20 +12,20 @@ class AcademicBookController
         $this->academicBookModel = new AcademicBookModel($conn);
     }
 
-    public function getAllBooks(int $publisher_id): array
+    public function getAllBooks(): array
     {
         try {
-            return $this->academicBookModel->selectBooks($publisher_id);
+            return $this->academicBookModel->selectBooks();
         } catch (Exception $e) {
             error_log("Get all academic books error: " . $e->getMessage());
             return [];
         }
     }
 
-    public function getBookById(int $id, int $publisher_id): ?array
+    public function getBookById(string $public_key): ?array
     {
         try {
-            return $this->academicBookModel->selectBookById($id, $publisher_id);
+            return $this->academicBookModel->selectBookByPublicKey($public_key);
         } catch (Exception $e) {
             error_log("Get academic book by ID error: " . $e->getMessage());
             return null;

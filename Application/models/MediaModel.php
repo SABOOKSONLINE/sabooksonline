@@ -43,7 +43,7 @@ class MediaModel
     {
         $sql = "SELECT * FROM magazines WHERE public_key = ?";
 
-        $stmt = mysqli_pofpare($this->conn, $sql);
+        $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
@@ -85,7 +85,7 @@ class MediaModel
         return $newspapers;
     }
 
-      public function getNewspapers($updatedSince = null): array
+    public function getNewspapers($updatedSince = null): array
     {
         $sql = "SELECT * FROM newspapers";
 

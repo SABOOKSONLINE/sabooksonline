@@ -12,16 +12,14 @@ class AcademicBookModel
         $this->conn = $connection;
     }
 
-    public function selectBooks(int $publisher_id): array
+    public function selectBooks(): array
     {
-        $sql = "SELECT * FROM academic_books WHERE publisher_id = ?";
+        $sql = "SELECT * FROM academic_books WHERE publish_date <= CURDATE()";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
-
-        mysqli_stmt_bind_param($stmt, "i", $publisher_id);
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
@@ -37,16 +35,17 @@ class AcademicBookModel
         return $books;
     }
 
-    public function selectBookById(int $id, int $publisher_id): ?array
+
+    public function selectBookByPublicKey(string $public_key): ?array
     {
-        $sql = "SELECT * FROM academic_books WHERE id = ? AND publisher_id = ?";
+        $sql = "SELECT * FROM academic_books WHERE public_key = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
 
-        mysqli_stmt_bind_param($stmt, "ii", $id, $publisher_id);
+        mysqli_stmt_bind_param($stmt, "i", $public_key);
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
