@@ -60,6 +60,9 @@ switch ($action) {
         $controller->getAllBooksJson($date);
         break;
 
+    case 'academicBooks':
+        $controller->getAcademicBooks($date);
+        break;
     case 'creators':
         $creator->getCreators($date);
         break;

@@ -216,6 +216,61 @@ class BookModel
     return $books;
 }
 
+public function getAcademicBooks($updatedSince = null): array
+{
+    $sql = "SELECT * FROM academic_books";
+
+    if ($updatedSince) {
+        try {
+            $lastUpdatedDateTime = new DateTime($updatedSince);
+            $formattedDate = $lastUpdatedDateTime->format('Y-m-d H:i:s');
+        } catch (Exception $e) {
+            throw new Exception("Invalid 'updatedSince' timestamp format: " . $e->getMessage());
+        }
+
+        $sql .= " WHERE updated_at > ?";
+        $sql .= " ORDER BY updated_at ASC";
+    } else {
+        $sql .= " ORDER BY RAND()"; 
+    }
+
+    $stmt = mysqli_prepare($this->conn, $sql);
+    if (!$stmt) {
+        throw new Exception("Failed to prepare statement for academic books: " . mysqli_error($this->conn));
+    }
+
+    if ($updatedSince) {
+        if (!mysqli_stmt_bind_param($stmt, "s", $formattedDate)) {
+            throw new Exception("Failed to bind parameters for academic books: " . mysqli_stmt_error($stmt));
+        }
+    }
+
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new Exception("Failed to execute statement for academic books: " . mysqli_stmt_error($stmt));
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        throw new Exception("Failed to get result for academic books: " . mysqli_stmt_error($stmt));
+    }
+
+    $academicBooks = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        if (isset($row['updated_at'])) {
+            try {
+                $row['updated_at'] = (new DateTime($row['updated_at']))->format(DateTime::ISO8601);
+            } catch (Exception $e) {
+                error_log("Error formatting updated_at for academic book ID {$row['ID']}: " . $e->getMessage());
+            }
+        }
+        $academicBooks[] = $row;
+    }
+
+    mysqli_stmt_close($stmt);
+
+    return $academicBooks;
+}
+
     /**
      * Fetch All Ebooks
      * @return array
