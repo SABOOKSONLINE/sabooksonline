@@ -7,11 +7,10 @@ require_once __DIR__ . "/../controllers/AcademicBookController.php";
 $controller = new AcademicBookController($conn);
 ?>
 
-<body class="justify-content-between">
+<body class="d-flex flex-column min-vh-100">
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
-
-    <div class="container py-4">
+    <div class="container py-4 flex-grow-1">
         <h1 class="fw-bold mb-0">Academic Books</h1>
         <span class="text-muted">Explore a world of knowledge and learning</span>
 
@@ -20,12 +19,21 @@ $controller = new AcademicBookController($conn);
         <div class="row py-3">
             <?php
             $books = $controller->getAllBooks();
-            // echo "<pre>";
-            // print_r($books);
-            // echo "</pre>";
-
             require_once __DIR__ . "/books/catalogueView.php";
             ?>
+
+            <?php if (empty($books)): ?>
+                <div class="alert alert-warning alert-dismissible fade show d-flex align-items-start" role="alert">
+                    <div>
+                        <strong>Academic Books Catalog
+                            (Coming Soon).
+                        </strong>
+                        <div class="mt-1">
+                            Try exploring our <a href="/library">library</a>.
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
