@@ -88,19 +88,18 @@ function academicBookFormDataArray(bool $isUpdate = false): array
         'edition' => clean($_POST['edition'] ?? ''),
         'pages' => clean($_POST['pages'] ?? ''),
         'isbn' => clean($_POST['isbn'] ?? ''),
-        'cover_image_path' => $cover_path,
         'publish_date' => clean($_POST['publish_date'] ?? ''),
-        'ebook_price'        => (float)($_POST['ebook_price'] ?? 0.00),
+        'cover_image_path' => $cover_path,
+        'ebook_price' => (float)($_POST['ebook_price'] ?? 0.00),
         'pdf_path' => $pdf_path,
-        'link' => clean($_POST['link'] ?? ''),
         'physical_book_price' => (float)($_POST['physical_book_price'] ?? 0.00),
+        'link' => clean($_POST['link'] ?? ''),
     ];
 }
 
 // echo "<pre>";
 // print_r(academicBookFormDataArray(false));
 // echo "</pre>";
-// echo $_GET["action"];
 // die();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -109,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($action === "insert") {
         try {
-            $data = academicBookFormDataArray(false);
+            $data = academicBookFormDataArray();
             $success = $academicController->insertBook($data);
 
             if ($success) {

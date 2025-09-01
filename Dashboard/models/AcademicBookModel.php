@@ -15,35 +15,53 @@ class AcademicBookModel
     public function insertBook(array $data): bool
     {
         $sql = "INSERT INTO academic_books (
-            publisher_id,
-            public_key,
-            title,
-            author,
-            editor,
-            description,
-            subject,
-            level,
-            language,
-            edition,
-            pages,
-            isbn,
-            publish_date,
-            cover_image_path,
-            pdf_path,
-            ebook_price,
-            physical_book_price,
-            link
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    publisher_id,
+                    public_key,
+                    title,
+                    author,
+                    editor,
+                    description,
+                    subject,
+                    level,
+                    language,
+                    edition,
+                    pages,
+                    ISBN,
+                    publish_date,
+                    cover_image_path,
+                    ebook_price,
+                    pdf_path,
+                    physical_book_price,
+                    link
+                ) VALUES (
+                    ?,
+                    ?,
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?
+                )";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
-            die();
         }
 
         mysqli_stmt_bind_param(
             $stmt,
-            "isssssssssssssddsi",
+            "isssssssssssssdsss",
             $data['publisher_id'],
             $data['public_key'],
             $data['title'],
@@ -58,26 +76,24 @@ class AcademicBookModel
             $data['isbn'],
             $data['publish_date'],
             $data['cover_image_path'],
-            $data['pdf_path'],
             $data['ebook_price'],
+            $data['pdf_path'],
             $data['physical_book_price'],
             $data['link']
         );
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
-            die();
         }
 
         mysqli_stmt_close($stmt);
         return true;
     }
 
+
     public function updateBook(array $data): bool
     {
         $sql = "UPDATE academic_books SET
-                    publisher_id = ?,
-                    public_key = ?,
                     title = ?,
                     author = ?,
                     editor = ?,
@@ -87,7 +103,7 @@ class AcademicBookModel
                     language = ?,
                     edition = ?,
                     pages = ?,
-                    isbn = ?,
+                    ISBN = ?,
                     publish_date = ?,
                     cover_image_path = ?,
                     pdf_path = ?,
@@ -103,9 +119,7 @@ class AcademicBookModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "isssssssssssssssssi",
-            $data['publisher_id'],
-            $data['public_key'],
+            "sssssssssssssddsi",
             $data['title'],
             $data['author'],
             $data['editor'],
@@ -133,7 +147,6 @@ class AcademicBookModel
         return true;
     }
 
-
     public function deleteBook(int $id): bool
     {
         $sql = "DELETE FROM academic_books WHERE id = ?";
@@ -155,7 +168,7 @@ class AcademicBookModel
 
     public function selectBooks(int $publisher_id): array
     {
-        $sql = "SELECT * FROM academic_books WHERE publisher_id = ?";
+        $sql = "SELECT * FROM academic_books WHERE publisher_id = ? ORDER BY academic_books.created_at DESC";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {

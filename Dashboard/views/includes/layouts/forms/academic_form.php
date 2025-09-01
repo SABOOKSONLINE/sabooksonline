@@ -27,7 +27,7 @@ function clean($data): string
     }
     $data = (string)$data;
     $data = trim($data);
-    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    return html_entity_decode($data, ENT_QUOTES, 'UTF-8');
 }
 
 function safeClean(array $arr, string $key, string $default = ''): string
@@ -132,7 +132,7 @@ $languages = [
     <div class="row g-3">
 
         <input type="text" name="publisher_id" class="form-control" value="<?= $userId ?>" hidden>
-        <input type="text" name="public_key" class="form-control" value="<?= $publisher_id ?>" hidden>
+        <input type="text" name="public_key" class="form-control" value="<?= $public_key ?>" hidden>
 
         <!-- Book Title -->
         <div class="col-md-12">
@@ -221,7 +221,7 @@ $languages = [
         <!-- Book Cover file -->
         <div class="col-md-6">
             <label class="form-label">Upload Book Cover <span class="text-danger">*</span></label>
-            <input type="file" name="cover" class="form-control">
+            <input type="file" name="cover" class="form-control" <?php echo empty($book) ? 'required' : ''; ?>>
             <input type="text" name="existing_cover" class="form-control" value="<?= $cover_image_path ?>" hidden>
             <?php if (!empty($cover_image_path)): ?>
                 <div class="mt-2">
