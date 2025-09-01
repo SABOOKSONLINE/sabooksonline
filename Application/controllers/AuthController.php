@@ -60,6 +60,8 @@ public function getUserInfo($email) {
     $publishedBooks = $this->userModel->getPublishedBookIds($userData['ADMIN_USERKEY']);
     $publishedMagazines = $this->userModel->getPublishedMagazines($userData['ADMIN_ID']);
     $publishedNewspapers = $this->userModel->getPublishedNewspapers($userData['ADMIN_ID']);
+    $publishedAcademicBooks = $this->userModel->publishedAcademicBooks($userData['ADMIN_ID']);
+
 
     // Login success
     http_response_code(200);
@@ -75,6 +77,8 @@ public function getUserInfo($email) {
         'publishedBooks' => $publishedBooks,
         'publishedMagazines' => $publishedMagazines,
         'publishedNewspapers' => $publishedNewspapers,
+        'publishedAcademicBooks' => $publishedAcademicBooks,
+
 
     ]);
     exit;
@@ -150,6 +154,8 @@ public function getUserInfo($email) {
     $publishedBooks = $this->userModel->getPublishedBookIds($userData['ADMIN_USERKEY']);
     $publishedMagazines = $this->userModel->getPublishedMagazines($userData['ADMIN_ID']);
     $publishedNewspapers = $this->userModel->getPublishedNewspapers($userData['ADMIN_ID']);
+    $publishedAcademicBooks = $this->userModel->publishedAcademicBooks($userData['ADMIN_ID']);
+
 
     // Login success
     http_response_code(200);
@@ -165,6 +171,8 @@ public function getUserInfo($email) {
         'publishedBooks' => $publishedBooks,
         'publishedMagazines' => $publishedMagazines,
         'publishedNewspapers' => $publishedNewspapers,
+        'publishedAcademicBooks' => $publishedAcademicBooks,
+
 
     ]);
     exit;

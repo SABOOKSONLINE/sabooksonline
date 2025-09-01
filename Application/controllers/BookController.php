@@ -322,6 +322,13 @@ class BookController
         echo json_encode($books);
     }
 
+    public function getAcademicBooks($date = null)
+    {
+        $books = $this->bookModel->getAcademicBooks($date);
+        header('Content-Type: application/json');
+        echo json_encode($books);
+    }
+
 
     public function renderBookCardByCategory($category = null, $limit = null, $reverse = false)
     {
