@@ -19,7 +19,10 @@ $controller = new AcademicBookController($conn);
         <div class="row py-3">
             <?php
             $books = $controller->getAllBooks();
-            require_once __DIR__ . "/books/catalogueView.php";
+
+            // COMING SOON
+            $books = [];
+            // require_once __DIR__ . "/books/catalogueView.php";
             ?>
 
             <?php if (empty($books)): ?>
