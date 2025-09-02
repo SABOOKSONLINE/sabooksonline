@@ -2,17 +2,6 @@
 
 require_once __DIR__ . "/../util/helpers.php";
 
-
-function getPublisherById($id): ?array
-{
-    require_once __DIR__ . "/../../Config/connection.php";
-    require_once __DIR__ . "/../../models/MediaModel.php";
-    require_once __DIR__ . "/../../controllers/MediaController.php";
-
-    $controller = new MediaController($conn);
-    return $controller->getUserById($id);
-}
-
 function booksByPage($books, $page)
 {
     $paginatedBooks = paginatedBooks($books);
@@ -42,10 +31,8 @@ function booksByPage($books, $page)
             $description = html_entity_decode($book['description']);
             // $userId = strtolower(html_entity_decode($book['publisher_id']));
 
-            $publisher = getPublisherById($book['publisher_id']);
-
-            $userId = $publisher['ADMIN_USERKEY'];
-            $publisher = $publisher['ADMIN_NAME'];
+            $userId = $book['ADMIN_USERKEY'];
+            $publisher = $book['ADMIN_NAME'];
 
             $coverPath = "/cms-data/academic/covers/$cover";
         }
