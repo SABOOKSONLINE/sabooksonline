@@ -49,6 +49,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/library/academic', function () {
         require "Application/views/academic.php";
     });
+    $r->addRoute('GET', '/library/academic/{publicKey}', function ($publicKey) {
+        $_GET['publicKey'] = $publicKey;
+        require "Application/views/academicBookView.php";
+    });
 
     // =================== Payment Routes ===================
     $r->addRoute('POST', '/payment/notify', function () {
@@ -82,7 +86,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/academicBooks', function () {
+    $r->addRoute('GET', '/api/academicBooks', function () {
         $_GET['action'] = 'academicBooks';
         require "Application/api.php";
     });

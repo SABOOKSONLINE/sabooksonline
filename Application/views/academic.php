@@ -21,8 +21,8 @@ $controller = new AcademicBookController($conn);
             $books = $controller->getAllBooks();
 
             // COMING SOON
-            $books = [];
-            // require_once __DIR__ . "/books/catalogueView.php";
+            // $books = [];
+            require_once __DIR__ . "/books/catalogueView.php";
             ?>
 
             <?php if (empty($books)): ?>

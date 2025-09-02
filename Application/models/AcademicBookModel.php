@@ -43,7 +43,11 @@ class AcademicBookModel
 
     public function selectBookByPublicKey(string $public_key): ?array
     {
-        $sql = "SELECT * FROM academic_books WHERE public_key = ?";
+        $sql = "SELECT academic_books.*, users.ADMIN_NAME, users.ADMIN_USERKEY
+                FROM academic_books
+                LEFT JOIN users
+                    ON academic_books.publisher_id = users.ADMIN_ID
+                WHERE public_key = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -65,7 +69,8 @@ class AcademicBookModel
 
     public function selectUserById($id): ?array
     {
-        $sql = "SELECT * FROM users WHERE ADMIN_ID = ?";
+        $sql = "SELECT * FROM users 
+                WHERE ADMIN_ID = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {

@@ -13,6 +13,7 @@ function booksByPage($books, $page)
 
     foreach ($paginatedBooks[$page] as $book) {
         $coverPath = "";
+        $bookPath = "";
         if (isset($book['CONTENTID'])) {
             $contentId = strtolower(html_entity_decode($book['CONTENTID']));
             $cover = html_entity_decode($book['COVER']);
@@ -23,30 +24,31 @@ function booksByPage($books, $page)
             $publisher = ucwords(html_entity_decode($book['PUBLISHER']));
 
             $coverPath = "/cms-data/book-covers/$cover";
+            $bookPath = "/library/book/$contentId";
         } else {
             $contentId = strtolower(html_entity_decode($book['public_key']));
             $cover = html_entity_decode($book['cover_image_path']);
             $title = html_entity_decode($book['title']);
             $category = html_entity_decode($book['subject']);
             $description = html_entity_decode($book['description']);
-            // $userId = strtolower(html_entity_decode($book['publisher_id']));
 
             $userId = $book['ADMIN_USERKEY'];
             $publisher = $book['ADMIN_NAME'];
 
             $coverPath = "/cms-data/academic/covers/$cover";
+            $bookPath = "/library/academic/$contentId";
         }
 
 ?>
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
             <div class="library-book-card">
                 <div class="library-book-card-img">
-                    <a href="/library/book/<?= $contentId ?>">
+                    <a href="<?= $bookPath ?>">
                         <img src="<?= $coverPath ?>" alt="<?= strtolower($title) ?>">
                     </a>
                 </div>
                 <div class="w-100">
-                    <a class="book-card-little text-capitalize" href="/library/book/<?= $contentId ?>">
+                    <a class="book-card-little text-capitalize" href="<?= $bookPath ?>">
                         <?= strlen($title) > 15 ? substr($title, 0, 15) . '...' : $title ?>
                     </a>
                     <p>
