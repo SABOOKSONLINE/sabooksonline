@@ -112,6 +112,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    $r->addRoute('POST', '/api/signup', function () {
+        $_GET['action'] = 'signup';
+        require "Application/api.php";
+    });
+
 
     // =================== Dashboard Routes ===================
     // --- Main Dashboard ---

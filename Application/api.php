@@ -56,6 +56,21 @@ switch ($action) {
         $authController->loginWithForm($email,$password, $name, $picture, $isform);
         break;
 
+     case 'signup':
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (!isset($input['email'], $input['password'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Email and password are required']);
+            exit;
+        }
+
+        $name = $input['name'];
+        $email = $input['email'];
+        $password = $input['password'];
+       
+        $authController->signup($name,$email,$password);
+        break;
+
     case 'getAllBooks':
         $controller->getAllBooksJson($date);
         break;
