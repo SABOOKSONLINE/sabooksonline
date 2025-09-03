@@ -488,6 +488,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/reviews-handler', function () {
         require __DIR__ . "/Application/handlers/reviewsHandler.php";
     });
+
+
+    // =================== Admin Dashboard ===================
+    $r->addRoute('GET', '/admin', function () {
+        require  "Admin/index.php";
+    });
 });
 
 // Fetch method and URI from server

@@ -12,8 +12,9 @@ class UserModel
         $this->conn = $connection;
     }
 
-    public function getPurchasedBooksByUserEmail($email) {
-    $sql = "
+    public function getPurchasedBooksByUserEmail($email)
+    {
+        $sql = "
         SELECT 
             b.id AS ID,
             b.contentid AS CONTENTID,
@@ -34,27 +35,28 @@ class UserModel
         WHERE bp.user_email = ?
     ";
 
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("s", $email);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
 
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        $books = [];
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            $books = [];
 
-        while ($row = $result->fetch_assoc()) {
-            $books[] = $row;
+            while ($row = $result->fetch_assoc()) {
+                $books[] = $row;
+            }
+
+            $stmt->close();
+            return $books;
+        } else {
+            error_log("❌ Failed to fetch purchased books: " . $stmt->error);
+            return [];
         }
-
-        $stmt->close();
-        return $books;
-    } else {
-        error_log("❌ Failed to fetch purchased books: " . $stmt->error);
-        return [];
     }
-}
 
-public function getUserBooksByAction($userId, $actionType = 'library') {
-    $query = "
+    public function getUserBooksByAction($userId, $actionType = 'library')
+    {
+        $query = "
     SELECT p.CONTENTID, p.TITLE, p.COVER, p.DESCRIPTION
     FROM user_book_actions AS uba
     INNER JOIN posts AS p 
@@ -66,21 +68,21 @@ public function getUserBooksByAction($userId, $actionType = 'library') {
 
 
 
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) {
-        error_log("Prepare failed: " . $this->conn->error);
-        return [];
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            error_log("Prepare failed: " . $this->conn->error);
+            return [];
+        }
+
+        $stmt->bind_param("ss", $userId, $actionType);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $books = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return $books;
     }
-
-    $stmt->bind_param("ss", $userId, $actionType);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $books = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    return $books;
-}
 
 
     /**
@@ -125,26 +127,27 @@ public function getUserBooksByAction($userId, $actionType = 'library') {
         }
     }
 
-    public function getBookIdsByUserEmail($email) {
-    $sql = "SELECT book_id FROM book_purchases WHERE user_email = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("s", $email);
+    public function getBookIdsByUserEmail($email)
+    {
+        $sql = "SELECT book_id FROM book_purchases WHERE user_email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
 
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        $bookIds = [];
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            $bookIds = [];
 
-        while ($row = $result->fetch_assoc()) {
-            $bookIds[] = $row['book_id'];
+            while ($row = $result->fetch_assoc()) {
+                $bookIds[] = $row['book_id'];
+            }
+
+            $stmt->close();
+            return $bookIds;
+        } else {
+            error_log("Failed to fetch book IDs: " . $stmt->error);
+            return [];
         }
-
-        $stmt->close();
-        return $bookIds;
-    } else {
-        error_log("Failed to fetch book IDs: " . $stmt->error);
-        return [];
     }
-}
 
 
     /**

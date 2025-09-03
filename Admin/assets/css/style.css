@@ -1,0 +1,275 @@
+body {
+    font-family: "Inter", sans-serif;
+}
+
+.dashboard__sidebar {
+    position: relative;
+    background: #fff;
+    border-right: 1px solid #eee;
+    margin-top: 70px;
+    height: calc(100vh - 70px);
+}
+
+.dashboard__sidebar .nav .nav-link {
+    transition: all 0.3s ease-in-out;
+}
+
+.dashboard__sidebar .nav .nav-link:hover {
+    background: #eee;
+}
+
+.dashboard__sidebar .nav .active {
+    color: #fff;
+    background: #ddd;
+}
+
+.position-fixed {
+    z-index: 10;
+}
+
+/* Analysis Card Styles */
+.analysis-card {
+    /* border: 1px solid #6c757d; */
+    /* soft black outline */
+    /* Black outline */
+    background-color: #fff;
+    color: #555;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+        background-color 0.3s ease, color 0.3s ease;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/* Hover Effects */
+.analysis-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    color: #222 !important;
+}
+
+.analysis-card:hover .text-muted,
+.analysis-card:hover .text-primary {
+    color: #222 !important;
+}
+
+/* Stylish Section Cards */
+#stylish-section .book-card {
+    margin: 14px 20px;
+    transition: 0.3s ease;
+}
+
+#stylish-section .book-card img {
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+#stylish-section .book-card:hover img {
+    transform: scale(1.15);
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.book-card-num {
+    position: absolute;
+    top: 50%;
+    left: -50px;
+    /* Closer to the bottom of the card */
+    transform: translateY(-50%);
+    color: var(--off-white);
+    font-size: 180px;
+    /* Bigger number */
+    font-weight: 900;
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.book-card:hover .book-card-num {
+    color: var(--yellow);
+    transform: translateY(-50%) rotateZ(-10deg) scale(1.1);
+    z-index: 3;
+    opacity: 0.25;
+}
+
+/* View count */
+.view-count {
+    margin-top: 2px;
+    /* slightly closer to title */
+    font-size: 1rem;
+    /* larger text */
+    font-weight: 600;
+    color: #333;
+    /* darker for contrast */
+    border: 1px solid #333;
+    /* black outline */
+    border-radius: 6px;
+    padding: 2px 6px;
+    display: inline-block;
+    background-color: #f8f9fa;
+    /* subtle background */
+}
+
+/* Control image size in book cards */
+.book-card img {
+    width: 100%;
+    max-height: 240px;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+}
+
+h2,
+h5.most-viewed-title {
+    /* font-weight: 700; */
+    font-size: "bold";
+    /* Adjust size as needed */
+    /* color: #1a1a1a; */
+    /* Dark gray for good contrast */
+    /* Optional: makes it uppercase */
+    margin-bottom: 1rem;
+    /* Accent underline */
+    padding-bottom: 0.3rem;
+    max-width: fit-content;
+    /* Shrinks underline to text width */
+}
+
+/* ===============================
+   LIBRARY / ENHANCED STYLING
+================================= */
+
+.library-book-card {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 180px auto;
+    gap: 20px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    min-height: 240px;
+    align-items: center;
+}
+
+.library-book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
+    background: var(--off-white);
+}
+
+.library-book-card-img {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.library-book-card img {
+    width: 100%;
+    height: 290px;
+    /* You can adjust this to 280px or more if needed */
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.library-book-card:hover img {
+    transform: scale(1.05);
+}
+
+.library-book-card .book-card-little {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+.library-book-card p {
+    opacity: 0.75;
+    font-size: 14px;
+    margin-bottom: 10px;
+    min-height: 50px;
+}
+
+.book-card-pub {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--brown);
+}
+
+.library-book-card .btn {
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+/* ===============================
+   COLUMN STRUCTURE ADJUSTMENT
+================================= */
+
+/* Force 2 columns instead of 3 */
+@media (min-width: 1200px) {
+    .col-xl-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+.pop_form,
+.ab_pop_form,
+.sample_pop_form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 16px;
+    z-index: 10;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    transition: 0.3s all ease;
+}
+
+.pop_bg,
+.ab_pop_bg,
+.sample_pop_bg {
+    content: "";
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%) scale(0);
+    backdrop-filter: blur(20px);
+}
+
+.close_pop_form,
+.close_ab_pop_form,
+.close_sample_pop_form {
+    position: fixed;
+    background: transparent;
+    color: #ddd;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 30px;
+    height: 30px;
+    align-content: center;
+    text-align: center;
+    right: 16px;
+    top: 16px;
+    border-radius: 50%;
+    transition: 0.3s all ease;
+}
+
+.close_pop_form:hover,
+.close_ab_pop_form:hover,
+.close_sample_pop_form:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #888;
+    border: 1px solid #888;
+}
+
+.pop_form_active {
+    transform: translate(-50%, -50%) scale(1);
+}
