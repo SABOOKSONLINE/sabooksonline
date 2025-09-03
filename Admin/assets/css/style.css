@@ -2,11 +2,16 @@ body {
     font-family: "Inter", sans-serif;
 }
 
+.main {
+    position: relative;
+    margin-top: 68px;
+}
+
 .dashboard__sidebar {
     position: relative;
     background: #fff;
     border-right: 1px solid #eee;
-    margin-top: 70px;
+    /* margin-top: 70px; */
     height: calc(100vh - 70px);
 }
 
