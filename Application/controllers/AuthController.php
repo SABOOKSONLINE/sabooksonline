@@ -80,7 +80,7 @@ public function signup($name, $email, $password) {
     if ($stmt->execute()) {
         // ✅ token link goes into email
         $verifyLink = "https://sabooksonline.co.za/verify/" . urlencode($token);
-        sendVerificationEmail($email, $verifyLink);
+        sendVerificationEmail($email, $verifyLink, "SABO MOBILE APP");
 
         echo json_encode([
             "message" => "Signup successful. Please verify email.",
