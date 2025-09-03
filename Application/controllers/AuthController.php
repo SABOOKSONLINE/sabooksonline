@@ -79,7 +79,7 @@ public function signup($name, $email, $password) {
 
     if ($stmt->execute()) {
         // ✅ token link goes into email
-        $verifyLink = "https://sabooksonline.co.za/verify?token=" . urlencode($token);
+        $verifyLink = "https://sabooksonline.co.za/verify/" . urlencode($token);
         sendVerificationEmail($email, $verifyLink);
 
         echo json_encode([

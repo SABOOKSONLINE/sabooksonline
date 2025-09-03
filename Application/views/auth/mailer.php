@@ -5,7 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
-function sendVerificationEmail($to, $link)
+function sendVerificationEmail($to, $link, $type = 'Website')
 {
     $mail = new PHPMailer(true);
     try {
@@ -21,7 +21,7 @@ function sendVerificationEmail($to, $link)
         $mail->addAddress($to);
         $mail->isHTML(true);
         $mail->Subject = 'Verify your email';
-        $mail->Body = "Click the link to verify your email: <a href='$link'>$link</a>";
+        $mail->Body = "Click the link to verify your email requested by $type : <a href='$link'>$link</a>";
 
         $mail->send();
     } catch (Exception $e) {
