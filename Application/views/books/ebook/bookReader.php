@@ -147,7 +147,7 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 <script>
-  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";  let pdfDoc = null,
+  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";
   let pdfDoc = null,
       zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
       chapterTitles = [];
@@ -262,7 +262,7 @@ require_once __DIR__ . "/../../includes/header.php";
       pages.forEach((pageText, index) => {
         const pageNum = index + 1;
         let textContent = pageText.items.map(item => item.str).join(' ');
-        let matches = textContent.match(/Chapter\s+\d+[^.]*/gi);
+        let matches = textContent.match(/(Chapter\s+\d+|CHAPTER\s+[A-Z]+|\d+\.\s+[A-Z][^.]*)/gi);
         if (matches) {
           matches.forEach(title => {
             chapterTitles.push({ title, page: pageNum });
