@@ -38,7 +38,7 @@ class BookController
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
-    $this->mediaModel = new MediaModel($conn);
+    $this->mediaModel = new MediaModel($this->conn);
 
 
     if (!$contentId) {
