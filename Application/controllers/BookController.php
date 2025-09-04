@@ -104,11 +104,11 @@ class BookController
         // Map category to folder for URL
         $folderMap = [
             'book'      => 'book-pdfs',
-            'magazine'  => 'magazine',
-            'newspaper' => 'newspaper'
+            'magazine'  => 'magazine/pdfs',
+            'newspaper' => 'newspaper/pdfs'
         ];
         $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
-        $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+        $pdfUrl = "https://sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
 
         include __DIR__ . '/../views/books/ebook/bookReader.php';
     } else {
