@@ -21,6 +21,8 @@ function sendVerificationEmail($to, $verificationLink = null, $userName, $device
         $mail->addAddress($to);
         $mail->isHTML(true);
 
+
+
         if ($verificationLink) {
             $mail->Subject = 'Verify your email';
             // Load verification template
