@@ -3,14 +3,11 @@
 class BookController
 {
     private $bookModel;
-    // private $mediaModel;
-
     private $conn;
 
     public function __construct($conn)
     {
         $this->bookModel = new BookModel($conn);
-        // $this->mediaModel = new MediaModel($conn);
         $this->conn = $conn;
     }
 
@@ -41,6 +38,8 @@ class BookController
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
+    $this->mediaModel = new MediaModel($conn);
+
 
     if (!$contentId) {
         header("Location: /404");
