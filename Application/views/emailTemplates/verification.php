@@ -67,7 +67,7 @@
                 <!-- Main Content -->
                 <tr>
                     <td class="content" style="padding:40px; text-align:center; color:#4a4a4a;">
-                        <h2 style="margin:0 0 20px; font-size:28px; color:#222222; font-weight:700;">Verify Email</h2>
+                        <h2 style="margin:0 0 20px; font-size:28px; color:#222222; font-weight:700;">Welcome</h2>
                         <p style="margin:0 0 30px; font-size:17px; line-height:1.6; color:#555555;">
                             Hi <?= htmlspecialchars($userName) ?>, thanks for signing up! A verification request was made by <?= htmlspecialchars($device) ?>. Please verify your email by clicking the button below:
                         </p>
@@ -91,10 +91,9 @@
 
                 <!-- Footer -->
                 <tr>
-                    <td align="center" style="background-color:#000000; padding:25px; font-size:12px; color:#ffffff;">
+                    <td align="center" style="background-color:#000000; padding:25px; font-size:12px; color:#ffffff !important;">
                         &copy; <?= date('Y') ?> SA Books Online. All rights reserved.<br>
                         68 Melville Rd, Illovo Point, Sandton<br>
-                        Sent from SABooksOnline Website & Mobile App
                     </td>
                 </tr>
 

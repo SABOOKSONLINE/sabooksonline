@@ -1,6 +1,4 @@
 <?php
-// Example variables
-$userName = "Chris";
 ?>
 <!DOCTYPE html>
 <html lang="en">

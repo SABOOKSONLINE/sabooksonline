@@ -20,6 +20,7 @@ class AuthController {
 
     if (!mysqli_num_rows($result)) {
         $this->userModel->insertGoogleUser($reg_name, $email, $profileImage, $email);
+        sendVerificationEmail($email, $reg_name);
         $result = $this->userModel->findUserByEmail($email);
     }
 
@@ -178,6 +179,8 @@ public function getUserInfo($email) {
     }
 
     $this->userModel->insertGoogleUser($name, $email, $picture, $email);
+    sendVerificationEmail($email, $name);
+
     $result = $this->userModel->findUserByEmail($email);
 }
 
