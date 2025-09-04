@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/BookModel.php';
+require_once __DIR__ . '/../models/AcademicBookModel.php';
 require_once __DIR__ . '/../models/UserModel.php';
 require_once __DIR__ . '/../models/MediaModel.php';
 require_once __DIR__ . '/../models/BillingModel.php';
@@ -11,12 +12,16 @@ class CheckoutController {
     private $userModel;
     private $mediaModel;
     private $conn;
+    private $academicBookModel;
+
 
     public function __construct($conn) {
         $this->conn = $conn;
         $this->userModel = new userModel($conn);
         $this->bookModel = new BookModel($conn);
         $this->mediaModel = new MediaModel($conn);
+        $this->academicBookModel = new AcademicBookModel($conn);
+
 
     }
 
@@ -58,6 +63,23 @@ class CheckoutController {
     }
     
     $this->generatePaymentForm($media, $user, $format);
+}
+ public function purchaseAcademicBook($bookId, $userId, $format) {
+    if (empty($bookId) || empty($userId) || empty($format)) {
+        die("Invalid book ID, user ID, or media format.");
+    }
+
+    $user = $this->userModel->getUserByNameOrKey($userId);
+    if (empty($user)) {
+        die("User not found.");
+    }
+    $academicBook = $this->academicBookModel->selectBookByPublicKey($bookId);
+
+    if (empty($media)) {
+        die("$format with ID $bookId not found.");
+    }
+    
+    $this->generatePaymentForm($academicBook, $user, $format);
 }
 
 
@@ -106,14 +128,15 @@ class CheckoutController {
             $price = $book['ABOOKPRICE'] ?? 0;
             break;
         case 'ebook':
-        // default:PRICE
             $price = $book['EBOOKPRICE'] ?? 0;
+            break;
+        case 'academicbook':
+            $price = $book['ebook_price'] ?? 0;
             break;
         case 'magazine':
             $price = $book['price'] ?? 0;
             break;
         case 'newspaper':
-        // default:
             $price = $book['price'] ?? 0;
             break;    
     }

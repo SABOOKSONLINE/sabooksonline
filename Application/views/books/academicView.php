@@ -1,5 +1,6 @@
 <?php
 
+$academicBookId = $book['public_key'];
 $title = $book['title'];
 $author = $book['author'];
 $editor = $book['editor'];
@@ -158,7 +159,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <?php if ((float)$ebookPrice > 0): ?>
                             <!-- BUY FORM -->
                             <form method="POST" action="/checkout" id="digital-version" class="w-100 mt-3">
-                                <input type="hidden" name="magazineId" value="<?= $magazineId ?>">
+                                <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
                                 <input type="hidden" name="format" value="digital">
                                 <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
                                     <i class="fas fa-shopping-cart me-2"></i> Purchase Digital Issue
@@ -167,7 +168,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <?php else: ?>
                             <!-- READ BUTTON -->
 
-                            <a href="/read?q=<?= urlencode($magazineId) ?>&category=magazine" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                            <a href="/read?q=<?= urlencode($academicBookId) ?>?category=academic" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
                                 Read Now
                             </a>
                         <?php endif; ?>

@@ -12,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $audiobookId = $_POST['audiobookId'] ?? null;
     $magazineId = $_POST['magazineId'] ?? null;
     $newspaperId = $_POST['newspaperId'] ?? null;
+    $academicBookId = $_POST['academicBookId'] ?? null;
+
 
 
     if (!$userId) {
@@ -35,6 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     elseif ($newspaperId) {
         $checkout->purchaseMedia($newspaperId, $userId, 'Newspaper');
+    }
+    elseif ($academicBookId) {
+        $checkout->purchaseAcademicBook($academicBookId, $userId, 'AcademicBook');
     }
 }
 
