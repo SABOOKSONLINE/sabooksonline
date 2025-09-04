@@ -5,7 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
-function sendVerificationEmail($to, $link, $type = 'Website')
+function sendVerificationEmail($to, $verificationLink = null, $userName, $device = 'SABO Website')
 {
     $mail = new PHPMailer(true);
     try {
@@ -14,19 +14,33 @@ function sendVerificationEmail($to, $link, $type = 'Website')
         $mail->SMTPAuth = true;
         $mail->Username = 'no-reply@sabooksonline.co.za';
         $mail->Password = '75o783F0O4L79o';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL (465)
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
         $mail->setFrom('no-reply@sabooksonline.co.za', 'SA Books Online');
         $mail->addAddress($to);
         $mail->isHTML(true);
-        $mail->Subject = 'Verify your email';
-        $mail->Body = "Click the link to verify your email requested by $type : <a href='$link'>$link</a>";
 
+        if ($verificationLink) {
+            $mail->Subject = 'Verify your email';
+            // Load verification template
+            ob_start();
+            include __DIR__ . '/../emailTemplates/verification.php';
+            $body = ob_get_clean();
+        } else {
+            $mail->Subject = 'Thank You for Signing Up!';
+            // Load thank-you template
+            ob_start();
+            include __DIR__ . '/../emailTemplates/Signup.php';
+            $body = ob_get_clean();
+        }
+
+        $mail->Body = $body;
         $mail->send();
     } catch (Exception $e) {
         error_log("Email error: {$e->getMessage()}");
     }
 }
+
 
 
