@@ -38,7 +38,7 @@ class BookController
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
-    $this->mediaModel = new MediaModel($this->conn);
+    $mediaModel = new MediaModel($this->conn);
 
 
     if (!$contentId) {
@@ -64,12 +64,12 @@ class BookController
     // Pick content & URL
     switch (strtolower($category)) {
         case 'magazine':
-            $content = $this->mediaModel->selectMagazineById($contentId);
+            $content = $mediaModel->selectMagazineById($contentId);
             $pdf = $content['pdf_path'] ?? null;
             break;
 
         case 'newspaper':
-            $content = $this->mediaModel->selectNewspaperById($contentId);
+            $content = $mediaModel->selectNewspaperById($contentId);
             $pdf = $content['pdf_path'] ?? null;
             break;
 
