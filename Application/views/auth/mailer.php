@@ -5,7 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
-function sendVerificationEmail($to, $verificationLink = null, $userName, $device = 'SABO Website')
+function sendVerificationEmail($to, $userName, $verificationLink = null, $device = 'SABO Website')
 {
     $mail = new PHPMailer(true);
     try {
@@ -21,17 +21,13 @@ function sendVerificationEmail($to, $verificationLink = null, $userName, $device
         $mail->addAddress($to);
         $mail->isHTML(true);
 
-
-
         if ($verificationLink) {
             $mail->Subject = 'Verify your email';
-            // Load verification template
             ob_start();
             include __DIR__ . '/../emailTemplates/verification.php';
             $body = ob_get_clean();
         } else {
             $mail->Subject = 'Thank You for Signing Up!';
-            // Load thank-you template
             ob_start();
             include __DIR__ . '/../emailTemplates/Signup.php';
             $body = ob_get_clean();
@@ -43,6 +39,7 @@ function sendVerificationEmail($to, $verificationLink = null, $userName, $device
         error_log("Email error: {$e->getMessage()}");
     }
 }
+
 
 
 

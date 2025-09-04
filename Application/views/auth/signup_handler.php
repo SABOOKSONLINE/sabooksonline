@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
     $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
-    sendVerificationEmail($email, $verifyLink, $name);
+    sendVerificationEmail($email,$name, $verifyLink);
     header("Location: /registration_success");
 
     exit;

@@ -20,7 +20,7 @@ class AuthController {
 
     if (!mysqli_num_rows($result)) {
         $this->userModel->insertGoogleUser($reg_name, $email, $profileImage, $email);
-        sendVerificationEmail($email, $reg_name);
+        sendVerificationEmail($email,$reg_name);
         $result = $this->userModel->findUserByEmail($email);
     }
 
@@ -81,7 +81,7 @@ public function signup($name, $email, $password) {
     if ($stmt->execute()) {
         // ✅ token link goes into email
         $verifyLink = "https://sabooksonline.co.za/verify/" . urlencode($token);
-        sendVerificationEmail($email, $verifyLink, $name, "SABO Mobile App");
+        sendVerificationEmail($email,$name, $verifyLink,"SABO Mobile App");
 
         echo json_encode([
             "message" => "Signup successful. Please verify email.",
