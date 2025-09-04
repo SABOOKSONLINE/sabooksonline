@@ -51,7 +51,7 @@ class BookController
     }
 
     if (empty($_SESSION['ADMIN_EMAIL'])) {
-        include_once __DIR__ . '/../views/403.php';
+        header('Location: /login');
         exit;
     }
 
@@ -112,7 +112,7 @@ class BookController
 
         include __DIR__ . '/../views/books/ebook/bookReader.php';
     } else {
-        include_once __DIR__ . '/../views/401.php';
+        header("Location: /404");
         exit;
     }
 }
