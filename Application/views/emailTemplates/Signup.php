@@ -87,7 +87,8 @@
                         <p style="margin:0 0 30px; font-size:17px; line-height:1.6; color:#555555;">
                             You can now explore thousands of books, audiobooks, and exclusive content directly from our website or mobile app.
                         </p>
-                        <a href="https://sabooksonline.co.za" class="button">
+                        <a href="https://sabooksonline.co.za" class="button"                            
+                        style="display:inline-block; background-color:#e60338; color:#ffffff !important; padding:15px 30px; border-radius:8px; font-weight:600; font-size:16px; line-height:1.2; text-decoration:none !important;">
                             Get Started
                         </a>
                         <p style="margin-top:40px; font-size:13px; color:#888888; line-height:1.5;">

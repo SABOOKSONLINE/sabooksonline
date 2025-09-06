@@ -115,7 +115,10 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                         <span class="book-card-num"><?= $index + 1 ?></span>
 
                                         <div class="card shadow-sm rounded-4 overflow-hidden" style="width: 100%; max-width: 260px;">
+                                            <a href="/library/book/<?= htmlspecialchars($book['CONTENTID']) ?>">
                                             <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" class="card-img-top" alt="<?= htmlspecialchars($book['TITLE']) ?>">
+                                        </a>
+
                                         </div>
                                     </div>
                                 </div>
