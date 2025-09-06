@@ -12,18 +12,40 @@ class Model
         $this->conn = $conn;
     }
 
+    protected function fetch(string $sql): array
+    {
+        $result = $this->conn->query($sql);
+
+        if (!$result) {
+            throw new Exception("Database query failed: " . $this->conn->error);
+        }
+
+        return $result->fetch_assoc() ?: [];
+    }
+
+
     protected function fetchAll(string $sql): array
     {
         $result = $this->conn->query($sql);
+
+        if (!$result) {
+            throw new Exception("Database query failed: " . $this->conn->error);
+        }
+
         return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 
     protected function fetchPrepared(string $sql, string $types = '', array $params = []): array
     {
         $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            throw new Exception("SQL prepare failed: " . $this->conn->error);
+        }
+
         if ($types && $params) {
             $stmt->bind_param($types, ...$params);
         }
+
         $stmt->execute();
         $result = $stmt->get_result();
 
