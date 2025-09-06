@@ -1,4 +1,6 @@
 <?php
+include __DIR__ . "/../includes/pageHeader.php";
+
 if (!isset($title)) $title = "Admin Dashboard";
 if (!isset($content)) $content = "";
 ?>
@@ -9,10 +11,28 @@ if (!isset($content)) $content = "";
 <?php include __DIR__ . "/../includes/head.php"; ?>
 
 <body>
-    <?php
-    include __DIR__ . "/../includes/nav.php";
-    include __DIR__ . "/../includes/left_bar.php";
-    ?>
+    <?php include __DIR__ . "/../includes/nav.php"; ?>
+
+    <main class="main">
+        <section>
+            <div class="container-fluid">
+                <div class="row">
+                    <?php include __DIR__ . "/../includes/left_bar.php"; ?>
+                    <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll">
+                        <?php
+                        renderHeading(
+                            "Dashboard Overview",
+                            "Welcome to your administration panel",
+                        );
+                        ?>
+                        <?= $content ?>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <?php include __DIR__ . "/../includes/scripts.php"; ?>
 </body>
 
 </html>
