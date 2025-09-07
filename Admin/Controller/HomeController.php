@@ -22,6 +22,7 @@ class HomeController extends Controller
     public function index()
     {
         $admins = $this->userModel->getAllAdmins();
+        $users = $this->userModel->getAllUsers();
         $countUsers = $this->userModel->countUsers();
         $countSubscribedUsers = $this->userModel->countSubscribers();
         $grossSubscriptionIncome = $this->userModel->grossSubscriptionIncome();
@@ -29,9 +30,10 @@ class HomeController extends Controller
         $this->render("home", [
             "admins" => $admins,
             "users" => [
-                "all" => $countUsers,
+                "countAll" => $countUsers,
                 "subscribed" => $countSubscribedUsers,
-                "subscribtion_gross" => $grossSubscriptionIncome
+                "subscribtion_gross" => $grossSubscriptionIncome,
+                "details" => $users
             ],
             "books" => $countPublishedContent
         ]);

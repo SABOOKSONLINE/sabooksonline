@@ -24,7 +24,8 @@ class UserModel extends Model
 
     public function getAllUsers(): array
     {
-        return $this->fetchAll("SELECT * FROM users");
+        return $this->fetchAll("SELECT ADMIN_ID, ADMIN_NAME, ADMIN_EMAIL, subscription_status
+                                FROM users ORDER BY ADMIN_ID DESC");
     }
 
     public function countUsers(): array
