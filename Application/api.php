@@ -14,25 +14,28 @@ require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/models/UserModel.php';
 require_once __DIR__ . '/models/MediaModel.php';
+require_once __DIR__ . '/models/ReviewsModel.php';
+
 
 require_once __DIR__ . '/controllers/BookController.php';
 require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/MediaController.php';
+require_once __DIR__ . '/controllers/ReviewsController.php';
+
 
 
 $controller = new BookController($conn);
 $creator = new UserController($conn);
+$reviews = new ReviewsController($conn);
 $authController = new AuthController($conn);
 $media = new MediaController($conn);
 
 
-
 $action = $_GET['action'] ?? 'getAllBooks';
-
 $date = $_GET['updated_since'] ?? null;
-
 $email = $_GET['email'] ?? null;
+
 
 switch ($action) {
     case 'login':
@@ -81,6 +84,10 @@ switch ($action) {
     case 'creators':
         $creator->getCreators($date);
         break;
+    case 'reviews':
+        $id = $_GET['id'] ?? null;
+        $reviews->getReviewById($id);
+        break;
 
     case 'magazine':
         $media->getMagazines($date);
@@ -96,7 +103,6 @@ switch ($action) {
 
     case 'audio':
         $a_id = $_GET['a_id'] ?? null;
-
         $controller->getAudiobookDetailsApi($a_id);
         break;
 

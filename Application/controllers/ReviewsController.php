@@ -19,6 +19,15 @@ class ReviewsController
         $this->reviewsModel->insertReview($data);
     }
 
+    public function getReviewById($bookId): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $this->reviewsModel->getReviewsByBookId($bookId);
+        echo json_encode($books);
+
+    }
+
     public function renderReviews(): void
     {
         $bookId = $_GET['q'];
