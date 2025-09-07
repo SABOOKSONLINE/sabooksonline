@@ -27,6 +27,11 @@ class HomeController extends Controller
         $countSubscribedUsers = $this->userModel->countSubscribers();
         $grossSubscriptionIncome = $this->userModel->grossSubscriptionIncome();
         $countPublishedContent = $this->bookModel->countPublishedContent();
+        $bookPurchaseIncome = $this->bookModel->bookPurchase();
+        $bookPurchaseCount = $this->bookModel->countBookPurchase();
+        $bookViews = $this->bookModel->countBookViews();
+        $mediaViews = $this->bookModel->countMediaViews();
+
         $this->render("home", [
             "admins" => $admins,
             "users" => [
@@ -35,7 +40,13 @@ class HomeController extends Controller
                 "subscribtion_gross" => $grossSubscriptionIncome,
                 "details" => $users
             ],
-            "books" => $countPublishedContent
+            "books" => [
+                "countAll" => $countPublishedContent,
+                "book_purchase_count" => $bookPurchaseCount,
+                "book_purchase_gross" => $bookPurchaseIncome,
+                "book_views" => $bookViews,
+                "media_views" => $mediaViews
+            ]
         ]);
     }
 
