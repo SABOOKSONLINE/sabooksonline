@@ -1,5 +1,5 @@
 <?php
-function renderSectionHeader($heading, $subheading = "", $button = "", $path = "")
+function renderSectionHeader($heading, $subheading = "", $button = "", $path = "", $btnType = "button")
 {
 ?>
     <div class="row align-items-center justify-content-between mt-5 mb-3">
@@ -14,10 +14,12 @@ function renderSectionHeader($heading, $subheading = "", $button = "", $path = "
         <!-- Right Button -->
         <?php if (!empty($button)): ?>
             <div class="col-md-auto col-12 text-md-end">
-                <a href="<?= $path ?>" class="btn">
+                <button
+                    type="<?= htmlspecialchars($btnType) ?>"
+                    class="btn btn-outline-dark"
+                    <?php if (!empty($path)): ?> onclick="window.location.href='<?= htmlspecialchars($path) ?>'" <?php endif; ?>>
                     <?= htmlspecialchars($button) ?>
-                    <i class="fas fa-arrow-right ms-2"></i>
-                </a>
+                </button>
             </div>
         <?php endif; ?>
     </div>
