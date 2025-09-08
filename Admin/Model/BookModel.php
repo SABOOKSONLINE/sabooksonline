@@ -62,4 +62,10 @@ class BookModel extends Model
                                     ORDER BY l.CATEGORY, p.TITLE");
         return $result;
     }
+
+
+    public function getAllBooks(): array
+    {
+        return $this->fetchAll("SELECT * FROM posts");
+    }
 }
