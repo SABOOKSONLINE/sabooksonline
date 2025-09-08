@@ -500,7 +500,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('GET', '/admin/pages/home', function () {
-        require  "Admin/View/pages/homePage.php";
+        require  "Admin/index.php";
     });
 });
 
