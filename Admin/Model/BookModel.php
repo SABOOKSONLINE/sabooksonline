@@ -66,6 +66,11 @@ class BookModel extends Model
 
     public function getAllBooks(): array
     {
-        return $this->fetchAll("SELECT * FROM posts");
+        return $this->fetchAll("SELECT COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
+    }
+
+    public function deleteListing(string $publicKey): int
+    {
+        return $this->delete("DELETE FROM listings WHERE CONTENTID = ?", "s", [$publicKey]);
     }
 }

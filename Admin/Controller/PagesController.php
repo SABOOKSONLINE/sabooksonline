@@ -17,10 +17,17 @@ class PagesController extends Controller
 
     public function pages(): void
     {
+        $allBooks = $this->bookModel->getAllBooks();
         $listings = $this->bookModel->getBooksListings();
 
         $this->render("homePage", [
-            "listings" => $listings
+            "listings" => $listings,
+            "books" => $allBooks
         ]);
+    }
+
+    public function deleteListing(string $publicKey): int
+    {
+        return $this->bookModel->deleteListing($publicKey);
     }
 }
