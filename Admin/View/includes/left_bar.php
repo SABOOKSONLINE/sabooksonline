@@ -16,22 +16,22 @@ $current_path = $_SERVER['REQUEST_URI'];
                 <a href="/admin/analytics" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/analytics' || $current_path == '/admin/analytics/') ? 'active' : ''; ?>">
                     <i class="fas fa-chart-line me-2"></i> Analytics
                 </a>
-            </div>
-        </div>
 
-        <div class="mt-4 pt-2 mt-auto">
-            <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
-                <i class="fas fa-user-circle me-1"></i> My Account
-            </p>
-
-            <div class="nav flex-column gap-1">
-                <a href="/dashboards/profile" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/profile') === 0) ? 'active' : ''; ?>">
-                    <i class="fas fa-user-edit me-2"></i> My Profile
+                <!-- Pages Dropdown -->
+                <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#pagesMenu" role="button" aria-expanded="false" aria-controls="pagesMenu">
+                    <span><i class="fas fa-file-alt me-2"></i> Pages</span>
+                    <i class="fas fa-chevron-down"></i>
                 </a>
-                <a href="../includes/logout" class="nav-link py-2 px-3 rounded-3 text-danger">
-                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                </a>
+                <div class="collapse <?php echo (strpos($current_path, '/admin/pages') === 0) ? 'show' : ''; ?>" id="pagesMenu">
+                    <div class="nav flex-column ms-3 mt-1">
+                        <a href="/admin/pages/home" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/pages/home') ? 'active' : ''; ?>">
+                            Home Page
+                        </a>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
