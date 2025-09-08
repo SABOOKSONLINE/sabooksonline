@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../includes/pageHeader.php";
+include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/cards/aCard.php";
 include __DIR__ . "/../layouts/cards/pCard.php";
 include __DIR__ . "/../layouts/cards/tCard.php";
