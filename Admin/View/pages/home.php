@@ -1,10 +1,16 @@
 <?php
+include __DIR__ . "/../includes/pageHeader.php";
 include __DIR__ . "/../layouts/cards/aCard.php";
 include __DIR__ . "/../layouts/cards/pCard.php";
 include __DIR__ . "/../layouts/cards/tCard.php";
 
 $title = "Admin Overviews";
 ob_start();
+
+renderHeading(
+    "Dashboard Overview",
+    "Welcome to your administration panel",
+);
 ?>
 
 <div class="row">
