@@ -39,23 +39,19 @@ body {
     /* Black outline */
     background-color: #fff;
     color: #555;
-    transition: transform 0.3s ease, box-shadow 0.3s ease,
-        background-color 0.3s ease, color 0.3s ease;
+    transition: 0.3s ease;
     border-radius: 0.5rem;
     padding: 1rem;
+    outline: 1px solid rgb(0, 0, 0, 0.05);
 }
 
 /* Hover Effects */
 .analysis-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
-    background-color: rgba(0, 0, 0, 0.02) !important;
-    color: #222 !important;
-}
-
-.analysis-card:hover .text-muted,
-.analysis-card:hover .text-primary {
-    color: #222 !important;
+    /* transform: scale(1.02); */
+    /* box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1); */
+    /* background-color: rgba(0, 0, 0, 0.02) !important; */
+    /* color: #222 !important; */
+    outline: 5px solid rgb(0, 0, 0, 0.1);
 }
 
 /* Stylish Section Cards */
