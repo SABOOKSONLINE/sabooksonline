@@ -52,4 +52,14 @@ class BookModel extends Model
                                 WHERE page_url LIKE '/media/%'");
         return $result;
     }
+
+    public function getBooksListings(): array
+    {
+        $result = $this->fetchAll("SELECT p.*, l.CATEGORY AS section
+                                    FROM posts AS p
+                                    JOIN listings AS l 
+                                        ON p.CONTENTID = l.CONTENTID
+                                    ORDER BY l.CATEGORY, p.TITLE");
+        return $result;
+    }
 }
