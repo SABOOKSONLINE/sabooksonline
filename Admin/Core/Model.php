@@ -12,6 +12,8 @@ class Model
         $this->conn = $conn;
     }
 
+    /** ---------------- FETCH METHODS ---------------- */
+
     protected function fetch(string $sql): array
     {
         $result = $this->conn->query($sql);
@@ -23,7 +25,6 @@ class Model
         return $result->fetch_assoc() ?: [];
     }
 
-
     protected function fetchAll(string $sql): array
     {
         $result = $this->conn->query($sql);
@@ -32,7 +33,7 @@ class Model
             throw new Exception("Database query failed: " . $this->conn->error);
         }
 
-        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        return $result->fetch_all(MYSQLI_ASSOC) ?: [];
     }
 
     protected function fetchPrepared(string $sql, string $types = '', array $params = []): array
@@ -52,5 +53,66 @@ class Model
         $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         $stmt->close();
         return $rows;
+    }
+
+
+    protected function insert(string $sql, string $types = '', array $params = []): int
+    {
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            throw new Exception("SQL prepare failed: " . $this->conn->error);
+        }
+
+        if ($types && $params) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Insert failed: " . $stmt->error);
+        }
+
+        $insertId = $stmt->insert_id;
+        $stmt->close();
+        return $insertId;
+    }
+
+    protected function update(string $sql, string $types = '', array $params = []): int
+    {
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            throw new Exception("SQL prepare failed: " . $this->conn->error);
+        }
+
+        if ($types && $params) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Update failed: " . $stmt->error);
+        }
+
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        return $affectedRows;
+    }
+
+    protected function delete(string $sql, string $types = '', array $params = []): int
+    {
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            throw new Exception("SQL prepare failed: " . $this->conn->error);
+        }
+
+        if ($types && $params) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Delete failed: " . $stmt->error);
+        }
+
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        return $affectedRows;
     }
 }
