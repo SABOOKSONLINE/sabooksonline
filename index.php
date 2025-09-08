@@ -498,6 +498,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/admin/analytics', function () {
         require  "Admin/View/pages/analytics.php";
     });
+
+    $r->addRoute('GET', '/admin/pages/home', function () {
+        require  "Admin/View/pages/homePage.php";
+    });
 });
 
 // Fetch method and URI from server
