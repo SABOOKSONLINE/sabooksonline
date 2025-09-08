@@ -274,3 +274,111 @@ h5.most-viewed-title {
 .pop_form_active {
     transform: translate(-50%, -50%) scale(1);
 }
+
+.scroll-row {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scroll-row::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-row-wrapper {
+    position: relative;
+}
+
+.scroll-row-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 1),
+        rgba(255, 255, 255, 0)
+    );
+}
+
+.ratio-container {
+    position: relative;
+    width: 100%;
+    padding-top: 120%;
+    display: block;
+    overflow: hidden;
+}
+
+.ratio-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-wrapper {
+    position: relative;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    color: black;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 15px;
+    padding: 2px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: 0.2s ease;
+}
+
+.remove-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(168, 41, 41, 0.8);
+}
+
+.card-wrapper:hover .remove-btn {
+    opacity: 1;
+}
+
+.remove-btn i {
+    font-size: 0.8rem;
+}
+
+.card {
+    transition: 0.3s ease;
+    outline: 5px solid rgba(0, 0, 0, 0);
+}
+
+.card:hover {
+    outline: 5px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 0.5rem 0.75rem;
+}
+
+.card-title {
+    font-size: 0.9rem;
+}
+
+.card-text {
+    font-size: 0.75rem;
+}
