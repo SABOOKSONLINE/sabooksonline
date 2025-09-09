@@ -26,6 +26,11 @@ class PagesController extends Controller
         ]);
     }
 
+    public function addListing(string $publicKey, string $category): int
+    {
+        return $this->bookModel->addListing($publicKey, $category);
+    }
+
     public function deleteListing(string $publicKey): int
     {
         return $this->bookModel->deleteListing($publicKey);

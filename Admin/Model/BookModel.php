@@ -69,6 +69,12 @@ class BookModel extends Model
         return $this->fetchAll("SELECT COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
     }
 
+    public function addListing(string $publicKey, string $category): int
+    {
+        return $this->insert("INSERT INTO listings (CONTENTID, CATEGORY)
+                            VALUES (?, ?)", "ss", [$publicKey, $category]);
+    }
+
     public function deleteListing(string $publicKey): int
     {
         return $this->delete("DELETE FROM listings WHERE CONTENTID = ?", "s", [$publicKey]);
