@@ -8,7 +8,6 @@ require_once __DIR__ . "/../../controllers/MediaController.php";
 require_once __DIR__ . "/../layout/sectionHeading.php";
 
 $controller = new MediaController($conn);
-
 $newspaperData = $controller->getNewspaperByPublicKey($_GET['publicKey']);
 
 
@@ -17,19 +16,18 @@ $newspaperId = $newspaperData['public_key'];
 
 $title = $newspaperData['title'];
 $description = $newspaperData['description'];
+
 $cover_image_path = $newspaperData['cover_image_path'];
 $category = $newspaperData['category'];
+
 $publisher_id = $newspaperData['publisher_id'];
 $publish_date = $newspaperData['publish_date'];
-$price = $newspaperData['price'];
 
+$price = $newspaperData['price'];
 $user = $controller->getUserById($publisher_id);
+
 $publisher = $user['ADMIN_NAME'];
 $publisherPublicKey = $user['ADMIN_USERKEY'];
-
-// echo "<pre>";
-// print_r($newspaperData);
-// echo "</pre>";
 $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 
@@ -132,8 +130,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-h">Digital Version</span>
                         <?php if ((float)$price !== 0.00): ?>
                             <span class="bv-purchase-select-hL">R<?= $price ?></span>
-                        <?php else: ?>
-                            <span class="bv-purchase-select-hL">FREE</span>
+                        <!-- <?php else: ?>
+                            <span class="bv-purchase-select-hL">FREE</span> -->
                         <?php endif; ?>
                     </span>
 
@@ -160,7 +158,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 </form>
                             <?php else: ?>
                                 <!-- READ BUTTON -->
-                                <a href="/read?q=<?= urlencode($newspaperId) ?>&category=newspaper"  id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                <a href="/read/<?= $newspaperId?>?category=newspaper"  id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
                                     Read Now
                                 </a>
                             <?php endif; ?>

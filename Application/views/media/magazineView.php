@@ -8,7 +8,6 @@ require_once __DIR__ . "/../../controllers/MediaController.php";
 require_once __DIR__ . "/../layout/sectionHeading.php";
 
 $controller = new MediaController($conn);
-
 $magazineData = $controller->getMagazineByPublicKey($_GET['publicKey']);
 
 $id = $magazineData['id'];
@@ -16,24 +15,26 @@ $magazineId = $magazineData['public_key'];
 
 $title = $magazineData['title'];
 $description = $magazineData['description'];
+
 $cover_image_path = $magazineData['cover_image_path'];
 $category = $magazineData['category'];
+
 $frequency = $magazineData['frequency'];
 $issn = $magazineData['issn'];
+
 $editor = $magazineData['editor'];
 $language = $magazineData['language'];
+
 $country = $magazineData['country'];
 $publisher_id = $magazineData['publisher_id'];
+
 $publish_date = $magazineData['publish_date'];
 $price = $magazineData['price'];
 
 $user = $controller->getUserById($publisher_id);
 $publisher = $user['ADMIN_NAME'];
-$publisherPublicKey = $user['ADMIN_USERKEY'];
 
-// echo "<pre>";
-// print_r($magazine);
-// echo "</pre>";
+$publisherPublicKey = $user['ADMIN_USERKEY'];
 $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 
@@ -150,8 +151,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <span class="bv-purchase-select-h">Digital Version</span>
                         <?php if ((float)$price !== 0.00): ?>
                             <span class="bv-purchase-select-hL">R<?= $price ?></span>
-                        <?php else: ?>
-                            <span class="bv-purchase-select-hL">FREE</span>
+                        <!-- <?php else: ?>
+                            <span class="bv-purchase-select-hL">FREE</span> -->
                         <?php endif; ?>
                     </span>
 
@@ -179,7 +180,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             <?php else: ?>
                                 <!-- READ BUTTON -->   
 
-                                <a href="/read?q=<?= urlencode($magazineId) ?>&category=magazine"  id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                <a href="/read/<?=$magazineId?>?category=magazine"  id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
                                     Read Now
                                 </a>
                             <?php endif; ?>

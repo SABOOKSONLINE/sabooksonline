@@ -3,14 +3,11 @@
 class BookController
 {
     private $bookModel;
-    // private $mediaModel;
-
     private $conn;
 
     public function __construct($conn)
     {
         $this->bookModel = new BookModel($conn);
-        // $this->mediaModel = new MediaModel($conn);
         $this->conn = $conn;
     }
 
@@ -41,6 +38,8 @@ class BookController
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
+    $mediaModel = new MediaModel($this->conn);
+
 
     if (!$contentId) {
         header("Location: /404");
@@ -52,7 +51,7 @@ class BookController
     }
 
     if (empty($_SESSION['ADMIN_EMAIL'])) {
-        include_once __DIR__ . '/../views/403.php';
+        header('Location: /login');
         exit;
     }
 
@@ -65,12 +64,12 @@ class BookController
     // Pick content & URL
     switch (strtolower($category)) {
         case 'magazine':
-            $content = $this->mediaModel->selectMagazineById($contentId);
+            $content = $mediaModel->selectMagazineById($contentId);
             $pdf = $content['pdf_path'] ?? null;
             break;
 
         case 'newspaper':
-            $content = $this->mediaModel->selectNewspaperById($contentId);
+            $content = $mediaModel->selectNewspaperById($contentId);
             $pdf = $content['pdf_path'] ?? null;
             break;
 
@@ -105,15 +104,15 @@ class BookController
         // Map category to folder for URL
         $folderMap = [
             'book'      => 'book-pdfs',
-            'magazine'  => 'magazine',
-            'newspaper' => 'newspaper'
+            'magazine'  => 'magazine/pdfs',
+            'newspaper' => 'newspaper/pdfs'
         ];
         $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
         $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
 
         include __DIR__ . '/../views/books/ebook/bookReader.php';
     } else {
-        include_once __DIR__ . '/../views/401.php';
+        header("Location: /404");
         exit;
     }
 }

@@ -18,43 +18,56 @@ require_once __DIR__ . "/../../includes/header.php";
   }
 
   .container {
-    max-width: 960px;
-    margin: auto;
-    padding: 1rem;
-  }
-
-  h2 {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .toolbar {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 1rem;
-    align-items: center;
+    max-width: 100%;
+    margin: 0;
   }
 
-  button {
-    padding: 10px 16px;
-    font-size: 14px;
-    border: none;
+  /* Sidebar (chapters) */
+  #chapterNav {
+    width: 250px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 1rem;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+  }
+
+  .dark-mode #chapterNav {
+    background-color: #1e1e1e;
+    border-right: 1px solid #333;
+  }
+
+  #chapters-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #chapters-list li {
+    padding: 10px 12px;
     border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
     cursor: pointer;
+    font-size: 14px;
   }
 
-  button:hover {
-    background-color: #0056b3;
+  #chapters-list li:hover {
+    background-color: #e2e2e2;
   }
 
-  .toggle-mode {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
+  .dark-mode #chapters-list li:hover {
+    background-color: #333;
+  }
+
+  /* Main PDF area */
+  .pdf-container {
+    flex: 1;
+    padding: 1rem;
+    overflow-x: hidden;
   }
 
   #pdf-pages {
@@ -85,40 +98,6 @@ require_once __DIR__ . "/../../includes/header.php";
     pointer-events: none;
     z-index: 999;
   }
-
-  #chapterNav {
-    max-height: 300px;
-    overflow-y: auto;
-    background: #fff;
-    padding: 10px;
-    margin: 1rem auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-
-  .dark-mode #chapterNav {
-    background-color: #1e1e1e;
-  }
-
-  #chapters-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  #chapters-list li {
-    padding: 6px 10px;
-    border-bottom: 1px solid #ccc;
-    cursor: pointer;
-  }
-
-  #chapters-list li:hover {
-    background-color: #e2e2e2;
-  }
-
-  .dark-mode #chapters-list li:hover {
-    background-color: #333;
-  }
 </style>
 </head>
 <body>
@@ -127,33 +106,26 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <div class="watermark">Protected by SABooksOnline</div>
 
-
-
 <div class="container">
-  <!-- <button onclick="toggleMode()">mode</button> -->
-  <!-- <h2><?= htmlspecialchars($book['TITLE']) ?></h2> -->
-
-  <div class="toolbar">
-    <button onclick="zoomOut()">-</button>
-    <span id="zoom-level">Zoom: 150%</span>
-    <button onclick="zoomIn()">+</button>
-  </div> 
-
+  <!-- Sidebar chapters -->
   <div id="chapterNav">
+    <h3>Chapters</h3>
     <ul id="chapters-list"></ul>
   </div>
 
-  <div id="pdf-pages"></div>
+  <!-- Main PDF pages -->
+  <div class="pdf-container">
+    <div id="pdf-pages"></div>
+  </div>
 </div>
 
 <script>
-  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";  let pdfDoc = null,
+  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";
   let pdfDoc = null,
-      zoom = parseFloat(localStorage.getItem('zoom')) || 1.5,
+      zoom = 1.5,
       chapterTitles = [];
 
   const pdfPagesContainer = document.getElementById("pdf-pages");
-  const zoomLevel = document.getElementById("zoom-level");
 
   // Disable right click & drag on canvas
   document.addEventListener("contextmenu", e => {
@@ -167,30 +139,6 @@ require_once __DIR__ . "/../../includes/header.php";
   // Dark mode preference
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark-mode");
-  }
-
-  function toggleMode() {
-    const isDark = document.body.classList.toggle("dark-mode");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }
-
-  function zoomIn() {
-    zoom += 0.2;
-    localStorage.setItem('zoom', zoom);
-    zoomLevel.textContent = `Zoom: ${Math.round(zoom * 100)}%`;
-    refreshPages();
-  }
-
-  function zoomOut() {
-    zoom = Math.max(0.5, zoom - 0.2);
-    localStorage.setItem('zoom', zoom);
-    zoomLevel.textContent = `Zoom: ${Math.round(zoom * 100)}%`;
-    refreshPages();
-  }
-
-  function refreshPages() {
-    pdfPagesContainer.innerHTML = "";
-    observePages();
   }
 
   function scrollToPage(pageNumber) {
@@ -262,7 +210,7 @@ require_once __DIR__ . "/../../includes/header.php";
       pages.forEach((pageText, index) => {
         const pageNum = index + 1;
         let textContent = pageText.items.map(item => item.str).join(' ');
-        let matches = textContent.match(/Chapter\s+\d+[^.]*/gi);
+        let matches = textContent.match(/(Chapter\s+\d+|CHAPTER\s+[A-Z]+|\d+\.\s+[A-Z][^.]*)/gi);
         if (matches) {
           matches.forEach(title => {
             chapterTitles.push({ title, page: pageNum });
@@ -287,7 +235,6 @@ require_once __DIR__ . "/../../includes/header.php";
   // Load the PDF
   pdfjsLib.getDocument(url).promise.then(pdf => {
     pdfDoc = pdf;
-    zoomLevel.textContent = `Zoom: ${Math.round(zoom * 100)}%`;
     observePages();
     extractTextFromPDF();
   });

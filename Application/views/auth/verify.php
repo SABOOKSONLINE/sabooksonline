@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../util/helpers/session_helper.php";
+require_once __DIR__ . "/mailer.php";
+
 
 session_start();
 if (isset($_GET['token'])) {
@@ -27,6 +29,8 @@ if (isset($_GET['token'])) {
         mysqli_stmt_execute($updateStmt);
 
         $_SESSION['alert'] = ['type' => 'success', 'message' => 'Email verified successfully. You may now log in.'];
+        sendVerificationEmail($user['ADMIN_EMAIL'], $user['ADMIN_NAME']);
+
         // if (!empty($_SESSION['current_page'])) {
         //     header("Location: " . $_SESSION['current_page']);
         // } else {
