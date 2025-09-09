@@ -2,21 +2,24 @@
 include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
 include __DIR__ . "/../layouts/cards/bkCard.php";
+include __DIR__ . "/../layouts/tables/bTable.php";
+
+require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
 $title = "Pages - Home";
 ob_start();
 
 renderHeading(
     "Dashboard Pages",
-    "",
+    "Manage and update featured sections on the home page.",
 );
-// echo "<pre>";
-// print_r($data["listings"]);
-// echo "</pre>";
+
+renderAlerts();
 ?>
 
 <?php
 $listings = $data["listings"];
+$allBooks = $data["books"];
 
 $booksBySection = [];
 foreach ($listings as $book) {
@@ -27,18 +30,19 @@ foreach ($listings as $book) {
     $booksBySection[$section][] = $book;
 }
 
+$headers = ["Cover", "Title", "Public Key", "Publisher Name"];
+
 foreach ($booksBySection as $sectionName => $books) {
     renderSectionHeader(
         $sectionName,
-        ""
+        "",
     );
 
-    echo '<div class="row">';
-    renderBookCards($books);
-    echo '</div>';
+    renderBookCards($books, false, $sectionName);
+    echo renderBookTable($headers, $allBooks, $sectionName);
 }
-?>
 
+?>
 
 <?php
 $content = ob_get_clean();
