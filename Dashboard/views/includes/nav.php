@@ -13,7 +13,7 @@ $userId = $_SESSION['ADMIN_ID'];
 if (isset($userKey)) {
     $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
 
-    if (isset($adminProfileImage)&& !empty($adminProfileImage)) {
+    if (isset($adminProfileImage) && !empty($adminProfileImage)) {
 
         if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
             $profile = $adminProfileImage;
@@ -87,6 +87,9 @@ require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
                                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"): ?>
+                                <li><a class="dropdown-item" href="/admin">Admin Dashboard</a></li>
+                            <?php endif ?>
                             <li><a class="dropdown-item" href="/dashboards/profile">Profile</a></li>
                             <li><a class="dropdown-item" href="/dashboards/account-billing">Account Billing</a></li>
                             <li><a class="dropdown-item" href="/membership">Subscription Plans</a></li>
