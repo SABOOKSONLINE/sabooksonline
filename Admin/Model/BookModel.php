@@ -71,9 +71,15 @@ class BookModel extends Model
 
     public function addListing(string $publicKey, string $category): int
     {
-        return $this->insert("INSERT INTO listings (CONTENTID, CATEGORY)
-                            VALUES (?, ?)", "ss", [$publicKey, $category]);
+        return $this->insert(
+            "INSERT INTO listings (CONTENTID, CATEGORY)
+         VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE CATEGORY = VALUES(CATEGORY)",
+            "ss",
+            [$publicKey, $category]
+        );
     }
+
 
     public function deleteListing(string $publicKey): int
     {
