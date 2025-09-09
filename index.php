@@ -491,6 +491,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
 
     // =================== Admin Dashboard ===================
+    $r->addRoute('POST', '/admin/process', function () {
+        require  "Admin/Helpers/process.php";
+    });
+
     $r->addRoute('GET', '/admin/process', function () {
         require  "Admin/Helpers/process.php";
     });
