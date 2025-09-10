@@ -16,7 +16,6 @@ include __DIR__ . "/includes/dashboard_heading.php";
             <div class="row">
                 <?php include __DIR__ . "/includes/layouts/side-bar.php" ?>
 
-
                 <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
                     renderHeading(
@@ -27,15 +26,8 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     $academicBooksController = new AcademicBookController($conn);
                     $books = $academicBooksController->getAllBooks($userId);
 
-                    // include __DIR__ . "/includes/layouts/tables/academic_table.php";
+                    include __DIR__ . "/includes/layouts/tables/academic_table.php";
                     ?>
-                    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"): ?>
-                        <?php include __DIR__ . "/includes/layouts/tables/academic_table.php"; ?>
-                    <?php else: ?>
-                        <div class="alert alert-danger" role="alert">
-                            You don’t have access to this feature.
-                        </div>
-                    <?php endif ?>
                 </div>
             </div>
         </div>
