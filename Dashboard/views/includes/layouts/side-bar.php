@@ -35,11 +35,9 @@ if (!in_array(strtolower($subscriptionPlan), $allowedPlans) && $current_path ===
                     <a href="/dashboards/media" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/media') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-newspaper me-2"></i> Manage Media
                     </a>
-                    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"): ?>
-                        <a href="/dashboards/academic/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/academic') === 0) ? 'active' : ''; ?>">
-                            <i class="fas fa-graduation-cap me-2"></i> Academic Content
-                        </a>
-                    <?php endif ?>
+                    <a href="/dashboards/academic/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/academic') === 0) ? 'active' : ''; ?>">
+                        <i class="fas fa-graduation-cap me-2"></i> Academic Content
+                    </a>
 
                     <a href="/dashboards/events" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/events') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt me-2"></i> Event Planner
