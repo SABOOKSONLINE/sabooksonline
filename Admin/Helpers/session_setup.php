@@ -5,6 +5,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (!isset($_SESSION['ADMIN_USERKEY'])) {
+    header("Location: /login");
+    exit;
+}
+
 $userKey = $_SESSION['ADMIN_USERKEY'];
 $userId = $_SESSION['ADMIN_ID'];
 $userName = extractName($_SESSION['ADMIN_EMAIL']);
