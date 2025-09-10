@@ -102,7 +102,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
      $r->addRoute('GET', '/api/banners', function () {
-        $_GET['action'] = 'screen';
+        $_GET['action'] = 'banners';
         require "Application/api.php";
     });
 
