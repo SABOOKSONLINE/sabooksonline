@@ -30,7 +30,7 @@ if (empty($email) || empty($password)) {
 // Database operations
 try {
     // Get user credentials
-    $stmt = mysqli_prepare($conn, "SELECT ADMIN_ID, ADMIN_PASSWORD, USER_STATUS FROM users WHERE ADMIN_EMAIL = ?");
+    $stmt = mysqli_prepare($conn, "SELECT ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USER_STATUS FROM users WHERE ADMIN_EMAIL = ?");
     if (!$stmt) {
         throw new Exception('Database preparation error: ' . mysqli_error($conn));
     }
@@ -52,7 +52,7 @@ try {
         exit;
     }
 
-    mysqli_stmt_bind_result($stmt, $userId, $hashedPassword, $userStatus);
+    mysqli_stmt_bind_result($stmt, $userId, $hashedPassword,$name, $userStatus);
     mysqli_stmt_fetch($stmt);
 
     // Verify password
@@ -74,7 +74,7 @@ try {
         }
 
         $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
-        sendVerificationEmail($email, $verifyLink);
+        sendVerificationEmail($email,$name, $verifyLink);
 
         $_SESSION['alert'] = [
             'type' => 'info',

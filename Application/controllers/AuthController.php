@@ -198,6 +198,19 @@ public function getUserInfo($email) {
     }
 }
 
+ if ($isform) {
+    if ($userData['USER_STATUS'] !== 'Verified') {
+        http_response_code(403); // 403 Forbidden is correct
+        echo json_encode([
+            'success' => false,
+            'message' => 'Account not verified. Please check your email.',
+        ]);
+        exit;
+    }
+   
+    }
+    
+    
 
     $subscriptionStatus = strtolower($userData['subscription_status'] ?? '');
     $adminSub = $userData['ADMIN_SUBSCRIPTION'] ?? '';
