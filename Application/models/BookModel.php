@@ -342,6 +342,34 @@ public function getAcademicBooks($updatedSince = null): array
         return $books;
     }
 
+    public function getBanners($screen)
+{
+    $sql = "SELECT * FROM Mobile_banners WHERE screen = ? ORDER BY RAND()";
+
+    $stmt = mysqli_prepare($this->conn, $sql);
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . mysqli_error($this->conn));
+    }
+
+    mysqli_stmt_bind_param($stmt, "s", $screen);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result || mysqli_num_rows($result) == 0) {
+        mysqli_stmt_close($stmt);
+        return [];
+    }
+
+    $banners = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $banners[] = $row;
+    }
+
+    mysqli_stmt_close($stmt);
+    return $banners;
+}
+
+
     public function getBookCategories()
     {
 

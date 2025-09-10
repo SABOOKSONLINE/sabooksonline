@@ -101,6 +101,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+     $r->addRoute('GET', '/api/banners', function () {
+        $_GET['action'] = 'screen';
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/reviews/{id}', function ($id) {
         $_GET['action'] = 'reviews';
         $_GET['id'] = $id;

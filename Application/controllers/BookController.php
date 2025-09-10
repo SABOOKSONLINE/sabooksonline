@@ -328,6 +328,13 @@ class BookController
         echo json_encode($books);
     }
 
+    public function getBanners($screen)
+    {
+        $banner = $this->bookModel->getBanners($screen);
+        header('Content-Type: application/json');
+        echo json_encode($banner);
+    }
+
 
     public function renderBookCardByCategory($category = null, $limit = null, $reverse = false)
     {

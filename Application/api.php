@@ -88,6 +88,10 @@ switch ($action) {
         $id = $_GET['id'] ?? null;
         $reviews->getReviewById($id);
         break;
+    case 'banners':
+        $screen = $_GET['screen'] ?? null;
+        $controller->getBanners($screen);
+        break;
 
     case 'magazine':
         $media->getMagazines($date);
