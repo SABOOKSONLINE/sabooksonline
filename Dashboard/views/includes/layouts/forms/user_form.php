@@ -11,7 +11,6 @@ $adminEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
 $adminNumber = htmlspecialchars($user['ADMIN_NUMBER'] ?? '');
 $adminPassword = htmlspecialchars($user['ADMIN_PASSWORD'] ?? '');
 $adminType = htmlspecialchars($user['ADMIN_TYPE'] ?? '');
-$adminStatus = htmlspecialchars($user['ADMIN_USER_STATUS'] ?? 'inactive');
 $adminDate = htmlspecialchars($user['ADMIN_DATE'] ?? date('Y-m-d'));
 
 $adminWebsite = htmlspecialchars($user['ADMIN_WEBSITE'] ?? '');
@@ -31,162 +30,207 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
 
-if (!empty($userKey)) {
-    // $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? "";
-
+if (isset($userKey)) {
     if (!empty($adminProfileImage)) {
-        if (strpos($adminProfileImage, 'googleusercontent.com') === false) {
-            // Not a Google image, so prefix with sabooks URL
-            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
-
-        } else {
-            // Google image, use as is
+        if (strpos($adminProfileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
+            $profile = "/public/images/user-3296.png";
+        } elseif (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
             $profile = $adminProfileImage;
+        } elseif (strpos($adminProfileImage, 'http') === 0) {
+            $profile = $adminProfileImage;
+        } else {
+            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
         }
     } else {
-        // No image set
         $profile = "/public/images/user-3296.png";
     }
 } else {
-    // No admin logged in
-    $profile = null;
+    header("Location: /login");
+    exit;
 }
-
-
 ?>
 
 <form method="POST"
     action="/dashboards/profile/update<?= $adminId ? "/$adminId" : "" ?>"
-    class="bg-white rounded mb-4 overflow-hidden position-relative">
-    <div class="card border-0 shadow-sm p-4 mb-3">
-        <div class="row">
-            <div class="border-bottom pb-3 mb-4">
-                <h5 class="fw-bold">Profile Information</h5>
-            </div>
+    enctype="multipart/form-data"
+    class="bg-white rounded shadow-sm p-4 mb-4">
+    <div class="row">
+        <div class="mb-3">
+            <h5 class="fw-bold">Profile Information</h5>
+        </div>
 
-            <input type="hidden" name="ADMIN_ID" value="<?= $adminId ?>">
+        <input type="hidden" name="ADMIN_ID" value="<?= $adminId ?>">
 
-
-            <div class="col-sm-6">
-            <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 70px; height: 70px;">
+        <div class="col-sm-6">
+            <div class="rounded-circle p-0" style="width: 70px; height: 70px;">
                 <img src="<?= $profile ?>" alt="Admin Profile"
-                class="rounded-circle"
-                style="width: 100%; height: 100%; object-fit: cover;
+                    class="rounded-circle"
+                    style="width: 100%; height: 100%; object-fit: cover;
                 border: 2px solid #dee2e6;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-            </button>
             </div>
+        </div>
 
-            <div class="col-md-6">
-            <label class="form-label"> Profile Image <span class="text-danger">*</span></label>
-            <input type="hidden" name="existing_profile" value="<?= $adminProfileImage?>">
-            <input type="file" name="profile" class="form-control" accept="image/*" <?= empty($adminProfileImage) ? 'required' : '' ?>>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"> Profile Image <span class="text-danger">*</span></label>
+                <input type="hidden" name="existing_profile" value="<?= $adminProfileImage ?>">
+                <input type="file" name="ADMIN_PROFILE_IMAGE" class="form-control" accept="image/*" <?= empty($adminProfileImage) ? 'required' : '' ?>>
             </div>
+        </div>
 
-
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Full Name*</label>
-                    <input type="text" class="form-control" name="ADMIN_NAME" value="<?= $adminName ?>" required>
-                </div>
+        <!-- Name -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="ADMIN_NAME" value="<?= $adminName ?>" id="name" required>
             </div>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold d-flex align-content-center justify-content-between">Email <small class="text-danger">(Read Only)</small></label>
-                    <input type="email" class="form-control text-muted bg-light" name="ADMIN_EMAIL" value="<?= $adminEmail ?>" readonly>
-                </div>
+        <!-- Email -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold d-flex align-content-center justify-content-between">Email <small class="text-danger">(Read Only)</small></label>
+                <input type="email" class="form-control text-muted bg-light" name="ADMIN_EMAIL" value="<?= $adminEmail ?>" readonly>
             </div>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Phone Number</label>
-                    <input type="text" class="form-control" name="ADMIN_NUMBER" value="<?= $adminNumber ?>">
-                </div>
+        <!-- Phone -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Phone Number</label>
+                <input type="text" class="form-control" name="ADMIN_NUMBER" value="<?= $adminNumber ?>">
             </div>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Website</label>
-                    <input type="text" class="form-control" name="ADMIN_WEBSITE" value="<?= $adminWebsite ?>">
-                </div>
+        <!-- Website URl -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Website</label>
+                <input type="text" class="form-control" name="ADMIN_WEBSITE" value="<?= $adminWebsite ?>">
             </div>
+        </div>
 
-            <div class="col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Physical Address</label>
-                    <input type="text" class="form-control" name="ADMIN_ADDRESS" value="<?= $adminAddress ?>">
-                </div>
+        <!-- Physical -->
+        <!-- <div class="col-sm-12">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Physical Address</label>
+                <input type="text" class="form-control" name="ADMIN_ADDRESS" value="<?= $adminAddress ?>">
             </div>
+        </div> -->
 
-            <div class="col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Author Bio</label>
-                    <textarea type="text" class="form-control" rows="6" maxlength="600" name="ADMIN_BIO"><?= $adminBio ?></textarea>
-                </div>
+        <!-- Author -->
+        <div class="col-sm-12">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Author Bio</label>
+                <textarea type="text" class="form-control" rows="6" maxlength="600" name="ADMIN_BIO"><?= $adminBio ?></textarea>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm p-4 mb-3">
-        <div class="row">
-            <div class="border-bottom pb-3 mb-4">
-                <h5 class="fw-bold">Social Media Links</h5>
-            </div>
+    <hr class="my-4">
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Facebook Link</label>
-                    <input type="text" class="form-control" name="ADMIN_FACEBOOK" value="<?= $adminFacebook ?>">
-                </div>
-            </div>
+    <div class="row">
+        <div class="mb-3">
+            <h5 class="fw-bold">Social Media Links</h5>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Instagram Link</label>
-                    <input type="text" class="form-control" name="ADMIN_INSTAGRAM" value="<?= $adminInstagram ?>">
-                </div>
+        <!-- Facebook -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Facebook Link</label>
+                <input type="text" class="form-control" name="ADMIN_FACEBOOK" value="<?= $adminFacebook ?>">
             </div>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Twitter Link</label>
-                    <input type="text" class="form-control" name="ADMIN_TWITTER" value="<?= $adminTwitter ?>">
-                </div>
+        <!-- Instagram -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Instagram Link</label>
+                <input type="text" class="form-control" name="ADMIN_INSTAGRAM" value="<?= $adminInstagram ?>">
             </div>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">LinkedIn Link</label>
-                    <input type="text" class="form-control" name="ADMIN_LINKEDIN" value="<?= $adminLinkedin ?>">
-                </div>
+        <!-- Twitter -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Twitter Link</label>
+                <input type="text" class="form-control" name="ADMIN_TWITTER" value="<?= $adminTwitter ?>">
+            </div>
+        </div>
+
+        <!-- Linkedin -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">LinkedIn Link</label>
+                <input type="text" class="form-control" name="ADMIN_LINKEDIN" value="<?= $adminLinkedin ?>">
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm p-4 mb-3">
-        <div class="row">
-            <div class="border-bottom pb-3 mb-4">
-                <h5 class="fw-bold">Change Password</h5>
-            </div>
+    <hr class="my-4">
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">New Password</label>
-                    <input type="password" class="form-control" name="ADMIN_PASSWORD">
-                </div>
-            </div>
+    <div class="row">
+        <div class="mb-3">
+            <h5 class="fw-bold">Change Password</h5>
+        </div>
 
-            <div class="col-sm-6">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Confirm Password</label>
-                    <input type="password" class="form-control" name="CONFIRM_PASSWORD">
-                </div>
+        <!-- New Password -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">New Password</label>
+                <input type="password" class="form-control" name="ADMIN_PASSWORD" id="new_password" autocomplete="new-password">
+            </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Confirm Password</label>
+                <input type="password" class="form-control" name="CONFIRM_PASSWORD" id="confirm_password" autocomplete="condirm-password">
             </div>
         </div>
     </div>
 
     <div class="col-12 mt-3">
-        <button type="submit" class="btn btn-success">Update Profile</button>
+        <button type="submit" class="btn btn-success" id="save_button">Update Profile</button>
     </div>
 </form>
+
+
+<script>
+    const name = document.querySelector("#name");
+    const newPassword = document.querySelector("#new_password");
+    const confirmPassword = document.querySelector("#confirm_password");
+    const saveButton = document.querySelector("#save_button");
+
+    const disableSaveButton = () => {
+        saveButton.classList.remove("btn-success");
+        saveButton.classList.add("btn-secondary");
+        confirmPassword.classList.add("border-danger");
+        saveButton.disabled = true;
+    }
+
+    const enableSaveButton = () => {
+        saveButton.classList.remove("btn-secondary");
+        saveButton.classList.add("btn-success");
+        confirmPassword.classList.remove("border-danger");
+        saveButton.disabled = false;
+    }
+
+    const isInputValid = () => {
+        if (newPassword.value !== confirmPassword.value) {
+            disableSaveButton();
+        } else {
+            enableSaveButton();
+        }
+    }
+
+    newPassword.addEventListener("input", () => {
+        isInputValid();
+    });
+
+    confirmPassword.addEventListener("input", () => {
+        isInputValid();
+    })
+</script>
