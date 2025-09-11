@@ -11,14 +11,15 @@ $userKey = $_SESSION['ADMIN_USERKEY'];
 $userId = $_SESSION['ADMIN_ID'];
 
 if (isset($userKey)) {
-    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
-
-    if (isset($adminProfileImage) && !empty($adminProfileImage)) {
-
-        if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+    if (!empty($adminProfileImage)) {
+        if (strpos($adminProfileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
+            $profile = "/public/images/user-3296.png";
+        } elseif (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } elseif (strpos($adminProfileImage, 'http') === 0) {
             $profile = $adminProfileImage;
         } else {
-            $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
         }
     } else {
         $profile = "/public/images/user-3296.png";
@@ -27,6 +28,7 @@ if (isset($userKey)) {
     header("Location: /login");
     exit;
 }
+
 
 require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
 
@@ -43,7 +45,7 @@ require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
         <div class="d-flex order-xl-last">
             <div class="dropdown d-xl-none">
                 <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle me-3" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
-                    <img src="<?php $profile; ?>" alt="Admin Profile"
+                    <img src="<?php echo htmlspecialchars_decode($profile); ?>" alt="Admin Profile"
                         class="rounded-circle"
                         style="width: 48px; height: 48px; object-fit: cover;
                                         border: 2px solid #dee2e6;
@@ -80,7 +82,7 @@ require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
-                            <img src="<?php echo htmlspecialchars($profile); ?>" alt="Admin Profile"
+                            <img src="<?php echo htmlspecialchars_decode($profile); ?>" alt="Admin Profile"
                                 class="rounded-circle"
                                 style="width: 100%; height: 100%; object-fit: cover;
                                         border: 2px solid #dee2e6;
