@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         mysqli_stmt_close($stmt);
         $_SESSION['alert'] = ['type' => 'warning', 'message' => 'An account with that email already exists.'];
         header("Location: /signup");
-        exit();
+        exit;
     }
     mysqli_stmt_close($stmt);
 
@@ -110,7 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
     sendVerificationEmail($email,$name, $verifyLink);
     header("Location: /registration_success");
-
     exit;
 } else {
     header("Location: /signup");
