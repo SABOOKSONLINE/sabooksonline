@@ -16,52 +16,43 @@ function formDataArray()
     $adminEmail = htmlspecialchars($_POST["ADMIN_EMAIL"]);
     $adminNumber = htmlspecialchars($_POST["ADMIN_NUMBER"]);
     $adminWebsite = htmlspecialchars($_POST["ADMIN_WEBSITE"]);
-    $adminAddress = htmlspecialchars($_POST["ADMIN_ADDRESS"]);
     $adminBio = htmlspecialchars($_POST["ADMIN_BIO"]);
     $adminFacebook = htmlspecialchars($_POST["ADMIN_FACEBOOK"]);
     $adminInstagram = htmlspecialchars($_POST["ADMIN_INSTAGRAM"]);
     $adminTwitter = htmlspecialchars($_POST["ADMIN_TWITTER"]);
     $adminLinkedin = htmlspecialchars($_POST["ADMIN_LINKEDIN"]);
-    $adminPassword = !empty($_POST["ADMIN_PASSWORD"]) ? password_hash($_POST["ADMIN_PASSWORD"], PASSWORD_BCRYPT) : null;
-    $adminStatus = htmlspecialchars($_POST["ADMIN_USER_STATUS"] ?? 'inactive');
+    $adminStatus = htmlspecialchars($_POST["ADMIN_USER_STATUS"] ?? 'approved');
     $adminType = htmlspecialchars($_POST["ADMIN_TYPE"] ?? 'user');
-
-    $adminProfileImage = "";
-    
-   if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
-    $uploadDir = __DIR__ . '/../../cms-data/profile-images/';
-
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
-    // Extract the original extension
-    $ext = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
-    // Create a clean, unique filename (e.g. 1720012345_abcd1234.jpeg)
-    $adminProfileImage = time() . '_' . uniqid() . '.' . strtolower($ext);
-
-    $targetPath = $uploadDir . $adminProfileImage;
-
-    if (!move_uploaded_file($_FILES['profile']['tmp_name'], $targetPath)) {
-        die("❌ Failed to upload profile image.");
-    }
-} else {
-    // Keep existing filename (not full path)
-    $adminProfileImage = htmlspecialchars($_POST['existing_profile'] ?? '');
-}
-
-
-
-
     $modified = date('Y-m-d H:i:s');
 
-    $userData = [
+    $adminPassword = null;
+    if (!empty($_POST["ADMIN_PASSWORD"])) {
+        if ($_POST["ADMIN_PASSWORD"] !== $_POST["CONFIRM_PASSWORD"]) {
+            die("❌ Passwords do not match.");
+        }
+        $adminPassword = password_hash($_POST["ADMIN_PASSWORD"], PASSWORD_BCRYPT);
+    }
+
+    $adminProfileImage = htmlspecialchars($_POST['existing_profile'] ?? '');
+    if (isset($_FILES['ADMIN_PROFILE_IMAGE']) && $_FILES['ADMIN_PROFILE_IMAGE']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . '/../../cms-data/profile-images/';
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $ext = pathinfo($_FILES['ADMIN_PROFILE_IMAGE']['name'], PATHINFO_EXTENSION);
+        $adminProfileImage = time() . '_' . uniqid() . '.' . strtolower($ext);
+        $targetPath = $uploadDir . $adminProfileImage;
+
+        if (!move_uploaded_file($_FILES['ADMIN_PROFILE_IMAGE']['tmp_name'], $targetPath)) {
+            die("❌ Failed to upload profile image.");
+        }
+    }
+
+    return [
         'ADMIN_ID' => $adminId,
         'ADMIN_NAME' => $adminName,
         'ADMIN_EMAIL' => $adminEmail,
         'ADMIN_NUMBER' => $adminNumber,
         'ADMIN_WEBSITE' => $adminWebsite,
-        'ADMIN_ADDRESS' => $adminAddress,
         'ADMIN_BIO' => $adminBio,
         'ADMIN_FACEBOOK' => $adminFacebook,
         'ADMIN_INSTAGRAM' => $adminInstagram,
@@ -73,29 +64,49 @@ function formDataArray()
         'ADMIN_TYPE' => $adminType,
         'MODIFIED' => $modified
     ];
-
-    return $userData;
 }
 
 function updateUser($userController)
 {
     try {
         $userData = formDataArray();
+        $userId = $_GET["id"] ?? null;
+        if (!$userId) die("❌ Missing user ID.");
 
-        $userId = $_GET["id"];
-
-        if (empty($userData['ADMIN_ID']) || empty($userData['ADMIN_NAME']) || empty($userData['ADMIN_EMAIL'])) {
-            die("Validation failed: Missing required fields.");
+        if (empty($userData['ADMIN_NAME']) || empty($userData['ADMIN_EMAIL'])) {
+            die("❌ Validation failed: Name and Email required.");
         }
 
-        $userController->updateUserData($userId, $userData);
+        $fieldsToUpdate = [
+            'ADMIN_NAME' => $userData['ADMIN_NAME'],
+            'ADMIN_NUMBER' => $userData['ADMIN_NUMBER'],
+            'ADMIN_WEBSITE' => $userData['ADMIN_WEBSITE'],
+            'ADMIN_BIO' => $userData['ADMIN_BIO'],
+            'ADMIN_FACEBOOK' => $userData['ADMIN_FACEBOOK'],
+            'ADMIN_INSTAGRAM' => $userData['ADMIN_INSTAGRAM'],
+            'ADMIN_TWITTER' => $userData['ADMIN_TWITTER'],
+            'ADMIN_LINKEDIN' => $userData['ADMIN_LINKEDIN'],
+            'ADMIN_PROFILE_IMAGE' => $userData['ADMIN_PROFILE_IMAGE'],
+            'ADMIN_USER_STATUS' => $userData['ADMIN_USER_STATUS'],
+            'ADMIN_TYPE' => $userData['ADMIN_TYPE'],
+            'MODIFIED' => $userData['MODIFIED']
+        ];
+
+        if (!empty($userData['ADMIN_PASSWORD'])) {
+            $fieldsToUpdate['ADMIN_PASSWORD'] = $userData['ADMIN_PASSWORD'];
+        }
+
+        $userController->updateUserData($userId, $fieldsToUpdate);
+
         header("Location: /dashboards/profile?update=success");
+        exit();
     } catch (Exception $e) {
+        error_log("Profile update error: " . $e->getMessage());
         header("Location: /dashboards/profile?update=fail");
-        exit;
+        exit();
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["action"] == "update") {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_GET["action"] ?? '') === "update") {
     updateUser($userController);
 }
