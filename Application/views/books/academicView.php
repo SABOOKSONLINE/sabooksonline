@@ -168,8 +168,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <?php else: ?>
                             <!-- READ BUTTON -->
 
-                            <a href="/read?q=<?= urlencode($academicBookId) ?>?category=academic" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
-                                Read Now
+                            <a href="/read/<?=$academicBookId ?>?category=academic" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                Read Now  
                             </a>
                         <?php endif; ?>
                     </div>

@@ -38,7 +38,10 @@ class BookController
 {
     require_once __DIR__ . '/../models/UserModel.php';
     require_once __DIR__ . '/../models/MediaModel.php';
+    require_once __DIR__ . '/../models/AcademicBookModel.php';
     $mediaModel = new MediaModel($this->conn);
+    $academicModel = new AcademicBookModel($this->conn);
+
 
 
     if (!$contentId) {
@@ -73,6 +76,11 @@ class BookController
             $pdf = $content['pdf_path'] ?? null;
             break;
 
+        case 'academic':
+            $content = $academicModel->selectBookByPublicKey($contentId);
+            $pdf = $content['pdf_path'] ?? null;
+            break;
+
         case 'book':
         default:
             $content = $this->bookModel->getBookById($contentId);
@@ -104,6 +112,7 @@ class BookController
         // Map category to folder for URL
         $folderMap = [
             'book'      => 'book-pdfs',
+            'academic'      => 'academic/pdfs',
             'magazine'  => 'magazine/pdfs',
             'newspaper' => 'newspaper/pdfs'
         ];
@@ -326,6 +335,13 @@ class BookController
         $books = $this->bookModel->getAcademicBooks($date);
         header('Content-Type: application/json');
         echo json_encode($books);
+    }
+
+    public function getBanners($screen)
+    {
+        $banner = $this->bookModel->getBanners($screen);
+        header('Content-Type: application/json');
+        echo json_encode($banner);
     }
 
 
