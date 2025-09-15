@@ -101,7 +101,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/banners', function () {
+    $r->addRoute('GET', '/api/banners', function () {
         $_GET['action'] = 'banners';
         require "Application/api.php";
     });
@@ -524,6 +524,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('GET', '/admin/pages/home', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/users', function () {
         require  "Admin/index.php";
     });
 });

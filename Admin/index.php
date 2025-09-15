@@ -15,6 +15,8 @@ if ($uri === "/admin") {
     $homeController->index();
 } else if ($uri === "/admin/pages/home") {
     $pagesController->pages();
+} else if ($uri === "/admin/users") {
+    echo $uri;
 } else {
     http_response_code(404);
     echo "404 Page Not Found";
