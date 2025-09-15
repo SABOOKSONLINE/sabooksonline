@@ -15,17 +15,21 @@ $userId = $_SESSION['ADMIN_ID'];
 $userName = extractName($_SESSION['ADMIN_EMAIL']);
 
 $oldDefaultProfile = "https://www.vecteezy.com/free-vector/default-profile-picture";
-$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
+$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
 $emails = ["tebogo@sabooksonline.co.za", "kganyamilton@gmail.com", "khumalopearl003@gmail.com"];
 checkEmailAllowed($_SESSION['ADMIN_EMAIL'], $emails);
 
-if ($userKey) {
-    if ($adminProfileImage && $adminProfileImage !== $oldDefaultProfile) {
-        if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+if (isset($userKey)) {
+    if (!empty($adminProfileImage)) {
+        if (strpos($adminProfileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
+            $profile = "/public/images/user-3296.png";
+        } elseif (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } elseif (strpos($adminProfileImage, 'http') === 0) {
             $profile = $adminProfileImage;
         } else {
-            $profile = "https://sabooksonline.co.za/cms-data/profile-images/" . $adminProfileImage;
+            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
         }
     } else {
         $profile = "/public/images/user-3296.png";

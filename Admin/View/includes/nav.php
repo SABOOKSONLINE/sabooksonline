@@ -47,7 +47,7 @@ require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
-                            <img src="<?= $profile ?>" alt="<?= $userName ?> Profile"
+                            <img src="<?= html_entity_decode($profile)  ?>" alt="<?= $userName ?> Profile"
                                 class="rounded-circle"
                                 style="width: 100%; height: 100%; object-fit: cover;
                                         border: 2px solid #dee2e6;
