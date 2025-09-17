@@ -13,20 +13,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-
-
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
+$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
-if (isset($userKey) && !empty($userKey)) {
-    $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
-
-    if (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
-        $profile = $adminProfileImage;
+if (isset($userKey)) {
+    if (!empty($adminProfileImage)) {
+        if (strpos($adminProfileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
+            $profile = "/public/images/user-3296.png";
+        } elseif (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
+            $profile = $adminProfileImage;
+        } elseif (strpos($adminProfileImage, 'http') === 0) {
+            $profile = $adminProfileImage;
+        } else {
+            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
+        }
     } else {
         $profile = "/public/images/user-3296.png";
     }
 } else {
-    $profile = null;
+    header("Location: /login");
+    exit;
 }
 
 require_once __DIR__ . "/../util/urlRedirect.php";
