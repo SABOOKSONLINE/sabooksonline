@@ -47,4 +47,10 @@ class UserModel extends Model
         $result = $this->fetchAll("SELECT SUM(amount_paid) AS gross FROM payment_plans");
         return $result[0];
     }
+
+    public function getAllUsersDetails(): array
+    {
+        return $this->fetchAll("SELECT *
+                                FROM users ORDER BY ADMIN_ID ASC LIMIT 20");
+    }
 }
