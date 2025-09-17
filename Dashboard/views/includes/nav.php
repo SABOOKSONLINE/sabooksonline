@@ -1,7 +1,4 @@
 <?php
-
-
-
 if (session_status() === PHP_SESSION_NONE) {
     $cookieDomain = ".sabooksonline.co.za";
     session_set_cookie_params(0, '/', $cookieDomain);

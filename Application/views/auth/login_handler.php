@@ -52,7 +52,7 @@ try {
         exit;
     }
 
-    mysqli_stmt_bind_result($stmt, $userId, $hashedPassword,$name, $userStatus);
+    mysqli_stmt_bind_result($stmt, $userId, $hashedPassword, $name, $userStatus);
     mysqli_stmt_fetch($stmt);
 
     // Verify password
@@ -74,7 +74,7 @@ try {
         }
 
         $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
-        sendVerificationEmail($email,$name, $verifyLink);
+        sendVerificationEmail($email, $name, $verifyLink);
 
         $_SESSION['alert'] = [
             'type' => 'info',

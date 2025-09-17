@@ -1,0 +1,30 @@
+<?php
+include __DIR__ . "/../layouts/pageHeader.php";
+include __DIR__ . "/../layouts/sectionHeader.php";
+include __DIR__ . "/../layouts/tables/uTable.php";
+
+require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
+
+$title = "Users";
+ob_start();
+
+renderHeading(
+    "Dashboard Users",
+    "Manage and update user accounts.",
+);
+
+renderAlerts();
+?>
+
+<?php
+$users = $data["details"];
+// echo "<pre>";
+// print_r($users);
+// echo "</pre>";
+
+renderUserTable($users);
+?>
+
+<?php
+$content = ob_get_clean();
+require __DIR__ . "/../layouts/base.php";
