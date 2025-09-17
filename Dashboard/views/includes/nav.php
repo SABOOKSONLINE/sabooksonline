@@ -27,8 +27,17 @@ if (isset($userKey)) {
     exit;
 }
 
-require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
+$current_path = $_SERVER['REQUEST_URI'];
+$subscriptionPlan = $_SESSION['ADMIN_SUBSCRIPTION'];
 
+$allowedPlans = ['pro', 'premium', 'standard', 'deluxe'];
+
+if (!in_array(strtolower($subscriptionPlan), $allowedPlans) && $current_path === '/dashboards') {
+    header("Location: /dashboards/bookshelf");
+    exit;
+}
+
+require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
 ?>
 <nav class="navbar navbar-expand-xl navbar-light fixed-top border-bottom bg-white">
     <div class="container-fluid">
