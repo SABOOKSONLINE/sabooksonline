@@ -51,6 +51,6 @@ class UserModel extends Model
     public function getAllUsersDetails(): array
     {
         return $this->fetchAll("SELECT *
-                                FROM users ORDER BY ADMIN_ID ASC");
+                                FROM users ORDER BY ADMIN_ID DESC");
     }
 }
