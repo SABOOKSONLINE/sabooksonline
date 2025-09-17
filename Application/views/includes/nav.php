@@ -14,18 +14,21 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
-$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+$profileImage = "";
+if (isset($_SESSION['ADMIN_PROFILE_IMAGE'])) {
+    $profileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+}
 
 if (isset($userKey)) {
-    if (!empty($adminProfileImage)) {
-        if (strpos($adminProfileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
+    if (!empty($profileImage)) {
+        if (strpos($profileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
             $profile = "/public/images/user-3296.png";
-        } elseif (strpos($adminProfileImage, 'googleusercontent.com') !== false) {
-            $profile = $adminProfileImage;
-        } elseif (strpos($adminProfileImage, 'http') === 0) {
-            $profile = $adminProfileImage;
+        } elseif (strpos($profileImage, 'googleusercontent.com') !== false) {
+            $profile = $profileImage;
+        } elseif (strpos($profileImage, 'http') === 0) {
+            $profile = $profileImage;
         } else {
-            $profile = "/cms-data/profile-images/" . ltrim($adminProfileImage, '/');
+            $profile = "/cms-data/profile-images/" . ltrim($profileImage, '/');
         }
     } else {
         $profile = "/public/images/user-3296.png";
