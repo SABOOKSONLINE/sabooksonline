@@ -530,6 +530,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/admin/users', function () {
         require  "Admin/index.php";
     });
+
+    $r->addRoute('GET', '/admin/users/impersonate/{id}', function ($id) {
+        $_GET["id"] = $id;
+        require  "Admin/Helpers/impersonate.php";
+    });
 });
 
 // Fetch method and URI from server
