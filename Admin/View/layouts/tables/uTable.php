@@ -43,11 +43,18 @@ function renderUserTable($users): void
                                     <i class="fas fa-sign-in-alt"></i>
                                 </a>
 
-                                <a href="/admin/users/delete/<?= urlencode($user["ADMIN_ID"]) ?>"
-                                    onclick="return confirm('Are you sure you want to delete <?= $user['ADMIN_NAME'] ?>?')"
+                                <a href="/admin/users/delete/<?= urlencode($user['ADMIN_ID']) ?>"
+                                    onclick="return confirm(
+                                                'Are you sure you want to delete the following user?\n\n' +
+                                                'Name: <?= addslashes($user['ADMIN_NAME']) ?>\n' +
+                                                'Email: <?= addslashes($user['ADMIN_EMAIL']) ?>\n' +
+                                                'Subscription: <?= addslashes($user['ADMIN_SUBSCRIPTION']) ?>\n\n' +
+                                                'This action cannot be undone.'
+                                            );"
                                     class="btn btn-outline-danger">
                                     <i class="fas fa-trash"></i>
                                 </a>
+
                             </div>
                         </td>
                     </tr>
