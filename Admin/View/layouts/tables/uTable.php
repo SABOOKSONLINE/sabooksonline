@@ -43,11 +43,11 @@ function renderUserTable($users): void
                                     <i class="fas fa-sign-in-alt"></i>
                                 </a>
 
-                                <!-- <a href="admin/users/delete/<?= urlencode($user["ADMIN_ID"]) ?>"
+                                <a href="/admin/users/delete/<?= urlencode($user["ADMIN_ID"]) ?>"
                                     onclick="return confirm('Are you sure you want to delete <?= $user['ADMIN_NAME'] ?>?')"
                                     class="btn btn-outline-danger">
                                     <i class="fas fa-trash"></i>
-                                </a> -->
+                                </a>
                             </div>
                         </td>
                     </tr>
