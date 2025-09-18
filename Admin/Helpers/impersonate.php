@@ -23,7 +23,7 @@ function getUserBy($conn, $id): array
 
 function isValidAdmin($email): bool
 {
-    $admins = ["tebogo@sabooksonline.co.za"];
+    $admins = ["tebogo@sabooksonline.co.za", "khumalopearl003@gmail.com", "kganyamilton@gmail.com"];
     return in_array($email, $admins, true);
 }
 
