@@ -535,6 +535,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET["id"] = $id;
         require  "Admin/Helpers/impersonate.php";
     });
+
+    $r->addRoute('GET', '/admin/users/delete/{id}', function ($id) {
+        $_GET["id"] = $id;
+        require  "Admin/Helpers/remove.php";
+    });
 });
 
 // Fetch method and URI from server
