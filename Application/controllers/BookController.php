@@ -119,7 +119,19 @@ class BookController
         $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
         $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
 
+        // Decide which reader to use
+    $extension = strtolower(pathinfo($pdf, PATHINFO_EXTENSION));
+
+    if ($extension === 'pdf') {
         include __DIR__ . '/../views/books/ebook/bookReader.php';
+    } elseif ($extension === 'epub') {
+        include __DIR__ . '/../views/books/ebook/epubReader.php';
+    } else {
+        // Unsupported format
+        header("Location: /404");
+        exit;
+    }
+
     } else {
         header("Location: /404");
         exit;

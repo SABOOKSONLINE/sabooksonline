@@ -219,7 +219,7 @@ require_once __DIR__ . "/../../includes/header.php";
       });
       renderChapters();
     });
-  }
+  }epubUrl
 
   function renderChapters() {
     const chapterList = document.getElementById("chapters-list");
