@@ -252,7 +252,7 @@ if (!empty($book['DATEPOSTED'])) {
 
         <div class="col-md-6">
             <label class="form-label">Upload Ebook (PDF)</label>
-            <input type="file" name="book_pdf" class="form-control" accept=".pdf">
+            <input type="file" name="book_pdf" class="form-control" accept="application/pdf,.pdf" id="book_pdf">
             <?php if (!empty($pdf)): ?>
                 <div class="mt-2">
                     <small class="text-muted">Current PDF:</small><br>
@@ -549,3 +549,13 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 <?php endif; ?>
+
+<script>
+    document.getElementById("book_pdf").addEventListener("change", function() {
+        const file = this.files[0];
+        if (file && file.type !== "application/pdf") {
+            alert("Only PDF files are allowed!");
+            this.value = "";
+        }
+    });
+</script>
