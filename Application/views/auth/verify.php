@@ -36,7 +36,7 @@ if (isset($_GET['token'])) {
         // } else {
         //     header("Location: /dashboards");
         // }
-        header("Location: /dashboards");
+        header("Location: " . $_SESSION["redirect_after_login"]);
         exit;
     } else {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid or expired verification link.'];

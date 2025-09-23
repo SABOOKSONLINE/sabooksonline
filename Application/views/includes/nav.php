@@ -1,5 +1,10 @@
 <?php
 
+require_once __DIR__ . "/../util/helpers.php";
+
+saveRedirectPage();
+echo $_SESSION["redirect_after_login"];
+
 require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../../models/PageVisitsModel.php";
 require_once __DIR__ . "/../../controllers/PageVisitsController.php";
