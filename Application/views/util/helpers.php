@@ -22,8 +22,10 @@ function saveRedirectPage(): void
         session_start();
     }
 
-    $_SESSION["redirect_after_login"] = $_SERVER["REQUEST_URI"];
+    $uri = $_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] . '?' . ($_SERVER['QUERY_STRING'] ?? ''));
+    $_SESSION["redirect_after_login"] = $uri;
 }
+
 
 // function redirectAfterLogin(): void
 // {
