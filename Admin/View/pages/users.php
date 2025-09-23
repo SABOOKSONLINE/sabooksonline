@@ -9,7 +9,7 @@ $title = "Users";
 ob_start();
 
 renderHeading(
-    "Dashboard Users",
+    "Users",
     "Manage and update user accounts.",
 );
 
@@ -23,6 +23,8 @@ $users = $data["details"];
 // echo "</pre>";
 
 renderUserTable($users);
+
+
 ?>
 
 <?php

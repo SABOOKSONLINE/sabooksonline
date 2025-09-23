@@ -10,7 +10,7 @@ $title = "Pages - Home";
 ob_start();
 
 renderHeading(
-    "Dashboard Pages",
+    "Pages",
     "Manage and update featured sections on the home page.",
 );
 
