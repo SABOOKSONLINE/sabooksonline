@@ -520,7 +520,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     $r->addRoute('GET', '/admin/analytics', function () {
-        require  "Admin/View/pages/analytics.php";
+        require  "Admin/index.php";
     });
 
     $r->addRoute('GET', '/admin/pages/home', function () {

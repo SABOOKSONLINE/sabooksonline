@@ -6,12 +6,14 @@ require_once __DIR__ . "/Core/Conn.php";
 require_once __DIR__ . "/Controller/HomeController.php";
 require_once __DIR__ . "/Controller/PagesController.php";
 require_once __DIR__ . "/Controller/UsersController.php";
+require_once __DIR__ . "/Controller/AnalyticsController.php";
 
 $uri = $_SERVER['REQUEST_URI'];
 
 $homeController = new HomeController($conn);
 $pagesController = new PagesController($conn);
 $usersController = new UsersController($conn);
+$analyticsController = new AnalyticsController($conn);
 
 if ($uri === "/admin") {
     $homeController->index();
@@ -19,6 +21,8 @@ if ($uri === "/admin") {
     $pagesController->pages();
 } else if ($uri === "/admin/users") {
     $usersController->users();
+} else if ($uri === "/admin/analytics") {
+    $analyticsController->analytics();
 } else {
     http_response_code(404);
     echo "404 Page Not Found";
