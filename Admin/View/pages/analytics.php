@@ -2,6 +2,8 @@
 include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
 include __DIR__ . "/../layouts/cards/aCard.php";
+include __DIR__ . "/../layouts/cards/bCard.php";
+include __DIR__ . "/../layouts/cards/lCard.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -10,19 +12,17 @@ ob_start();
 
 renderHeading(
     "Analytics",
-    "Monitor book sales, downloads, and publisher performance.",
+    "Monitor book sales, downloads, and publisher performance."
 );
 
 renderAlerts();
-// echo "<pre>";
-// print_r($data);
-// echo "</pre>";
 
 renderSectionHeader(
     "Income Analytics",
-    "Track revenue streams and monitor overall earnings.",
+    "Track revenue streams and monitor overall earnings."
 );
 ?>
+
 <div class="row">
     <?php
     $cards = [
@@ -55,9 +55,84 @@ renderSectionHeader(
     foreach ($cards as $card) {
         renderAnalysisCard($card["title"], $card["value"], $card["icon"], $card["color"]);
     }
+
+    function getMonth($date)
+    {
+        return date('Y-m', strtotime($date));
+    }
+
+    $monthlySubscriptions = [];
+    foreach ($data['payment_plans']['all'] as $payment) {
+        $month = getMonth($payment['payment_date']);
+        $monthlySubscriptions[$month] = ($monthlySubscriptions[$month] ?? 0) + (float)$payment['amount_paid'];
+    }
+
+    $monthlyPublisherCount = [];
+    foreach ($data["payment_plans"]["all"] as $payment) {
+        $month = getMonth($payment['payment_date']);
+        $monthlyPublisherCount[$month] = ($monthlyPublisherCount[$month] ?? 0) + 1;
+    }
+
+    $monthlyBookSales = [];
+    foreach ($data['book_purchases']['all'] as $purchase) {
+        $month = getMonth($purchase['payment_date']);
+        $monthlyBookSales[$month] = ($monthlyBookSales[$month] ?? 0) + (float)$purchase['amount'];
+    }
+
+    $monthlyBookSalesCount = [];
+    foreach ($data['book_purchases']['all'] as $purchase) {
+        $month = getMonth($purchase['payment_date']);
+        $monthlyBookSalesCount[$month] = ($monthlyBookSalesCount[$month] ?? 0) + 1;
+    }
+
+    $allMonths = array_unique(array_merge(array_keys($monthlySubscriptions), array_keys($monthlyBookSales)));
+    sort($allMonths);
+
+    $subscriptionValues = [];
+    $bookSalesValues = [];
+    foreach ($allMonths as $month) {
+        $subscriptionValues[] = $monthlySubscriptions[$month] ?? 0;
+        $bookSalesValues[] = $monthlyBookSales[$month] ?? 0;
+    }
+
+    renderAnalysisBar(
+        "Monthly New Publishers",
+        $allMonths,
+        array_map(fn($m) => $monthlyPublisherCount[$m] ?? 0, $allMonths),
+        "success"
+    );
+
+    renderAnalysisLine(
+        "Monthly Subscription Revenue",
+        $allMonths,
+        $subscriptionValues,
+        "success"
+    );
+
+    renderAnalysisBar(
+        "Monthly Books Sold",
+        $allMonths,
+        array_map(fn($m) => $monthlyBookSalesCount[$m] ?? 0, $allMonths),
+        "success"
+    );
+
+    renderAnalysisLine(
+        "Monthly Book Sales",
+        $allMonths,
+        $bookSalesValues,
+        "success"
+    );
     ?>
 </div>
 
 <?php
+renderSectionHeader(
+    "Traffic Analytics",
+    "Still under development (Coming Soon)!"
+);
+?>
+
+<?php
 $content = ob_get_clean();
 require __DIR__ . "/../layouts/base.php";
+?>
