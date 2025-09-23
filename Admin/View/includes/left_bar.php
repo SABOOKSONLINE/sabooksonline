@@ -13,9 +13,9 @@ $current_path = $_SERVER['REQUEST_URI'];
                 <a href="/admin" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin' || $current_path == '/admin/') ? 'active' : ''; ?>">
                     <i class="fas fa-home me-2"></i> Overview
                 </a>
-                <!-- <a href="/admin/analytics" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/analytics' || $current_path == '/admin/analytics/') ? 'active' : ''; ?>">
+                <a href="/admin/analytics" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/analytics' || $current_path == '/admin/analytics/') ? 'active' : ''; ?>">
                     <i class="fas fa-chart-line me-2"></i> Analytics
-                </a> -->
+                </a>
 
                 <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex justify-content-between align-items-center"
                     data-bs-toggle="collapse" href="#pagesMenu" role="button" aria-expanded="false" aria-controls="pagesMenu">
