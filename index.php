@@ -170,6 +170,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/dashboards/media', function () {
         require "Dashboard/views/manage_media.php";
     });
+
+    $r->addRoute('GET', '/dashboards/onix', function () {
+        require "Dashboard/views/add/add_onix.php";
+    });
     $r->addRoute('GET', '/dashboards/add/media', function () {
         require "Dashboard/views/add/add_media.php";
     });
