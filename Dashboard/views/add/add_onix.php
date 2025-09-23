@@ -17,8 +17,7 @@ include __DIR__ . "/../includes/dashboard_heading.php";
                     <div>
                         <?php
 
-                            renderHeading("Upload Onix Files Books", "ONIX (ONline Information eXchange) is the international standard format for sharing book information in XML.
-It’s the publishing industry’s way of packaging all the important metadata about a book in a single file that computers can read and exchange");
+                            renderHeading("Upload Onix Files", "ONIX is the industry standard format for book metadata, making it easy to share accurate details like title, author, ISBN, and pricing.");
                         include __DIR__ . "/../includes/layouts/forms/onix_form.php";
                         ?>
                     </div>

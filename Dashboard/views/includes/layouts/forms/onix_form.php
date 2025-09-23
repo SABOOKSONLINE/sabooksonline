@@ -90,8 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['onix_file'])) {
 }
 ?>
 
-<div style="max-width:600px;margin:40px auto;padding:20px;border:1px solid #ddd;border-radius:8px;">
-  <h2>Upload ONIX File</h2>
+<div style="margin:40px auto;padding:20px;border:1px solid #ddd;border-radius:8px;">
   <div style="background:#f9f9f9;border-left:4px solid #007BFF;padding:15px;margin:15px 0;border-radius:4px;">
     <h3 style="margin-top:0;">Why upload ONIX files here?</h3>
     <ul style="margin:10px 0 0 20px;color:#444;line-height:1.6;">
@@ -107,9 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['onix_file'])) {
       <p style="color:red;"><?= $error ?></p>
   <?php endif; ?>
 
-  <form method="POST" enctype="multipart/form-data">
-      <label for="onix_file">Select ONIX XML file:</label><br><br>
-      <input type="file" name="onix_file" id="onix_file" accept=".xml" required><br><br>
-      <button type="submit">Upload</button>
-  </form>
+  <!-- Warning note -->
+<div style="color:#b71c1c; background:#fdecea; border:1px solid #f5c2c7; padding:10px; border-radius:4px; margin-bottom:15px;">
+    ⚠️ Only administrators or developers are allowed to upload ONIX files.
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    <label for="onix_file">Select ONIX XML file:</label><br><br>
+    <input type="file" name="onix_file" id="onix_file" accept=".xml" required disabled><br><br>
+
+    <button type="submit" class="btn btn-success px-4" disabled>
+        Upload
+    </button>
+</form>
 </div>

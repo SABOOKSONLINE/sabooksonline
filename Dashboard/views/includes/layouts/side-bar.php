@@ -33,7 +33,7 @@ if (!in_array(strtolower($subscriptionPlan), $allowedPlans) && $current_path ===
                         <i class="fas fa-book me-2"></i> Manage Books
                     </a>
                      <a href="/dashboards/onix" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/onix') === 0) ? 'active' : ''; ?>">
-                        <i class="fas fa-book me-2"></i> Onix Files
+                        <i class="fas fa-file-import me-2"></i> Onix Files
                     </a>
                     <a href="/dashboards/media" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/media') === 0) ? 'active' : ''; ?>">
                         <i class="fas fa-newspaper me-2"></i> Manage Media
