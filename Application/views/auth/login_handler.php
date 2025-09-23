@@ -100,7 +100,7 @@ try {
     // } else {
     //     header("Location: /dashboards");
     // }
-    header("Location: " . $_SESSION["redirect_after_login"]);
+    header("Location: /dashboards");
     exit;
 } catch (Exception $e) {
     error_log("Login error: " . $e->getMessage());
