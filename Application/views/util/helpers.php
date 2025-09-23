@@ -16,15 +16,15 @@ function paginatedBooks($books)
     return $book_pages;
 }
 
-function saveRedirectPage(): void
-{
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+// function saveRedirectPage(): void
+// {
+//     if (session_status() === PHP_SESSION_NONE) {
+//         session_start();
+//     }
 
-    $uri = $_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] . '?' . ($_SERVER['QUERY_STRING'] ?? ''));
-    $_SESSION["redirect_after_login"] = $uri;
-}
+//     $uri = $_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] . '?' . ($_SERVER['QUERY_STRING'] ?? ''));
+//     $_SESSION["redirect_after_login"] = $uri;
+// }
 
 
 // function redirectAfterLogin(): void
