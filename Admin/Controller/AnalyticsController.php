@@ -24,6 +24,8 @@ class AnalyticsController extends Controller
         $bookPurchases = $this->analyticsModel->bookPurchases();
         $bookPurchasesRevenue = $this->analyticsModel->bookPurchasesRevenue();
 
+        $pageVisits = $this->analyticsModel->pageVisits();
+
         $this->render("analytics", [
             "payment_plans" => [
                 "all" => $paymentPlans,
@@ -33,6 +35,9 @@ class AnalyticsController extends Controller
                 "all" => $bookPurchases,
                 "revenue" => $bookPurchasesRevenue["revenue"]
             ],
+            "page_visits" => [
+                "all" => $pageVisits
+            ]
         ]);
     }
 }
