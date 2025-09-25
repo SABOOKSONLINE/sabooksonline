@@ -18,6 +18,17 @@ include __DIR__ . "/includes/dashboard_heading.php";
                     renderHeading("Account Billing", "Manage your billing information, invoices, and payment methods here.");
 
                     $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+                    // ---------------------------
+                        // Subscriptions
+                        // ---------------------------
+                        $sqlPlans = "SELECT payment_id, plan_name, amount_paid, payment_date, end_date, status, renewal_status, is_recurring
+                                    FROM payment_plans
+                                    WHERE user_email = ?
+                                    ORDER BY payment_date DESC";
+                        $stmtPlans = $conn->prepare($sqlPlans);
+                        $stmtPlans->bind_param("s", $userEmail);
+                        $stmtPlans->execute();
+                        $resultPlans = $stmtPlans->get_result();
 
                     if ($resultPlans->num_rows > 0) {
                             echo '<div class="card shadow-sm mt-4">';
@@ -106,17 +117,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                         $stmt->execute();
                         $result = $stmt->get_result();
 
-                        // ---------------------------
-                        // Subscriptions
-                        // ---------------------------
-                        $sqlPlans = "SELECT payment_id, plan_name, amount_paid, payment_date, end_date, status, renewal_status, is_recurring
-                                    FROM payment_plans
-                                    WHERE user_email = ?
-                                    ORDER BY payment_date DESC";
-                        $stmtPlans = $conn->prepare($sqlPlans);
-                        $stmtPlans->bind_param("s", $userEmail);
-                        $stmtPlans->execute();
-                        $resultPlans = $stmtPlans->get_result();
+                        
 
                         // Purchases table
                         if ($result->num_rows > 0) {
