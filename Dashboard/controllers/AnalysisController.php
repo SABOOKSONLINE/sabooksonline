@@ -29,6 +29,10 @@ class AnalysisController
         return $this->model->getBookViews($user_id,$start,$end);
     }
 
+    public function getMediaViews($user_id,$start,$end) {
+        return $this->model->getMediaViews($user_id,$start,$end);
+    }
+
     public function getTopBooks($user_id) {
         return $this->model->getUserMostViewedBooks($user_id);
     }

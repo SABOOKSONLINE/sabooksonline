@@ -74,7 +74,7 @@ public function getRevenueByBooks(array $bookIds)
     $types = str_repeat('i', count($bookIds));
 
     // Fetch total revenue
-    $sqlRevenue = "
+    $sqlRevenue = "mediaView
         SELECT COALESCE(SUM(amount), 0) AS total_revenue
         FROM book_purchases
         WHERE book_id IN ($placeholders)
@@ -156,6 +156,40 @@ public function getUserRevenue($userKey)
 
         $stmt = $this->conn->prepare($query);
         $likePattern = "%book%";
+        $params = array_merge([$likePattern], $contentIds);
+        $types = str_repeat("s", count($params));
+
+        if ($start_date && $end_date) {
+            $params[] = $start_date;
+            $params[] = $end_date;
+            $types .= "ss";
+        }
+
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $stmt->bind_result($unique_user_count);
+        $stmt->fetch();
+        $stmt->close();
+
+        return ['unique_user_count' => $unique_user_count];
+    }
+    public function getMediaViews($user_id, $start_date = null, $end_date = null)
+    {
+        $contentIds = $this->getUserMediaIds($user_id);
+        if (empty($contentIds)) return ['unique_user_count' => 0];
+
+        $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
+        $query = "SELECT COUNT(*) AS unique_user_count
+                  FROM page_visits AS pv
+                  INNER JOIN magazines AS p ON pv.page_url LIKE CONCAT('%', p.PUBLIC_KEY, '%')
+                  WHERE pv.page_url LIKE ? AND p.PUBLIC_KEY IN ($placeholders)";
+
+        if ($start_date && $end_date) {
+            $query .= " AND pv.visit_time BETWEEN ? AND ?";
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $likePattern = "%media%";
         $params = array_merge([$likePattern], $contentIds);
         $types = str_repeat("s", count($params));
 
@@ -326,24 +360,35 @@ public function getUserRevenue($userKey)
      * @return int The count of titles.
      */
     public function getTitlesCount($user_id)
-    {
-        $query = "SELECT COUNT(*) as total FROM posts WHERE USERID = ?";
-        $stmt = $this->conn->prepare($query);
-        if (!$stmt) {
-            return 0;
-        }
-        $stmt->bind_param("s", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
+{
+    $query = "
+        SELECT 
+            (SELECT COUNT(*) FROM posts WHERE USERID = ?) +
+            (SELECT COUNT(*) FROM magazines WHERE publisher_id = ?) +
+            (SELECT COUNT(*) FROM newspapers WHERE publisher_id = ?) +
+            (SELECT COUNT(*) FROM academic_books WHERE publisher_id = ?) 
+        AS total
+    ";
 
-        $count = 0;
-        if ($row = $result->fetch_assoc()) {
-            $count = (int)$row['total'];
-        }
-        $stmt->close();
-
-        return $count;
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return 0;
     }
+
+    // Bind the same user_id four times
+    $stmt->bind_param("ssss", $user_id, $user_id, $user_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $count = 0;
+    if ($row = $result->fetch_assoc()) {
+        $count = (int)$row['total'];
+    }
+    $stmt->close();
+
+    return $count;
+}
+
 
     // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -594,5 +639,20 @@ public function getUserRevenue($userKey)
         $stmt->close();
 
         return array_column($book_ids, 'CONTENTID');
+    }
+
+    private function getUserMediaIds($user_id)
+    {
+        $query = "SELECT PUBLIC_KEY FROM magazines WHERE PUBLISHER_ID = ?";
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) return [];
+
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $book_ids = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return array_column($book_ids, 'PUBLIC_KEY');
     }
 }
