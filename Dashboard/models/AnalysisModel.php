@@ -74,7 +74,7 @@ public function getRevenueByBooks(array $bookIds)
     $types = str_repeat('i', count($bookIds));
 
     // Fetch total revenue
-    $sqlRevenue = "mediaView
+    $sqlRevenue = "
         SELECT COALESCE(SUM(amount), 0) AS total_revenue
         FROM book_purchases
         WHERE book_id IN ($placeholders)
