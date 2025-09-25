@@ -8,27 +8,34 @@ require_once __DIR__ . "/../Core/Model.php";
 class AnalyticsModel extends Model
 {
 
-    function paymentPlans(): array
+    public function paymentPlans(): array
     {
         $sql = "SELECT * FROM payment_plans";
         return $this->fetchAll($sql);
     }
 
-    function paymentPlansRevenue(): array
+    public function paymentPlansRevenue(): array
     {
         $sql = "SELECT SUM(amount_paid) AS revenue FROM payment_plans";
         return $this->fetch($sql);
     }
 
-    function bookPurchases(): array
+    public function bookPurchases(): array
     {
         $sql = "SELECT * FROM book_purchases";
         return $this->fetchAll($sql);
     }
 
-    function bookPurchasesRevenue(): array
+    public function bookPurchasesRevenue(): array
     {
         $sql = "SELECT SUM(amount) AS revenue FROM book_purchases";
         return $this->fetch($sql);
+    }
+
+
+    public function pageVisits(): array
+    {
+        $sql = "SELECT * FROM page_visits ORDER BY page_visits.id DESC";
+        return $this->fetchAll($sql);
     }
 }
