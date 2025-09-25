@@ -111,7 +111,45 @@ include __DIR__ . "/includes/dashboard_heading.php";
                             }
                             echo '</tbody></table></div></div>';
                         } else {
-                            echo '<div class="alert alert-info shadow-sm mt-4">No subscription history found.</div>';
+                            $sqlRoyalty = "SELECT subscription_status FROM users WHERE admin_email = ? AND subscription_status = 'royalties'";
+                            $stmtRoyalty = $conn->prepare($sqlRoyalty);
+                            $stmtRoyalty->bind_param("s", $userEmail);
+                            $stmtRoyalty->execute();
+                            $resultRoyalty = $stmtRoyalty->get_result();
+
+                            if ($resultRoyalty->num_rows > 0) {
+                                echo '<div class="card shadow-sm mb-4 border-primary">';
+                                echo '<div class="card-header bg-primary text-white d-flex align-items-center">';
+                                echo '<img src="public/images/sabo_logo.png" alt="SA Books Online" style="height:40px; margin-right:10px;">';
+                                echo '<h5 class="mb-0">Royalty Plan Information</h5>';
+                                echo '</div>';
+                                echo '<div class="card-body">';
+                                echo '<p class="mb-3"><strong>Dear Author/Publisher,</strong><br>';
+                                echo 'You are currently enrolled in the <strong>Royalty Plan — Pay Later option</strong>. By signing up, you agreed to the terms and conditions outlined below:</p>';
+                                echo '<ul class="mb-3" style="line-height:1.6;">';
+                                echo '<li>Authors and publishers earn <strong>65% royalties</strong> from all sales through the SA Books Online platform.</li>';
+                                echo '<li>Royalties are calculated based on <strong>completed and cleared sales</strong>.</li>';
+                                echo '<li>Royalty payouts are made on a <strong>quarterly basis</strong> (March, June, September, December).</li>';
+                                echo '<li>Clients on the Pay Later option will have applicable <strong>Trade Levies</strong> deducted before payout.</li>';
+                                echo '<li>Payment requests outside of the quarterly payout cycle may be considered and are subject to an <strong>administrative fee</strong>.</li>';
+                                echo '<li>All royalties are paid via the author/publisher\'s designated <strong>bank account</strong>.</li>';
+                                echo '</ul>';
+                                echo '<p class="mb-0">';
+                                echo 'For more details or to <strong>upgrade to a full paid plan</strong>, please ';
+                                echo '<a href="/membership" class="btn btn-sm btn-primary">Click Here</a>.';
+                                echo '</p>';
+                                echo '</div>';
+                                echo '</div>';
+                                
+                            } else {
+                                // 3️⃣ Default reader message
+                                echo '<div class="alert alert-secondary shadow-sm">';
+                                echo '<h5>Welcome Reader!</h5>';
+                                echo '<p>You can browse and enjoy our collection of books, magazines, newspapers, academic textbooks, and audiobooks.</p>';
+                                echo '</div>';
+                            }
+
+                            $stmtRoyalty->close();
                         }
 
                         $stmt->close();
