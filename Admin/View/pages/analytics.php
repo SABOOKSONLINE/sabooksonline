@@ -68,7 +68,7 @@ renderSectionHeader(
     }
 
     $monthlyPublisherCount = [];
-    foreach ($data["payment_plans"]["all"] as $payment) {
+    foreach ($data['payment_plans']['all'] as $payment) {
         $month = getMonth($payment['payment_date']);
         $monthlyPublisherCount[$month] = ($monthlyPublisherCount[$month] ?? 0) + 1;
     }
@@ -131,6 +131,80 @@ renderSectionHeader(
     "Still under development (Coming Soon)!"
 );
 ?>
+<div class="row">
+    <?php
+    // echo "<pre>";
+    // print_r($data["page_visits"]);
+    // echo "</pre>";
+
+    $pageVisits = [];
+    foreach ($data['page_visits']['all'] as $pageVisit) {
+        $ip = $pageVisit['user_ip'];
+        $pageVisits[$ip] = ($pageVisits[$ip] ?? 0) + 1;
+    }
+
+    $bookViews = 0;
+    $mediaViews = 0;
+    foreach ($data['page_visits']['all'] as $pageVisit) {
+
+        if (str_starts_with("/library/book/", $pageVisit['page_url'])) {
+            $bookViews = $bookViews + 1;
+        } else if (str_starts_with("/media/", $pageVisit['page_url'])) {
+            $mediaViews = $mediaViews + 1;
+        }
+    }
+
+    // echo "<pre>";
+    // print_r($pageVisits);
+    // echo "</pre>";
+
+    $cards = [
+        [
+            "title" => "Total Visits",
+            "value" => count($data["page_visits"]["all"]),
+            "icon"  => "fas fa-users",
+            "color" => "primary"
+        ],
+        [
+            "title" => "Unique IP Visits",
+            "value" => count($pageVisits),
+            "icon"  => "fas fa-users",
+            "color" => "primary"
+        ],
+        [
+            "title" => "Book Views",
+            "value" => $bookViews,
+            "icon"  => "fas fa-users",
+            "color" => "primary"
+        ],
+        [
+            "title" => "Media Views",
+            "value" => $mediaViews,
+            "icon"  => "fas fa-users",
+            "color" => "primary"
+        ]
+    ];
+
+    foreach ($cards as $card) {
+        renderAnalysisCard($card["title"], $card["value"], $card["icon"], $card["color"]);
+    }
+
+    // $allMonthly = array_unique(array_merge(array_keys($monthlySubscriptions), array_keys($monthlyBookSales)));
+
+    // $monthlyViews = [];
+    // foreach ($data['page_visits']['all'] as $pageVisit) {
+    //     $month = getMonth($pageVisit['visit_time']);
+    //     $monthlyViews[$month] = ($monthlyViews[$month] ?? 0) + 1;
+    // }
+
+    // renderAnalysisBar(
+    //     "Monthly Visits",
+    //     $monthlyViews,
+    //     array_map(fn($m) => $monthlyViews[$m] ?? 0, $allMonths),
+    //     "priamry"
+    // );
+    ?>
+</div>
 
 <?php
 $content = ob_get_clean();
