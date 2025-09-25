@@ -118,14 +118,14 @@ include __DIR__ . "/includes/dashboard_heading.php";
                             $resultRoyalty = $stmtRoyalty->get_result();
 
                             if ($resultRoyalty->num_rows > 0) {
-                                echo '<div class="card shadow-sm mb-4 border-primary">';
+                                echo '<div class="card shadow-sm border-primary mt-4 mb-4">';
                                 echo '<div class="card-header bg-primary text-white d-flex align-items-center">';
-                                echo '<img src="public/images/sabo_logo.png" alt="SA Books Online" style="height:40px; margin-right:10px;">';
+                                echo '<img src="/public/images/sabo_logo.png" alt="SA Books Online" style="height:40px; margin-right:10px;">';
                                 echo '<h5 class="mb-0">Royalty Plan Information</h5>';
                                 echo '</div>';
                                 echo '<div class="card-body">';
                                 echo '<p class="mb-3"><strong>Dear Author/Publisher,</strong><br>';
-                                echo 'You are currently enrolled in the <strong>Royalty Plan — Pay Later option</strong>. By signing up, you agreed to the terms and conditions outlined below:</p>';
+                                echo 'You are currently enrolled in the <strong>Royalty Plan — Pay Later option</strong>. Upon signing up, you agreed to the terms and conditions outlined below:</p>';
                                 echo '<ul class="mb-3" style="line-height:1.6;">';
                                 echo '<li>Authors and publishers earn <strong>65% royalties</strong> from all sales through the SA Books Online platform.</li>';
                                 echo '<li>Royalties are calculated based on <strong>completed and cleared sales</strong>.</li>';
@@ -136,7 +136,7 @@ include __DIR__ . "/includes/dashboard_heading.php";
                                 echo '</ul>';
                                 echo '<p class="mb-0">';
                                 echo 'For more details or to <strong>upgrade to a full paid plan</strong>, please ';
-                                echo '<a href="/membership" class="btn btn-sm btn-primary">Click Here</a>.';
+                                echo '<a href="/membership" >Click Here</a>.';
                                 echo '</p>';
                                 echo '</div>';
                                 echo '</div>';
