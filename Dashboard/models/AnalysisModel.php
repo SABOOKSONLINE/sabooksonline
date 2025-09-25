@@ -359,7 +359,7 @@ public function getUserRevenue($userKey)
      * @param string $user_id The ID of the user.
      * @return int The count of titles.
      */
-    public function getTitlesCount($user_id)
+    public function getTitlesCount($user_id,$id)
 {
     $query = "
         SELECT 
@@ -376,7 +376,7 @@ public function getUserRevenue($userKey)
     }
 
     // Bind the same user_id four times
-    $stmt->bind_param("ssss", $user_id, $user_id, $user_id, $user_id);
+    $stmt->bind_param("ssss", $user_id, $id, $id, $id);
     $stmt->execute();
     $result = $stmt->get_result();
 

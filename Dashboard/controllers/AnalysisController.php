@@ -12,8 +12,8 @@ class AnalysisController
     }
 
     // Dashboard analytics
-    public function getTitlesCount($user_id){
-        return $this->model->getTitlesCount($user_id);
+    public function getTitlesCount($user_id,$id){
+        return $this->model->getTitlesCount($user_id,$id);
     }
 
     // revenue analyticssss

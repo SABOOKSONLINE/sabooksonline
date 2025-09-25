@@ -69,11 +69,11 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                             ]);
                         }, $revenue['purchases']);
 
-                        $titlesCount = $analysisController->getTitlesCount($userKey);
+                        $titlesCount = $analysisController->getTitlesCount($userKey,$userID);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
                         $bookView = $analysisController->getBookViews($userKey, $start_date, $end_date);
                         $profileView = $analysisController->getProfileViews($userKey, $start_date, $end_date);
-                        $mediaView = $analysisController->getMediaViews($serID, $start_date, $end_date);
+                        $mediaView = $analysisController->getMediaViews($userID, $start_date, $end_date);
 
                         // $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'], $start_date, $end_date);
                         $eventView = $analysisController->getEventViews($userKey, $start_date, $end_date);
