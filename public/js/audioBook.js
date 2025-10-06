@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
     const bookTitle = $(".audio-book-title .title");
 
-    const bacward = $("#ctrl-backward");
+    const backward = $("#ctrl-backward");
     const play = document.querySelector("#ctrl-play");
     const forward = $("#ctrl-forward");
     const time = $("#tracker-time");
@@ -126,7 +126,7 @@ jQuery(document).ready(function () {
         forwardPlay();
     });
 
-    bacward.on("click", function () {
+    backward.on("click", function () {
         backwardPlay();
     });
 
