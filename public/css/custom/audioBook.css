@@ -133,7 +133,7 @@
 
 .audio-ctrl:hover {
     background: rgb(255, 255, 255, 0.25);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .audio-trackers {
@@ -166,7 +166,7 @@
 
 #ctrl-tracker:hover,
 #ctrl-volume:hover {
-    height: 50px;
+    height: 35px;
     transform: scale(1);
 }
 
