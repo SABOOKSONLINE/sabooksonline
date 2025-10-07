@@ -540,6 +540,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET["id"] = $id;
         require  "Admin/Helpers/remove.php";
     });
+
+    $r->addRoute('GET', '/401', function () {
+        require  "Application/views/401.php";
+    });
 });
 
 // Fetch method and URI from server
