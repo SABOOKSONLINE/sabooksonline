@@ -6,6 +6,12 @@ jQuery(document).ready(function () {
     const forward = $("#ctrl-forward");
     const time = $("#tracker-time");
     const tracker = $("#ctrl-tracker .tracker");
+    const ctrlTracker = $("#ctrl-tracker");
+
+    const DEFAULT_VOLUME = 0.7;
+
+    const volumeCtrl = $("#ctrl-volume");
+    const volumeLevel = $("#ctrl-volume .tracker");
 
     const chapters = document.querySelectorAll(".chapter");
 
@@ -16,12 +22,18 @@ jQuery(document).ready(function () {
 
     let selectAudio = audio_list.eq(0);
 
+    const updateVolumeBar = (volume) => {
+        volumeLevel.css("width", volume * 100 + "%");
+    };
+
     const initializeAudio = (audioUrl = "") => {
         if (!audioUrl) {
             audioUrl = selectAudio.attr("audio_url");
         }
 
         audio = new Audio("/cms-data/audiobooks/" + audioUrl);
+        audio.volume = DEFAULT_VOLUME;
+        updateVolumeBar(DEFAULT_VOLUME);
         selectChapterByUrl(audioUrl);
     };
 
@@ -153,5 +165,53 @@ jQuery(document).ready(function () {
     openAudioDetailsButton.addEventListener("click", () => {
         audioCoverSide.classList.toggle("hide-cv");
         audioDetails.classList.toggle("show-ad");
+    });
+
+    ctrlTracker.on("click", function (e) {
+        if (!audio || !audio.duration) return;
+
+        const offset = $(this).offset().left;
+        const positionX = e.pageX - offset;
+        const width = $(this).outerWidth();
+
+        const percentage = positionX / width;
+        const newTime = percentage * audio.duration;
+
+        audio.currentTime = newTime;
+        tracker.css("width", percentage * 100 + "%");
+        time.text(formatTime(newTime));
+    });
+
+    volumeCtrl.on("click", function (e) {
+        if (!audio) return;
+
+        const offset = $(this).offset().left;
+        const positionX = e.pageX - offset;
+        const width = $(this).outerWidth();
+
+        const volume = Math.min(Math.max(positionX / width, 0), 1);
+        audio.volume = volume;
+        updateVolumeBar(volume);
+    });
+
+    let isDraggingVolume = false;
+
+    volumeCtrl.on("mousedown", function () {
+        isDraggingVolume = true;
+    });
+
+    $(document).on("mouseup", function () {
+        isDraggingVolume = false;
+    });
+
+    $(document).on("mousemove", function (e) {
+        if (isDraggingVolume && audio) {
+            const offset = volumeCtrl.offset().left;
+            const width = volumeCtrl.outerWidth();
+            const positionX = e.pageX - offset;
+            const volume = Math.min(Math.max(positionX / width, 0), 1);
+            audio.volume = volume;
+            updateVolumeBar(volume);
+        }
     });
 });
