@@ -544,6 +544,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/401', function () {
         require  "Application/views/401.php";
     });
+    $r->addRoute('GET', '/405', function () {
+        require  "Application/views/405.php";
+    });
 });
 
 // Fetch method and URI from server
