@@ -168,8 +168,37 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <p class="bv-text-meta"><b>ISBN:</b> <?= $isbn ?></p>
                 <?php endif; ?>
                 <?php if ($description): ?>
-                    <p class="bv-text-para"><?= $description ?></p>
-                <?php endif; ?>
+    <p class="bv-text-para" id="book-description">
+        <?= strlen($description) > 500 ? substr($description, 0, 500) . '...' : $description ?>
+    </p>
+
+    <?php if (strlen($description) > 500): ?>
+        <button id="toggleDescription" class="btn btn p-0">Show more</button>
+    <?php endif; ?>
+<?php endif; ?>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('toggleDescription');
+        const descEl = document.getElementById('book-description');
+        if (!toggleBtn || !descEl) return;
+
+        let expanded = false;
+        const fullText = `<?= addslashes($description) ?>`;
+
+        toggleBtn.addEventListener('click', () => {
+            if (!expanded) {
+                descEl.textContent = fullText;
+                toggleBtn.textContent = 'Show less';
+            } else {
+                descEl.textContent = fullText.substring(0, 500) + '...';
+                toggleBtn.textContent = 'Show more';
+            }
+            expanded = !expanded;
+        });
+    });
+</script>
+
 
                 <div class="bk-tags mt-4 justify-content-between">
                     <div class="bk-tags">
@@ -196,10 +225,12 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <div class="">
             <div class="bv-purchase">
                 <!-- E-Book -->
-                <span class="bv-purchase-select" price="<?= $eBookPrice ?>" available="<?= !empty($ebook) ?>">
+                  <span class="bv-purchase-select" price="<?= (int)$eBookPrice ?>" available="<?= !empty($ebook) ?>">
+
                     <span class="bv-purchase-select-h">E-Book</span>
                     <?php if ((int)$eBookPrice !== 0 && $ebook): ?>
                         <span class="bv-purchase-select-hL">R<?= $eBookPrice ?><small>.00</small></span>
+                        
                     <?php elseif ((int)$eBookPrice === 0 && $ebook): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
                     <?php else: ?>
@@ -251,7 +282,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 </span>
 
                 <div class="bv-purchase-details">
-                    <span class="bv-price"><span></span><small>00</small></span>
+                    <span class="bv-price"></span>
                     <span class="bv-note-muted">This price applies to the format shown..</span>
 
                     <!-- ebook button -->
@@ -313,15 +344,17 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     let bvBuyBtn = document.querySelector(".bv-buy-btn");
 
     const updatePrice = (value) => {
-        const price = parseInt(value);
-
-    if (isNaN(price) || price === 0) {         
+        let price = parseInt(value);
+    
+        if (isNaN(price) || price === 0) {
             selectedPrice.innerHTML = "FREE";
             selectedPrice.classList.add("bv-text-green");
         } else {
             selectedPrice.innerText = "R" + price;
+            selectedPrice.classList.remove("bv-text-green");
         }
     };
+
 
     const selectFirstBvBtn = () => {
         for (let i = 0; i < bvSelectBtn.length; i++) {
