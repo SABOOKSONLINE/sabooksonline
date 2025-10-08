@@ -315,7 +315,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     const updatePrice = (value) => {
         const price = parseInt(value);
 
-        if (price == 0) {
+    if (isNaN(price) || price === 0) {         
             selectedPrice.innerHTML = "FREE";
             selectedPrice.classList.add("bv-text-green");
         } else {
