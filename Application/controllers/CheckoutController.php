@@ -170,13 +170,15 @@ class CheckoutController {
     }
     $htmlForm .= '</form>';
 
-    $htmlForm .= '<script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("payfastForm").submit();
-        });
-    </script>';
+    // $htmlForm .= '<script>
+    //     document.addEventListener("DOMContentLoaded", function() {
+    //         document.getElementById("payfastForm").submit();
+    //     });
+    // </script>';
 
-    echo $htmlForm;
+    // echo $htmlForm;
+    include __DIR__ . '/../views/payment/checkout.php';
+
 }
 
     public function generatePaymentFormPlan($plan, $planPrice, $subscriptionType, $planName, $user) {
