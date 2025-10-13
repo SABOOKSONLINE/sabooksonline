@@ -173,7 +173,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     </p>
 
                     <?php if (strlen($description) > 500): ?>
-                        <button id="toggleDescription" class="btn btn p-0">Show more</button>
+                        <button id="toggleDescription" class="bk-tag">Show more <i class="fas fa-angle-down"></i></button>
                     <?php endif; ?>
                 <?php endif; ?>
 
@@ -185,14 +185,15 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                         let expanded = false;
                         const fullText = `<?= addslashes($description) ?>`;
+                        const shortText = fullText.substring(0, 500) + '...';
 
                         toggleBtn.addEventListener('click', () => {
                             if (!expanded) {
                                 descEl.textContent = fullText;
-                                toggleBtn.textContent = 'Show less';
+                                toggleBtn.innerHTML = 'Show less <i class="fas fa-angle-up"></i>';
                             } else {
-                                descEl.textContent = fullText.substring(0, 500) + '...';
-                                toggleBtn.textContent = 'Show more';
+                                descEl.textContent = shortText;
+                                toggleBtn.innerHTML = 'Show more <i class="fas fa-angle-down"></i>';
                             }
                             expanded = !expanded;
                         });
@@ -240,16 +241,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                 <!-- Audiobook -->
                 <span class="bv-purchase-select" price="<?= $aBookPrice ?>" available="<?= isset($audiobookId) ?>">
-                    <span class="bv-purchase-select-h d-block mb-1">Audiobook</span>
-                    <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
-                        <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
-                    <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
-                        <span class="bv-purchase-select-hL">FREE</span>
-                    <?php else: ?>
-                        <span>Not available</span>
-                    <?php endif; ?>
-
-
                     <?php if ($audiobook_sample): ?>
                         <div class="position-absolute top-50 end-0 translate-middle-y me-3">
                             <audio id="bg-music">
@@ -266,6 +257,17 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             </div>
                         </div>
                     <?php endif; ?>
+
+                    <span class="bv-purchase-select-h d-block mb-1">Audiobook</span>
+                    <?php if ((int)$aBookPrice !== 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">R<?= $aBookPrice ?><small>.00</small></span>
+                    <?php elseif ((int)$aBookPrice === 0 && $audiobookId): ?>
+                        <span class="bv-purchase-select-hL">FREE</span>
+                    <?php else: ?>
+                        <span>Not available</span>
+                    <?php endif; ?>
+
+
 
                 </span>
 
