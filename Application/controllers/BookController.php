@@ -34,109 +34,108 @@ class BookController
     }
 
 
- public function readBook($contentId, $category = 'book')
-{
-    require_once __DIR__ . '/../models/UserModel.php';
-    require_once __DIR__ . '/../models/MediaModel.php';
-    require_once __DIR__ . '/../models/AcademicBookModel.php';
-    $mediaModel = new MediaModel($this->conn);
-    $academicModel = new AcademicBookModel($this->conn);
+    public function readBook($contentId, $category = 'book')
+    {
+        require_once __DIR__ . '/../models/UserModel.php';
+        require_once __DIR__ . '/../models/MediaModel.php';
+        require_once __DIR__ . '/../models/AcademicBookModel.php';
+        $mediaModel = new MediaModel($this->conn);
+        $academicModel = new AcademicBookModel($this->conn);
 
 
 
-    if (!$contentId) {
-        header("Location: /404");
-        exit;
-    }
+        if (!$contentId) {
+            header("Location: /404");
+            exit;
+        }
 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    if (empty($_SESSION['ADMIN_EMAIL'])) {
-        header('Location: /login');
-        exit;
-    }
+        if (empty($_SESSION['ADMIN_EMAIL'])) {
+            header('Location: /login');
+            exit;
+        }
 
-    $email = $_SESSION['ADMIN_EMAIL'];
-    $contentId = htmlspecialchars(trim($contentId));
+        $email = $_SESSION['ADMIN_EMAIL'];
+        $contentId = htmlspecialchars(trim($contentId));
 
-    $content = null;
-    $pdf = null;
+        $content = null;
+        $pdf = null;
 
-    // Pick content & URL
-    switch (strtolower($category)) {
-        case 'magazine':
-            $content = $mediaModel->selectMagazineById($contentId);
-            $pdf = $content['pdf_path'] ?? null;
-            break;
-
-        case 'newspaper':
-            $content = $mediaModel->selectNewspaperById($contentId);
-            $pdf = $content['pdf_path'] ?? null;
-            break;
-
-        case 'academic':
-            $content = $academicModel->selectBookByPublicKey($contentId);
-            $pdf = $content['pdf_path'] ?? null;
-            break;
-
-        case 'book':
-        default:
-            $content = $this->bookModel->getBookById($contentId);
-            $pdf = $content['PDFURL'] ?? null;
-            break;
-    }
-
-    if (!$content) {
-        header("Location: /404");
-        exit;
-    }
-
-    // Ownership check only for books
-    $userOwnsThisContent = false;
-    if ($category === 'book') {
-        $userModel = new UserModel($this->conn);
-        $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
-        foreach ($userBooks as $purchasedBook) {
-            if ($purchasedBook['ID'] == $content['ID']) {
-                $userOwnsThisContent = true;
+        // Pick content & URL
+        switch (strtolower($category)) {
+            case 'magazine':
+                $content = $mediaModel->selectMagazineById($contentId);
+                $pdf = $content['pdf_path'] ?? null;
                 break;
+
+            case 'newspaper':
+                $content = $mediaModel->selectNewspaperById($contentId);
+                $pdf = $content['pdf_path'] ?? null;
+                break;
+
+            case 'academic':
+                $content = $academicModel->selectBookByPublicKey($contentId);
+                $pdf = $content['pdf_path'] ?? null;
+                break;
+
+            case 'book':
+            default:
+                $content = $this->bookModel->getBookById($contentId);
+                $pdf = $content['PDFURL'] ?? null;
+                break;
+        }
+
+        if (!$content) {
+            header("Location: /404");
+            exit;
+        }
+
+        // Ownership check only for books
+        $userOwnsThisContent = false;
+        if ($category === 'book') {
+            $userModel = new UserModel($this->conn);
+            $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
+            foreach ($userBooks as $purchasedBook) {
+                if ($purchasedBook['ID'] == $content['ID']) {
+                    $userOwnsThisContent = true;
+                    break;
+                }
             }
         }
+
+        $canView = ($category === 'book') ? $userOwnsThisContent : true;
+
+        if ($pdf) {
+            // Map category to folder for URL
+            $folderMap = [
+                'book'      => 'book-pdfs',
+                'academic'      => 'academic/pdfs',
+                'magazine'  => 'magazine/pdfs',
+                'newspaper' => 'newspaper/pdfs'
+            ];
+            $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
+            $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+
+            // Decide which reader to use
+            $extension = strtolower(pathinfo($pdf, PATHINFO_EXTENSION));
+
+            if ($extension === 'pdf') {
+                include __DIR__ . '/../views/books/ebook/bookReader.php';
+            } elseif ($extension === 'epub') {
+                include __DIR__ . '/../views/books/ebook/ebupReader.php';
+            } else {
+                // Unsupported format
+                header("Location: /404");
+                exit;
+            }
+        } else {
+            header("Location: /404");
+            exit;
+        }
     }
-
-    $canView = ($category === 'book') ? $userOwnsThisContent : true;
-
-    if ($pdf) {
-        // Map category to folder for URL
-        $folderMap = [
-            'book'      => 'book-pdfs',
-            'academic'      => 'academic/pdfs',
-            'magazine'  => 'magazine/pdfs',
-            'newspaper' => 'newspaper/pdfs'
-        ];
-        $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
-        $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
-
-        // Decide which reader to use
-    $extension = strtolower(pathinfo($pdf, PATHINFO_EXTENSION));
-
-    if ($extension === 'pdf') {
-        include __DIR__ . '/../views/books/ebook/bookReader.php';
-    } elseif ($extension === 'epub') {
-        include __DIR__ . '/../views/books/ebook/ebupReader.php';
-    } else {
-        // Unsupported format
-        header("Location: /404");
-        exit;
-    }
-
-    } else {
-        header("Location: /404");
-        exit;
-    }
-}
 
 
 
@@ -180,10 +179,15 @@ class BookController
         $userBooks = $userModel->getPurchasedBooksByUserEmail($email);
 
         $userOwnsThisBook = false;
-        foreach ($userBooks as $purchasedBook) {
-            if ($purchasedBook['ID'] == $book['ID']) {
-                $userOwnsThisBook = true;
-                break;
+
+        if (empty($book['ABOOKPRICE']) || $book['ABOOKPRICE'] === 0) {
+            $userOwnsThisBook = true;
+        } else {
+            foreach ($userBooks as $purchasedBook) {
+                if ($purchasedBook['ID'] == $book['ID']) {
+                    $userOwnsThisBook = true;
+                    break;
+                }
             }
         }
 
@@ -202,16 +206,16 @@ class BookController
 
 
     public function getAudiobookDetailsApi($a_id)
-{
-    header('Content-Type: application/json; charset=utf-8');
+    {
+        header('Content-Type: application/json; charset=utf-8');
 
-    $chapters = $this->bookModel->getChaptersByAudiobookId($a_id ?? null);
+        $chapters = $this->bookModel->getChaptersByAudiobookId($a_id ?? null);
 
-    echo json_encode([
-        'chapters' => $chapters,
-    ]);
-    exit;
-}
+        echo json_encode([
+            'chapters' => $chapters,
+        ]);
+        exit;
+    }
 
 
     /**
@@ -252,7 +256,6 @@ class BookController
 
         if ($books) {
             include __DIR__ . '/../views/books/bookCategory.php';
-           
         } else {
             echo "<div class='container'>No books found in this category.</div>";
         }
