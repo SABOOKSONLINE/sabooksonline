@@ -46,6 +46,9 @@ if (isset($userKey)) {
 require_once __DIR__ . "/../util/urlRedirect.php";
 ?>
 
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVQBTH7N"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
 <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div>
 
 <nav class="navbar navbar-expand-xl navbar-light bg-light">
