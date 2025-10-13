@@ -63,9 +63,9 @@ require_once __DIR__ . "/../includes/header.php";
 
     .checkout-right {
       flex: 0 0 320px;
-      background: #fff;
+      /*background: #fff;*/
       padding: 30px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+      /*box-shadow: 0 3px 12px rgba(0,0,0,0.05);*/
       align-self: flex-start;
     }
 
@@ -185,7 +185,7 @@ require_once __DIR__ . "/../includes/header.php";
       width: 100%;
       max-width: 250px;
       height: auto;
-      border-radius: 8px;
+      /*border-radius: 8px;*/
       object-fit: cover;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
