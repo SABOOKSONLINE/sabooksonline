@@ -2,6 +2,8 @@
 // views/payment/checkout.php
 // Expected: $book, $user, $format, $data, $price
 
+
+
 $title = htmlspecialchars($book['TITLE'] ?? 'Untitled Book');
 $author = htmlspecialchars($book['AUTHORS'] ?? 'Unknown Author');
 $category = htmlspecialchars($book['CATEGORY'] ?? 'General');
@@ -9,6 +11,9 @@ $cover = htmlspecialchars($book['COVER'] ?? '/assets/img/default-book.png');
 $formatLabel = ucfirst($format);
 $priceFormatted = number_format($price, 2);
 $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
+require_once __DIR__ . "/../includes/header.php";
+
+
 ?>
 
 <!DOCTYPE html>
@@ -116,8 +121,8 @@ $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
       margin-bottom: 20px;
     }
     .book-thumb img {
-      width: 70px;
-      height: 100px;
+      width: 250px;
+      height: 280px;
       border-radius: 6px;
       object-fit: cover;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -125,7 +130,7 @@ $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
     .book-info small {
       display: block;
       color: #777;
-      font-size: 13px;
+      font-size: 19px;
     }
     .footer-links {
       margin-top: 40px;
@@ -145,7 +150,13 @@ $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
     }
   </style>
 </head>
+
 <body>
+     <?php require_once __DIR__ . "/../includes/navv.php";
+    ?>
+  
+  
+
 
 <div class="checkout-wrapper">
   <!-- LEFT SIDE -->
@@ -166,15 +177,7 @@ $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
         </span>
       </label>
 
-      <label class="payment-option">
-        <span>
-          <input type="radio" name="payment_method">
-          Ozow
-        </span>
-        <span class="logos">
-          <img src="https://www.ozow.com/wp-content/uploads/2021/11/ozow-logo-green.svg" alt="Ozow">
-        </span>
-      </label>
+      
     </div>
 
     <div class="billing-section">
@@ -197,20 +200,22 @@ $userEmail = htmlspecialchars($user['ADMIN_EMAIL'] ?? '');
 
       <div class="book-info">
         <strong><?= $title ?></strong>
-        <small>by <?= $author ?></small>
-        <small>Category: <?= $category ?></small>
-        <small>Format: <?= $formatLabel ?></small>
       </div>
     </div>
 
+       <div class="summary-item">
+      <span>By</span>
+      <span><?= $author ?></span>
+    </div>
+     <div class="summary-item">
+      <span>Format</span>
+      <span><?= $formatLabel ?></span>
+    </div>
     <div class="summary-item">
       <span>Subtotal</span>
       <span>R <?= $priceFormatted ?></span>
     </div>
-    <div class="summary-item">
-      <span>Shipping</span>
-      <span>Free</span>
-    </div>
+    
     <hr>
     <div class="summary-item">
       <strong>Total</strong>
