@@ -46,6 +46,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
                         $analysisController = new AnalysisController($conn);
                         $userKey = $_SESSION["ADMIN_USERKEY"];
+                        $userID = $_SESSION["ADMIN_ID"];
                         $email = $_SESSION["ADMIN_EMAIL"];
 
                         $start = $_GET['start_date'] ?? null;
@@ -68,10 +69,12 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                             ]);
                         }, $revenue['purchases']);
 
-                        $titlesCount = $analysisController->getTitlesCount($userKey);
+                        $titlesCount = $analysisController->getTitlesCount($userKey,$userID);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
                         $bookView = $analysisController->getBookViews($userKey, $start_date, $end_date);
                         $profileView = $analysisController->getProfileViews($userKey, $start_date, $end_date);
+                        $mediaView = $analysisController->getMediaViews($userID, $start_date, $end_date);
+
                         // $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'], $start_date, $end_date);
                         $eventView = $analysisController->getEventViews($userKey, $start_date, $end_date);
                         $downloads = $analysisController->getDownloadsByEmail($email);
@@ -96,7 +99,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card");
                         renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
                         renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
-                        renderAnalysisCard("Media Views", '0', "fas fa-newspaper");
+                        renderAnalysisCard("Media Views", $mediaView['unique_user_count'], "fas fa-newspaper");
                         renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
                         renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt");
                         renderPurchaseCard($purchasesWithTitle);

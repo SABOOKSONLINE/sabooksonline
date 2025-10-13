@@ -59,9 +59,8 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
         $pdfUrl    = trim($book['PDFURL'] ?? '');
 
         $types = [];
-        if ($book['EBOOKPRICE']) $types[] = 'ebook';
+        if ($pdfUrl) $types[] = 'ebook';
         if ($book['ABOOKPRICE']) $types[] = 'audiobook';
-        if (!$book['EBOOKPRICE'] && !$book['ABOOKPRICE']) $types[] = 'physical';
         $dataTypeAttr = implode(' ', $types);
     ?>
         <div class="col-xl-6 col-lg-6 col-md-12" data-type="<?= $dataTypeAttr ?>">
@@ -89,15 +88,16 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 
                         <!-- Badges -->
                         <div class="text-end">
-                            <?php if (!empty($book['EBOOKPRICE']) && !empty($pdfUrl)): ?>
+                            <?php if (!empty($pdfUrl)): ?>
                                 <span class="badge bg-primary">Ebook</span>
                             <?php endif; ?>
                             <?php if (!empty($book['ABOOKPRICE'])): ?>
                                 <span class="badge bg-info text-dark">Audiobook</span>
                             <?php endif; ?>
-                            <?php if (empty($book['EBOOKPRICE']) && empty($book['ABOOKPRICE'])): ?>
+                           <?php if ($hPrice !== 0): ?>
                                 <span class="badge bg-secondary">Book</span>
                             <?php endif; ?>
+
                         </div>
                     </div>
 

@@ -125,7 +125,7 @@ class BookController
     if ($extension === 'pdf') {
         include __DIR__ . '/../views/books/ebook/bookReader.php';
     } elseif ($extension === 'epub') {
-        include __DIR__ . '/../views/books/ebook/epubReader.php';
+        include __DIR__ . '/../views/books/ebook/ebupReader.php';
     } else {
         // Unsupported format
         header("Location: /404");

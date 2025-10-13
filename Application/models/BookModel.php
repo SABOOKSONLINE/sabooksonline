@@ -344,7 +344,7 @@ public function getAcademicBooks($updatedSince = null): array
 
     public function getBanners($screen)
 {
-    $sql = "SELECT * FROM Mobile_banners WHERE screen = ? ORDER BY RAND()";
+    $sql = "SELECT * FROM Mobile_banners WHERE screen = ? ";
 
     $stmt = mysqli_prepare($this->conn, $sql);
     if (!$stmt) {
