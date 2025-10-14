@@ -90,17 +90,25 @@ try {
         throw new Exception('Failed to set user session');
     }
 
-    $_SESSION['alert'] = [
-        'type' => 'success',
-        'message' => 'Login successful! Welcome back.',
-        'title' => 'Welcome'
-    ];
+    // $_SESSION['alert'] = [
+    //     'type' => 'success',
+    //     'message' => 'Login successful! Welcome back.',
+    //     'title' => 'Welcome'
+    // ];
+
     // if (!empty($_SESSION['current_page'])) {
     //     header("Location: " . $_SESSION['current_page']);
     // } else {
     //     header("Location: /dashboards");
     // }
-    header("Location: /dashboards");
+
+    // redirect the user to last book page before logging in
+    $redirectUri = $_SESSION["redirect_uri"];
+    if (str_starts_with($redirectUri, "/library")) {
+        header("Location: " . $redirectUri);
+    } else {
+        header("Location: /dashboards");
+    }
     exit;
 } catch (Exception $e) {
     error_log("Login error: " . $e->getMessage());
