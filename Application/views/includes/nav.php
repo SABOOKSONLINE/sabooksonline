@@ -50,6 +50,7 @@ require_once __DIR__ . "/../util/urlRedirect.php";
         height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <?php include __DIR__ . "/stickyBanner.php"; ?>
+<?php include __DIR__ . "/popupBanner.php"; ?>
 
 <!-- <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div> -->
 
