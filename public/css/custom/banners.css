@@ -1,0 +1,104 @@
+#sticky-banner {
+    background: var(--black);
+    position: sticky;
+    top: 0;
+    padding: var(--space-md) var(--space-lg);
+    overflow: hidden;
+    z-index: 1080;
+    display: flex;
+    align-items: center;
+    transition: 0.3s all ease-in-out;
+}
+
+#sticky-banner::before {
+    background: url("/public/images/ndebele_patterns.jpeg");
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    top: 0;
+    right: 0;
+    z-index: -2;
+    opacity: 0.5;
+}
+
+#sticky-banner::after {
+    background: linear-gradient(
+        90deg,
+        var(--black),
+        var(--black),
+        rgba(0, 0, 0, 0)
+    );
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.banner-heading {
+    font-size: var(--typo-size-md);
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+.banner-subheading {
+    font-size: var(--typo-size-sm);
+    color: var(--off-white);
+    margin-bottom: 0;
+    max-width: 600px;
+}
+
+.btn-close-icon {
+    position: absolute;
+    top: 50%;
+    right: var(--space-sm);
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--off-white);
+    font-size: var(--typo-size-lg);
+    cursor: pointer;
+    line-height: 1;
+    z-index: 20;
+}
+
+.btn-close-icon:hover {
+    color: var(--white);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+    #sticky-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .banner-heading {
+        font-size: var(--typo-size-sm);
+    }
+
+    .banner-subheading {
+        font-size: var(--typo-size-xs);
+    }
+
+    .btn-white {
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-close-icon {
+        top: var(--space-md);
+        right: var(--space-md);
+        transform: none;
+        font-size: var(--typo-size-md);
+    }
+}
