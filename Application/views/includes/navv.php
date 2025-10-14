@@ -51,15 +51,6 @@ if (isset($userKey)) {
             <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
-       
-
-        
-            <div class="d-xl-none bg-light p-3">
-                <div class="d-grid gap-2">
-                    <a href="/signup" class="btn btn-black">Sign Up</a>
-                    <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
-                </div>
-            </div>
         </div>
     </div>
 </nav>
