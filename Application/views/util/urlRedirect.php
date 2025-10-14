@@ -1,14 +1,11 @@
 <?php
-$protocol = 'http://';
-if (
-    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-    $_SERVER['SERVER_PORT'] == 443 ||
-    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
-) {
-    $protocol = 'https://';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+
+$currentUri = $_SERVER['REQUEST_URI'];
+
+// save the current uri
+if (str_starts_with($currentUri, "/library")) {
+    $_SESSION["redirect_uri"] = $_SERVER['REQUEST_URI'];
+} else {
+    $currentUri = "/";
 }
-
-$currentUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-$_SESSION['current_page'] = $currentUrl;
