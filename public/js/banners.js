@@ -1,15 +1,34 @@
-// const stickyBanner = document.querySelector("#sticky-banner");
+const closePopupBannerBtn = document.querySelector("#close-popup-banner");
+const popupBannerBg = document.querySelector(".popup-banner-bg");
+const popupBanner = document.querySelector(".popup-banner");
 
-// window.addEventListener("scroll", () => {
-//     const y = window.scrollY;
-//     if (y >= 80) {
-//         stickyBanner.classList.add("fixed-top");
-//         stickyBanner.style.left = "0";
-//         stickyBanner.style.right = "0";
-//     } else {
-//         stickyBanner.classList.remove("fixed-top");
-//         stickyBanner.style.left = "";
-//         stickyBanner.style.right = "";
-//     }
-//     console.log(y);
-// });
+const openPopupBanner = () => {
+    popupBannerBg.classList.remove("hide-banner-bg");
+    popupBanner.classList.remove("hide-banner");
+};
+
+const closePopupBanner = () => {
+    popupBannerBg.classList.add("hide-banner-bg");
+    popupBanner.classList.add("hide-banner");
+};
+
+const currentDate = new Date();
+const currentDay = currentDate.getDate();
+
+const showPopupBanner = () => {
+    const lastBannerPopup = localStorage.getItem("popup-banner");
+
+    if (!lastBannerPopup || parseInt(lastBannerPopup) !== currentDay) {
+        setTimeout(() => {
+            openPopupBanner();
+        }, 5000);
+    }
+};
+
+showPopupBanner();
+
+closePopupBannerBtn.addEventListener("click", () => {
+    localStorage.setItem("popup-banner", currentDay);
+    closePopupBanner();
+    console.log("closed");
+});
