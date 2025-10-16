@@ -27,12 +27,6 @@ require_once __DIR__ . "/../includes/header.php";
       color: #222;
     }
 
-    .checkout-header {
-      background: white;
-      color: black;
-      padding: 40px 20px;
-      text-align: center;
-    }
     .checkout-header h1 {
       margin: 0;
       font-size: 2rem;
@@ -44,15 +38,23 @@ require_once __DIR__ . "/../includes/header.php";
       opacity: 0.95;
     }
 
-    .checkout-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 40px;
-      padding: 60px 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
+    .checkout-header {
+  color: black;
+  padding: 20px 15px 10px;
+  text-align: center;
+  margin-top: 0px; /* Adjust to fit under navv header */
+}
+
+.checkout-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px 15px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
 
     .checkout-left {
       flex: 1 1 580px;
@@ -241,7 +243,7 @@ require_once __DIR__ . "/../includes/header.php";
     <h1>Checkout</h1>
     <p>You’re almost there — complete your purchase securely.</p>
       <?php
-    include __DIR__ . "/../includes/payments.php";
+    include __DIR__ . "/../includes/payements.php";
   ?>
   </div>
   <div class="checkout-wrapper">
@@ -326,7 +328,7 @@ require_once __DIR__ . "/../includes/header.php";
   </script>
 
   <?php
-    include __DIR__ . "/../includes/payfast.php";
+    // include __DIR__ . "/../includes/payfast.php";
 
     include __DIR__ . "/../includes/footer.php";
     include __DIR__ .  "/../includes/scripts.php";

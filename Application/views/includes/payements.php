@@ -30,7 +30,7 @@
 
 .payment-track {
     display: flex;
-    gap: 40px;
+    gap: 50px;
     animation: scroll-left 25s linear infinite;
 }
 

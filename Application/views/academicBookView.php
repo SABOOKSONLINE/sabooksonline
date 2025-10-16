@@ -20,9 +20,9 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     require_once __DIR__ . "/books/academicView.php";
     ?>
-    <?php require_once __DIR__ . "/includes/payfast.php" ?>
 
     <?php
+    require_once __DIR__ . "/includes/payfast.php";
     require_once __DIR__ . "/includes/footer.php";
     require_once __DIR__ .  "/includes/scripts.php";
     ?>
