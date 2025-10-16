@@ -304,6 +304,8 @@ require_once __DIR__ . "/../includes/header.php";
   </script>
 
   <?php
+    include __DIR__ . "/../includes/payfast.php";
+
     include __DIR__ . "/../includes/footer.php";
     include __DIR__ .  "/../includes/scripts.php";
   ?>
