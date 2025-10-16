@@ -64,6 +64,8 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     <?php
     include __DIR__ . "/layout/reviewForm.php";
+    require_once __DIR__ . "/includes/payfast.php";
+
     require_once __DIR__ . "/includes/footer.php";
     require_once __DIR__ .  "/includes/scripts.php";
     ?>

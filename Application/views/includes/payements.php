@@ -1,9 +1,6 @@
 <!-- 💳 Payment Methods Footer -->
 <footer style="background:#f9f9f9; padding:30px 0; border-top:1px solid #eee;">
     <div style="max-width:1200px; margin:0 auto; text-align:center;">
-        <h3 style="font-weight:800; font-size:30px; margin-bottom:55px; color:#333;">
-            We Offer Secure Payment Methods
-        </h3>
 
         <div class="payment-carousel">
             <div class="payment-track">
@@ -33,12 +30,12 @@
 
 .payment-track {
     display: flex;
-    gap: 60px;
+    gap: 40px;
     animation: scroll-left 25s linear infinite;
 }
 
 .payment-logo img {
-    height: 70px;
+    height: 40px;
     object-fit: contain;
     filter: grayscale(0.2);
     opacity: 0.9;

@@ -32,6 +32,7 @@ $newspapers = $controller->getAllNewspapers();
     <?php
     include __DIR__ . "/media/mCard.php";
     include __DIR__ . "/media/nCard.php";
+    require_once __DIR__ . "/includes/payfast.php" ;
 
     include __DIR__ . "/includes/footer.php";
     include __DIR__ .  "/includes/scripts.php";

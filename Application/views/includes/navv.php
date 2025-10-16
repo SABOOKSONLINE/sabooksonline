@@ -68,7 +68,9 @@ if (isset($userKey)) {
                 <li class="nav-item">
                     <a class="nav-link" href="/library">Library</a>
                 </li>
-                <li><a class="dropdown-item" href="/membership">Sell on SABO</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/membership">Sell</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/library/academic">Academic</a>
                 </li>

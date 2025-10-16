@@ -39,7 +39,7 @@ require_once __DIR__ . "/../includes/header.php";
       font-weight: 600;
     }
     .checkout-header p {
-      margin-top: 10px;
+      margin-top: 0px;
       font-size: 1rem;
       opacity: 0.95;
     }
@@ -219,6 +219,17 @@ require_once __DIR__ . "/../includes/header.php";
       text-decoration: none;
       margin: 0 8px;
     }
+     .legal-links {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 40px;
+      color: #888;
+    }
+    .legal-links a {
+      color: #0070f3;
+      text-decoration: none;
+      margin: 0 6px;
+    }
   </style>
 </head>
 
@@ -226,7 +237,13 @@ require_once __DIR__ . "/../includes/header.php";
   <?php require_once __DIR__ . "/../includes/navv.php"; ?>
 
 
-
+<div class="checkout-header">
+    <h1>Checkout</h1>
+    <p>You’re almost there — complete your purchase securely.</p>
+      <?php
+    include __DIR__ . "/../includes/payments.php";
+  ?>
+  </div>
   <div class="checkout-wrapper">
     <!-- LEFT SIDE -->
     <div class="checkout-left">
@@ -264,6 +281,11 @@ require_once __DIR__ . "/../includes/header.php";
         <?php endforeach; ?>
         <button type="submit" class="pay-btn">Pay now</button>
       </form>
+       <div class="legal-links">
+      <a href="/terms">Terms & Conditions</a> |
+      <a href="/refunds">Refunds</a> |
+      <a href="/delivery">Delivery</a>
+    </div>
     </div>
 
     <!-- RIGHT SIDE -->
