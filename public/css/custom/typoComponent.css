@@ -69,3 +69,10 @@
     color: var(--typo-link-hover-color);
     gap: var(--icon-margin-left-md);
 }
+
+.typo-text {
+    font-size: var(--typo-size-base);
+    font-weight: var(--typo-subheading-weight);
+    color: var(--typo-text-light);
+    line-height: 100%;
+}
