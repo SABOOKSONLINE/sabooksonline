@@ -39,6 +39,7 @@ $controller = new AcademicBookController($conn);
             <?php endif; ?>
         </div>
     </div>
+    <?php require_once __DIR__ . "/includes/payfast.php" ?>
 
     <?php require_once __DIR__ . "/includes/footer.php"; ?>
     <?php require_once __DIR__ . "/includes/scripts.php"; ?>

@@ -27,32 +27,34 @@ require_once __DIR__ . "/../includes/header.php";
       color: #222;
     }
 
-    .checkout-header {
-      background: white;
-      color: black;
-      padding: 40px 20px;
-      text-align: center;
-    }
     .checkout-header h1 {
       margin: 0;
       font-size: 2rem;
       font-weight: 600;
     }
     .checkout-header p {
-      margin-top: 10px;
+      margin-top: 0px;
       font-size: 1rem;
       opacity: 0.95;
     }
 
-    .checkout-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 40px;
-      padding: 60px 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
+    .checkout-header {
+  color: black;
+  padding: 20px 15px 10px;
+  text-align: center;
+  margin-top: 0px; /* Adjust to fit under navv header */
+}
+
+.checkout-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px 15px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
 
     .checkout-left {
       flex: 1 1 580px;
@@ -219,6 +221,17 @@ require_once __DIR__ . "/../includes/header.php";
       text-decoration: none;
       margin: 0 8px;
     }
+     .legal-links {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 40px;
+      color: #888;
+    }
+    .legal-links a {
+      color: #0070f3;
+      text-decoration: none;
+      margin: 0 6px;
+    }
   </style>
 </head>
 
@@ -226,7 +239,13 @@ require_once __DIR__ . "/../includes/header.php";
   <?php require_once __DIR__ . "/../includes/navv.php"; ?>
 
 
-
+<div class="checkout-header">
+    <h1>Checkout</h1>
+    <p>You’re almost there — complete your purchase securely.</p>
+      <?php
+    include __DIR__ . "/../includes/payements.php";
+  ?>
+  </div>
   <div class="checkout-wrapper">
     <!-- LEFT SIDE -->
     <div class="checkout-left">
@@ -264,6 +283,11 @@ require_once __DIR__ . "/../includes/header.php";
         <?php endforeach; ?>
         <button type="submit" class="pay-btn">Pay now</button>
       </form>
+       <div class="legal-links">
+      <a href="/terms">Terms & Conditions</a> |
+      <a href="/refunds">Refunds</a> |
+      <a href="/delivery">Delivery</a>
+    </div>
     </div>
 
     <!-- RIGHT SIDE -->
@@ -304,6 +328,8 @@ require_once __DIR__ . "/../includes/header.php";
   </script>
 
   <?php
+    // include __DIR__ . "/../includes/payfast.php";
+
     include __DIR__ . "/../includes/footer.php";
     include __DIR__ .  "/../includes/scripts.php";
   ?>

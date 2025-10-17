@@ -50,6 +50,41 @@ if (isset($userKey)) {
         <a class="navbar-brand pe-3 border-end" href="/">
             <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
+        <div class="d-flex order-xl-last">
+            <button class="btn border-0 me-2 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch">
+                <i class="fas fa-search"></i>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fas fa-bars"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/library">Library</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/membership">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/library/academic">Academic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/media">Media</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/services">Our Services</a>
+                </li>
+               
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Contact</a>
+                </li>
+            </ul>
 
         </div>
     </div>
