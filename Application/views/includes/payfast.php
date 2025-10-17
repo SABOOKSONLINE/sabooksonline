@@ -71,7 +71,7 @@ require_once __DIR__ . "/../layout/sectionHeading.php";
     /* Responsive */
     @media (max-width: 768px) {
         .payment-logo img {
-            height: 30px;
+            height: 40px;
         }
     }
 </style>
