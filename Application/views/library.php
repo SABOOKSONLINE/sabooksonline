@@ -3,6 +3,8 @@ require_once __DIR__ . "/includes/header.php";
 require_once __DIR__ . "/../../database/connection.php";
 require_once __DIR__ . "/../models/BookModel.php";
 require_once __DIR__ . "/../controllers/BookController.php";
+require_once __DIR__ . "/../models/BannerModel.php";
+require_once __DIR__ . "/../controllers/BannerController.php";
 
 $controller = new BookController($conn);
 
@@ -14,7 +16,7 @@ $keyword = $_GET['k'] ?? null;
 
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
-    
+
 
     <div class="container py-4">
         <h1 class="fw-bold mb-0">Library</h1>
@@ -30,6 +32,11 @@ $keyword = $_GET['k'] ?? null;
                 <i class="fas fa-angle-down"></i>
             </span>
         </div>
+
+        <?php
+        $bannerController = new BannerController($conn);
+        $bannerController->renderBanner("home");
+        ?>
 
         <?php if (!$category && $keyword): ?>
             <h5 class="mt-3 text-capitalize">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
