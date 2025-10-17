@@ -1,5 +1,6 @@
 #sticky-banner {
     background: var(--black);
+    height: 80px;
     position: sticky;
     top: 0;
     padding: var(--space-md) var(--space-lg);
@@ -39,6 +40,28 @@
     top: 0;
     left: 0;
     z-index: -1;
+}
+
+.sticky-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sticky-slider > * {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    transition: 2s;
+    transition-delay: 0.5s;
+    opacity: 0;
+}
+
+.sticky-slider > *.show-sticky {
+    opacity: 1;
+    top: 1px;
 }
 
 .banner-heading {
@@ -170,11 +193,11 @@
 }
 
 .popup-sponsored {
-    background-color: var(--red);
+    background-color: var(--yellow);
     color: var(--white);
     font-weight: bold;
     margin-bottom: var(--space-sm);
-    width: 150px;
+    width: 125px;
     border: 2px solid var(--white);
 }
 
@@ -227,6 +250,10 @@
         flex-direction: column;
         align-items: flex-start;
         padding: var(--space-md) var(--space-sm);
+    }
+
+    #close-popup-banner {
+        top: var(--space-xl);
     }
 
     .banner-heading {
