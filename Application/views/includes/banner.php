@@ -1,4 +1,4 @@
-<div id="myCarousel" class="carousel slide banner" data-bs-ride="carousel">
+<div id="myCarousel" class="carousel slide my-4" data-bs-ride="carousel">
     <div class="carousel-inner" style="border-radius: 25px;">
         <?php foreach ($banners as $index => $banner): ?>
             <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
