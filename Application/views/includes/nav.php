@@ -54,6 +54,24 @@ require_once __DIR__ . "/../util/urlRedirect.php";
 
 <!-- <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div> -->
 
+<?php
+$navItems = [
+    ["title" => "Home", "url" => "/"],
+    ["title" => "Library", "dropdown" => [
+        ["title" => "All Books", "url" => "/library"],
+        ["title" => "Academic Collection", "url" => "/library/academic"],
+        ["title" => "Media Hub", "url" => "/media"],
+    ]],
+    ["title" => "Community", "dropdown" => [
+        ["title" => "Events", "url" => "/events"],
+        ["title" => "Membership Pricing", "url" => "/membership"]
+    ]],
+    ["title" => "Our Story", "url" => "/about"],
+    ["title" => "Our Services", "url" => "/services"],
+];
+?>
+
+
 <nav class="navbar navbar-expand-xl navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand pe-3 border-end" href="/">
@@ -64,7 +82,6 @@ require_once __DIR__ . "/../util/urlRedirect.php";
             <button class="btn border-0 me-2 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch">
                 <i class="fas fa-search"></i>
             </button>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fas fa-bars"></span>
             </button>
@@ -72,97 +89,60 @@ require_once __DIR__ . "/../util/urlRedirect.php";
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/library">Library</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle show" href="#" id="communityDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true">
-                        Community
-                    </a>
-                    <ul class="dropdown-menu" data-bs-popper="static">
-                        <li><a class="dropdown-item" href="/events">Events</a></li>
-                        <!-- <li><a class="dropdown-item" href="/providers">Service Providers</a></li> -->
-                        <li><a class="dropdown-item" href="/membership">Membership Pricing</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/library/academic">Academic</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/media">Media</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/services">Our Services</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/gallery">Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/about">Our Story</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/contact">Contact</a>
-                </li>
+                <?php foreach ($navItems as $item): ?>
+                    <?php if (isset($item['dropdown'])): ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <?= $item['title'] ?>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($item['dropdown'] as $sub): ?>
+                                    <li><a class="dropdown-item" href="<?= $sub['url'] ?>"><?= $sub['title'] ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= $item['url'] ?>"><?= $item['title'] ?></a>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </ul>
 
+            <!-- Search -->
             <div class="d-none d-xl-flex">
                 <form class="d-flex me-3" action="/library" method="GET">
                     <div class="input-group">
-                        <input class="form-control" type="search" placeholder="Search Title or Publisher" aria-label="Search" name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
+                        <input class="form-control" type="search" placeholder="Search Title or Publisher" name="k" value="<?= htmlspecialchars($_GET['k'] ?? '') ?>">
                     </div>
                 </form>
 
-                <div class="    ">
-                    <?php
-                    if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])) {
-                    ?>
+                <!-- Profile / Login -->
+                <div>
+                    <?php if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])): ?>
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
-                                <img src="<?= $profile ?>" alt="Admin Profile"
-                                    class="rounded-circle"
-                                    style="width: 100%; height: 100%; object-fit: cover;
-                                            border: 2px solid #dee2e6;
-                                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                <img src="<?= $profile ?>" alt="Admin Profile" class="rounded-circle" style="width:100%; height:100%; object-fit:cover; border:2px solid #dee2e6; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="/dashboards">
-                                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/dashboards/bookshelf">
-                                        <i class="fas fa-book me-2"></i> My Library
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="/logout">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                             </ul>
                         </div>
-                    <?php
-                    } else {
-                    ?>
-                        <a href="/signup" class="btn btn-black">Sign Up</a>
-                        <a href="/login" class="btn btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
-                    <?php
-                    }
-                    ?>
+                    <?php else: ?>
+                        <a href="/login" class="btn btn-red">Sign in <i class="fas fa-sign-in-alt"></i></a>
+                    <?php endif; ?>
                 </div>
             </div>
 
+            <!-- Mobile Sign In -->
             <div class="d-xl-none bg-light p-3">
                 <div class="d-grid gap-2">
-                    <a href="/signup" class="btn btn-black">Sign Up</a>
-                    <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
+                    <a href="/login" class="btn btn-danger btn-red">Sign in <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>
         </div>
