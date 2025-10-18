@@ -1,6 +1,6 @@
 #sticky-banner {
     background: var(--black);
-    height: 80px;
+    height: 90px;
     position: sticky;
     top: 0;
     padding: var(--space-md) var(--space-lg);
@@ -57,6 +57,10 @@
     transition: 2s;
     transition-delay: 0.5s;
     opacity: 0;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .sticky-slider > *.show-sticky {
@@ -213,17 +217,6 @@
     opacity: 0.8;
 }
 
-.btn-white {
-    color: var(--black);
-    background: var(--white);
-    border: 1px solid var(--white);
-    text-decoration: none;
-    font-weight: 600;
-    border-radius: var(--bk-space-sm);
-    padding: var(--bk-space-sm) var(--bk-space-md);
-    transition: all 0.2s ease;
-    align-self: flex-start;
-}
 .btn-white:hover {
     background: transparent;
     color: var(--white);
@@ -241,6 +234,34 @@
 @media (max-width: 998px) {
     .popup-banner {
         width: calc(100% - (var(--bk-space-lg) * 2));
+    }
+
+    #sticky-banner {
+        height: 140px;
+    }
+
+    .sticky-slider > * {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+
+        text-align: center;
+        align-items: center;
+    }
+
+    .banner-heading {
+        font-size: var(--typo-size-sm);
+    }
+
+    .banner-subheading {
+        font-size: var(--typo-size-xs);
+        margin-bottom: var(--space-xs);
+    }
+
+    .btn-white {
+        width: auto;
+        text-align: center;
     }
 }
 
