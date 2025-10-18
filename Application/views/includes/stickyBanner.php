@@ -1,9 +1,7 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
-$_SESSION["sticky_banner_active"] = true;
+$uri = $_SERVER["REQUEST_URI"];
 
-
-if ($_SESSION["sticky_banner_active"]): ?>
+if ($uri !== "/media" && $uri !== "/library/academic"): ?>
 
     <nav class="navbar" id="sticky-banner">
         <div class="sticky-slider">
