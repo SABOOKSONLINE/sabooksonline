@@ -4,25 +4,34 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . "/../Core/Controller.php";
+require_once __DIR__ . "/../Model/BannersModel.php";
 
 class PagesController extends Controller
 {
     private BookModel $bookModel;
+    private BannerModel $bannerModel;
 
     public function __construct(mysqli $conn)
     {
         parent::__construct($conn);
         $this->bookModel = new BookModel($conn);
+        $this->bannerModel = new BannerModel($conn);
     }
 
     public function pages(): void
     {
         $allBooks = $this->bookModel->getAllBooks();
         $listings = $this->bookModel->getBooksListings();
+        $stickyBanners = $this->bannerModel->getStickyBanners();
+        $pageBanners = $this->bannerModel->getPageBanner();
 
         $this->render("homePage", [
             "listings" => $listings,
-            "books" => $allBooks
+            "books" => $allBooks,
+            "banners" => [
+                "sticky_banners" => $stickyBanners,
+                "page_banners" => $pageBanners
+            ]
         ]);
     }
 
