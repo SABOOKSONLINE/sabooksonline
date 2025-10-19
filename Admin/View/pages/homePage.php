@@ -3,6 +3,8 @@ include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
 include __DIR__ . "/../layouts/cards/bkCard.php";
 include __DIR__ . "/../layouts/tables/bTable.php";
+include __DIR__ . "/../layouts/banners/stickyBanner.php";
+include __DIR__ . "/../layouts/banners/mBanner.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -20,6 +22,21 @@ renderAlerts();
 <?php
 $listings = $data["listings"];
 $allBooks = $data["books"];
+$banners = $data["banners"];
+
+renderSectionHeader(
+    "Sticky Banner",
+    "",
+);
+
+echo renderStickyBannerSlider($banners["sticky_banners"]);
+
+renderSectionHeader(
+    "Page Banner",
+    "",
+);
+
+echo renderImageCarouselBanner($banners["page_banners"], "featuredBookCarousel");
 
 $booksBySection = [];
 foreach ($listings as $book) {
