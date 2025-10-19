@@ -12,6 +12,23 @@ class Model
         $this->conn = $conn;
     }
 
+    protected function createTable(string $tableName, array $columns): bool
+    {
+        $cols = [];
+
+        foreach ($columns as $name => $definition) {
+            $cols[] = "`$name` $definition";
+        }
+
+        $columnsSQL = implode(", ", $cols);
+        $sql = "CREATE TABLE IF NOT EXISTS `$tableName` ($columnsSQL);";
+
+        if ($this->conn->query($sql)) {
+            return true;
+        }
+        throw new Exception("Table creation failed: " . $this->conn->error);
+    }
+
     /** ---------------- FETCH METHODS ---------------- */
 
     protected function fetch(string $sql): array
