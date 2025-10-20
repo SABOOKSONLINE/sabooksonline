@@ -5,6 +5,7 @@ include __DIR__ . "/../layouts/cards/bkCard.php";
 include __DIR__ . "/../layouts/tables/bTable.php";
 include __DIR__ . "/../layouts/banners/stickyBanner.php";
 include __DIR__ . "/../layouts/banners/mBanner.php";
+include __DIR__ . "/../layouts/banners/popBanner.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -17,12 +18,18 @@ renderHeading(
 );
 
 renderAlerts();
-?>
 
-<?php
+
 $listings = $data["listings"];
 $allBooks = $data["books"];
 $banners = $data["banners"];
+
+renderSectionHeader(
+    "Pop-up Banner",
+    "",
+);
+
+echo renderPopupBannerAdminUI($banners["popup_banners"], $allBooks);
 
 renderSectionHeader(
     "Sticky Banner",
