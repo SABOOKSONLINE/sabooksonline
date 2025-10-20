@@ -35,6 +35,7 @@
     <link href="/public/css/custom/typoComponent.css" rel="stylesheet" />
     <link href="/public/css/custom/section.css" rel="stylesheet" />
     <link href="/public/css/custom/bkComponent.css" rel="stylesheet" />
+    <link href="/public/css/custom/banners.css" rel="stylesheet" />
 
     <link href="/public/css/custom/responsive.css" rel="stylesheet" />
     <link href="/public/css/custom/audioBook.css" rel="stylesheet" />
