@@ -223,6 +223,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 </script>
 
     <?php
+    include __DIR__ . "/../includes/payfast.php";
     include __DIR__ . "/../includes/footer.php";
     include __DIR__ .  "/../includes/scripts.php";
     ?>
