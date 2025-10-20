@@ -134,7 +134,7 @@ $navItems = [
                             </ul>
                         </div>
                     <?php else: ?>
-                        <a href="/login" class="btn btn-red">Sign in <i class="fas fa-sign-in-alt"></i></a>
+                        <a href="/login" class="btn btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -142,7 +142,7 @@ $navItems = [
             <!-- Mobile Sign In -->
             <div class="d-xl-none bg-light p-3">
                 <div class="d-grid gap-2">
-                    <a href="/login" class="btn btn-danger btn-red">Sign in <i class="fas fa-sign-in-alt"></i></a>
+                    <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
                 </div>
             </div>
         </div>
