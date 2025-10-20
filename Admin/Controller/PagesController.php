@@ -24,13 +24,15 @@ class PagesController extends Controller
         $listings = $this->bookModel->getBooksListings();
         $stickyBanners = $this->bannerModel->getStickyBanners();
         $pageBanners = $this->bannerModel->getPageBanner();
+        $popupBanners = $this->bannerModel->getPopupBanners();
 
         $this->render("homePage", [
             "listings" => $listings,
             "books" => $allBooks,
             "banners" => [
                 "sticky_banners" => $stickyBanners,
-                "page_banners" => $pageBanners
+                "page_banners" => $pageBanners,
+                "popup_banners" => $popupBanners
             ]
         ]);
     }
