@@ -79,12 +79,24 @@ class BannersModel extends Model
     {
         $this->createPopupBannerTable();
 
-        $sql = "SELECT pb.*, p.*
+        $sqlUtf8 = "SELECT pb.*, p.*
                 FROM popup_banners AS pb
                 LEFT JOIN posts AS p
                     ON pb.book_public_key COLLATE utf8mb4_general_ci = p.CONTENTID
                 ORDER BY pb.id DESC
                 LIMIT 1;";
-        return $this->fetchAll($sql);
+
+        $sqlLatin = "SELECT *
+                 FROM popup_banners
+                 LEFT JOIN posts
+                     ON popup_banners.book_public_key COLLATE latin1_swedish_ci = posts.CONTENTID
+                 ORDER BY popup_banners.id DESC
+                 LIMIT 1;";
+
+        try {
+            return $this->fetchAll($sqlUtf8);
+        } catch (\mysqli_sql_exception $e) {
+            return $this->fetchAll($sqlLatin);
+        }
     }
 }
