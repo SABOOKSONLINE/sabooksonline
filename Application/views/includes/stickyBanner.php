@@ -1,35 +1,28 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
-$_SESSION["sticky_banner_active"] = true;
+$uri = $_SERVER["REQUEST_URI"];
+$stickyBanners = $homeController->banners()['banners']['sticky_banners'];
 
-
-if ($_SESSION["sticky_banner_active"]): ?>
-
+if ($uri !== "/media" && $uri !== "/library/academic" && $stickyBanners): ?>
     <nav class="navbar" id="sticky-banner">
-        <div class="container-fluid d-flex justify-content-between align-items-center gap-3">
-            <div>
-                <h5 class="typo-heading banner-heading mb-1">
-                    Introducing SA Books Academic
-                </h5>
-                <p class="typo-subheading banner-subheading mb-0">
-                    Empowering students, educators, and researchers with quality academic content.
-                </p>
-            </div>
+        <div class="sticky-slider">
+            <?php foreach ($stickyBanners as $banner): ?>
+                <div class="">
+                    <div>
+                        <h5 class="typo-heading banner-heading mb-1">
+                            <?= htmlspecialchars($banner['heading']) ?>
+                        </h5>
+                        <p class="typo-subheading banner-subheading mb-0">
+                            <?= htmlspecialchars($banner['subheading']) ?>
+                        </p>
+                    </div>
 
-            <div class="d-flex align-items-center">
-                <a href="/library/academic" class="btn btn-white">
-                    Explore Now <i class="fas fa-arrow-right ms-1"></i>
-                </a>
-
-                <!-- <button
-                    type="button"
-                    id="close-banner"
-                    aria-label="Close banner"
-                    class="btn-close-icon">
-                    <i class="fas fa-times"></i>
-                </button> -->
-            </div>
+                    <div class="">
+                        <a href="<?= htmlspecialchars($banner['button_link']) ?>" class="btn btn-white">
+                            <?= htmlspecialchars($banner['button_text']) ?> <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </nav>
-
 <?php endif; ?>

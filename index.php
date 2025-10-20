@@ -547,6 +547,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/Helpers/remove.php";
     });
 
+    $r->addRoute('POST', '/admin/pages/home/banners', function () {
+        require  "Admin/Helpers/process_banners.php";
+    });
+
+    $r->addRoute('GET', '/admin/pages/home/banners/{id}', function ($id) {
+        $_GET["id"] = $id;
+        require  "Admin/Helpers/process_banners.php";
+    });
+
     $r->addRoute('GET', '/401', function () {
         require  "Application/views/401.php";
     });

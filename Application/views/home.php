@@ -7,9 +7,12 @@ require_once __DIR__ . "/../controllers/BookController.php";
 require_once __DIR__ . "/../models/BannerModel.php";
 require_once __DIR__ . "/../controllers/BannerController.php";
 
+require_once __DIR__ . "/../controllers/HomeController.php";
+
 require_once __DIR__ . "/layout/sectionHeading.php";
 
 $bookController = new BookController($conn);
+$homeController = new HomeController($conn);
 ?>
 
 <body>
@@ -42,8 +45,7 @@ $bookController = new BookController($conn);
 
     <div class="container">
         <?php
-        $bannerController = new BannerController($conn);
-        $bannerController->renderBanner("home");
+        include_once __DIR__ . "/includes/banner.php";
         ?>
     </div>
 
@@ -157,7 +159,7 @@ $bookController = new BookController($conn);
             </div>
         </div>
     </section>
-    
+
     <?php require_once __DIR__ . "/includes/payfast.php" ?>
     <?php require_once __DIR__ . "/includes/footer.php" ?>
 
