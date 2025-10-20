@@ -3,7 +3,6 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
 {
 ?>
     <div id="<?= htmlspecialchars($carouselId) ?>" class="carousel slide my-4" data-bs-ride="carousel" data-bs-interval="5000">
-        <!-- Carousel Indicators -->
         <div class="carousel-indicators">
             <?php foreach ($banners as $index => $banner): ?>
                 <button type="button"
@@ -15,27 +14,25 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
             <?php endforeach; ?>
         </div>
 
-        <!-- Carousel Slides -->
         <div class="carousel-inner" style="border-radius: 25px;">
             <?php foreach ($banners as $index => $banner): ?>
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                    <?php if (!empty($banner['UPLOADED'])): ?>
-                        <a href="<?= htmlspecialchars($banner['UPLOADED']) ?>">
+                    <?php if (!empty($banner['banner_image'])): ?>
+                        <a href="<?= htmlspecialchars($banner['link']) ?>">
                         <?php endif; ?>
 
-                        <img src="/img/<?= htmlspecialchars(str_replace('../../../', '', $banner['IMAGE'])) ?>"
+                        <img src="/cms-data/banners/<?= $banner['banner_image'] ?>"
                             class="d-block w-100"
-                            alt="<?= htmlspecialchars($banner['SLIDE'] ?? 'Banner Image') ?>"
+                            alt="Banner Image"
                             style="border-radius: 25px; object-fit: cover; max-height: 500px;">
 
-                        <?php if (!empty($banner['UPLOADED'])): ?>
+                        <?php if (!empty($banner['banner_image'])): ?>
                         </a>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <!-- Controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#<?= htmlspecialchars($carouselId) ?>" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
@@ -46,7 +43,6 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
         </button>
     </div>
 
-    <!-- Manage Button -->
     <div class="position-relative text-white mt-3">
         <div class="d-flex justify-content-center align-items-center">
             <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#manageBannerModal-<?= htmlspecialchars($carouselId) ?>">
@@ -60,7 +56,6 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
         </div>
     </div>
 
-    <!-- Manage Banner Modal -->
     <div class="modal fade" id="manageBannerModal-<?= htmlspecialchars($carouselId) ?>" tabindex="-1" aria-labelledby="manageBannerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
@@ -69,24 +64,34 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <!-- Divider line under title -->
                 <hr class="mt-0 mb-3 mx-3" style="opacity: 0.1;">
 
                 <div class="modal-body">
-                    <!-- Banner Form -->
-                    <form id="bannerForm-<?= htmlspecialchars($carouselId) ?>" class="mb-4">
+                    <form id="bannerForm-<?= htmlspecialchars($carouselId) ?>"
+                        class="mb-4"
+                        method="POST"
+                        action="/admin/pages/home/banners?type=insert&return=<?= urlencode($_SERVER['REQUEST_URI']) ?>&banner=page"
+                        enctype="multipart/form-data">
+
                         <div class="mb-3">
-                            <label class="form-label">Slide Title</label>
-                            <input type="text" class="form-control" name="SLIDE" placeholder="Enter slide title">
+                            <label class="form-label">Banner Image <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="banner_image" accept="image/*" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Banner Image</label>
-                            <input type="file" class="form-control" name="IMAGE" accept="image/*">
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Link URL</label>
-                            <input type="url" class="form-control" name="UPLOADED" placeholder="https://example.com">
+                            <input type="url" class="form-control" name="link" placeholder="https://example.com">
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Show Page <span class="text-danger">*</span></label>
+                            <select class="form-select" name="show_page" required>
+                                <option value="">Select Page</option>
+                                <option value="/home">Home</option>
+                                <option value="/library">Books</option>
+                            </select>
+                        </div>
+
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-plus me-1"></i> Add Banner
@@ -94,13 +99,13 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
                         </div>
                     </form>
 
-                    <!-- Table of Existing Banners -->
+
+
                     <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                         <table class="table table-sm table-striped bordered align-middle">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Slide</th>
                                     <th scope="col">Image</th>
                                     <th scope="col">Link</th>
                                     <th scope="col" class="text-center">Action</th>
@@ -110,16 +115,15 @@ function renderImageCarouselBanner(array $banners, string $carouselId = "myCarou
                                 <?php foreach ($banners as $i => $banner): ?>
                                     <tr>
                                         <td><?= $i + 1 ?></td>
-                                        <td><?= htmlspecialchars($banner['SLIDE'] ?? '') ?></td>
                                         <td>
-                                            <img src="/img/<?= htmlspecialchars(str_replace('../../../', '', $banner['IMAGE'])) ?>"
-                                                alt="<?= htmlspecialchars($banner['SLIDE'] ?? '') ?>" style="height: 50px; border-radius: 5px;">
+                                            <img src="/cms-data/banners/<?= $banner['banner_image'] ?>"
+                                                alt="Banner Image" style="height: 50px; border-radius: 5px;">
                                         </td>
-                                        <td><?= htmlspecialchars($banner['UPLOADED'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($banner['link'] ?? '') ?></td>
                                         <td class="text-center">
-                                            <button class="btn btn-outline-danger btn-sm">
+                                            <a href="/admin/pages/home/banners/<?= $banner['id'] ?>?type=delete&return=<?= urlencode($_SERVER['REQUEST_URI']) ?>&banner=page" class="btn btn-outline-danger btn-sm">
                                                 <i class="fas fa-trash"></i> Delete
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
