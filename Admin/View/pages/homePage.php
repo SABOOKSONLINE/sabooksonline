@@ -4,7 +4,7 @@ include __DIR__ . "/../layouts/sectionHeader.php";
 include __DIR__ . "/../layouts/cards/bkCard.php";
 include __DIR__ . "/../layouts/tables/bTable.php";
 include __DIR__ . "/../layouts/banners/stickyBanner.php";
-include __DIR__ . "/../layouts/banners/mBanner.php";
+include __DIR__ . "/../layouts/banners/pageBanner.php";
 include __DIR__ . "/../layouts/banners/popBanner.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
