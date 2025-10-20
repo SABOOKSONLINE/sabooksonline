@@ -23,6 +23,8 @@
 
             <h1 class="typo-heading">I Think I’m Depressed</h1>
 
+            <i class="popup-tag text-lowercase text-capitalize">Published By: Sibusiso Manqa</i>
+
             <p class="popup-desc">
                 Take the first step toward understanding your emotions and finding peace.
                 This powerful read explores what it truly means to struggle and heal in silence.
