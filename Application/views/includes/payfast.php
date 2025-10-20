@@ -14,8 +14,8 @@
         // Load payment icons
         $paymentIcons = glob(__DIR__ . "/../../../cms-data/payfast/*.{png,jpg,jpeg,svg}", GLOB_BRACE);
         foreach (array_merge($paymentIcons, $paymentIcons) as $iconPath): // Duplicate for smooth loop
-            $iconName = basename($iconPath);
-            $iconUrl = "/cms-data/payfast/" . $iconName;
+          $iconName = basename($iconPath);
+          $iconUrl = "/cms-data/payfast/" . $iconName;
         ?>
           <div class="payment-logo">
             <img src="<?= $iconUrl ?>" alt="<?= pathinfo($iconName, PATHINFO_FILENAME) ?>" />
@@ -42,7 +42,7 @@
   }
 
   .payment-logo img {
-    height: 70px;
+    height: 50px;
     object-fit: contain;
     filter: grayscale(0.2);
     opacity: 0.9;
@@ -53,7 +53,7 @@
     filter: grayscale(0);
     opacity: 1;
     transform: scale(1.05);
-        filter: grayscale(75%);
+    filter: grayscale(75%);
   }
 
   /* Auto-scroll keyframes */
