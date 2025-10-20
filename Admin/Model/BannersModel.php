@@ -81,7 +81,7 @@ class BannerModel extends Model
     {
         $columns = [
             "id" => "INT AUTO_INCREMENT PRIMARY KEY",
-            "book_id" => "INT NOT NULL",
+            "book_public_key" => "VARCHAR(255) NOT NULL", // renamed from book_id
             "description" => "TEXT",
             "subtext" => "TEXT",
             "button_text" => "VARCHAR(150) DEFAULT 'Read Now'",
@@ -109,14 +109,14 @@ class BannerModel extends Model
     public function addPopupBanner(array $data): int
     {
         $sql = "INSERT INTO popup_banners 
-            (book_id, button_text, link, description, subtext, date_from, date_to, time_from, time_to) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        (book_public_key, button_text, link, description, subtext, date_from, date_to, time_from, time_to) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         return $this->insert(
             $sql,
-            "issssssss",
+            "sssssssss", // all strings because book_public_key is VARCHAR
             [
-                $data["book_id"],
+                $data["book_public_key"],           // public key
                 $data["button_text"] ?? 'Read Now',
                 $data["link"],
                 $data["description"],
@@ -129,25 +129,23 @@ class BannerModel extends Model
         );
     }
 
-    public function updatePopupBanner(int $id, array $data): int
+    public function updatePopupBanner(string $bookPublicKey, array $data): int
     {
         $sql = "UPDATE popup_banners SET 
-                book_id = ?, 
-                button_text = ?, 
-                link = ?, 
-                description = ?, 
-                subtext = ?, 
-                date_from = ?, 
-                date_to = ?, 
-                time_from = ?, 
-                time_to = ?
-            WHERE id = ?";
+            button_text = ?, 
+            link = ?, 
+            description = ?, 
+            subtext = ?, 
+            date_from = ?, 
+            date_to = ?, 
+            time_from = ?, 
+            time_to = ?
+        WHERE book_public_key = ?"; // use public key
 
         return $this->update(
             $sql,
-            "issssssssi",
+            "sssssssss",
             [
-                $data["book_id"],
                 $data["button_text"] ?? 'Read Now',
                 $data["link"],
                 $data["description"],
@@ -156,17 +154,17 @@ class BannerModel extends Model
                 $data["date_to"],
                 $data["time_from"],
                 $data["time_to"],
-                $id
+                $bookPublicKey
             ]
         );
     }
 
-    public function removePopupBanner(int $id): int
+    public function removePopupBanner(string $bookPublicKey): int
     {
         return $this->delete(
-            "DELETE FROM popup_banners WHERE id = ?",
-            "i",
-            [$id]
+            "DELETE FROM popup_banners WHERE book_public_key = ?",
+            "s",
+            [$bookPublicKey]
         );
     }
 }
