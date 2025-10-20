@@ -23,7 +23,7 @@ function renderPopupBannerAdminUI(array $banners = [], array $books = []): void
                 </div>
 
                 <div class="modal-body">
-                    <form id="popupBannerForm" class="mb-4">
+                    <form id="popupBannerForm" class="mb-4" method="POST" action="/admin/pages/home/banners?type=insert&return=<?= $_SERVER['REQUEST_URI'] ?>&banner=popup">
                         <div class="row g-3">
                             <!-- Search Book -->
                             <div class="col-md-12">
@@ -112,23 +112,33 @@ function renderPopupBannerAdminUI(array $banners = [], array $books = []): void
                             </thead>
                             <tbody>
                                 <?php foreach ($banners as $i => $b): ?>
+                                    <?php
+                                    $start = strtotime($b['date_from'] . ' ' . $b['time_from']);
+                                    $end = strtotime($b['date_to'] . ' ' . $b['time_to']);
+                                    $now = time();
+
+                                    $isActive = ($now >= $start && $now <= $end);
+                                    $statusText = $isActive ? 'Active' : 'Inactive';
+                                    $statusClass = $isActive ? 'success' : 'secondary';
+                                    ?>
                                     <tr>
                                         <td><?= $i + 1 ?></td>
-                                        <td><?= htmlspecialchars($b['title']) ?></td>
-                                        <td><?= htmlspecialchars($b['tag']) ?></td>
+                                        <td><?= htmlspecialchars($b['TITLE']) ?></td>
+                                        <td>Sponsored Ad</td>
                                         <td><?= htmlspecialchars($b['date_from']) ?> → <?= htmlspecialchars($b['date_to']) ?></td>
                                         <td><?= htmlspecialchars($b['time_from']) ?> → <?= htmlspecialchars($b['time_to']) ?></td>
                                         <td>
-                                            <span class="badge bg-<?= $b['status'] === 'Active' ? 'success' : 'secondary' ?>">
-                                                <?= htmlspecialchars($b['status']) ?>
+                                            <span class="badge bg-<?= $statusClass ?>">
+                                                <?= $statusText ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-primary">Edit</button>
-                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                            <!-- <button class="btn btn-sm btn-outline-primary">Edit</button> -->
+                                            <a href="/admin/pages/home/banners/<?= $b['id'] ?>?type=delete&return=<?= $_SERVER['REQUEST_URI'] ?>&banner=popup" class="btn btn-sm btn-outline-danger">Delete</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+
                             </tbody>
                         </table>
                     </div>
@@ -138,20 +148,18 @@ function renderPopupBannerAdminUI(array $banners = [], array $books = []): void
     </div>
 
     <script>
-        // Make select searchable
         const select = document.getElementById('bookSelect');
         select.addEventListener('focus', function() {
-            select.size = Math.min(select.options.length, 10); // show 10 options on focus
+            select.size = Math.min(select.options.length, 10);
         });
         select.addEventListener('blur', function() {
-            setTimeout(() => select.size = 1, 150); // shrink back to 1 after blur
+            setTimeout(() => select.size = 1, 150);
         });
 
-        // Filter options while typing
         select.addEventListener('input', function() {
             const filter = select.value.toLowerCase();
             Array.from(select.options).forEach(opt => {
-                if (opt.value === "") return; // keep placeholder
+                if (opt.value === "") return;
                 opt.style.display = opt.textContent.toLowerCase().includes(filter) ? "" : "none";
             });
         });
