@@ -1,45 +1,28 @@
 <?php
 $uri = $_SERVER["REQUEST_URI"];
+$stickyBanners = $homeController->banners()['banners']['sticky_banners'];
 
-if ($uri !== "/media" && $uri !== "/library/academic"): ?>
-
+if ($uri !== "/media" && $uri !== "/library/academic" && $stickyBanners): ?>
     <nav class="navbar" id="sticky-banner">
         <div class="sticky-slider">
-            <div class="">
-                <div>
-                    <h5 class="typo-heading banner-heading mb-1">
-                        Explore Our Academic Collection
-                    </h5>
-                    <p class="typo-subheading banner-subheading mb-0">
-                        Empowering students, educators, and researchers with high-quality textbooks and scholarly materials.
-                    </p>
-                </div>
-
+            <?php foreach ($stickyBanners as $banner): ?>
                 <div class="">
-                    <a href="/library/academic" class="btn btn-white">
-                        Browse Academic Books <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
+                    <div>
+                        <h5 class="typo-heading banner-heading mb-1">
+                            <?= htmlspecialchars($banner['heading']) ?>
+                        </h5>
+                        <p class="typo-subheading banner-subheading mb-0">
+                            <?= htmlspecialchars($banner['subheading']) ?>
+                        </p>
+                    </div>
 
-            <div class="">
-                <div>
-                    <h5 class="typo-heading banner-heading mb-1">
-                        Discover the Media Hub
-                    </h5>
-                    <p class="typo-subheading banner-subheading mb-0">
-                        Dive into the latest magazines, newspapers, and multimedia stories from across South Africa.
-                    </p>
+                    <div class="">
+                        <a href="<?= htmlspecialchars($banner['button_link']) ?>" class="btn btn-white">
+                            <?= htmlspecialchars($banner['button_text']) ?> <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
                 </div>
-
-                <div class="">
-                    <a href="/media" class="btn btn-white">
-                        Explore Media Content <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-
+            <?php endforeach; ?>
         </div>
     </nav>
-
 <?php endif; ?>
