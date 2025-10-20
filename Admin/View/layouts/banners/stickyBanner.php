@@ -33,8 +33,8 @@ function renderStickyBannerSlider($banners)
                                         <small class="opacity-75"><?= htmlspecialchars($banner['subheading']) ?></small>
                                     </div>
                                     <div class="mt-3 mt-md-0">
-                                        <a href="<?= htmlspecialchars($banner['link']) ?>" class="btn btn-outline-light btn-lg">
-                                            <?= htmlspecialchars($banner['buttonText']) ?>
+                                        <a href="<?= htmlspecialchars($banner['button_link']) ?>" class="btn btn-outline-light btn-lg">
+                                            <?= htmlspecialchars($banner['button_text']) ?>
                                             <i class="fas fa-arrow-right ms-2"></i>
                                         </a>
                                     </div>
@@ -73,7 +73,7 @@ function renderStickyBannerSlider($banners)
 
                 <div class="modal-body">
                     <!-- Add Banner Form -->
-                    <form id="addBannerForm" class="mb-4">
+                    <form id="addBannerForm" class="mb-4" method="POST" action="/admin/pages/home/banners?type=insert&return=<?= $_SERVER['REQUEST_URI'] ?>&banner=sticky">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Header <span class="text-danger">*</span></label>
@@ -121,9 +121,9 @@ function renderStickyBannerSlider($banners)
                                         <td class="align-middle"><small><?= htmlspecialchars($banner['heading']) ?></small></td>
                                         <td class="align-middle"><small><?= htmlspecialchars($banner['subheading']) ?></small></td>
                                         <td class="align-middle">
-                                            <button class="btn btn-outline-danger btn-sm">
+                                            <a href="/admin/pages/home/banners/<?= $banner['id'] ?>?type=delete&return=<?= $_SERVER['REQUEST_URI'] ?>&banner=sticky" class="btn btn-outline-danger btn-sm">
                                                 <i class="fas fa-trash"></i> Delete
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
