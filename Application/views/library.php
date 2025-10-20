@@ -34,8 +34,7 @@ $keyword = $_GET['k'] ?? null;
         </div>
 
         <?php
-        $bannerController = new BannerController($conn);
-        $bannerController->renderBanner("home");
+        include_once __DIR__ . "/includes/banner.php";
         ?>
 
         <?php if (!$category && $keyword): ?>
