@@ -52,26 +52,44 @@ class BannerModel extends Model
         );
     }
 
+    private function createPageBannerTable(): bool
+    {
+        $columns = [
+            "id" => "INT AUTO_INCREMENT PRIMARY KEY",
+            "banner_image" => "VARCHAR(255) NOT NULL",
+            "link" => "VARCHAR(2083) NOT NULL",
+            "show_page" => "VARCHAR(255) NOT NULL",
+            "is_active" => "TINYINT(1) DEFAULT 1",
+            "created_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            "updated_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+        ];
+
+        return $this->createTable("page_banners", $columns);
+    }
+
     public function getPageBanner(): array
     {
-        $sql = "SELECT * FROM banners";
+        $this->createPageBannerTable();
+
+        $sql = "SELECT * FROM page_banners";
         return $this->fetchAll($sql);
     }
 
     public function addPageBanner(array $data): int
     {
-        $sql = "INSERT INTO banners (SLIDE, IMAGE, UPLOADED, TYPE, sort_order)";
+        $sql = "INSERT INTO page_banners (banner_image, link, show_page)
+                VALUES (?, ?, ?)";
         return $this->insert(
             $sql,
-            "ssssi",
-            [$data["slide"], $data["image"], $data["upload"], "Home", 0]
+            "sss",
+            [$data["banner_image"], $data["link"], $data["show_page"]]
         );
     }
 
     public function removePageBanner(int $id): int
     {
         return $this->delete(
-            "DELETE FROM banners WHERE id = ?",
+            "DELETE FROM page_banners WHERE id = ?",
             "i",
             [$id]
         );
@@ -81,7 +99,7 @@ class BannerModel extends Model
     {
         $columns = [
             "id" => "INT AUTO_INCREMENT PRIMARY KEY",
-            "book_public_key" => "VARCHAR(255) NOT NULL", // renamed from book_id
+            "book_public_key" => "TEXT",
             "description" => "TEXT",
             "subtext" => "TEXT",
             "button_text" => "VARCHAR(150) DEFAULT 'Read Now'",
@@ -102,7 +120,11 @@ class BannerModel extends Model
     {
         $this->createPopupBannerTable();
 
-        $sql = "SELECT * FROM popup_banners";
+        $sql = "SELECT *
+                FROM popup_banners
+                LEFT JOIN posts
+                    ON popup_banners.book_public_key COLLATE utf8mb4_general_ci = posts.CONTENTID;
+                ";
         return $this->fetchAll($sql);
     }
 
@@ -114,9 +136,9 @@ class BannerModel extends Model
 
         return $this->insert(
             $sql,
-            "sssssssss", // all strings because book_public_key is VARCHAR
+            "sssssssss",
             [
-                $data["book_public_key"],           // public key
+                $data["book_public_key"],
                 $data["button_text"] ?? 'Read Now',
                 $data["link"],
                 $data["description"],
@@ -140,7 +162,7 @@ class BannerModel extends Model
             date_to = ?, 
             time_from = ?, 
             time_to = ?
-        WHERE book_public_key = ?"; // use public key
+        WHERE book_public_key = ?";
 
         return $this->update(
             $sql,
@@ -159,12 +181,12 @@ class BannerModel extends Model
         );
     }
 
-    public function removePopupBanner(string $bookPublicKey): int
+    public function removePopupBanner(string $id): int
     {
         return $this->delete(
-            "DELETE FROM popup_banners WHERE book_public_key = ?",
-            "s",
-            [$bookPublicKey]
+            "DELETE FROM popup_banners WHERE id = ?",
+            "i",
+            [$id]
         );
     }
 }
