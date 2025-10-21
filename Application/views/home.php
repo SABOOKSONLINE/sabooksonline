@@ -88,7 +88,7 @@ $bookController = new BookController($conn);
             </div>
         </div>
     </section>
-    <?php require_once __DIR__ . "/includes/payfast.php" ?>
+    <?php require_once __DIR__ . "/includes/mobile.php" ?>
 
     <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
 
