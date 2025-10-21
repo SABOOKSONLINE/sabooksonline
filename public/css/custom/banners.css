@@ -5,10 +5,12 @@
     top: 0;
     padding: var(--space-md) var(--space-lg);
     overflow: hidden;
-    z-index: 1075;
     display: flex;
     align-items: center;
     transition: 0.3s all ease-in-out;
+    
+    /* below popup banner */
+    z-index: 1075;
 }
 
 #sticky-banner::before {
