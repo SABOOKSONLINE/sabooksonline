@@ -3,57 +3,21 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smooth Scroll Showcase</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      background: #fff;
-      color: #111;
-      overflow-x: hidden;
-    }
-
-    sectionn {
-      padding: 60px 20px 20px 20px; /* reduced bottom padding */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 2.5rem;
-      margin-bottom: 16px;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    p {
-      max-width: 600px;
-      font-size: 1.1rem;
-      line-height: 1.5;
-      color: #555;
-      margin-bottom: 24px; /* space before buttons */
-    }
-
     /* --- Download Buttons --- */
     .download-buttons {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 20px; /* space before images */
+      margin-bottom: 20px;
+      /* space before images */
     }
 
     .download-buttons a {
@@ -77,7 +41,7 @@
       background: #fff;
     }
 
-  
+
 
     /* --- Mockup Images --- */
     .mockups {
@@ -100,7 +64,8 @@
     .mockup img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* shows full image without cutting */
+      object-fit: contain;
+      /* shows full image without cutting */
       background: #f5f5f7;
     }
 
@@ -110,24 +75,27 @@
     }
   </style>
 </head>
+
 <body>
 
-  <sectionn>
-    <h1>Read. Listen. Discover.</h1>
-    <p>Explore books, magazines, newspapers, academic texts, and audiobooks — all in one intuitive app designed for your enjoyment.</p>
+  <section>
+    <div class="container text-center">
+      <h1>Read. Listen. Discover.</h1>
+      <p>Explore books, magazines, newspapers, academic texts, and audiobooks — all in one intuitive app designed for your enjoyment.</p>
 
-    <!-- Download Buttons -->
-    <div class="download-buttons">
-      <a href="https://apps.apple.com/us/app/sa-books-online/id6746923717?platform=iphone" class="ios">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="iOS" width="40" />
-        Download on iOS
-      </a>
-      <a href="#" class="android">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" alt="Android" width="40" />
-        coming soon
-      </a>
+      <!-- Download Buttons -->
+      <div class="download-buttons">
+        <a href="https://apps.apple.com/us/app/sa-books-online/id6746923717?platform=iphone" class="ios">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="iOS" width="40" />
+          Download on iOS
+        </a>
+        <a href="#" class="android">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" alt="Android" width="40" />
+          coming soon
+        </a>
+      </div>
     </div>
-  </sectionn>
+  </section>
 
   <section>
     <div class="mockups">
@@ -139,4 +107,5 @@
   </section>
 
 </body>
+
 </html>
