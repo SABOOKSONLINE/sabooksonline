@@ -284,9 +284,9 @@ require_once __DIR__ . "/../includes/header.php";
         <button type="submit" class="pay-btn">Pay now</button>
       </form>
        <div class="legal-links">
-      <a href="/terms">Terms & Conditions</a> |
-      <a href="/refunds">Refunds</a> |
-      <a href="/delivery">Delivery</a>
+      <a href="https://sabooksonline.co.za/public/documents/terms">Terms & Conditions</a> |
+      <a href="https://sabooksonline.co.za/public/documents/ReturnPolicy.pdf">Refunds</a> |
+      <a href="https://sabooksonline.co.za/public/documents/Delivery.pdf ">Delivery</a>
     </div>
     </div>
 
@@ -328,8 +328,6 @@ require_once __DIR__ . "/../includes/header.php";
   </script>
 
   <?php
-    // include __DIR__ . "/../includes/payfast.php";
-
     include __DIR__ . "/../includes/footer.php";
     include __DIR__ .  "/../includes/scripts.php";
   ?>

@@ -81,21 +81,12 @@ function renderBookCard($book, $index, $isPurchased = false, $forceFormatCheck =
                     endif; ?>
                 </div>
 
-                <!-- Library Books -->
-                <h5 class="mb-3 mt-5">Saved to Library</h5>
-                <div class="row">
-                    <?php if (empty($combinedBooks)): ?>
-                        <div class="alert alert-secondary">You haven’t added or liked any books to your library.</div>
-                    <?php else:
-                        foreach ($combinedBooks as $index => $book){
-                            renderBookCard($book, $index, false,false);
-                        }
-                    endif; ?>
-                </div>
+               
             </div>
         </div>
     </div>
 </section>
+<?php include __DIR__ . "/includes/mobile.php"; ?>
 
 <?php include __DIR__ . "/includes/scripts.php"; ?>
 </body>
