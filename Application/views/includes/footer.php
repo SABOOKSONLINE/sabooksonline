@@ -53,7 +53,7 @@
                 <div class="footer-links">
                     <p><strong>Headquarters:</strong><br>
                         13th Floor, Illovo Point,<br>
-                        68 Melville Rd, Illovo, Sandton, 2B6</p>
+                        68 Melville Rd, Illovo, Sandton, 2196</p>
                     <p><strong>Enquiries:</strong><br>
                         +27 67 852 3593 (MON to FRI 9am–6pm)</p>
                     <p><a href="mailto:admin@sabooksonline.co.za" class="text-light">admin@sabooksonline.co.za</a></p>
