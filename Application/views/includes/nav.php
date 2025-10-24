@@ -70,6 +70,7 @@ $navItems = [
         ["title" => "Events", "url" => "/events"],
         ["title" => "Membership Pricing", "url" => "/membership"]
     ]],
+    ["title" => "Sell", "url" => "/sell"],
     ["title" => "Our Story", "url" => "/about"],
     ["title" => "Our Services", "url" => "/services"],
 ];
