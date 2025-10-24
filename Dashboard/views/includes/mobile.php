@@ -122,9 +122,9 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="iOS" width="40" />
         Download on iOS
       </a>
-      <a href="#" class="android">
+      <a href="https://play.google.com/store/apps/details?id=com.anonymous.sabooksmobile" class="android">
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" alt="Android" width="40" />
-        coming soon
+        Download on Android
       </a>
     </div>
   </sectionn>
