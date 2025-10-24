@@ -486,6 +486,16 @@
     margin: 0;
 }
 
+.bs-card {
+    background: var(--off-white);
+    transition: 0.3s ease-in-out;
+}
+
+.bs-card:hover {
+    transform: translateY(-2px);
+    background: var(--bk-color-bg-primary);
+}
+
 @media (max-width: 1200px) {
     .bv-view {
         grid-template-columns: 1fr 1fr;
