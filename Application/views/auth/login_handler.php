@@ -104,7 +104,17 @@ try {
 
     // redirect the user to last book page before logging in
     $redirectUri = $_SESSION["redirect_uri"];
-    if (str_starts_with($redirectUri, "/library")) {
+    $prefixes = ["/library", "/sell", "/membership"];
+    $matched = false;
+
+    foreach ($prefixes as $prefix) {
+        if (str_starts_with($redirectUri, $prefix)) {
+            $matched = true;
+            break;
+        }
+    }
+
+    if ($matched) {
         header("Location: " . $redirectUri);
     } else {
         header("Location: /dashboards");
