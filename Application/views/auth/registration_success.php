@@ -20,4 +20,8 @@ require_once __DIR__ . "/../includes/header.php";
 
     <?php require_once __DIR__ . "/../includes/footer.php" ?>
     <?php require_once __DIR__ . "/../includes/scripts.php" ?>
+    <!-- Google tag (gtag.js) event -->
+    <script>
+        gtag('event', 'ads_conversion_About_Us_1', {});
+    </script>
 </body>
