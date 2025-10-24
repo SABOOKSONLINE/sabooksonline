@@ -78,6 +78,31 @@
     margin-top: var(--space-sm);
 }
 
+.hero {
+    position: relative;
+    color: var(--black);
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/public/images/ndebele_patterns.jpeg") center/cover
+        no-repeat;
+    filter: blur(20px);
+    z-index: -2;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--white), var(--white), transparent);
+    opacity: 0.95;
+    z-index: -1;
+}
+
 /* ========== Newsletter Input ========== */
 .nl-input {
     background-color: transparent;
