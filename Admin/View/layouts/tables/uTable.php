@@ -203,19 +203,40 @@ function renderUserTable($users): void
 
         // CSV export
         document.getElementById('downloadCSV').addEventListener('click', () => {
-            const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+            const searchValue = searchInput.value.toLowerCase();
+            const selectedSubscription = subscriptionFilter.value.toLowerCase();
+
+            // Get ALL rows, not just visible ones
+            const allRows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Filter rows based on search + subscription (same as displayTable)
+            const filteredRows = allRows.filter(row => {
+                const cells = Array.from(row.querySelectorAll('td'));
+                const subscription = (cells[3]?.textContent || '').toLowerCase();
+
+                const matchesSearch = cells.some(td =>
+                    td.textContent.toLowerCase().includes(searchValue)
+                );
+                const matchesSubscription = !selectedSubscription || subscription === selectedSubscription;
+
+                return matchesSearch && matchesSubscription;
+            });
+
             let csv = [];
 
+            // Collect headers
             const headers = Array.from(table.querySelectorAll('thead th'))
                 .map(th => `"${th.textContent.trim()}"`);
             csv.push(headers.join(','));
 
-            rows.forEach(row => {
+            // Collect filtered rows (even if not visible on current page)
+            filteredRows.forEach(row => {
                 const cells = Array.from(row.querySelectorAll('td'))
                     .map(td => `"${td.textContent.trim().replace(/"/g, '""')}"`);
                 csv.push(cells.join(','));
             });
 
+            // Create downloadable CSV file
             const blob = new Blob([csv.join('\n')], {
                 type: 'text/csv;charset=utf-8;'
             });
@@ -225,30 +246,6 @@ function renderUserTable($users): void
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        });
-
-        document.getElementById('printPDF').addEventListener('click', () => {
-            // Clone table to include only visible rows (filtered)
-            const tableClone = table.cloneNode(true);
-            const cloneTbody = tableClone.querySelector('tbody');
-            Array.from(cloneTbody.querySelectorAll('tr')).forEach(row => {
-                if (row.style.display === 'none') {
-                    row.remove();
-                }
-            });
-
-            // Open a new window and print
-            const printWindow = window.open('', '', 'width=900,height=700');
-            printWindow.document.write('<html><head><title>Users Table</title>');
-            printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">');
-            printWindow.document.write('<style>table {width: 100%; border-collapse: collapse;} th, td {border: 1px solid #ddd; padding: 8px;} th {background-color: #f8f9fa;}</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(tableClone.outerHTML);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
         });
 
 
