@@ -54,7 +54,6 @@ if (!$products || count($products) === 0) {
 
 echo "<h4>Found " . count($products) . " product(s) in the ONIX file.</h4><hr>";
 
-// 🔹 Helper function: safely traverse XML path
 function getXmlValue($node, array $path) {
     foreach ($path as $child) {
         if (isset($node->$child)) {
@@ -66,7 +65,6 @@ function getXmlValue($node, array $path) {
     return (string)$node;
 }
 
-// 6️⃣ Loop through products
 $totalImported = 0;
 
 foreach ($products as $i => $product) {

@@ -20,12 +20,10 @@ $newspapers = $controller->getAllNewspapers();
     <?php require_once __DIR__ . "/includes/nav.php";
     ?>
 
-
-        <?php require_once __DIR__ . "/includes/mobile.php" ?>
-
-
     <?php
     include __DIR__ . "/media/mCard.php";
+    require_once __DIR__ . "/includes/mobile.php" ;
+
     include __DIR__ . "/media/nCard.php";
     require_once __DIR__ . "/includes/payfast.php" ;
 

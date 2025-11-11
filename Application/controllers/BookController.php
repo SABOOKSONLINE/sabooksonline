@@ -228,9 +228,7 @@ class BookController
 
         if ($books) {
             include __DIR__ . '/../views/books/bookCategory.php';
-        } else {
-            echo "No books found in this category.";
-        }
+        } 
     }
 
 
