@@ -86,7 +86,6 @@ function renderBookCard($book, $index, $isPurchased = false, $forceFormatCheck =
         </div>
     </div>
 </section>
-<?php include __DIR__ . "/includes/mobile.php"; ?>
 
 <?php include __DIR__ . "/includes/scripts.php"; ?>
 </body>
