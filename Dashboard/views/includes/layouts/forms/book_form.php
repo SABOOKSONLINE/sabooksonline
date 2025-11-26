@@ -6,23 +6,37 @@ error_reporting(E_ALL);
 
 $book = $book ?? [];
 
-$bookId = html_entity_decode($book['ID'] ?? '');
-$title = html_entity_decode($book['TITLE'] ?? '');
-$cover = html_entity_decode($book['COVER'] ?? '');
-$category = $book['CATEGORY'] ?? '';
-$publisher = ucwords(html_entity_decode($book['PUBLISHER'] ?? ''));
-$authors = html_entity_decode($book['AUTHORS'] ?? '');
-$description = html_entity_decode($book['DESCRIPTION'] ?? '');
-$isbn = html_entity_decode($book['ISBN'] ?? '');
-$website = html_entity_decode($book['WEBSITE'] ?? '');
-$retailPrice = html_entity_decode($book['RETAILPRICE'] ?? '');
-$EbookPrice = html_entity_decode($book['EBOOKPRICE'] ?? '');
-$languages = html_entity_decode($book['LANGUAGES'] ?? '');
-$status = html_entity_decode($book['STATUS'] ?? 'Draft');
+$bookId       = html_entity_decode($book['ID'] ?? '');
+$title        = html_entity_decode($book['TITLE'] ?? '');
+$cover        = html_entity_decode($book['COVER'] ?? '');
+$category     = $book['CATEGORY'] ?? '';
+$publisher    = ucwords(html_entity_decode($book['PUBLISHER'] ?? ''));
+$authors      = html_entity_decode($book['AUTHORS'] ?? '');
+$description  = html_entity_decode($book['DESCRIPTION'] ?? '');
+$isbn         = html_entity_decode($book['ISBN'] ?? '');
+$website      = html_entity_decode($book['WEBSITE'] ?? '');
+$retailPrice  = html_entity_decode($book['RETAILPRICE'] ?? '');
+$EbookPrice   = html_entity_decode($book['EBOOKPRICE'] ?? '');
+$languages    = html_entity_decode($book['LANGUAGES'] ?? '');
+$status       = html_entity_decode($book['STATUS'] ?? 'Draft');
 $availability = html_entity_decode($book['STOCK'] ?? 'in stock');
-$keywords = html_entity_decode($book['CATEGORY'] ?? '');
-$type = html_entity_decode($book['TYPE'] ?? 'book');
-$pdf = html_entity_decode($book['PDFURL'] ?? '');
+$keywords     = html_entity_decode($book['CATEGORY'] ?? '');
+$type         = html_entity_decode($book['TYPE'] ?? 'book');
+$pdf          = html_entity_decode($book['PDFURL'] ?? '');
+
+// -------------------- HARDCOPY VARIABLES --------------------
+$hcId               = html_entity_decode($book['hc_id'] ?? '');
+$hcPrice            = html_entity_decode($book['hc_price'] ?? '');
+$hcDiscountPercent  = html_entity_decode($book['hc_discount_percent'] ?? '0');
+$hcCountry          = html_entity_decode($book['hc_country'] ?? '');
+$hcPages            = html_entity_decode($book['hc_pages'] ?? '');
+$hcWeightKg         = html_entity_decode($book['hc_weight_kg'] ?? '');
+$hcHeightCm         = html_entity_decode($book['hc_height_cm'] ?? '');
+$hcWidthCm          = html_entity_decode($book['hc_width_cm'] ?? '');
+$hcReleaseDate      = html_entity_decode($book['hc_release_date'] ?? '');
+$hcContributors     = html_entity_decode($book['hc_contributors'] ?? '');
+$hcStockCount       = html_entity_decode($book['hc_stock_count'] ?? '');
+
 
 $narrator = htmlspecialchars_decode($book['narrator'] ?? '');
 $releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
@@ -203,13 +217,13 @@ if (!empty($book['DATEPOSTED'])) {
     <hr class="my-4">
 
     <!-- Section: Pricing -->
-    <h4 class="fw-bold mb-3">Availability & Pricing</h4>
+    <h4 class="fw-bold mb-3">Digital Content Pricing</h4>
     <div class="row g-3">
 
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <label class="form-label">Retail Price (Hard Copy)</label>
             <input type="number" name="book_price" class="form-control" placeholder="e.g. 199.99" value="<?= $retailPrice ?>">
-        </div>
+        </div> -->
 
         <div class="col-md-6">
             <label class="form-label">Ebook Price (PDF)</label>
@@ -229,9 +243,93 @@ if (!empty($book['DATEPOSTED'])) {
                 <option value="inactive" <?= $status !== 'active' ? 'selected' : '' ?>>Inactive</option>
             </select>
         </div>
+    </div>
 
+    <hr class="my-4">
+
+
+    <h4 class="fw-bold mb-3">Hardcopy Details</h4>
+
+    <div class="row g-3">
+
+        <!-- Price -->
+        <div class="col-md-6">
+            <label for="hc_price" class="form-label">Price (R)</label>
+            <input type="number" step="0.01" name="hc_price" id="hc_price" class="form-control"
+                value="<?= htmlspecialchars($hcPrice ?? '') ?>">
+        </div>
+
+        <!-- Discount -->
+        <div class="col-md-6">
+            <label for="hc_discount_percent" class="form-label">
+                Discount (%)
+                <span class="text-danger small">
+                    Note: percentage will be deducted from the price.
+                </span>
+            </label>
+            <input type="number" name="hc_discount_percent" id="hc_discount_percent"
+                class="form-control" min="0" max="100"
+                value="<?= htmlspecialchars($hcDiscountPercent ?? 0) ?>">
+        </div>
+
+        <!-- Country -->
+        <div class="col-md-6">
+            <label for="hc_country" class="form-label">Country</label>
+            <input type="text" name="hc_country" id="hc_country" class="form-control"
+                value="<?= htmlspecialchars($hcCountry ?? '') ?>">
+        </div>
+
+        <!-- Pages -->
+        <div class="col-md-6">
+            <label for="hc_pages" class="form-label">Pages</label>
+            <input type="number" name="hc_pages" id="hc_pages" class="form-control"
+                value="<?= htmlspecialchars($hcPages ?? '') ?>">
+        </div>
+
+        <!-- Weight -->
+        <div class="col-md-6">
+            <label for="hc_weight_kg" class="form-label">Weight (kg)</label>
+            <input type="number" step="0.01" name="hc_weight_kg" id="hc_weight_kg" class="form-control"
+                value="<?= htmlspecialchars($hcWeightKg ?? '') ?>">
+        </div>
+
+        <!-- Height -->
+        <div class="col-md-6">
+            <label for="hc_height_cm" class="form-label">Height (cm)</label>
+            <input type="number" step="0.01" name="hc_height_cm" id="hc_height_cm" class="form-control"
+                value="<?= htmlspecialchars($hcHeightCm ?? '') ?>">
+        </div>
+
+        <!-- Width -->
+        <div class="col-md-6">
+            <label for="hc_width_cm" class="form-label">Width (cm)</label>
+            <input type="number" step="0.01" name="hc_width_cm" id="hc_width_cm" class="form-control"
+                value="<?= htmlspecialchars($hcWidthCm ?? '') ?>">
+        </div>
+
+        <!-- Release Date -->
+        <div class="col-md-6">
+            <label for="hc_release_date" class="form-label">Release Date</label>
+            <input type="date" name="hc_release_date" id="hc_release_date" class="form-control"
+                value="<?= htmlspecialchars($hcReleaseDate ?? '') ?>">
+        </div>
+
+        <!-- Contributors -->
+        <div class="col-md-6">
+            <label for="hc_contributors" class="form-label">Contributors</label>
+            <input type="text" name="hc_contributors" id="hc_contributors" class="form-control"
+                value="<?= htmlspecialchars($hcContributors ?? '') ?>">
+        </div>
+
+        <!-- Stock -->
+        <div class="col-md-6">
+            <label for="hc_stock_count" class="form-label">Stock Count</label>
+            <input type="number" name="hc_stock_count" id="hc_stock_count" class="form-control"
+                value="<?= htmlspecialchars($hcStockCount ?? 0) ?>">
+        </div>
 
     </div>
+
 
     <hr class="my-4">
 

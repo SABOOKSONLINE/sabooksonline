@@ -57,20 +57,33 @@ class BookListingsModel
     {
         $sql = "SELECT 
                 p.*, 
+                h.hc_id,
+                h.hc_price,
+                h.hc_discount_percent,
+                h.hc_country,
+                h.hc_pages,
+                h.hc_weight_kg,
+                h.hc_height_cm,
+                h.hc_width_cm,
+                h.hc_release_date,
+                h.hc_contributors,
+                h.hc_stock_count,
                 a.id AS audiobook_id,
-                a.book_id,
+                a.book_id AS audiobook_book_id,
                 a.narrator,
                 a.duration_minutes AS audiobook_duration,
-                a.release_date,
+                a.release_date AS audiobook_release_date,
                 c.id AS chapter_id,
                 c.chapter_number,
                 c.chapter_title,
                 c.audio_url,
                 c.duration_minutes AS chapter_duration,
                 s.id AS audiobook_sample_id,
-                s.book_id,
+                s.book_id AS sample_book_id,
                 s.url AS sample_url
             FROM posts AS p
+            LEFT JOIN book_hardcopy AS h
+                ON h.book_id = p.ID
             LEFT JOIN audiobooks AS a 
                 ON a.book_id = p.ID
             LEFT JOIN audiobook_chapters AS c 
@@ -119,6 +132,7 @@ class BookListingsModel
 
         return $book;
     }
+
 
 
     /**
@@ -657,5 +671,134 @@ class BookListingsModel
         mysqli_stmt_close($stmt);
 
         return $affectedRows;
+    }
+
+    public function insertHardcopy($data)
+    {
+        $sql = "INSERT INTO book_hardcopy (
+                    book_id,
+                    hc_price,
+                    hc_discount_percent,
+                    hc_country,
+                    hc_pages,
+                    hc_weight_kg,
+                    hc_height_cm,
+                    hc_width_cm,
+                    hc_release_date,
+                    hc_contributors,
+                    hc_stock_count
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            throw new Exception("Insert Hardcopy: Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        if (!mysqli_stmt_bind_param(
+            $stmt,
+            "idissdddssi",
+            $data['book_id'],
+            $data['hc_price'],
+            $data['hc_discount_percent'],
+            $data['hc_country'],
+            $data['hc_pages'],
+            $data['hc_weight_kg'],
+            $data['hc_height_cm'],
+            $data['hc_width_cm'],
+            $data['hc_release_date'],
+            $data['hc_contributors'],
+            $data['hc_stock_count']
+        )) {
+            throw new Exception("Insert Hardcopy: Failed to bind parameters: " . mysqli_stmt_error($stmt));
+        }
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Insert Hardcopy: Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $insertId = mysqli_insert_id($this->conn);
+        mysqli_stmt_close($stmt);
+
+        return $insertId;
+    }
+
+    public function updateHardcopy($data)
+    {
+        $sql = "UPDATE book_hardcopy SET
+                hc_price = ?, 
+                hc_discount_percent = ?, 
+                hc_country = ?, 
+                hc_pages = ?, 
+                hc_weight_kg = ?, 
+                hc_height_cm = ?, 
+                hc_width_cm = ?, 
+                hc_release_date = ?, 
+                hc_contributors = ?, 
+                hc_stock_count = ?
+            WHERE book_id = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            throw new Exception("Update Hardcopy: Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        if (!mysqli_stmt_bind_param(
+            $stmt,
+            "dissdddssii",
+            $data['hc_price'],
+            $data['hc_discount_percent'],
+            $data['hc_country'],
+            $data['hc_pages'],
+            $data['hc_weight_kg'],
+            $data['hc_height_cm'],
+            $data['hc_width_cm'],
+            $data['hc_release_date'],
+            $data['hc_contributors'],
+            $data['hc_stock_count'],
+            $data['book_id']
+        )) {
+            throw new Exception("Update Hardcopy: Failed to bind parameters: " . mysqli_stmt_error($stmt));
+        }
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Update Hardcopy: Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+        mysqli_stmt_close($stmt);
+
+        return $affectedRows;
+    }
+
+    public function getHardcopyByBookId($bookId)
+    {
+        $sql = "SELECT * FROM book_hardcopy WHERE book_id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            throw new Exception("Get Hardcopy: Failed to prepare statement: " . mysqli_error($this->conn));
+        }
+
+        if (!mysqli_stmt_bind_param($stmt, "i", $bookId)) {
+            throw new Exception("Get Hardcopy: Failed to bind parameters: " . mysqli_stmt_error($stmt));
+        }
+
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Get Hardcopy: Failed to execute statement: " . mysqli_stmt_error($stmt));
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (!$result) {
+            throw new Exception("Get Hardcopy: Failed to fetch result: " . mysqli_error($this->conn));
+        }
+
+        $row = mysqli_fetch_assoc($result);
+
+        mysqli_stmt_close($stmt);
+
+        return $row ?: null; // return null if not found
     }
 }

@@ -5,7 +5,6 @@ error_reporting(E_ALL);
 
 class BookListingController
 {
-
     private $booksModel;
 
     public function __construct($conn)
@@ -32,32 +31,49 @@ class BookListingController
 
     public function insertBookData($data)
     {
-        $this->booksModel->insertBook($data);
+        return $this->booksModel->insertBook($data);
     }
 
     public function updateBookData($bookId, $data)
     {
-        $this->booksModel->updateBook($bookId, $data);
+        return $this->booksModel->updateBook($bookId, $data);
     }
 
     public function deleteBookListing($contentId)
     {
-        $this->booksModel->deleteBook($contentId);
+        return $this->booksModel->deleteBook($contentId);
     }
 
+    // ----------------- HARDCOPY METHODS -----------------
+    public function insertHardcopy($data)
+    {
+        return $this->booksModel->insertHardcopy($data);
+    }
+
+    public function updateHardcopy($data)
+    {
+        return $this->booksModel->updateHardcopy($data);
+    }
+
+    public function getHardcopyByBookId($bookId)
+    {
+        return $this->booksModel->getHardcopyByBookId($bookId);
+    }
+
+    // ----------------- AUDIOBOOK METHODS -----------------
     public function insertAudiobook($data)
     {
-        $this->booksModel->insertAudiobook($data);
+        return $this->booksModel->insertAudiobook($data);
     }
 
     public function updateAudiobook($bookId, $data)
     {
-        $this->booksModel->updateAudiobook($bookId, $data);
+        return $this->booksModel->updateAudiobook($bookId, $data);
     }
 
     public function deleteAudiobookByBookId($bookId)
     {
-        $this->booksModel->deleteAudiobookByBookId($bookId);
+        return $this->booksModel->deleteAudiobookByBookId($bookId);
     }
 
     public function getAudiobookByBookId($bookId, $contentId = null)
@@ -68,37 +84,36 @@ class BookListingController
 
     public function insertAudiobookChapter($data)
     {
-        $this->booksModel->insertAudiobookChapter($data);
+        return $this->booksModel->insertAudiobookChapter($data);
     }
 
     public function updateAudiobookChapter($chapterId, $data)
     {
-        $this->booksModel->updateAudiobookChapter($chapterId, $data);
+        return $this->booksModel->updateAudiobookChapter($chapterId, $data);
     }
 
     public function deleteAudiobookChapter($chapterId)
     {
-        $this->booksModel->deleteAudiobookChapter($chapterId);
+        return $this->booksModel->deleteAudiobookChapter($chapterId);
     }
 
     public function getAudiobookByContentId($contentId)
     {
-        $book = $this->booksModel->selectAudiobookByContentId($contentId);
-        return $book;
+        return $this->booksModel->selectAudiobookByContentId($contentId);
     }
 
     public function insertAudiobookSample($data)
     {
-        $this->booksModel->insertAudiobookSample($data);
+        return $this->booksModel->insertAudiobookSample($data);
     }
 
     public function updateAudiobookSample($data)
     {
-        $this->booksModel->updateAudiobookSample($data);
+        return $this->booksModel->updateAudiobookSample($data);
     }
 
     public function deleteAudiobookSample($data)
     {
-        $this->booksModel->deleteAudiobookSample($data);
+        return $this->booksModel->deleteAudiobookSample($data);
     }
 }
