@@ -565,6 +565,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/405', function () {
         require  "Application/views/405.php";
     });
+
+    // =================== Cart ===================
+    $r->addRoute('GET', '/cart', function () {
+        require  "Application/views/cart.php";
+    });
 });
 
 // Fetch method and URI from server
