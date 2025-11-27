@@ -10,6 +10,12 @@ require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../../models/PageVisitsModel.php";
 require_once __DIR__ . "/../../controllers/PageVisitsController.php";
 
+require_once __DIR__ . "/../../Config/connection.php";
+require_once __DIR__ . "/../../models/CartModel.php";
+require_once __DIR__ . "/../../controllers/CartController.php";
+$cartController = new CartController($conn);
+$cartItemsCount = 0;
+
 require_once __DIR__ . "/../../controllers/HomeController.php";
 $homeController = new HomeController($conn);
 
@@ -29,6 +35,7 @@ if (isset($_SESSION['ADMIN_PROFILE_IMAGE'])) {
 }
 
 if (isset($userKey)) {
+    $cartItemsCount = $cartController->getItemsCount();
     if (!empty($profileImage)) {
         if (strpos($profileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
             $profile = "/public/images/user-3296.png";
@@ -129,7 +136,8 @@ $navItems = [
                         <a href="/cart" class="position-relative me-3 text-decoration-none text-dark">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
-                                1 </span>
+                                <?= $cartItemsCount ?>
+                            </span>
                         </a>
 
                         <div class="dropdown">

@@ -50,6 +50,18 @@ $eBookPrice = $book['EBOOKPRICE'];
 $aBookPrice = $book['ABOOKPRICE'];
 $date = $book['DATEPOSTED'];
 
+$hc_price            = isset($book['hc_price']) ? (float)$book['hc_price'] : 0.0;
+$hc_discount_percent = isset($book['hc_discount_percent']) ? (int)$book['hc_discount_percent'] : 0;
+$hc_country          = htmlspecialchars($book['hc_country'] ?? '');
+$hc_pages            = isset($book['hc_pages']) ? (int)$book['hc_pages'] : 0;
+$hc_weight_kg        = isset($book['hc_weight_kg']) ? (float)$book['hc_weight_kg'] : 0.0;
+$hc_height_cm        = isset($book['hc_height_cm']) ? (float)$book['hc_height_cm'] : 0.0;
+$hc_width_cm         = isset($book['hc_width_cm']) ? (float)$book['hc_width_cm'] : 0.0;
+$hc_release_date     = htmlspecialchars($book['hc_release_date'] ?? '');
+$hc_contributors     = htmlspecialchars($book['hc_contributors'] ?? '');
+$hc_stock_count      = isset($book['hc_stock_count']) ? (int)$book['hc_stock_count'] : 0;
+
+
 $date = formatDateComponents($date);
 $ebook = $book['PDFURL'] ?? '';
 
@@ -225,6 +237,9 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
+                <!-- Internal hardcopy -->
+
+
                 <!-- E-Book -->
                 <span class="bv-purchase-select" price="<?= (int)$eBookPrice ?>" available="<?= !empty($ebook) ?>">
 
@@ -324,8 +339,11 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <!-- hardcopy button -->
                     <div class="hide">
                         <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">purchase Link<span></span></a>
+                        <button id="hardcopy" class="btn btn-green bv-buy-btn add-to-cart"
+                            data-book-id="<?= $book['ID']; ?>">
+                            Add to cart
+                        </button>
                         <span class="bv-note-muted" id="hardcopy"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
-
                     </div>
 
                 </div>
@@ -333,6 +351,44 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         </div>
     </div>
 </div>
+
+<?php
+// echo "<pre>";
+// print_r($book);
+// echo "</pre>";
+?>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.querySelector(".add-to-cart");
+
+
+        btn.addEventListener("click", async function() {
+            const bookId = this.getAttribute("data-book-id");
+
+            const response = await fetch("/cart/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    book_id: bookId,
+                    qty: 1
+                }),
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if (data.success) {
+                alert("Added to cart!");
+            } else {
+                alert("Failed to add item.");
+            }
+        });
+    });
+</script>
+
 
 <script>
     const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");

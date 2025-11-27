@@ -30,6 +30,7 @@ class CartModel extends Model
 
         $sql = "SELECT 
                     bc.*,
+                    hc.*,
                     b.COVER AS cover_image,
                     b.TITLE AS title,
                     b.DESCRIPTION AS description,
@@ -42,6 +43,8 @@ class CartModel extends Model
                     b.AUTHORS AS authors
                 FROM book_cart AS bc
                 JOIN posts AS b ON bc.book_id = b.ID
+                LEFT JOIN book_hardcopy AS hc
+                    ON hc.book_id = b.ID
                 WHERE bc.user_id = ?
                 ORDER BY bc.created_at DESC";
 
