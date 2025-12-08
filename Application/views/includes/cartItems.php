@@ -117,8 +117,7 @@
                         <span class="summary-total">R<?= number_format($subtotal, 2) ?></span>
                     </div>
 
-                    <button class="btn btn-primary w-100 py-2">Checkout</button>
-
+                    <a href="cart/checkout" class="btn btn-blue w-100 py-2">Checkout</a>
                 </div>
             </div>
         </div>

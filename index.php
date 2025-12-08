@@ -568,19 +568,25 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // =================== Cart ===================
     $r->addRoute('GET', '/cart', function () {
-        require  "Application/views/cart.php";
+        require "Application/views/cart.php";
     });
-
     $r->addRoute('POST', '/cart/add', function () {
         require "Application/handlers/cartHandler.php";
     });
-
     $r->addRoute('POST', '/cart/update', function () {
         require "Application/handlers/cartHandler.php";
     });
-
     $r->addRoute('POST', '/cart/remove', function () {
         require "Application/handlers/cartHandler.php";
+    });
+    $r->addRoute('GET', '/cart/checkout', function () {
+        require "Application/views/cartCheckout.php";
+    });
+    $r->addRoute('POST', '/cart-checkout/process', function () {
+        require "Application/handlers/checkoutHandler.php";
+    });
+    $r->addRoute('POST', '/cart-checkout/address', function () {
+        require "Application/handlers/saveDeliveryAddressHandler.php";
     });
 });
 

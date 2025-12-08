@@ -287,16 +287,29 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 </span>
 
                 <!-- Hardcopy -->
-                <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
-                    <span class="bv-purchase-select-h">Hardcopy</span>
-                    <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
-                        <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
-                    <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
-                        <span class="bv-purchase-select-hL">FREE</span>
-                    <?php else: ?>
-                        <span>Not available</span>
-                    <?php endif; ?>
-                </span>
+                <?php if (!$book['hc_id']): ?>
+                    <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
+                        <span class="bv-purchase-select-h">Hardcopy</span>
+                        <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
+                            <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
+                        <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
+                            <span class="bv-purchase-select-hL">FREE</span>
+                        <?php else: ?>
+                            <span>Not available</span>
+                        <?php endif; ?>
+                    </span>
+                <?php else: ?>
+                    <span class="bv-purchase-select" price="<?= $book['hc_price'] ?>" available="<?= !empty($book['hc_id']) ?>">
+                        <span class="bv-purchase-select-h">Hardcopy</span>
+                        <?php if ((int)$book['hc_price'] !== 0): ?>
+                            <span class="bv-purchase-select-hL">R<?= $book['hc_price'] ?></span>
+                        <?php elseif ((int)$book['hc_price']): ?>
+                            <span class="bv-purchase-select-hL">FREE</span>
+                        <?php else: ?>
+                            <span>Not available</span>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"></span>
@@ -339,13 +352,14 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <!-- hardcopy button -->
                     <div class="hide">
                         <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">purchase Link<span></span></a>
-                        <button id="hardcopy" class="btn btn-green bv-buy-btn add-to-cart"
-                            data-book-id="<?= $book['ID']; ?>">
-                            Add to cart
-                        </button>
+                        <?php if ($userId && $book['hc_id']): ?>
+                            <button id="hardcopy" class="btn btn-green bv-buy-btn add-to-cart"
+                                data-book-id="<?= $book['ID']; ?>">
+                                Add to cart
+                            </button>
+                        <?php endif; ?>
                         <span class="bv-note-muted" id="hardcopy"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                     </div>
-
                 </div>
             </div>
         </div>
