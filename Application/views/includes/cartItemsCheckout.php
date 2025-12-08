@@ -5,9 +5,106 @@ require_once __DIR__ . "/../../controllers/CartController.php";
 
 $cartModel = new CartModel($conn);
 $userId = $_SESSION['ADMIN_ID'];
-$address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
-?>
+$address = $cartModel->getDeliveryAddress($userId);
+$cartItems = $cartModel->getCartItemsByUserId($userId);
 
+// echo "<pre>";
+// print_r($cartItems);
+// echo "</pre>";
+
+function getCourierGuyDeliveryCost($address, $cartItems)
+{
+    if (!$address || !$cartItems) return 0;
+
+    $apiUrl = "https://api.portal.thecourierguy.co.za/v2/rates";
+    $apiKey = "bb8b36e0b0eb41aa91c292674aeaf503";
+
+    $parcels = [];
+    foreach ($cartItems as $item) {
+        $qty = (int)$item['cart_item_count'];
+        for ($i = 0; $i < $qty; $i++) {
+            $parcels[] = [
+                "submitted_length_cm" => isset($item['hc_height_cm']) ? (float)$item['hc_height_cm'] : 10.0,
+                "submitted_width_cm" => isset($item['hc_width_cm']) ? (float)$item['hc_width_cm'] : 10.0,
+                "submitted_height_cm" => isset($item['hc_pages']) ? (float)$item['hc_pages'] / 2 : 5.0,
+                "submitted_weight_kg" => isset($item['hc_weight_kg']) ? (float)$item['hc_weight_kg'] : 1.0
+            ];
+        }
+    }
+
+    $payload = [
+        "collection_address" => [
+            "type" => "business",
+            "company" => "uAfrica.com",
+            "street_address" => "116 Lois Avenue",
+            "local_area" => "Menlyn",
+            "city" => "Pretoria",
+            "code" => "0181",
+            "zone" => "Gauteng",
+            "country" => "ZA"
+        ],
+        "collection_contact" => [
+            "name" => "Cornel Rautenbach",
+            "mobile_number" => "+27821234567",
+            "email" => "tjjmalebana@gmail.com"
+        ],
+        "delivery_address" => [
+            "type" => $address['delivery_type'] ?? "residential",
+            "company" => $address['company'] ?? "",
+            "street_address" => $address['street_address'] ?? "",
+            "local_area" => $address['local_area'] ?? "",
+            "city" => $address['city'] ?? "",
+            "zone" => $address['zone'] ?? "",
+            "country" => $address['country'] ?? "ZA",
+            "code" => $address['postal_code'] ?? ""
+        ],
+        "delivery_contact" => [
+            "name" => $address['full_name'] ?? "",
+            "mobile_number" => $address['phone'] ?? "",
+            "email" => $address['email'] ?? ""
+        ],
+        "parcels" => $parcels,
+        "opt_in_rates" => [],
+        "opt_in_time_based_rates" => [76],
+        "declared_value" => 0.0,
+        "collection_min_date" => gmdate("Y-m-d\TH:i:s\Z"),
+        "collection_after" => "08:00",
+        "collection_before" => "16:00",
+        "delivery_min_date" => gmdate("Y-m-d\TH:i:s\Z"),
+        "delivery_after" => "10:00",
+        "delivery_before" => "17:00",
+        "service_level_code" => "ECO",
+        "notes" => "This is a test order for sandbox environment"
+    ];
+
+    $ch = curl_init($apiUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer $apiKey",
+            "Content-Type: application/json"
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload)
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // echo "<pre>";
+    // print_r($response);
+    // echo "</pre>";
+
+    if (!$response) return 0;
+
+    $data = json_decode($response, true);
+
+    return $data['rates'][0]['rate'] ?? 0;
+}
+
+
+$deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
+?>
 
 <div class="container">
 
@@ -24,13 +121,11 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
 
     <div class="row">
 
-        <!-- LEFT COLUMN — DELIVERY & PAYMENT -->
         <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body p-4">
                     <h4 class="mb-3">Delivery Details</h4>
                     <div class="row g-3">
-                        <!-- Delivery inputs -->
                         <div class="col-md-6">
                             <label class="form-label">Company (Optional)</label>
                             <input type="text" id="company" class="form-control"
@@ -64,12 +159,8 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                         <div class="col-md-4">
                             <label class="form-label">Delivery Type <span class="text-danger">*</span></label>
                             <select id="delivery_type" class="form-select" required>
-                                <option value="business" <?= (isset($address['delivery_type']) && $address['delivery_type'] === 'business') ? 'selected' : '' ?>>
-                                    Business
-                                </option>
-                                <option value="residential" <?= (isset($address['delivery_type']) && $address['delivery_type'] === 'residential') ? 'selected' : '' ?>>
-                                    Residential
-                                </option>
+                                <option value="business" <?= (isset($address['delivery_type']) && $address['delivery_type'] === 'business') ? 'selected' : '' ?>>Business</option>
+                                <option value="residential" <?= (isset($address['delivery_type']) && $address['delivery_type'] === 'residential') ? 'selected' : '' ?>>Residential</option>
                             </select>
                         </div>
 
@@ -84,23 +175,11 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                             <select id="zone" class="form-select" required>
                                 <option value="">Choose...</option>
                                 <?php
-                                $zones = [
-                                    "Gauteng",
-                                    "KwaZulu-Natal",
-                                    "Western Cape",
-                                    "Eastern Cape",
-                                    "Free State",
-                                    "Limpopo",
-                                    "Mpumalanga",
-                                    "Northern Cape",
-                                    "North West"
-                                ];
+                                $zones = ["Gauteng", "KwaZulu-Natal", "Western Cape", "Eastern Cape", "Free State", "Limpopo", "Mpumalanga", "Northern Cape", "North West"];
                                 $selectedZone = $address['zone'] ?? '';
                                 foreach ($zones as $zone):
                                 ?>
-                                    <option value="<?= $zone ?>" <?= $zone === $selectedZone ? 'selected' : '' ?>>
-                                        <?= $zone ?>
-                                    </option>
+                                    <option value="<?= $zone ?>" <?= $zone === $selectedZone ? 'selected' : '' ?>><?= $zone ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -118,7 +197,6 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                         </div>
                     </div>
 
-                    <!-- SAVE DELIVERY BUTTON -->
                     <button type="button" id="saveDeliveryBtn" class="btn btn-green py-2 mt-4">
                         Save Delivery Address
                     </button>
@@ -140,12 +218,9 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                         </div>
                     </label>
                 </div>
-
             </div>
         </div>
 
-
-        <!-- RIGHT COLUMN — ORDER SUMMARY -->
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body">
@@ -165,7 +240,8 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                             <div class="d-flex justify-content-between align-items-start mb-2 pb-2">
                                 <div class="me-2">
                                     <strong><?= $title ?></strong><br>
-                                    <small class="text-muted">Qty: <?= $qty ?></small>
+                                    <small class="text-muted">Qty: <?= $qty ?></small><br>
+                                    <small class="text-muted">Delivery: R<?= number_format($deliveryPrice, 2) ?></small>
                                 </div>
                                 <div>
                                     <span>R<?= number_format($lineTotal, 2) ?></span>
@@ -174,13 +250,22 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                         <?php endforeach; ?>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3 border-top pt-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2 border-top pt-2">
                         <strong>Total (<?= $totalItems ?> items)</strong>
                         <strong>R<?= number_format($subtotal, 2) ?></strong>
                     </div>
 
-                    <!-- CONFIRM & PAY BUTTON -->
-                    <button type="button" id="confirmCheckoutBtn" class="btn btn-primary w-100 py-2" disabled>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>Delivery Cost</strong>
+                        <strong>R<?= number_format($deliveryPrice, 2) ?></strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                        <strong>Grand Total</strong>
+                        <strong>R<?= number_format($subtotal + $deliveryPrice, 2) ?></strong>
+                    </div>
+
+                    <button type="button" id="confirmCheckoutBtn" class="btn btn-primary w-100 py-2 mt-3">
                         Confirm & Pay
                     </button>
                 </div>
@@ -210,12 +295,11 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
 
         const requiredFields = ['full_name', 'phone', 'email', 'street_address', 'delivery_type', 'local_area', 'zone', 'postal_code', 'country'];
         const allFilled = requiredFields.every(key => deliveryData[key] !== '');
-
         payBtn.disabled = !allFilled;
 
         saveBtn.addEventListener("click", async () => {
             try {
-                const response = await fetch("/cart-checkout/address", { // <-- updated route
+                const response = await fetch("/cart-checkout/address", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -223,18 +307,15 @@ $address = $cartModel->getDeliveryAddress($userId);  // <-- Load saved address
                     body: JSON.stringify(deliveryData)
                 });
                 const data = await response.json();
-                if (data.success) {
-                    payBtn.disabled = false;
-                } else {
-                    alert("Failed to save delivery address: " + (data.error || "Unknown error"));
-                }
+                if (data.success) payBtn.disabled = false;
+                else alert("Failed to save delivery address: " + (data.error || "Unknown error"));
             } catch (err) {
                 console.error(err);
                 alert("An error occurred while saving delivery address.");
             }
         });
 
-        payBtn.addEventListener("click", async () => {
+        payBtn.addEventListener("click", () => {
             alert("Checkout button clicked — proceed to payment.");
         });
     });
