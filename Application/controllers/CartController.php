@@ -64,11 +64,13 @@ class CartController
 
     public function clearCart($userId)
     {
+        $userId = $_SESSION['ADMIN_ID'];
         return $this->cartModel->clearCart($userId);
     }
 
     public function createOrder($userId)
     {
+        $userId = $_SESSION['ADMIN_ID'];
         return $this->cartModel->createOrder($userId);
     }
 
