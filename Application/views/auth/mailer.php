@@ -10,12 +10,12 @@ function sendVerificationEmail($to, $userName, $verificationLink = null, $device
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'www22.jnb2.host-h.net';
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'no-reply@sabooksonline.co.za';
-        $mail->Password = '75o783F0O4L79o';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+        $mail->Password = 'DehKaDRqASgW4rB&';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
 
         $mail->setFrom('no-reply@sabooksonline.co.za', 'SA Books Online');
         $mail->addAddress($to);
@@ -39,7 +39,3 @@ function sendVerificationEmail($to, $userName, $verificationLink = null, $device
         error_log("Email error: {$e->getMessage()}");
     }
 }
-
-
-
-
