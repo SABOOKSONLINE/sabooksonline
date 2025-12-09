@@ -208,7 +208,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             if (targetFormId) {
                 const targetForm = document.getElementById(targetFormId);
 
-                if (targetForm && targetForm.tagName === 'FORM') {
+                if (targetForm && targetForm.tagName === 'FORM') {_POST
                     targetForm.closest('.hide')?.classList.remove('hide');
 
                     targetForm.submit();

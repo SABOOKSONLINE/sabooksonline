@@ -49,7 +49,7 @@ class CartModel extends Model
             "total_amount"        => "DECIMAL(10,2) NOT NULL DEFAULT 0.00",
             "shipping_fee"        => "DECIMAL(10,2) DEFAULT 0.00",
             "payment_method"      => "VARCHAR(50) DEFAULT NULL",
-            "payment_status"      => "ENUM('pending','paid','failed','refunded') DEFAULT 'pending'",
+            "payment_status"      => "ENUM('pending','paid','failed','refunded') DEFAULT 'paid'",
             "order_status"        => "ENUM('pending','processing','packed','shipped','out_for_delivery','delivered','cancelled','returned') DEFAULT 'pending'",
             "tracking_number"     => "VARCHAR(255) DEFAULT NULL",
             "created_at"          => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
