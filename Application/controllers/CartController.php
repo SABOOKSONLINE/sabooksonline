@@ -23,15 +23,14 @@ class CartController
 
     public function getCartCheckoutItems($userId)
     {
-        $cartItems = $this->cartModel->getCartItemsByUserId($userId);
-        return $cartItems;
+        return $this->cartModel->getCartItemsByUserId($userId);
     }
 
     public function getItemsCount()
     {
         $userId = $_SESSION['ADMIN_ID'] ?? null;
-        if ($userId)
-            return count($this->cartModel->getCartItemsByUserId($userId));
+        if ($userId) return $this->cartModel->countItems($userId);
+        return 0;
     }
 
     public function addCartItem($userId, $bookId, $qty)
@@ -52,17 +51,29 @@ class CartController
         return $this->cartModel->updateItemCount($userId, $bookId, $qty);
     }
 
-    // -----------------------------
-    // Save delivery address
-    // -----------------------------
     public function saveDeliveryAddress($userId, array $data)
     {
-        // Expected $data keys: delivery_address, delivery_contact
-        if (empty($userId) || empty($data)) {
-            return false;
-        }
-
-        // Call the model method to actually save to DB
+        if (empty($userId) || empty($data)) return false;
         return $this->cartModel->saveDeliveryAddress($userId, $data);
+    }
+
+    public function getDeliveryAddress($userId)
+    {
+        return $this->cartModel->getDeliveryAddress($userId);
+    }
+
+    public function clearCart($userId)
+    {
+        return $this->cartModel->clearCart($userId);
+    }
+
+    public function createOrder($userId)
+    {
+        return $this->cartModel->createOrder($userId);
+    }
+
+    public function getOrderDetails($orderId)
+    {
+        return $this->cartModel->getOrderDetails($orderId);
     }
 }
