@@ -95,6 +95,7 @@ echo $message4 . "<br>";
 
 if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     require_once __DIR__ . '/../../Config/connection.php';
+    require_once __DIR__ . '/../../models/CartModel.php';
     require_once __DIR__ . '/../../controllers/CartController.php';
 
 
@@ -116,12 +117,11 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
 
     $checkout = new CartController($conn);
 
-     if ($plan === 'hardcopy') {
+    if ($plan === 'hardcopy') {
         $this->checkout->createOrder($format);
-        $this->checkout->clearCart($format);
     }
 
-    if ($bookId) {
+    elseif ($bookId) {
     $sql = "INSERT INTO book_purchases (user_email, book_id, user_key, format, payment_id, amount, payment_status, payment_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     

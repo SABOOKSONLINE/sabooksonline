@@ -115,9 +115,47 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+     $r->addRoute('GET', '/api/cart/{userID}', function ($userID) {
+        $_GET['action'] = 'getCart';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/address/{userID}', function ($userID) {
+        $_GET['action'] = 'addAddress';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
+        $_GET['action'] = 'getOrderDetails';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
         $_GET['action'] = 'audio';
         $_GET['a_id'] = $a_id;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/cart/add/{userID}', function ($userID) {
+        $_GET['action'] = 'addBook';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/address/add/{userID}', function ($userID) {
+        $_GET['action'] = 'addAddress';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/cart/delete/{userID}', function ($userID) {
+        $_GET['action'] = 'deleteBook';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/purchase/{userID}', function ($userID) {
+        $_GET['action'] = 'purchase';
         require "Application/api.php";
     });
 

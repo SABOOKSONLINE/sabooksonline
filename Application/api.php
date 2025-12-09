@@ -15,6 +15,7 @@ require_once __DIR__ . '/models/BookModel.php';
 require_once __DIR__ . '/models/UserModel.php';
 require_once __DIR__ . '/models/MediaModel.php';
 require_once __DIR__ . '/models/ReviewsModel.php';
+require_once __DIR__ . '/models/CartModel.php';
 
 
 require_once __DIR__ . '/controllers/BookController.php';
@@ -22,6 +23,8 @@ require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/MediaController.php';
 require_once __DIR__ . '/controllers/ReviewsController.php';
+require_once __DIR__ . '/controllers/CartController.php';
+require_once __DIR__ . '/controllers/CheckoutController.php';
 
 
 
@@ -30,11 +33,15 @@ $creator = new UserController($conn);
 $reviews = new ReviewsController($conn);
 $authController = new AuthController($conn);
 $media = new MediaController($conn);
+$cart = new CartController($conn);
+$checkout = new CheckoutController($conn);
+
 
 
 $action = $_GET['action'] ?? 'getAllBooks';
 $date = $_GET['updated_since'] ?? null;
 $email = $_GET['email'] ?? null;
+$userID = $_GET['userID'] ?? null;
 
 
 switch ($action) {
@@ -72,6 +79,56 @@ switch ($action) {
         $password = $input['password'];
        
         $authController->signup($name,$email,$password);
+        break;
+
+    case 'getCart':
+        $myCart = $cart->getCartCheckoutItems($userID);
+        echo json_encode([
+        "success" => true,
+        "cart" => $myCart
+    ]);
+        break; 
+
+    case 'addBook':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $bookID = $input['bookID'];
+        $password = $input['qty'];
+        $cart->addCartItem($userID,$bookID, $qty);
+        break;
+
+    case 'purchase':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $price = $input['price'];
+        $checkout->purchase($price,$userID);
+        break;
+
+    case 'deleteBook':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $bookID = $input['bookID'];
+        $cart->removeCartItem($userID,$bookID);
+        break;
+
+    case 'addAddress':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $data = $input['data'];
+        $cart->saveDeliveryAddress($userID,$data);
+        break;
+      
+    case 'getAddress':
+        $address = $cart->getDeliveryAddress($userID);
+        echo json_encode([
+        "success" => true,
+        "address" => $address
+    ]);
+        break;
+
+    case 'getOrderDetails':
+        $order = $cart->getOrderDetails($userID);
+        echo json_encode([
+        "success" => true,
+        "order" => $order
+    ]);
+        
         break;
 
     case 'getAllBooks':
