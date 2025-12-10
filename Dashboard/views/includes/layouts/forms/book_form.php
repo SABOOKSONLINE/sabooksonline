@@ -245,91 +245,124 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 
-    <hr class="my-4">
+    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>
+        <hr class="my-4">
 
+        <h4 class="fw-bold mb-3">Hardcopy Details</h4>
 
-    <h4 class="fw-bold mb-3">Hardcopy Details</h4>
+        <div class="row g-3">
 
-    <div class="row g-3">
+            <!-- Price -->
+            <div class="col-md-6">
+                <label for="hc_price" class="form-label">Price (R)
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" step="0.01" name="hc_price" id="hc_price" class="form-control"
+                    value="<?= htmlspecialchars($hcPrice ?? '') ?>">
+            </div>
 
-        <!-- Price -->
-        <div class="col-md-6">
-            <label for="hc_price" class="form-label">Price (R)</label>
-            <input type="number" step="0.01" name="hc_price" id="hc_price" class="form-control"
-                value="<?= htmlspecialchars($hcPrice ?? '') ?>">
+            <!-- Discount -->
+            <div class="col-md-6">
+                <label for="hc_discount_percent" class="form-label">
+                    Discount (%)
+                    <span class="text-danger small">
+                        Note: percentage will be deducted from the price.
+                    </span>
+                </label>
+                <input type="number" name="hc_discount_percent" id="hc_discount_percent"
+                    class="form-control" min="0" max="100"
+                    value="<?= htmlspecialchars($hcDiscountPercent ?? 0) ?>">
+            </div>
+
+            <!-- Country -->
+            <div class="col-md-6">
+                <label for="hc_country" class="form-label">Country
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="text" name="hc_country" id="hc_country" class="form-control"
+                    value="<?= htmlspecialchars($hcCountry ?? '') ?>">
+            </div>
+
+            <!-- Pages -->
+            <div class="col-md-6">
+                <label for="hc_pages" class="form-label">Pages
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" name="hc_pages" id="hc_pages" class="form-control"
+                    value="<?= htmlspecialchars($hcPages ?? '') ?>">
+            </div>
+
+            <!-- Weight -->
+            <div class="col-md-6">
+                <label for="hc_weight_kg" class="form-label">Weight (kg)
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" step="0.01" name="hc_weight_kg" id="hc_weight_kg" class="form-control"
+                    value="<?= htmlspecialchars($hcWeightKg ?? '') ?>">
+            </div>
+
+            <!-- Height -->
+            <div class="col-md-6">
+                <label for="hc_height_cm" class="form-label">Height (cm)
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" step="0.01" name="hc_height_cm" id="hc_height_cm" class="form-control"
+                    value="<?= htmlspecialchars($hcHeightCm ?? '') ?>">
+            </div>
+
+            <!-- Width -->
+            <div class="col-md-6">
+                <label for="hc_width_cm" class="form-label">Width (cm)
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" step="0.01" name="hc_width_cm" id="hc_width_cm" class="form-control"
+                    value="<?= htmlspecialchars($hcWidthCm ?? '') ?>">
+            </div>
+
+            <!-- Release Date -->
+            <div class="col-md-6">
+                <label for="hc_release_date" class="form-label">Release Date
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="date" name="hc_release_date" id="hc_release_date" class="form-control"
+                    value="<?= htmlspecialchars($hcReleaseDate ?? '') ?>">
+            </div>
+
+            <!-- Contributors -->
+            <div class="col-md-6">
+                <label for="hc_contributors" class="form-label">Contributors</label>
+                <input type="text" name="hc_contributors" id="hc_contributors" class="form-control" value="SABO"
+                    value="<?= htmlspecialchars($hcContributors ?? '') ?>">
+            </div>
+
+            <!-- Stock -->
+            <div class="col-md-6">
+                <label for="hc_stock_count" class="form-label">Stock Count
+                    <span class="text-danger small">
+                        *
+                    </span>
+                </label>
+                <input type="number" name="hc_stock_count" id="hc_stock_count" class="form-control"
+                    value="<?= htmlspecialchars($hcStockCount ?? 0) ?>">
+            </div>
+
         </div>
 
-        <!-- Discount -->
-        <div class="col-md-6">
-            <label for="hc_discount_percent" class="form-label">
-                Discount (%)
-                <span class="text-danger small">
-                    Note: percentage will be deducted from the price.
-                </span>
-            </label>
-            <input type="number" name="hc_discount_percent" id="hc_discount_percent"
-                class="form-control" min="0" max="100"
-                value="<?= htmlspecialchars($hcDiscountPercent ?? 0) ?>">
-        </div>
-
-        <!-- Country -->
-        <div class="col-md-6">
-            <label for="hc_country" class="form-label">Country</label>
-            <input type="text" name="hc_country" id="hc_country" class="form-control"
-                value="<?= htmlspecialchars($hcCountry ?? '') ?>">
-        </div>
-
-        <!-- Pages -->
-        <div class="col-md-6">
-            <label for="hc_pages" class="form-label">Pages</label>
-            <input type="number" name="hc_pages" id="hc_pages" class="form-control"
-                value="<?= htmlspecialchars($hcPages ?? '') ?>">
-        </div>
-
-        <!-- Weight -->
-        <div class="col-md-6">
-            <label for="hc_weight_kg" class="form-label">Weight (kg)</label>
-            <input type="number" step="0.01" name="hc_weight_kg" id="hc_weight_kg" class="form-control"
-                value="<?= htmlspecialchars($hcWeightKg ?? '') ?>">
-        </div>
-
-        <!-- Height -->
-        <div class="col-md-6">
-            <label for="hc_height_cm" class="form-label">Height (cm)</label>
-            <input type="number" step="0.01" name="hc_height_cm" id="hc_height_cm" class="form-control"
-                value="<?= htmlspecialchars($hcHeightCm ?? '') ?>">
-        </div>
-
-        <!-- Width -->
-        <div class="col-md-6">
-            <label for="hc_width_cm" class="form-label">Width (cm)</label>
-            <input type="number" step="0.01" name="hc_width_cm" id="hc_width_cm" class="form-control"
-                value="<?= htmlspecialchars($hcWidthCm ?? '') ?>">
-        </div>
-
-        <!-- Release Date -->
-        <div class="col-md-6">
-            <label for="hc_release_date" class="form-label">Release Date</label>
-            <input type="date" name="hc_release_date" id="hc_release_date" class="form-control"
-                value="<?= htmlspecialchars($hcReleaseDate ?? '') ?>">
-        </div>
-
-        <!-- Contributors -->
-        <div class="col-md-6">
-            <label for="hc_contributors" class="form-label">Contributors</label>
-            <input type="text" name="hc_contributors" id="hc_contributors" class="form-control"
-                value="<?= htmlspecialchars($hcContributors ?? '') ?>">
-        </div>
-
-        <!-- Stock -->
-        <div class="col-md-6">
-            <label for="hc_stock_count" class="form-label">Stock Count</label>
-            <input type="number" name="hc_stock_count" id="hc_stock_count" class="form-control"
-                value="<?= htmlspecialchars($hcStockCount ?? 0) ?>">
-        </div>
-
-    </div>
-
+    <?php } ?>
 
     <hr class="my-4">
 
