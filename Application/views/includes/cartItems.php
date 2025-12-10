@@ -22,6 +22,7 @@
                 $qty        = (int)$item['cart_item_count'];
                 $cover      = $item['cover_image'] ?: "assets/images/no-cover.png";
                 $hc_price   = $item['hc_price'];
+                $maxQty     = $item['hc_stock_count'];
                 // echo "<pre>";
                 // print_r($item);
                 // echo "</pre>";
@@ -63,6 +64,7 @@
                                             style="width: 70px;"
                                             value="<?= $qty ?>"
                                             min="1"
+                                            max="<?= $maxQty ?>"
                                             data-book-id="<?= $bookId ?>">
                                     </div>
 
