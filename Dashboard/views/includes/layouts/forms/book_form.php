@@ -245,7 +245,7 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 
-    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za") { ?>
+    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com") { ?>
         <hr class="my-4">
 
         <h4 class="fw-bold mb-3">Hardcopy Details</h4>
