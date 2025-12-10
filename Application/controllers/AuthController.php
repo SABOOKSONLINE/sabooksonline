@@ -138,6 +138,7 @@ public function getUserInfo($email) {
     echo json_encode([
         'success' => true,
         'adminKey' => $userData['ADMIN_USERKEY'],
+        'adminID' => $userData['ADMIN_ID'],
         'email' => $userData['ADMIN_EMAIL'],
         'profile' => $userData['ADMIN_PROFILE_IMAGE'],
         'name' => $userData['ADMIN_NAME'],
@@ -247,6 +248,7 @@ public function getUserInfo($email) {
     echo json_encode([
         'success' => true,
         'adminKey' => $userData['ADMIN_USERKEY'],
+        'adminID' => $userData['ADMIN_ID'],
         'email' => $userData['ADMIN_EMAIL'],
         'profile' => $userData['ADMIN_PROFILE_IMAGE'],
         'name' => $userData['ADMIN_NAME'],

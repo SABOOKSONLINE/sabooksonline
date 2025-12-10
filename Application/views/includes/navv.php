@@ -14,6 +14,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? "";
+if (!$userKey) {
+    header('Location: /login');
+    exit;
+}
+
 $profileImage = "";
 if (isset($_SESSION['ADMIN_PROFILE_IMAGE'])) {
     $profileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
@@ -37,7 +42,6 @@ if (isset($userKey)) {
     header("Location: /login");
     exit;
 }
-
 ?>
 
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVQBTH7N"
@@ -59,35 +63,33 @@ if (isset($userKey)) {
                 <span class="fas fa-bars"></span>
             </button>
         </div>
+        <?php if (!$_SERVER['REQUEST_URI'] === '/cart/checkout'): ?>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library">Library</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/membership">Sell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library/academic">Academic</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/media">Media</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">Our Services</a>
+                    </li>
 
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/library">Library</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/membership">Sell</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/library/academic">Academic</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/media">Media</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/services">Our Services</a>
-                </li>
-               
-                <li class="nav-item">
-                    <a class="nav-link" href="/contact">Contact</a>
-                </li>
-            </ul>
-
-        </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        <?php endif ?>
     </div>
 </nav>
-
-

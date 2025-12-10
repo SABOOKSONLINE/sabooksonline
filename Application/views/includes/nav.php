@@ -10,6 +10,12 @@ require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../../models/PageVisitsModel.php";
 require_once __DIR__ . "/../../controllers/PageVisitsController.php";
 
+require_once __DIR__ . "/../../Config/connection.php";
+require_once __DIR__ . "/../../models/CartModel.php";
+require_once __DIR__ . "/../../controllers/CartController.php";
+$cartController = new CartController($conn);
+$cartItemsCount = 0;
+
 require_once __DIR__ . "/../../controllers/HomeController.php";
 $homeController = new HomeController($conn);
 
@@ -29,6 +35,7 @@ if (isset($_SESSION['ADMIN_PROFILE_IMAGE'])) {
 }
 
 if (isset($userKey)) {
+    $cartItemsCount = $cartController->getItemsCount();
     if (!empty($profileImage)) {
         if (strpos($profileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
             $profile = "/public/images/user-3296.png";
@@ -123,8 +130,16 @@ $navItems = [
                 </form>
 
                 <!-- Profile / Login -->
-                <div>
+                <div class="d-flex align-items-center">
                     <?php if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])): ?>
+                        <!-- Cart -->
+                        <a href="/cart" class="position-relative me-3 text-decoration-none text-dark">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
+                                <?= $cartItemsCount ?>
+                            </span>
+                        </a>
+
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 48px; height: 48px;">
                                 <img src="<?= $profile ?>" alt="Admin Profile" class="rounded-circle" style="width:100%; height:100%; object-fit:cover; border:2px solid #dee2e6; box-shadow:0 2px 4px rgba(0,0,0,0.1);">

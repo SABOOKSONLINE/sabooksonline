@@ -17,10 +17,10 @@ function sendEmail($to, $link, $message)
 
         // Server settings
         $mail->isSMTP();
-        $mail->Host = 'www22.jnb2.host-h.net';       // Your hosting SMTP server
+        $mail->Host = 'smtp.gmail.com';       // Your hosting SMTP server
         $mail->SMTPAuth = true;
         $mail->Username = 'no-reply@sabooksonline.co.za';
-        $mail->Password = '75o783F0O4L79o';
+        $mail->Password = 'DehKaDRqASgW4rB&';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL (465)
         $mail->Port = 465;
 

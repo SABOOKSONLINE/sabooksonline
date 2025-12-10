@@ -34,6 +34,10 @@ $current_path = $_SERVER['REQUEST_URI'];
                 <a href="/admin/users" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/users' || $current_path == '/admin/users/') ? 'active' : ''; ?>">
                     <i class="fas fa-users me-2"></i> Users
                 </a>
+
+                <a href="/admin/orders" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/orders' || $current_path == '/admin/orders/') ? 'active' : ''; ?>">
+                    <i class="fa-solid fa-bag-shopping me-2"></i> Orders
+                </a>
             </div>
 
         </div>

@@ -115,9 +115,47 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+     $r->addRoute('GET', '/api/cart/{userID}', function ($userID) {
+        $_GET['action'] = 'getCart';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/address/{userID}', function ($userID) {
+        $_GET['action'] = 'addAddress';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+     $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
+        $_GET['action'] = 'getOrderDetails';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
         $_GET['action'] = 'audio';
         $_GET['a_id'] = $a_id;
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/cart/add/{userID}', function ($userID) {
+        $_GET['action'] = 'addBook';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/address/add/{userID}', function ($userID) {
+        $_GET['action'] = 'addAddress';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/cart/delete/{userID}', function ($userID) {
+        $_GET['action'] = 'deleteBook';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/purchase/{userID}', function ($userID) {
+        $_GET['action'] = 'purchase';
         require "Application/api.php";
     });
 
@@ -540,6 +578,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/index.php";
     });
 
+    $r->addRoute('GET', '/admin/orders', function () {
+        require  "Admin/index.php";
+    });
+
     $r->addRoute('GET', '/admin/users/impersonate/{id}', function ($id) {
         $_GET["id"] = $id;
         require  "Admin/Helpers/impersonate.php";
@@ -564,6 +606,29 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
     $r->addRoute('GET', '/405', function () {
         require  "Application/views/405.php";
+    });
+
+    // =================== Cart ===================
+    $r->addRoute('GET', '/cart', function () {
+        require "Application/views/cart.php";
+    });
+    $r->addRoute('POST', '/cart/add', function () {
+        require "Application/handlers/cartHandler.php";
+    });
+    $r->addRoute('POST', '/cart/update', function () {
+        require "Application/handlers/cartHandler.php";
+    });
+    $r->addRoute('POST', '/cart/remove', function () {
+        require "Application/handlers/cartHandler.php";
+    });
+    $r->addRoute('GET', '/cart/checkout', function () {
+        require "Application/views/cartCheckout.php";
+    });
+    $r->addRoute('POST', '/cart-checkout/process', function () {
+        require "Application/handlers/checkoutHandler.php";
+    });
+    $r->addRoute('POST', '/cart-checkout/address', function () {
+        require "Application/handlers/saveDeliveryAddressHandler.php";
     });
 });
 

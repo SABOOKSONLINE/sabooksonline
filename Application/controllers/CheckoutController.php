@@ -82,6 +82,17 @@ class CheckoutController {
     $this->generatePaymentForm($academicBook, $user, $format);
 }
 
+public function purchase($price, $userId) {
+
+    $user = $this->userModel->getUserByNameOrKey($userId);
+    if (empty($user)) {
+        die("User not found.");
+    }
+
+    
+    $this->generatePayment($price, $user);
+}
+
 
     public function subscribe($planType, $paymentOption, $userId) {
 
@@ -109,6 +120,52 @@ class CheckoutController {
 }
 
 
+public function generatePayment($price, $user) {
+    if (!$user) {
+        die("Invalid book or user data.");
+    }
+
+
+    $userId = $user['ADMIN_ID'] ?? '';
+    $userName = $user['ADMIN_NAME'] ?? 'Customer';
+    $userEmail = $user['ADMIN_EMAIL'] ?? '';
+    
+
+    $data = [
+        'merchant_id'     => '18172469',
+        'merchant_key'    => 'gwkk16pbxdd8m',
+        'return_url'      => 'https://www.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://www.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://www.sabooksonline.co.za/payment/notify',
+        'name_first'      => $userName,
+        'email_address'   => $userEmail,
+        'm_payment_id'    => uniqid(),
+        'amount'          => number_format($price, 2, '.', ''),
+        'item_name'       => 'Checkout Books Purchase',
+        'custom_str2'     => 'hardcopy',
+        'custom_str3'     => $userId,
+
+    ];
+
+    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $data['signature'] = $signature;
+
+    $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
+    foreach ($data as $name => $value) {
+        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
+    }
+    $htmlForm .= '</form>';
+
+    // $htmlForm .= '<script>
+    //     document.addEventListener("DOMContentLoaded", function() {
+    //         document.getElementById("payfastForm").submit();
+    //     });
+    // </script>';
+
+    // echo $htmlForm;
+    include __DIR__ . '/../views/payment/checkout.php';
+
+}
    public function generatePaymentForm($book, $user, $format = 'Ebook') {
     if (!$book || !$user) {
         die("Invalid book or user data.");
@@ -138,7 +195,10 @@ class CheckoutController {
             break;
         case 'newspaper':
             $price = $book['price'] ?? 0;
-            break;    
+            break; 
+        case 'hardcopy':
+            $price = $book['price'] ?? 0;
+            break;   
     }
 
     if (empty($bookId) || empty($userEmail)) {

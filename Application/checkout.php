@@ -9,6 +9,7 @@ $userId = $_SESSION['ADMIN_USERKEY'] ?? null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $bookId = $_POST['bookId'] ?? null;
+    $hardcopy = $_POST['price'] ?? null;
     $audiobookId = $_POST['audiobookId'] ?? null;
     $magazineId = $_POST['magazineId'] ?? null;
     $newspaperId = $_POST['newspaperId'] ?? null;
@@ -28,7 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkout->purchaseBook($bookId, $userId);
     }
 
-    elseif ($audiobookId) {
+    elseif ($hardcopy) {
+        $checkout->purchase($hardcopy,$userId);
+    }
+     elseif ($audiobookId) {
         $checkout->purchaseBook($audiobookId, $userId, 'Audiobook');
     }
 
