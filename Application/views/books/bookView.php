@@ -357,6 +357,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 data-book-id="<?= $book['ID']; ?>">
                                 Add to cart
                             </button>
+                        <?php else: ?>
+                            <a href="/login" class="btn btn-green w-100">Add to cart</a>
                         <?php endif; ?>
                         <span class="bv-note-muted" id="hardcopy"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                     </div>
