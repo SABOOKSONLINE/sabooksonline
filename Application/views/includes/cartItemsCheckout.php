@@ -35,18 +35,18 @@ function getCourierGuyDeliveryCost($address, $cartItems)
     $payload = [
         "collection_address" => [
             "type" => "business",
-            "company" => "uAfrica.com",
-            "street_address" => "116 Lois Avenue",
-            "local_area" => "Menlyn",
-            "city" => "Pretoria",
-            "code" => "0181",
+            "company" => "https://www.sabooksonline.co.za/",
+            "street_address" => "68 Melville Rd",
+            "local_area" => "Illovo",
+            "city" => "Sandton",
+            "code" => "2196",
             "zone" => "Gauteng",
             "country" => "ZA"
         ],
         "collection_contact" => [
-            "name" => "Cornel Rautenbach",
-            "mobile_number" => "+27821234567",
-            "email" => "tjjmalebana@gmail.com"
+            "name" => "Pearl Khumalo",
+            "mobile_number" => "+27678523593",
+            "email" => "pearl@sabooksonline.co.za"
         ],
         "delivery_address" => [
             "type" => $address['delivery_type'] ?? "residential",
