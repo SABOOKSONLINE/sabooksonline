@@ -232,4 +232,26 @@ class CartModel extends Model
         $items = $this->fetchPrepared("SELECT * FROM order_items WHERE order_id=?", "i", [$orderId]);
         return ["order" => $order[0], "items" => $items];
     }
+
+    public function updateOrderTotals(int $orderId, ?float $totalAmount, ?float $shippingFee, ?string $paymentMethod): bool
+    {
+        $this->createOrdersTable();
+        $order = $this->fetchPrepared("SELECT * FROM orders WHERE id=?", "i", [$orderId]);
+        if (empty($order)) return false;
+
+        $order = $order[0];
+        $totalAmount = $totalAmount ?? $order['total_amount'];
+        $shippingFee = $shippingFee ?? $order['shipping_fee'];
+        $paymentMethod = $paymentMethod ?? $order['payment_method'];
+
+        $stmt = $this->conn->prepare("
+        UPDATE orders 
+        SET total_amount=?, shipping_fee=?, payment_method=?
+        WHERE id=?
+    ");
+        $stmt->bind_param("ddsi", $totalAmount, $shippingFee, $paymentMethod, $orderId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 }
