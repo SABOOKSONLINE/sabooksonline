@@ -99,7 +99,7 @@ switch ($action) {
     case 'purchase':
         $input = json_decode(file_get_contents('php://input'), true);
         $price = $input['price'];
-        $checkout->purchase($price,$userID);
+        $checkout->purchase($price,$userID,true);
         break;
 
     case 'deleteBook':

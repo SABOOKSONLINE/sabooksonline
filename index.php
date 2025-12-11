@@ -156,8 +156,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('POST', '/api/purchase/{userID}', function ($userID) {
         $_GET['action'] = 'purchase';
+        $_GET['userID'] = $userID;
+
         require "Application/api.php";
     });
+
+
 
     $r->addRoute('POST', '/api/login', function () {
         $_GET['action'] = 'login';
