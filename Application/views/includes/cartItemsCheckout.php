@@ -266,7 +266,7 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
                     </div>
 
 
-                    <form method="POST" action="/checkout-book" id="purchase" class="w-100 mt-3">
+                    <form method="POST" action="/checkout" id="purchase" class="w-100 mt-3">
                         <input type="hidden" name="price" value="<?= number_format($subtotal + $deliveryPrice, 2, '.', '') ?>">
                         <input type="hidden" name="shipping_price" value="<?= number_format($deliveryPrice, 2, '.', '') ?>">
                         <button type="button" id="confirmCheckoutBtn" class="btn btn-primary w-100 py-2 mt-3">
