@@ -198,7 +198,7 @@ class CartModel extends Model
         if (!$address) return null;
         $orderNumber = "ORD-" . time() . "-" . rand(1000, 9999);
         $subtotal = 0;
-        foreach ($cartItems as $item) $subtotal += ($item["PRICE"] ?? 0) * $item["cart_item_count"];
+        foreach ($cartItems as $item) $subtotal += ($item["hc_price"] ?? 0) * $item["cart_item_count"];
         $shippingFee = 60;
         $total = $subtotal + $shippingFee;
         $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee) VALUES (?, ?, ?, ?, ?)";
@@ -208,12 +208,12 @@ class CartModel extends Model
         $orderId = $stmt->insert_id;
         $stmt->close();
         foreach ($cartItems as $item) {
-            $price = $item["PRICE"] ?? 0;
+            $price = $item["hc_price"] ?? 0;
             $qty = $item["cart_item_count"];
             $totalPrice = $price * $qty;
             $sqlItem = "INSERT INTO order_items (order_id, book_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)";
             $stmtItem = $this->conn->prepare($sqlItem);
-            $stmtItem->bind_param("iiidd", $orderId, $item["book_id"], $qty, $price, $totalPrice);
+            $stmtItem->bind_param("iiidd", $orderId, $item["book_id"], $qty, $price, $totalPrice);  
             $stmtItem->execute();
             $stmtItem->close();
         }
