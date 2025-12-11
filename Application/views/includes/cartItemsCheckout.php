@@ -266,7 +266,7 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
                     </div>
 
 
-                    <form method="POST" action="/checkout" id="digital-version" class="w-100 mt-3">
+                    <form method="POST" action="/checkout" id="purchase" class="w-100 mt-3">
                         <input type="hidden" name="price" value="<?= number_format($subtotal + $deliveryPrice, 2, '.', '') ?>">
                         <button type="button" id="confirmCheckoutBtn" class="btn btn-primary w-100 py-2 mt-3">
                             Confirm & Pay
@@ -322,5 +322,10 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
         // payBtn.addEventListener("click", () => {
         //     alert("Checkout button clicked — proceed to payment.");
         // });
+
+        payBtn.addEventListener("click", () => {
+        document.getElementById("purchase").submit();
+    });
+
     });
 </script>

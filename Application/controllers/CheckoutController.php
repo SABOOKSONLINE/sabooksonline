@@ -82,15 +82,18 @@ class CheckoutController {
     $this->generatePaymentForm($academicBook, $user, $format);
 }
 
-public function purchase($price, $userId) {
+public function purchase($price, $userId,$api = false) {
 
     $user = $this->userModel->getUserByNameOrKey($userId);
     if (empty($user)) {
         die("User not found.");
     }
 
-    
-    $this->generatePayment($price, $user);
+    if($api){
+          $this->payment($price, $user);
+
+    }else{
+    $this->generatePayment($price, $user);}
 }
 
 
@@ -117,6 +120,47 @@ public function purchase($price, $userId) {
             $user
         );
     }
+}
+
+public function payment($price, $user) {
+
+    if (!$user) {
+        die("Invalid book or user data.");
+    }
+
+    $userId      = $user['ADMIN_ID'];
+    $userName    = $user['ADMIN_NAME'];
+    $userEmail   = $user['ADMIN_EMAIL'];
+
+    $data = [
+        'merchant_id'     => '18172469',
+        'merchant_key'    => 'gwkk16pbxdd8m',
+        'return_url'      => 'https://www.sabooksonline.co.za/payment/return',
+        'cancel_url'      => 'https://www.sabooksonline.co.za/payment/cancel',
+        'notify_url'      => 'https://www.sabooksonline.co.za/payment/notify',
+        'name_first'      => $userName,
+        'email_address'   => $userEmail,
+        'm_payment_id'    => uniqid(),
+        'amount'          => number_format($price, 2, '.', ''),
+        'item_name'       => 'Checkout Books Purchase',
+        'custom_str2'     => 'hardcopy',
+        'custom_str3'     => $userId
+    ];
+
+    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $data['signature'] = $signature;
+    // Build query string
+    $queryString = http_build_query($data);
+
+    // PayFast URL
+    $paymentUrl = "https://www.payfast.co.za/eng/process?" . $queryString;
+
+    // Return JSON to mobile app
+    echo json_encode([
+        "status" => "success",
+        "payment_url" => $paymentUrl
+    ]);
+    exit;
 }
 
 
