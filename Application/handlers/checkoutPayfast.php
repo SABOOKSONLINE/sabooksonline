@@ -6,20 +6,23 @@ require_once __DIR__ . "/../views/auth/default_mailer.php";
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-$userId = $_SESSION['ADMIN_ID'] ?? null;
-if (!$userId) die("Admin ID not found in session.");
-
-$cartController = new CartController($conn);
-
-$address = $cartController->getDeliveryAddress($userId);
-$cartItems = $cartController->getCartCheckoutItems($userId);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (empty($cartItems)) die("Cart is empty, cannot create order.");
-
+function createOrderAndNotify(int $userId, float $shippingFee = 0): string
+{
+    global $conn;
     $paymentMethod = 'payfast';
-    $shippingFee = $_POST['shipping_price'] ?? 0;
+
+    if (!$userId) {
+        return "User ID is required.";
+    }
+
+    $cartController = new CartController($conn);
+
+    $address = $cartController->getDeliveryAddress($userId);
+    $cartItems = $cartController->getCartCheckoutItems($userId);
+
+    if (empty($cartItems)) {
+        return "Cart is empty, cannot create order.";
+    }
 
     $subtotal = 0;
     foreach ($cartItems as $item) {
@@ -28,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $grandTotal = $subtotal + $shippingFee;
 
     $orderId = $cartController->createOrder($userId);
-    if (!$orderId) die("Failed to create order.");
+    if (!$orderId) {
+        return "Failed to create order.";
+    }
 
     $cartController->updateOrderTotals($orderId, $grandTotal, $shippingFee, $paymentMethod);
 
@@ -51,14 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $message .= "</ul>";
 
-    // send email to buyer
-    sendEmail($address['email'], "", $message);
+    sendEmail($address['email'], "Your Order Details", $message);
+    sendEmail("pearl@sabooksonline.co.za", "New Order Placed", $message);
 
-    // send email to pearl
-    sendEmail("pearl@sabooksonline.co.za", "", $message);
-
-    echo $message;
-    echo "<p><em>Cart has been cleared automatically.</em></p>";
-} else {
-    echo "Please submit the form with POST values 'price' and 'shipping_price' to create the order.";
+    return $message . "<p><em>Cart has been cleared automatically.</em></p>";
 }
