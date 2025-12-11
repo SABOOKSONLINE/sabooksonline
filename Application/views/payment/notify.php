@@ -95,9 +95,7 @@ echo $message4 . "<br>";
 
 if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     require_once __DIR__ . '/../../Config/connection.php';
-    require_once __DIR__ . '/../../models/CartModel.php';
-    require_once __DIR__ . '/../../controllers/CartController.php';
-
+    require_once __DIR__ . '/../../handlers/checkoutPayfast.php';
 
     $amount = floatval($pfData['amount_gross']);
     $orderName = $pfData['item_name'] ?? '';
@@ -115,10 +113,9 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     $logDetails = '';
 
 
-    $checkout = new CartController($conn);
 
     if ($plan === 'hardcopy') {
-        $this->checkout->createOrder($format);
+        createOrderAndNotify($format, $shippingFee = 70);    
     }
 
     elseif ($bookId) {
