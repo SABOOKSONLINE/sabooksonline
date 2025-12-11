@@ -200,14 +200,13 @@ public function generatePayment($price, $user) {
     }
     $htmlForm .= '</form>';
 
-    // $htmlForm .= '<script>
-    //     document.addEventListener("DOMContentLoaded", function() {
-    //         document.getElementById("payfastForm").submit();
-    //     });
-    // </script>';
+    $htmlForm .= '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("payfastForm").submit();
+        });
+    </script>';
 
-    // echo $htmlForm;
-    include __DIR__ . '/../views/payment/checkout.php';
+    echo $htmlForm;
 
 }
    public function generatePaymentForm($book, $user, $format = 'Ebook') {

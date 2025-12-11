@@ -122,7 +122,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
      $r->addRoute('GET', '/api/address/{userID}', function ($userID) {
-        $_GET['action'] = 'addAddress';
+        $_GET['action'] = 'getAddress';
         $_GET['userID'] = $userID;
         require "Application/api.php";
     });
