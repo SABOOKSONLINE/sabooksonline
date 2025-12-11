@@ -115,19 +115,19 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/cart/{userID}', function ($userID) {
+    $r->addRoute('GET', '/api/cart/{userID}', function ($userID) {
         $_GET['action'] = 'getCart';
         $_GET['userID'] = $userID;
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/address/{userID}', function ($userID) {
+    $r->addRoute('GET', '/api/address/{userID}', function ($userID) {
         $_GET['action'] = 'getAddress';
         $_GET['userID'] = $userID;
         require "Application/api.php";
     });
 
-     $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
+    $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
         $_GET['action'] = 'getOrderDetails';
         $_GET['userID'] = $userID;
         require "Application/api.php";
@@ -633,6 +633,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
     $r->addRoute('POST', '/cart-checkout/address', function () {
         require "Application/handlers/saveDeliveryAddressHandler.php";
+    });
+    $r->addRoute('POST', '/checkout-book', function () {
+        require "Application/handlers/checkoutPayfast.php";
     });
 });
 
