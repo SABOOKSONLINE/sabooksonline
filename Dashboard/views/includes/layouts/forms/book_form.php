@@ -245,7 +245,16 @@ if (!empty($book['DATEPOSTED'])) {
         </div>
     </div>
 
-    <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com") { ?>
+    <?php
+    if (
+        !empty($book['ID']) &&
+        (
+            $_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" ||
+            $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" ||
+            $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"
+        )
+    ):
+    ?>
         <hr class="my-4">
 
         <h4 class="fw-bold mb-3">Hardcopy Details</h4>
@@ -362,7 +371,7 @@ if (!empty($book['DATEPOSTED'])) {
 
         </div>
 
-    <?php } ?>
+    <?php endif; ?>
 
     <hr class="my-4">
 

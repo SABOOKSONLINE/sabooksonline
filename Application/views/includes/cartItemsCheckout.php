@@ -9,7 +9,7 @@ $address = $cartModel->getDeliveryAddress($userId);
 $cartItems = $cartModel->getCartItemsByUserId($userId);
 
 // echo "<pre>";
-// print_r($cartItems);
+// print_r($address);
 // echo "</pre>";
 
 function getCourierGuyDeliveryCost($address, $cartItems)
@@ -152,7 +152,7 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
 
                         <div class="col-12">
                             <label class="form-label">Street Address <span class="text-danger">*</span></label>
-                            <input type="text" id="street_address" class="form-control" required
+                            <input type="text" id="street_address" class="form-control" required pattern=".*"
                                 value="<?= $address['street_address'] ?? '' ?>">
                         </div>
 
@@ -186,7 +186,7 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
 
                         <div class="col-md-6">
                             <label class="form-label">Postal / ZIP Code <span class="text-danger">*</span></label>
-                            <input type="text" id="code" class="form-control" required
+                            <input type="number" id="code" class="form-control" required
                                 value="<?= $address['postal_code'] ?? '' ?>">
                         </div>
 
@@ -297,9 +297,44 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
             country: document.getElementById('country').value.trim()
         };
 
-        const requiredFields = ['full_name', 'phone', 'email', 'street_address', 'delivery_type', 'local_area', 'zone', 'postal_code', 'country'];
-        const allFilled = requiredFields.every(key => deliveryData[key] !== '');
-        payBtn.disabled = !allFilled;
+        const keyMap = {
+            company: "company",
+            full_name: "full_name",
+            mobile_number: "phone",
+            email: "email",
+            street_address: "street_address",
+            delivery_type: "delivery_type",
+            local_area: "local_area",
+            zone: "zone",
+            code: "postal_code",
+            country: "country"
+        };
+
+        const requiredFields = [
+            "full_name",
+            "phone",
+            "email",
+            "street_address",
+            "delivery_type",
+            "local_area",
+            "zone",
+            "postal_code",
+            "country"
+        ];
+
+        function validateFields() {
+            const allFilled = requiredFields.every(key => deliveryData[key] !== "");
+            payBtn.disabled = !allFilled;
+        }
+
+        document.querySelectorAll("#delivery_type, #company, #full_name, #mobile_number, #email, #street_address, #local_area, #zone, #code, #country")
+            .forEach(input => {
+                input.addEventListener("input", () => {
+                    const mappedKey = keyMap[input.id];
+                    deliveryData[mappedKey] = input.value.trim();
+                    validateFields();
+                });
+            });
 
         saveBtn.addEventListener("click", async () => {
             try {
@@ -310,17 +345,21 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
                     },
                     body: JSON.stringify(deliveryData)
                 });
+
                 const data = await response.json();
-                if (data.success) payBtn.disabled = false;
-                else alert("Failed to save delivery address: " + (data.error || "Unknown error"));
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Failed to save delivery address: " + (data.error || "Unknown error"));
+                }
+
             } catch (err) {
                 console.error(err);
                 alert("An error occurred while saving delivery address.");
             }
         });
 
-        // payBtn.addEventListener("click", () => {
-        //     alert("Checkout button clicked — proceed to payment.");
-        // });
+        validateFields();
     });
 </script>
