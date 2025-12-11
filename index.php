@@ -605,6 +605,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/Helpers/process_banners.php";
     });
 
+    $r->addRoute('POST', '/admin/orders/update-status', function () {
+        require "Admin/Helpers/process_order.php";
+    });
+
     $r->addRoute('GET', '/401', function () {
         require  "Application/views/401.php";
     });

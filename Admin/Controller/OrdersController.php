@@ -18,8 +18,26 @@ class OrdersController extends Controller
 
     public function orders()
     {
+        $orders = $this->ordersModel->getAllOrders();
+        $allItems = [];
+
+        foreach ($orders as $order) {
+            $allItems[$order['id']] = $this->ordersModel->getOrderItems($order['id']);
+        }
+
         $this->render("orders", [
-            "orders" => ""
+            "orders" => $orders,
+            "items"  => $allItems
+        ]);
+    }
+
+
+    public function orderItems(int $orderId)
+    {
+        $items = $this->ordersModel->getOrderItems($orderId);
+
+        $this->render("order_items", [
+            "items" => $items
         ]);
     }
 }
