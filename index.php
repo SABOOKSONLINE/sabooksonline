@@ -133,7 +133,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-    $r->addRoute('GET', '/api/analytics', function () {
+    $r->addRoute('POST', '/api/analytics', function () {
         $_GET['action'] = 'analytics';
         require "Application/api.php";
     });
