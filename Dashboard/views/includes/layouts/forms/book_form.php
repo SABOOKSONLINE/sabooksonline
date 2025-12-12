@@ -251,7 +251,8 @@ if (!empty($book['DATEPOSTED'])) {
         (
             $_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" ||
             $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" ||
-            $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"
+            $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com" ||
+            $_SESSION['ADMIN_EMAIL'] == "sbusisomanqa@gmail.com"
         )
     ):
     ?>
