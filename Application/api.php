@@ -16,6 +16,8 @@ require_once __DIR__ . '/models/UserModel.php';
 require_once __DIR__ . '/models/MediaModel.php';
 require_once __DIR__ . '/models/ReviewsModel.php';
 require_once __DIR__ . '/models/CartModel.php';
+require_once __DIR__ . "/../Dashboard/models/UserModel.php";
+
 
 
 require_once __DIR__ . '/controllers/BookController.php';
@@ -25,6 +27,7 @@ require_once __DIR__ . '/controllers/MediaController.php';
 require_once __DIR__ . '/controllers/ReviewsController.php';
 require_once __DIR__ . '/controllers/CartController.php';
 require_once __DIR__ . '/controllers/CheckoutController.php';
+require_once __DIR__ . '/../Dashboard/controllers/AnalysisController.php';
 
 
 
@@ -35,6 +38,7 @@ $authController = new AuthController($conn);
 $media = new MediaController($conn);
 $cart = new CartController($conn);
 $checkout = new CheckoutController($conn);
+$analysisController = new AnalysisController($conn);
 
 
 
@@ -166,6 +170,32 @@ switch ($action) {
         $a_id = $_GET['a_id'] ?? null;
         $controller->getAudiobookDetailsApi($a_id);
         break;
+    case 'analytics':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userID = $input['userID'];
+        $userKey = $input['userKey'];
+
+    $titlesCount = $analysisController->getTitlesCount($userKey,$userID);
+    $bookView = $analysisController->getBookViews($$userKey);
+    $profileView = $analysisController->getProfileViews($userKey);
+    $mediaView = $analysisController->getMediaViews($userID);
+    $revenue = $analysisController->getUserRevenue($userKey);
+    $eventView = $analysisController->getEventViews($userKey);
+
+    // Return JSON response
+    echo json_encode([
+        'status' => 'success',
+        'data' => [
+            'titlesCount' => $titlesCount,
+            'bookViews' => $bookView['unique_user_count'],
+            'profileViews' => $profileView['visit_count'],
+            'mediaViews' => $mediaView['unique_user_count'],
+            'revenue' => $revenue['total_revenue'],
+            'eventViews' => $eventView['visit_count']
+        ]
+    ]);
+    break;
+
 
     default:
         http_response_code(400);
