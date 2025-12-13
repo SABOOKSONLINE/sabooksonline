@@ -16,7 +16,7 @@ require_once __DIR__ . '/models/UserModel.php';
 require_once __DIR__ . '/models/MediaModel.php';
 require_once __DIR__ . '/models/ReviewsModel.php';
 require_once __DIR__ . '/models/CartModel.php';
-require_once __DIR__ . "/../Dashboard/models/UserModel.php";
+require_once __DIR__ . "/../Dashboard/models/AnalysisModel.php";
 
 
 
@@ -175,12 +175,19 @@ switch ($action) {
         $userID = $input['userID'];
         $userKey = $input['userKey'];
 
-    $titlesCount = $analysisController->getTitlesCount($userKey,$userID);
-    $bookView = $analysisController->getBookViews($$userKey);
-    $profileView = $analysisController->getProfileViews($userKey);
-    $mediaView = $analysisController->getMediaViews($userID);
-    $revenue = $analysisController->getUserRevenue($userKey);
-    $eventView = $analysisController->getEventViews($userKey);
+        $start = date('Y-m-d', strtotime('-30 days'));
+        $end   = date('Y-m-d');
+
+        $start_date = $start . ' 00:00:00';
+        $end_date   = $end . ' 23:59:59';
+
+
+        $titlesCount = $analysisController->getTitlesCount($userKey,$userID,$start_date,$end_date);
+        $bookView = $analysisController->getBookViews($userKey,$start_date,$end_date);
+        $profileView = $analysisController->getProfileViews($userKey,$start_date,$end_date);
+        $mediaView = $analysisController->getMediaViews($userID,$start_date,$end_date);
+        $revenue = $analysisController->getUserRevenue($userKey,$start_date,$end_date);
+        $eventView = $analysisController->getEventViews($userKey,$start_date,$end_date);
 
     // Return JSON response
     echo json_encode([
