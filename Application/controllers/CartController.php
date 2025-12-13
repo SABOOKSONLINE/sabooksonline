@@ -26,6 +26,11 @@ class CartController
         return $this->cartModel->getCartItemsByUserId($userId);
     }
 
+     public function getOrders($userId)
+    {
+        return $this->cartModel->getOrders($userId);
+    }
+
     public function getItemsCount()
     {
         $userId = $_SESSION['ADMIN_ID'] ?? null;

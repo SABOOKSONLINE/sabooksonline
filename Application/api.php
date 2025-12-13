@@ -127,7 +127,7 @@ switch ($action) {
         break;
 
     case 'getOrderDetails':
-        $order = $cart->getOrderDetails($userID);
+        $order = $cart->getOrders($userID);
         echo json_encode([
         "success" => true,
         "order" => $order

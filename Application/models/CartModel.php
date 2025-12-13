@@ -233,6 +233,50 @@ class CartModel extends Model
         return ["order" => $order[0], "items" => $items];
     }
 
+    public function getOrders(int $userId): ?array
+{
+    $this->createOrdersTable();
+    $this->createOrderItemsTable();
+    $this->createDeliveryAddressTable();
+
+    // 1. Fetch all orders with their delivery addresses
+    $sqlOrders = "SELECT o.*, d.* 
+                  FROM orders AS o
+                  JOIN delivery_addresses AS d 
+                    ON o.delivery_address_id = d.id
+                  WHERE o.user_id = ?
+                  ORDER BY o.id DESC";
+
+    $orders = $this->fetchPrepared($sqlOrders, "i", [$userId]);
+    if (empty($orders)) return null;
+
+    // Extract order IDs
+    $orderIds = array_column($orders, 'id');
+    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+
+    // 2. Fetch all order items in one query
+    $sqlItems = "SELECT * FROM order_items WHERE order_id IN ($placeholders)";
+    $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
+
+    // 3. Group items by order_id
+    $itemsByOrder = [];
+    foreach ($itemsData as $item) {
+        $itemsByOrder[$item['order_id']][] = $item;
+    }
+
+    // 4. Combine orders with their items
+    $result = [];
+    foreach ($orders as $order) {
+        $result[] = [
+            "order" => $order,
+            "items" => $itemsByOrder[$order['id']] ?? []
+        ];
+    }
+
+    return $result;
+}
+
+
     public function updateOrderTotals(int $orderId, ?float $totalAmount, ?float $shippingFee, ?string $paymentMethod): bool
     {
         $this->createOrdersTable();
