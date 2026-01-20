@@ -43,6 +43,7 @@ $releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
 
 $audiobookSampleId = htmlspecialchars_decode($book['audiobook_sample_id'] ?? '');
 $audiobookSampleUrl = htmlspecialchars_decode($book['sample_url'] ?? '');
+$AbookPrice = html_entity_decode($book['ABOOKPRICE'] ?? '');
 
 if (!empty($narrator)) {
     $chapters = $book['chapters'];
