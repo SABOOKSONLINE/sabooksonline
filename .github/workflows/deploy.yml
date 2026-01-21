@@ -7,7 +7,6 @@ on:
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
-        timeout-minutes: 25
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -28,14 +27,12 @@ jobs:
                       ${{ runner.os }}-php-
 
             - name: Install Composer dependencies
-              timeout-minutes: 10
               run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
             - name: Deploy via FTP (only changed files, safe)
-              timeout-minutes: 15
               env:
                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
                   FTP_USER: ${{ secrets.FTP_USERNAME }}
@@ -43,18 +40,14 @@ jobs:
                   REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
               run: |
                   lftp -e "
-                    set cmd:fail-exit true;
                     set ftp:ssl-force false;
                     set ftp:ssl-protect-data false;
                     set ftp:passive-mode true;
-                    set net:timeout 20;
-                    set net:max-retries 2;
-                    set net:reconnect-interval-base 5;
                     open -u $FTP_USER,$FTP_PASS $FTP_SERVER;
                     mirror --reverse \
                           --verbose \
                           --only-newer \
-                          --parallel=4 \
+                          --ignore-time \
                           --exclude-glob .git* \
                           --exclude-glob img/* \
                           --exclude-glob .github/* \
