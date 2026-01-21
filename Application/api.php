@@ -93,11 +93,63 @@ switch ($action) {
     ]);
         break; 
 
+    // Mobile: POST /api/cart/add  { admin_id, book_id, quantity }
+    case 'addBookMobile':
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $adminId = $input['admin_id'] ?? $input['userID'] ?? $userID ?? null;
+        $bookId = $input['book_id'] ?? $input['bookID'] ?? null;
+        $qty = $input['quantity'] ?? $input['qty'] ?? 1;
+
+        if (!$adminId || !$bookId) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "admin_id and book_id are required"]);
+            break;
+        }
+
+        $ok = $cart->addCartItem((int)$adminId, (int)$bookId, (int)$qty);
+        echo json_encode(["success" => (bool)$ok]);
+        break;
+
+    // Mobile: PUT /api/cart/update/{cartId} { quantity }
+    case 'updateCartByCartId':
+        $cartId = (int)($_GET['cartId'] ?? 0);
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $qty = $input['quantity'] ?? $input['qty'] ?? null;
+
+        if ($cartId <= 0 || $qty === null) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "cartId and quantity are required"]);
+            break;
+        }
+
+        $ok = $cart->updateCartItemByCartId($cartId, (int)$qty);
+        echo json_encode(["success" => (bool)$ok]);
+        break;
+
+    // Mobile: DELETE /api/cart/remove/{cartId}
+    case 'removeCartByCartId':
+        $cartId = (int)($_GET['cartId'] ?? 0);
+        if ($cartId <= 0) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "cartId is required"]);
+            break;
+        }
+        $ok = $cart->removeCartItemByCartId($cartId);
+        echo json_encode(["success" => (bool)$ok]);
+        break;
+
     case 'addBook':
-        $input = json_decode(file_get_contents('php://input'), true);
-        $bookID = $input['bookID'];
-        $password = $input['qty'];
-        $cart->addCartItem($userID,$bookID, $qty);
+        // Legacy: POST /api/cart/add/{userID}  { bookID, qty }
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $bookID = $input['bookID'] ?? null;
+        $qty = $input['qty'] ?? 1;
+        if (!$userID || !$bookID) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "userID and bookID are required"]);
+            break;
+        }
+        $ok = $cart->addCartItem((int)$userID, (int)$bookID, (int)$qty);
+        echo json_encode(["success" => (bool)$ok]);
         break;
 
     case 'purchase':
@@ -116,6 +168,31 @@ switch ($action) {
         $input = json_decode(file_get_contents('php://input'), true);
         $data = $input['data'];
         $cart->saveDeliveryAddress($userID,$data);
+        break;
+
+    // Mobile: POST /api/address/{userID}  (fields directly in body)
+    case 'saveAddressMobile':
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        if (!$userID) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "userID is required"]);
+            break;
+        }
+        $ok = $cart->saveDeliveryAddress((int)$userID, $input);
+        echo json_encode(["success" => (bool)$ok]);
+        break;
+
+    // Mobile: PUT /api/address/{addressId} (fields directly in body)
+    case 'updateAddressById':
+        $addressId = (int)($_GET['addressId'] ?? 0);
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        if ($addressId <= 0) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "addressId is required"]);
+            break;
+        }
+        $ok = $cart->updateDeliveryAddressById($addressId, $input);
+        echo json_encode(["success" => (bool)$ok]);
         break;
       
     case 'getAddress':

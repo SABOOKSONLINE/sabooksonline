@@ -118,12 +118,31 @@ class CartModel extends Model
         return $stmt->execute();
     }
 
+    public function updateItemCountByCartId(int $cartId, int $qty): bool
+    {
+        $this->createCartTable();
+        if ($qty <= 0) return $this->removeItemByCartId($cartId);
+        $sql = "UPDATE book_cart SET cart_item_count = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $qty, $cartId);
+        return $stmt->execute();
+    }
+
     public function removeItem(int $userId, int $bookId): bool
     {
         $this->createCartTable();
         $sql = "DELETE FROM book_cart WHERE user_id = ? AND book_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $userId, $bookId);
+        return $stmt->execute();
+    }
+
+    public function removeItemByCartId(int $cartId): bool
+    {
+        $this->createCartTable();
+        $sql = "DELETE FROM book_cart WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $cartId);
         return $stmt->execute();
     }
 
@@ -168,6 +187,27 @@ class CartModel extends Model
         $sql = "INSERT INTO delivery_addresses (user_id, company, full_name, phone, email, street_address, street_address2, delivery_type, local_area, zone, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("isssssssssss", $userId, $company, $full_name, $phone, $email, $street, $street2, $delivery_type, $local_area, $zone, $postal_code, $country);
+        return $stmt->execute();
+    }
+
+    public function updateDeliveryAddressById(int $addressId, array $data): bool
+    {
+        $this->createDeliveryAddressTable();
+        $company = $data['company'] ?? null;
+        $full_name = $data['full_name'] ?? '';
+        $phone = $data['phone'] ?? '';
+        $email = $data['email'] ?? '';
+        $street = $data['street_address'] ?? '';
+        $street2 = $data['street_address2'] ?? null;
+        $delivery_type = $data['delivery_type'] ?? 'residential';
+        $local_area = $data['local_area'] ?? '';
+        $zone = $data['zone'] ?? '';
+        $postal_code = $data['postal_code'] ?? '';
+        $country = $data['country'] ?? 'ZA';
+
+        $sql = "UPDATE delivery_addresses SET company=?, full_name=?, phone=?, email=?, street_address=?, street_address2=?, delivery_type=?, local_area=?, zone=?, postal_code=?, country=? WHERE id=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssssssssssi", $company, $full_name, $phone, $email, $street, $street2, $delivery_type, $local_area, $zone, $postal_code, $country, $addressId);
         return $stmt->execute();
     }
 

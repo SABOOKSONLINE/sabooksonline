@@ -127,6 +127,41 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    // =================== Mobile-compatible Cart & Address endpoints ===================
+    // Mobile: add to cart (expects JSON body with admin_id, book_id, quantity, etc.)
+    $r->addRoute('POST', '/api/cart/add', function () {
+        $_GET['action'] = 'addBookMobile';
+        require "Application/api.php";
+    });
+
+    // Mobile: update quantity by cart row id
+    $r->addRoute('PUT', '/api/cart/update/{cartId}', function ($cartId) {
+        $_GET['action'] = 'updateCartByCartId';
+        $_GET['cartId'] = $cartId;
+        require "Application/api.php";
+    });
+
+    // Mobile: remove item by cart row id
+    $r->addRoute('DELETE', '/api/cart/remove/{cartId}', function ($cartId) {
+        $_GET['action'] = 'removeCartByCartId';
+        $_GET['cartId'] = $cartId;
+        require "Application/api.php";
+    });
+
+    // Mobile: save address directly to /api/address/{userID} with address fields in JSON
+    $r->addRoute('POST', '/api/address/{userID}', function ($userID) {
+        $_GET['action'] = 'saveAddressMobile';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+    // Mobile: update address by address row id
+    $r->addRoute('PUT', '/api/address/{addressId}', function ($addressId) {
+        $_GET['action'] = 'updateAddressById';
+        $_GET['addressId'] = $addressId;
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
         $_GET['action'] = 'getOrderDetails';
         $_GET['userID'] = $userID;
