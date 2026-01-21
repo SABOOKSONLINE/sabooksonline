@@ -54,8 +54,6 @@ jobs:
                     mirror --reverse \
                           --verbose \
                           --only-newer \
-                          --size-only \
-                          --no-delete \
                           --parallel=4 \
                           --exclude-glob .git* \
                           --exclude-glob img/* \
