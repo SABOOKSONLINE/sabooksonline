@@ -29,7 +29,7 @@ renderAlerts();
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Title *</label>
-                                <input type="text" class="form-control" name="title" required maxlength="255">
+                                <input type="text" class="form-control" name="title" required maxlength="255" placeholder="Enter notification title">
                                 <small class="form-text text-muted">Keep it concise and attention-grabbing</small>
                             </div>
                         </div>
@@ -37,18 +37,18 @@ renderAlerts();
                             <div class="mb-3">
                                 <label class="form-label">Target Audience *</label>
                                 <select class="form-select" name="target_audience" required id="targetAudience">
-                                    <option value="all">📱 All Users (Everyone)</option>
-                                    <option value="publishers">📚 Publishers (Pro/Premium/Standard/Deluxe)</option>
-                                    <option value="customers">🛒 Free Users (Basic customers)</option>
-                                    <option value="book_buyers">💰 Book Buyers (Made purchases)</option>
-                                    <option value="new_users">🆕 New Users (Registered recently)</option>
-                                    <option value="active_users">🔥 Active Users (Login regularly)</option>
-                                    <option value="free">🆓 Free Users Only</option>
-                                    <option value="pro">⭐ Pro Subscribers</option>
-                                    <option value="premium">💎 Premium Subscribers</option>
-                                    <option value="standard">📖 Standard Subscribers</option>
-                                    <option value="deluxe">👑 Deluxe Subscribers</option>
-                                    <option value="inactive_users">😴 Inactive Users (Bring them back)</option>
+                                    <option value="all">All Users (Everyone)</option>
+                                    <option value="publishers">Publishers (Pro/Premium/Standard/Deluxe)</option>
+                                    <option value="customers">Free Users (Basic customers)</option>
+                                    <option value="book_buyers">Book Buyers (Made purchases)</option>
+                                    <option value="new_users">New Users (Registered recently)</option>
+                                    <option value="active_users">Active Users (Login regularly)</option>
+                                    <option value="free">Free Users Only</option>
+                                    <option value="pro">Pro Subscribers</option>
+                                    <option value="premium">Premium Subscribers</option>
+                                    <option value="standard">Standard Subscribers</option>
+                                    <option value="deluxe">Deluxe Subscribers</option>
+                                    <option value="inactive_users">Inactive Users (Bring them back)</option>
                                 </select>
                                 <small class="form-text text-muted">
                                     <i class="fas fa-info-circle text-info"></i> <strong>Simple:</strong> Sent to ALL app users, but app filters based on their subscription in localStorage.
@@ -57,13 +57,13 @@ renderAlerts();
                         </div>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Message *</label>
-                        <textarea class="form-control" name="message" required rows="4" maxlength="500"></textarea>
+                        <textarea class="form-control" name="message" required rows="4" maxlength="500" placeholder="Enter your notification message here..."></textarea>
                         <small class="form-text text-muted">Maximum 500 characters for optimal display</small>
                     </div>
                     
-                    <div class="row">
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Notification Image</label>
@@ -87,7 +87,7 @@ renderAlerts();
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Action URL</label>
-                                <input type="url" class="form-control" name="action_url">
+                                <input type="url" class="form-control" name="action_url" placeholder="https://example.com/page">
                                 <small class="form-text text-muted">URL to open when notification is tapped</small>
                             </div>
                         </div>
@@ -95,51 +95,88 @@ renderAlerts();
                     
                     <!-- Simple approach - no complex criteria needed -->
                     
-                    <div class="mb-3">
-                        <label class="form-label">Schedule</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="schedule_type" 
-                                           value="now" id="scheduleNow" checked>
-                                    <label class="form-check-label" for="scheduleNow">
-                                        Send Now
-                                    </label>
+                    <div class="mb-4">
+                        <label class="form-label">Scheduling Options</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="schedule_type" 
+                                                   value="now" id="scheduleNow" checked>
+                                            <label class="form-check-label" for="scheduleNow">
+                                                <strong>Send Immediately</strong>
+                                                <br><small class="text-muted">Notification will be sent right away</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="schedule_type" 
+                                                   value="later" id="scheduleLater">
+                                            <label class="form-check-label" for="scheduleLater">
+                                                <strong>Schedule for Later</strong>
+                                                <br><small class="text-muted">Choose a specific date and time</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="scheduleDateContainer" class="mt-3" style="display: none;">
+                                    <label class="form-label">Select Date & Time</label>
+                                    <input type="datetime-local" class="form-control" name="scheduled_at">
+                                    <small class="form-text text-muted">Choose when to send this notification</small>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="schedule_type" 
-                                           value="later" id="scheduleLater">
-                                    <label class="form-check-label" for="scheduleLater">
-                                        Schedule for Later
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="scheduleDateContainer" class="mt-2" style="display: none;">
-                            <input type="datetime-local" class="form-control" name="scheduled_at">
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-between">
-                        <a href="/admin/mobile/notifications" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Notifications
-                        </a>
-                        <div>
-                            <button type="button" class="btn btn-info me-2" onclick="previewRecipients()">
-                                <i class="fas fa-users me-2"></i>Preview Who Will See This
-                            </button>
-                            <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
-                                <i class="fas fa-save me-2"></i>Save as Draft
-                            </button>
-                            <button type="submit" name="action" value="send" class="btn btn-success">
-                                <i class="fas fa-paper-plane me-2"></i>Send to All App Users
-                            </button>
-                            <small class="d-block text-muted mt-2">
-                                <i class="fas fa-info-circle"></i> Sent to ALL mobile users, but only <strong id="targetText">selected audience</strong> will see it.
-                            </small>
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Back Button -->
+                                        <div class="col-md-3">
+                                            <a href="/admin/mobile/notifications" class="btn btn-outline-secondary w-100">
+                                                <i class="fas fa-arrow-left me-2"></i>Back to List
+                                            </a>
+                                        </div>
+                                        
+                                        <!-- Preview Button -->
+                                        <div class="col-md-3 mt-2 mt-md-0">
+                                            <button type="button" class="btn btn-outline-info w-100" onclick="previewRecipients()">
+                                                <i class="fas fa-users me-2"></i>Preview Recipients
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Save Draft Button -->
+                                        <div class="col-md-3 mt-2 mt-md-0">
+                                            <button type="submit" name="action" value="draft" class="btn btn-outline-primary w-100">
+                                                <i class="fas fa-save me-2"></i>Save Draft
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Send Button -->
+                                        <div class="col-md-3 mt-2 mt-md-0">
+                                            <button type="submit" name="action" value="send" class="btn btn-success w-100">
+                                                <i class="fas fa-paper-plane me-2"></i>Send Notification
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Info Text -->
+                                    <div class="row mt-3">
+                                        <div class="col-12 text-center">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle text-info"></i> 
+                                                Notification will be sent to all mobile users, but only <strong id="targetText">selected audience</strong> will see it based on their app settings.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -543,6 +580,70 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 12px;
     line-height: 1.3;
     margin-top: 2px;
+}
+
+/* Form styling improvements */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+    font-weight: 500;
+    border-radius: 0.375rem;
+}
+
+.btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-info:hover {
+    color: #fff;
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Form section spacing */
+.mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+/* Radio button styling */
+.form-check {
+    padding-left: 1.5em;
+}
+
+.form-check-input {
+    margin-top: 0.25rem;
+}
+
+.form-check-label {
+    cursor: pointer;
+}
+
+/* Action buttons area */
+.card.bg-light {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
 }
 </style>
 
