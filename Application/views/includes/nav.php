@@ -246,15 +246,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadNotifications() {
     fetch('/api/user/notifications')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.log('Notifications API returned non-JSON response, skipping...');
+                return { success: false, notifications: [] };
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            if (data && data.success) {
                 notifications = data.notifications || [];
                 updateNotificationDisplay();
             }
         })
         .catch(error => {
-            console.error('Error loading notifications:', error);
+            console.log('Notifications not available:', error.message);
+            // Don't spam console with errors - notifications are optional
         });
 }
 

@@ -1,75 +1,87 @@
 const stickyBanner = document.querySelector("#sticky-banner");
 const stickySlider = document.querySelector(".sticky-slider");
-let stickyChildId = Math.floor(Math.random() * stickySlider.childElementCount);
-let sliderInterval;
 
-const getNextStickyId = (currentId, maxId) => {
-    let nextId = currentId + 1;
-    if (nextId > maxId) nextId = 0;
-    return nextId;
-};
+// Exit early if sticky banner elements don't exist (e.g., on admin pages)
+if (!stickyBanner || !stickySlider) {
+    console.log('Sticky banner elements not found - skipping banner functionality');
+} else {
+    let stickyChildId = Math.floor(Math.random() * stickySlider.childElementCount);
+    let sliderInterval;
 
-const showSticky = (id, elements) => {
-    for (let i = 0; i < elements.childElementCount; i++) {
-        elements.children[i].classList.toggle("show-sticky", i === id);
-    }
-};
+    const getNextStickyId = (currentId, maxId) => {
+        let nextId = currentId + 1;
+        if (nextId > maxId) nextId = 0;
+        return nextId;
+    };
 
-const startStickySlider = (slider, interval = 7000) => {
-    if (sliderInterval) clearInterval(sliderInterval);
+    const showSticky = (id, elements) => {
+        for (let i = 0; i < elements.childElementCount; i++) {
+            elements.children[i].classList.toggle("show-sticky", i === id);
+        }
+    };
 
-    const childrenCount = slider.childElementCount;
+    const startStickySlider = (slider, interval = 7000) => {
+        if (sliderInterval) clearInterval(sliderInterval);
 
-    showSticky(stickyChildId, slider);
+        const childrenCount = slider.childElementCount;
 
-    sliderInterval = setInterval(() => {
-        stickyChildId = getNextStickyId(stickyChildId, childrenCount - 1);
         showSticky(stickyChildId, slider);
-    }, interval);
-};
 
-const stopStickySlider = () => {
-    clearInterval(sliderInterval);
-};
+        sliderInterval = setInterval(() => {
+            stickyChildId = getNextStickyId(stickyChildId, childrenCount - 1);
+            showSticky(stickyChildId, slider);
+        }, interval);
+    };
 
-stickyBanner.addEventListener("mouseenter", stopStickySlider);
-stickyBanner.addEventListener("mouseleave", () =>
-    startStickySlider(stickySlider, 7000)
-);
+    const stopStickySlider = () => {
+        clearInterval(sliderInterval);
+    };
 
-startStickySlider(stickySlider, 7000);
+    stickyBanner.addEventListener("mouseenter", stopStickySlider);
+    stickyBanner.addEventListener("mouseleave", () =>
+        startStickySlider(stickySlider, 7000)
+    );
 
+    startStickySlider(stickySlider, 7000);
+}
+
+// Popup Banner Functionality
 const closePopupBannerBtn = document.querySelector("#close-popup-banner");
 const popupBannerBg = document.querySelector(".popup-banner-bg");
 const popupBanner = document.querySelector(".popup-banner");
 
-const openPopupBanner = () => {
-    popupBannerBg.classList.remove("hide-banner-bg");
-    popupBanner.classList.remove("hide-banner");
-};
+// Exit early if popup banner elements don't exist (e.g., on admin pages)
+if (!closePopupBannerBtn || !popupBannerBg || !popupBanner) {
+    console.log('Popup banner elements not found - skipping popup functionality');
+} else {
+    const openPopupBanner = () => {
+        popupBannerBg.classList.remove("hide-banner-bg");
+        popupBanner.classList.remove("hide-banner");
+    };
 
-const closePopupBanner = () => {
-    popupBannerBg.classList.add("hide-banner-bg");
-    popupBanner.classList.add("hide-banner");
-};
+    const closePopupBanner = () => {
+        popupBannerBg.classList.add("hide-banner-bg");
+        popupBanner.classList.add("hide-banner");
+    };
 
-const currentDate = new Date();
-const currentDay = currentDate.getDate();
+    const currentDate = new Date();
+    const currentDay = currentDate.getDate();
 
-const showPopupBanner = () => {
-    const lastBannerPopup = localStorage.getItem("popup-banner");
+    const showPopupBanner = () => {
+        const lastBannerPopup = localStorage.getItem("popup-banner");
 
-    if (!lastBannerPopup || parseInt(lastBannerPopup) !== currentDay) {
-        setTimeout(() => {
-            openPopupBanner();
-        }, 5000);
-    }
-};
+        if (!lastBannerPopup || parseInt(lastBannerPopup) !== currentDay) {
+            setTimeout(() => {
+                openPopupBanner();
+            }, 5000);
+        }
+    };
 
-showPopupBanner();
+    showPopupBanner();
 
-closePopupBannerBtn.addEventListener("click", () => {
-    localStorage.setItem("popup-banner", currentDay);
-    closePopupBanner();
-    console.log("closed");
-});
+    closePopupBannerBtn.addEventListener("click", () => {
+        localStorage.setItem("popup-banner", currentDay);
+        closePopupBanner();
+        console.log("closed");
+    });
+}
