@@ -135,18 +135,13 @@ class MobileController extends Controller
         // Update status to sending
         $this->notificationModel->updateNotificationStatus($notificationId, 'sending');
 
-        // Validate and get target device tokens
-        $criteria = $notification['target_criteria'] ? json_decode($notification['target_criteria'], true) : [];
-        $validation = $this->notificationModel->validateNotificationTargets($notification['target_type'], $criteria);
-        $deviceTokens = $this->notificationModel->getDeviceTokens($notification['target_type'], $criteria);
+        // Simple: Get ALL device tokens - app will filter locally
+        $deviceTokens = $this->notificationModel->getAllDeviceTokens();
         
-        // Log targeting validation
-        error_log("📧 Notification #{$notificationId} targeting validation:");
-        error_log("   Target Type: {$notification['target_type']}");
-        error_log("   Total Recipients: {$validation['total_recipients']}");
-        if (!empty($validation['warnings'])) {
-            error_log("   Warnings: " . implode('; ', $validation['warnings']));
-        }
+        error_log("📧 Notification #{$notificationId} - Sending to ALL mobile users:");
+        error_log("   Target Audience: {$notification['target_audience']}");
+        error_log("   Total Devices: " . count($deviceTokens));
+        error_log("   App will filter locally based on user subscription");
 
         $successCount = 0;
         $failCount = 0;
@@ -158,6 +153,7 @@ class MobileController extends Controller
                 $notification['message'],
                 $notification['image_url'],
                 $notification['action_url'],
+                $notification['target_audience'],
                 $device['platform']
             );
 
@@ -226,7 +222,7 @@ class MobileController extends Controller
         }
     }
 
-    private function sendPushNotification(string $deviceToken, string $title, string $message, ?string $imageUrl, ?string $actionUrl, string $platform): bool
+    private function sendPushNotification(string $deviceToken, string $title, string $message, ?string $imageUrl, ?string $actionUrl, string $targetAudience, string $platform): bool
     {
         // This is a placeholder for actual push notification implementation
         // You would integrate with Firebase Cloud Messaging (FCM) or Apple Push Notification service (APNs)
@@ -245,7 +241,10 @@ class MobileController extends Controller
         }
         
         $data = [
-            'action_url' => $actionUrl
+            'action_url' => $actionUrl,
+            'target_audience' => $targetAudience,  // ← App will use this for local filtering
+            'notification_id' => uniqid(),         // ← For notification history
+            'timestamp' => time()
         ];
         
         $payload = [

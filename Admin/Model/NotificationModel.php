@@ -15,7 +15,7 @@ class NotificationModel extends Model
             "message" => "TEXT NOT NULL",
             "image_url" => "VARCHAR(500)",
             "action_url" => "VARCHAR(500)",
-            "target_type" => "ENUM('all', 'subscription', 'specific_users', 'publishers', 'customers') NOT NULL DEFAULT 'all'",
+            "target_audience" => "ENUM('all', 'publishers', 'customers', 'free', 'pro', 'premium', 'standard', 'deluxe') NOT NULL DEFAULT 'all'",
             "target_criteria" => "JSON",
             "scheduled_at" => "DATETIME NULL",
             "sent_at" => "DATETIME NULL",
@@ -164,89 +164,16 @@ class NotificationModel extends Model
         return $result;
     }
 
-    public function getDeviceTokens(string $targetType = 'all', array $criteria = []): array
+    public function getAllDeviceTokens(): array
     {
         $this->createDeviceTokenTable();
         
-        $sql = "SELECT DISTINCT dt.device_token, dt.user_email, dt.platform, dt.app_version,
-                       u.ADMIN_SUBSCRIPTION as admin_subscription,
-                       u.subscription_status
+        // Simple: Get ALL active device tokens - let mobile app handle filtering
+        $sql = "SELECT DISTINCT dt.device_token, dt.user_email, dt.platform, dt.app_version
                 FROM device_tokens dt
-                LEFT JOIN users u ON dt.user_email = u.ADMIN_EMAIL
                 WHERE dt.is_active = 1";
         
-        $params = [];
-        $types = "";
-        
-        switch ($targetType) {
-            case 'all':
-                // Send to all active device tokens - no additional filtering
-                break;
-                
-            case 'subscription':
-                if (isset($criteria['subscription_type']) && !empty($criteria['subscription_type'])) {
-                    if ($criteria['subscription_type'] === 'free') {
-                        // Free users: ADMIN_SUBSCRIPTION is NULL, empty, or 'Free'
-                        $sql .= " AND (u.ADMIN_SUBSCRIPTION IS NULL OR u.ADMIN_SUBSCRIPTION = '' OR LOWER(u.ADMIN_SUBSCRIPTION) = 'free')";
-                    } else {
-                        // Specific subscription level (pro, premium, standard, deluxe)
-                        $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) = ?";
-                        $params[] = strtolower($criteria['subscription_type']);
-                        $types .= "s";
-                    }
-                } else {
-                    // If no specific subscription type, send to users with any paid subscription
-                    $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) IN ('pro', 'premium', 'standard', 'deluxe')";
-                }
-                break;
-                
-            case 'publishers':
-                // Publishers: Users with paid plans (pro, premium, standard, deluxe) - matching nav.php logic
-                $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) IN ('pro', 'premium', 'standard', 'deluxe')";
-                break;
-                
-            case 'customers':
-                // Customers: Free users OR users who made successful book purchases
-                $sql .= " AND (
-                    (u.ADMIN_SUBSCRIPTION IS NULL OR u.ADMIN_SUBSCRIPTION = '' OR LOWER(u.ADMIN_SUBSCRIPTION) = 'free')
-                    OR dt.user_email IN (
-                        SELECT DISTINCT user_email FROM book_purchases 
-                        WHERE payment_status = 'COMPLETE'
-                    )
-                )";
-                break;
-                
-            case 'specific_users':
-                if (isset($criteria['emails']) && !empty($criteria['emails'])) {
-                    // Validate and filter emails
-                    $validEmails = array_filter($criteria['emails'], function($email) {
-                        return filter_var(trim($email), FILTER_VALIDATE_EMAIL);
-                    });
-                    
-                    if (!empty($validEmails)) {
-                        $placeholders = implode(',', array_fill(0, count($validEmails), '?'));
-                        $sql .= " AND dt.user_email IN ($placeholders)";
-                        $params = array_merge($params, $validEmails);
-                        $types .= str_repeat('s', count($validEmails));
-                    } else {
-                        // No valid emails provided, return empty result
-                        return [];
-                    }
-                } else {
-                    // No emails provided, return empty result
-                    return [];
-                }
-                break;
-                
-            default:
-                // Unknown target type, return empty result
-                return [];
-        }
-        
         $stmt = $this->conn->prepare($sql);
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
         $stmt->execute();
         $result = $stmt->get_result();
         

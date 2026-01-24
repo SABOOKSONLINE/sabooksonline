@@ -36,13 +36,19 @@ renderAlerts();
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Target Audience *</label>
-                                <select class="form-select" name="target_type" required id="targetType">
-                                    <option value="all">All Users (Everyone with app installed)</option>
-                                    <option value="subscription">By Subscription Level</option>
-                                    <option value="publishers">Publishers (Pro/Premium/Standard/Deluxe)</option>
-                                    <option value="customers">Customers (Free users + Book buyers)</option>
-                                    <option value="specific_users">Specific Users (by Email)</option>
+                                <select class="form-select" name="target_audience" required id="targetAudience">
+                                    <option value="all">📱 All Users (Everyone)</option>
+                                    <option value="publishers">📚 Publishers (Pro/Premium/Standard/Deluxe)</option>
+                                    <option value="customers">🛒 Customers (Free users)</option>
+                                    <option value="free">🆓 Free Users Only</option>
+                                    <option value="pro">⭐ Pro Subscribers</option>
+                                    <option value="premium">💎 Premium Subscribers</option>
+                                    <option value="standard">📖 Standard Subscribers</option>
+                                    <option value="deluxe">👑 Deluxe Subscribers</option>
                                 </select>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle text-info"></i> <strong>Simple:</strong> Sent to ALL app users, but app filters based on their subscription in localStorage.
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -70,29 +76,7 @@ renderAlerts();
                         </div>
                     </div>
                     
-                    <!-- Target Criteria (shown conditionally) -->
-                    <div id="subscriptionCriteria" class="mb-3" style="display: none;">
-                        <label class="form-label">Subscription Type</label>
-                        <select class="form-select" name="target_criteria[subscription_type]">
-                            <option value="">All Paid Subscriptions (Pro, Premium, Standard, Deluxe)</option>
-                            <option value="free">Free Users</option>
-                            <option value="pro">Pro Subscribers</option>
-                            <option value="premium">Premium Subscribers</option>
-                            <option value="standard">Standard Subscribers</option>
-                            <option value="deluxe">Deluxe Subscribers</option>
-                        </select>
-                        <small class="form-text text-muted">
-                            <strong>Publishers:</strong> Pro/Premium/Standard/Deluxe users<br>
-                            <strong>Customers:</strong> Free users or anyone who made purchases
-                        </small>
-                    </div>
-                    
-                    <div id="specificUsersCriteria" class="mb-3" style="display: none;">
-                        <label class="form-label">User Emails</label>
-                        <textarea class="form-control" name="target_criteria[emails]" rows="3" 
-                                  placeholder="Enter email addresses, one per line"></textarea>
-                        <small class="form-text text-muted">Enter one email address per line</small>
-                    </div>
+                    <!-- Simple approach - no complex criteria needed -->
                     
                     <div class="mb-3">
                         <label class="form-label">Schedule</label>
@@ -127,15 +111,15 @@ renderAlerts();
                             <i class="fas fa-arrow-left me-2"></i>Back to Notifications
                         </a>
                         <div>
-                            <button type="button" class="btn btn-info me-2" onclick="previewRecipients()">
-                                <i class="fas fa-eye me-2"></i>Preview Recipients
-                            </button>
                             <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
                                 <i class="fas fa-save me-2"></i>Save as Draft
                             </button>
-                            <button type="submit" name="action" value="send" class="btn btn-primary">
-                                <i class="fas fa-paper-plane me-2"></i>Send Notification
+                            <button type="submit" name="action" value="send" class="btn btn-success">
+                                <i class="fas fa-paper-plane me-2"></i>Send to All App Users
                             </button>
+                            <small class="d-block text-muted mt-2">
+                                <i class="fas fa-mobile-alt"></i> Will send to ALL mobile app users. App filters based on target audience.
+                            </small>
                         </div>
                     </div>
                 </form>
@@ -220,20 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Handle target type changes
-    targetTypeSelect.addEventListener('change', function() {
-        // Hide all criteria sections
-        document.getElementById('subscriptionCriteria').style.display = 'none';
-        document.getElementById('specificUsersCriteria').style.display = 'none';
-        
-        // Show relevant criteria section
-        if (this.value === 'subscription') {
-            document.getElementById('subscriptionCriteria').style.display = 'block';
-        } else if (this.value === 'specific_users') {
-            document.getElementById('specificUsersCriteria').style.display = 'block';
-        }
-    });
-    
     // Handle schedule type changes
     scheduleRadios.forEach(radio => {
         radio.addEventListener('change', function() {
@@ -251,84 +221,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Preview Recipients Function
-    window.previewRecipients = function() {
-        const targetType = document.getElementById('targetType').value;
-        const subscriptionType = document.querySelector('select[name="target_criteria[subscription_type]"]')?.value || '';
-        const specificEmails = document.querySelector('textarea[name="target_criteria[emails]"]')?.value || '';
-        
-        // Show loading state
-        const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
-        document.getElementById('previewContent').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading recipients...</div>';
-        modal.show();
-        
-        // Prepare criteria
-        const criteria = {};
-        if (targetType === 'subscription' && subscriptionType) {
-            criteria.subscription_type = subscriptionType;
-        } else if (targetType === 'specific_users' && specificEmails) {
-            criteria.emails = specificEmails.split('\n').map(email => email.trim()).filter(email => email);
+    // Simple: Update preview based on target audience selection
+    document.getElementById('targetAudience').addEventListener('change', function() {
+        const preview = document.querySelector('.notification-preview .notification-title');
+        if (preview && this.value !== 'all') {
+            preview.textContent = `[${this.options[this.selectedIndex].text}] ${document.querySelector('input[name="title"]').value || 'Notification Title'}`;
         }
-        
-        // Make AJAX request to preview recipients
-        fetch('/admin/mobile/notifications/preview', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                target_type: targetType,
-                criteria: criteria
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayRecipientPreview(data.validation);
-            } else {
-                document.getElementById('previewContent').innerHTML = '<div class="alert alert-danger">Error loading recipients: ' + data.message + '</div>';
-            }
-        })
-        .catch(error => {
-            document.getElementById('previewContent').innerHTML = '<div class="alert alert-danger">Error loading recipients: ' + error.message + '</div>';
-        });
-    };
-    
-    function displayRecipientPreview(validation) {
-        let html = `
-            <div class="mb-3">
-                <h6><i class="fas fa-bullseye text-primary"></i> Target: <span class="badge bg-primary">${validation.target_type.replace('_', ' ').toUpperCase()}</span></h6>
-                <h6><i class="fas fa-users text-success"></i> Total Recipients: <span class="badge bg-success">${validation.total_recipients}</span></h6>
-            </div>
-        `;
-        
-        if (validation.warnings && validation.warnings.length > 0) {
-            html += '<div class="alert alert-warning"><strong>Warnings:</strong><ul class="mb-0">';
-            validation.warnings.forEach(warning => {
-                html += `<li>${warning}</li>`;
-            });
-            html += '</ul></div>';
-        }
-        
-        if (validation.recipients && validation.recipients.length > 0) {
-            html += '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Email</th><th>Devices</th><th>Subscription</th></tr></thead><tbody>';
-            validation.recipients.forEach(recipient => {
-                const subscriptionBadge = recipient.subscription_status ? 
-                    `<span class="badge bg-info">${recipient.subscription_status}</span>` : 
-                    '<span class="badge bg-secondary">Free</span>';
-                html += `
-                    <tr>
-                        <td>${recipient.email}</td>
-                        <td><span class="badge bg-primary">${recipient.devices}</span></td>
-                        <td>${subscriptionBadge}</td>
-                    </tr>
-                `;
-            });
-            html += '</tbody></table></div>';
-        }
-        
-        document.getElementById('previewContent').innerHTML = html;
-    }
+    });
     
     // Form submission handling
     form.addEventListener('submit', function(e) {
@@ -396,27 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 
-<!-- Recipient Preview Modal -->
-<div class="modal fade" id="recipientPreviewModal" tabindex="-1" aria-labelledby="recipientPreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="recipientPreviewModalLabel">
-                    <i class="fas fa-eye text-primary"></i> Notification Recipients Preview
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="previewContent">
-                    <!-- Content will be loaded here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Simple approach - no preview modal needed -->
 
 <?php
 $content = ob_get_clean();
