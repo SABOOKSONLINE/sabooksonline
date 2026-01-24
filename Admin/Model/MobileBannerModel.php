@@ -31,7 +31,7 @@ class MobileBannerModel extends Model
     {
         $this->createMobileBannerTable();
         
-        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners ORDER BY screen, priority DESC, created_at DESC";
+        $sql = "SELECT id, title, description, image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners ORDER BY screen, priority DESC, created_at DESC";
         return $this->fetchAll($sql);
     }
 
@@ -39,7 +39,7 @@ class MobileBannerModel extends Model
     {
         $this->createMobileBannerTable();
         
-        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners 
+        $sql = "SELECT id, title, description, image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners 
                 WHERE screen = ? 
                 AND (start_date <= NOW()) 
                 AND (end_date IS NULL OR end_date >= NOW())
@@ -61,31 +61,56 @@ class MobileBannerModel extends Model
 
     public function addMobileBanner(array $data): int
     {
-        $this->createMobileBannerTable();
-        
-        $sql = "INSERT INTO Mobile_banners (title, description, image, action_url, screen, priority, start_date, end_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $this->createMobileBannerTable();
+            
+            // Debug: Log the data being processed
+            error_log("📱 MobileBannerModel->addMobileBanner data: " . print_r($data, true));
+            
+            $sql = "INSERT INTO Mobile_banners (title, description, image_url, action_url, screen, priority, start_date, end_date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        return $this->insert(
-            $sql,
-            "sssssiis",
-            [
+            error_log("📝 SQL Query: " . $sql);
+            error_log("📋 Parameters: " . print_r([
                 $data["title"],
                 $data["description"],
-                $data["image_url"], // Will be stored in 'image' column
+                $data["image"],
                 $data["action_url"],
                 $data["screen"],
                 $data["priority"],
                 $data["start_date"],
                 $data["end_date"]
-            ]
-        );
+            ], true));
+
+            $result = $this->insert(
+                $sql,
+                "sssssiis",
+                [
+                    $data["title"],
+                    $data["description"],
+                    $data["image_url"], // Use correct field name for database
+                    $data["action_url"],
+                    $data["screen"],
+                    $data["priority"],
+                    $data["start_date"],
+                    $data["end_date"]
+                ]
+            );
+            
+            error_log("✅ Insert result: " . ($result ? "Success (ID: $result)" : "Failed"));
+            return $result;
+            
+        } catch (Exception $e) {
+            error_log("❌ Database error in addMobileBanner: " . $e->getMessage());
+            error_log("❌ Stack trace: " . $e->getTraceAsString());
+            throw $e; // Re-throw to be caught by controller
+        }
     }
 
     public function updateMobileBanner(int $id, array $data): bool
     {
         $sql = "UPDATE Mobile_banners 
-                SET title = ?, description = ?, image = ?, action_url = ?, 
+                SET title = ?, description = ?, image_url = ?, action_url = ?, 
                     screen = ?, priority = ?, start_date = ?, end_date = ?
                 WHERE id = ?";
 
@@ -95,7 +120,7 @@ class MobileBannerModel extends Model
             [
                 $data["title"],
                 $data["description"],
-                $data["image_url"], // Will be stored in 'image' column
+                $data["image_url"], // Use correct field name for database
                 $data["action_url"],
                 $data["screen"],
                 $data["priority"],
@@ -117,7 +142,7 @@ class MobileBannerModel extends Model
 
     public function getMobileBannerById(int $id): ?array
     {
-        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners WHERE id = ?";
+        $sql = "SELECT id, title, description, image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();

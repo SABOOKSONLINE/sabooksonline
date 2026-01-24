@@ -412,6 +412,7 @@ class MobileController extends Controller
     private function addBanner(): void
     {
         try {
+            error_log("🔧 Starting banner creation process...");
             $data = [
                 'title' => trim($_POST['title'] ?? ''),
                 'description' => trim($_POST['description'] ?? ''),
@@ -455,23 +456,34 @@ class MobileController extends Controller
                 return;
             }
 
-            $data['image'] = $fileName;
+            $data['image_url'] = $fileName;
 
             if (empty($data['title'])) {
                 $_SESSION['error'] = "Title is required!";
                 return;
             }
 
+            // Debug: Log the data being sent to the model
+            error_log("Banner data being inserted: " . print_r($data, true));
+            
             $bannerId = $this->mobileBannerModel->addMobileBanner($data);
+            
+            error_log("Banner insert result: " . ($bannerId ? "Success (ID: $bannerId)" : "Failed"));
+            
             if ($bannerId) {
-                $_SESSION['success'] = "Mobile banner created successfully!";
+                $_SESSION['success'] = "Mobile banner created successfully! ID: $bannerId";
             } else {
-                $_SESSION['error'] = "Failed to create mobile banner.";
+                $_SESSION['error'] = "Failed to create mobile banner. Check error logs for details.";
             }
             
         } catch (Exception $e) {
-            error_log("Add Banner Error: " . $e->getMessage());
+            error_log("❌ Add Banner Error: " . $e->getMessage());
+            error_log("❌ Stack trace: " . $e->getTraceAsString());
             $_SESSION['error'] = "Error creating banner: " . $e->getMessage();
+        } catch (Error $e) {
+            error_log("❌ PHP Error in addBanner: " . $e->getMessage());
+            error_log("❌ Stack trace: " . $e->getTraceAsString());
+            $_SESSION['error'] = "PHP Error: " . $e->getMessage();
         }
     }
     
@@ -512,7 +524,7 @@ class MobileController extends Controller
                 $targetPath = $uploadDir . $fileName;
 
                 if (move_uploaded_file($image['tmp_name'], $targetPath)) {
-                    $data['image'] = $fileName;
+                    $data['image_url'] = $fileName;
                 } else {
                     $_SESSION['error'] = "Failed to upload image file.";
                     return;
@@ -520,7 +532,7 @@ class MobileController extends Controller
             } else {
                 // Keep existing image if no new image uploaded
                 $existingBanner = $this->mobileBannerModel->getMobileBannerById($bannerId);
-                $data['image'] = $existingBanner['image'] ?? '';
+                $data['image_url'] = $existingBanner['image_url'] ?? '';
             }
 
             if (empty($data['title'])) {
