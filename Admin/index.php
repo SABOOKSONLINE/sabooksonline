@@ -34,7 +34,11 @@ if ($uri === "/admin") {
 } else if ($uri === "/admin/purchases") {
     $purchasesController->purchases();
 } else if ($uri === "/admin/mobile/banners") {
-    $mobileController->banners();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $mobileController->handleBannerForm();
+    } else {
+        $mobileController->banners();
+    }
 } else if ($uri === "/admin/mobile/notifications") {
     $mobileController->notifications();
 } else if ($uri === "/admin/mobile/notifications/send") {

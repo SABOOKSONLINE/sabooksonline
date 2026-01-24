@@ -391,4 +391,153 @@ class MobileController extends Controller
         // In production, parse the response and return actual status
         return $httpCode === 200;
     }
+    
+    public function handleBannerForm(): void
+    {
+        session_start();
+        $action = $_POST['action'] ?? 'add';
+        
+        if ($action === 'add') {
+            $this->addBanner();
+        } elseif ($action === 'edit') {
+            $bannerId = $_POST['id'] ?? 0;
+            $this->updateBanner($bannerId);
+        }
+        
+        // Redirect back to banners page
+        header("Location: /admin/mobile/banners");
+        exit;
+    }
+    
+    private function addBanner(): void
+    {
+        try {
+            $data = [
+                'title' => trim($_POST['title'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
+                'action_url' => trim($_POST['action_url'] ?? ''),
+                'screen' => $_POST['screen'] ?? 'home',
+                'priority' => (int)($_POST['priority'] ?? 0),
+                'start_date' => $_POST['start_date'] ?? date('Y-m-d H:i:s'),
+                'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null
+            ];
+
+            // Handle image upload
+            if (!isset($_FILES['banner_image']) || $_FILES['banner_image']['error'] !== UPLOAD_ERR_OK) {
+                $_SESSION['error'] = "Please select a banner image to upload!";
+                return;
+            }
+
+            $image = $_FILES['banner_image'];
+            $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+            
+            if (!in_array($image['type'], $allowed)) {
+                $_SESSION['error'] = "Invalid image format! Only JPG, PNG, or WEBP allowed.";
+                return;
+            }
+
+            // Check file size (5MB max)
+            if ($image['size'] > 5 * 1024 * 1024) {
+                $_SESSION['error'] = "Image file is too large! Maximum size is 5MB.";
+                return;
+            }
+
+            $uploadDir = __DIR__ . "/../../cms-data/banners/";
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $fileName = uniqid("mobile_banner_", true) . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
+            $targetPath = $uploadDir . $fileName;
+
+            if (!move_uploaded_file($image['tmp_name'], $targetPath)) {
+                $_SESSION['error'] = "Failed to upload image file.";
+                return;
+            }
+
+            $data['image'] = $fileName;
+
+            if (empty($data['title'])) {
+                $_SESSION['error'] = "Title is required!";
+                return;
+            }
+
+            $bannerId = $this->mobileBannerModel->addMobileBanner($data);
+            if ($bannerId) {
+                $_SESSION['success'] = "Mobile banner created successfully!";
+            } else {
+                $_SESSION['error'] = "Failed to create mobile banner.";
+            }
+            
+        } catch (Exception $e) {
+            error_log("Add Banner Error: " . $e->getMessage());
+            $_SESSION['error'] = "Error creating banner: " . $e->getMessage();
+        }
+    }
+    
+    private function updateBanner(int $bannerId): void
+    {
+        try {
+            if ($bannerId <= 0) {
+                $_SESSION['error'] = "Invalid banner ID.";
+                return;
+            }
+            
+            $data = [
+                'title' => trim($_POST['title'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
+                'action_url' => trim($_POST['action_url'] ?? ''),
+                'screen' => $_POST['screen'] ?? 'home',
+                'priority' => (int)($_POST['priority'] ?? 0),
+                'start_date' => $_POST['start_date'] ?? date('Y-m-d H:i:s'),
+                'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null
+            ];
+
+            // Handle image upload if new image provided
+            if (isset($_FILES['banner_image']) && $_FILES['banner_image']['error'] === UPLOAD_ERR_OK) {
+                $image = $_FILES['banner_image'];
+                $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                
+                if (!in_array($image['type'], $allowed)) {
+                    $_SESSION['error'] = "Invalid image format! Only JPG, PNG, or WEBP allowed.";
+                    return;
+                }
+
+                $uploadDir = __DIR__ . "/../../cms-data/banners/";
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                $fileName = uniqid("mobile_banner_", true) . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
+                $targetPath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($image['tmp_name'], $targetPath)) {
+                    $data['image'] = $fileName;
+                } else {
+                    $_SESSION['error'] = "Failed to upload image file.";
+                    return;
+                }
+            } else {
+                // Keep existing image if no new image uploaded
+                $existingBanner = $this->mobileBannerModel->getMobileBannerById($bannerId);
+                $data['image'] = $existingBanner['image'] ?? '';
+            }
+
+            if (empty($data['title'])) {
+                $_SESSION['error'] = "Title is required!";
+                return;
+            }
+
+            $success = $this->mobileBannerModel->updateMobileBanner($bannerId, $data);
+            if ($success) {
+                $_SESSION['success'] = "Mobile banner updated successfully!";
+            } else {
+                $_SESSION['error'] = "Failed to update mobile banner.";
+            }
+            
+        } catch (Exception $e) {
+            error_log("Update Banner Error: " . $e->getMessage());
+            $_SESSION['error'] = "Error updating banner: " . $e->getMessage();
+        }
+    }
 }

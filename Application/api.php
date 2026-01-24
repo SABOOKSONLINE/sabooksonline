@@ -365,16 +365,17 @@ switch ($action) {
                        CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as `read`
                 FROM push_notifications n
                 LEFT JOIN notification_reads nr ON n.id = nr.notification_id AND nr.user_email = ?
-                WHERE (n.target_type = 'all' OR 
-                       (n.target_type = 'customers' AND ? IN (SELECT email FROM book_purchases)) OR
-                       (n.target_type = 'specific_users' AND n.target_criteria LIKE CONCAT('%', ?, '%')))
+                WHERE (n.target_audience = 'all' OR 
+                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
+                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
+                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
                 AND n.status = 'sent'
                 ORDER BY n.created_at DESC
                 LIMIT 20";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("sss", $userEmail, $userEmail, $userEmail);
+            $stmt->bind_param("ss", $userEmail, $userEmail);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -447,14 +448,15 @@ switch ($action) {
 
         $sql = "INSERT IGNORE INTO notification_reads (notification_id, user_email)
                 SELECT n.id, ? FROM push_notifications n
-                WHERE (n.target_type = 'all' OR 
-                       (n.target_type = 'customers' AND ? IN (SELECT email FROM book_purchases)) OR
-                       (n.target_type = 'specific_users' AND n.target_criteria LIKE CONCAT('%', ?, '%')))
+                WHERE (n.target_audience = 'all' OR 
+                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
+                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
+                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
                 AND n.status = 'sent'";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("sss", $userEmail, $userEmail, $userEmail);
+            $stmt->bind_param("ss", $userEmail, $userEmail);
             $success = $stmt->execute();
             $stmt->close();
             

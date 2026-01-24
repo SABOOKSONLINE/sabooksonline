@@ -195,6 +195,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    // Website notifications page
+    $r->addRoute('GET', '/notifications', function () {
+        require "Application/views/notifications.php";
+    });
+
     // Enhanced mobile banners API with better filtering - removed to avoid class conflicts
     // Access directly via /API/mobile_banners.php?screen={screen}
 
@@ -657,6 +662,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // Mobile Management Routes
     $r->addRoute('GET', '/admin/mobile/banners', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/banners', function () {
         require  "Admin/index.php";
     });
 

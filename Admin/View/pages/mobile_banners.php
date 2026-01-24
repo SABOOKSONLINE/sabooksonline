@@ -389,7 +389,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Change modal title and form action
             modal.querySelector('.modal-title').textContent = 'Edit Mobile Banner';
-            form.action = `/admin/mobile/banners/edit/${banner.id}`;
+            form.action = '/admin/mobile/banners';
+            
+            // Add/update hidden fields for edit
+            let actionInput = form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = 'edit';
+            }
+            
+            let idInput = form.querySelector('input[name="id"]');
+            if (!idInput) {
+                idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'id';
+                form.appendChild(idInput);
+            }
+            idInput.value = banner.id;
             
             // Show modal
             new bootstrap.Modal(modal).show();
@@ -400,8 +415,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('addBannerModal').addEventListener('hidden.bs.modal', function() {
         const form = document.getElementById('bannerForm');
         form.reset();
-        form.action = '/admin/mobile/banners/add';
+        form.action = '/admin/mobile/banners';
         this.querySelector('.modal-title').textContent = 'Add Mobile Banner';
+        
+        // Reset action to add
+        let actionInput = form.querySelector('input[name="action"]');
+        if (actionInput) {
+            actionInput.value = 'add';
+        }
+        
+        // Remove id input if it exists
+        let idInput = form.querySelector('input[name="id"]');
+        if (idInput) {
+            idInput.remove();
+        }
     });
     
     // Toggle banner status
