@@ -195,9 +195,18 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-    // Website notifications page
+    // Website notifications page (traditional)
     $r->addRoute('GET', '/notifications', function () {
-        require "Application/views/notifications.php";
+        require_once "Application/controllers/NotificationController.php";
+        $controller = new NotificationController();
+        $controller->index();
+    });
+
+    // Notifications action handler
+    $r->addRoute('POST', '/notifications/action', function () {
+        require_once "Application/controllers/NotificationController.php";
+        $controller = new NotificationController();
+        $controller->handleAction();
     });
 
     // Enhanced mobile banners API with better filtering - removed to avoid class conflicts

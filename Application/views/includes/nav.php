@@ -66,6 +66,23 @@ require_once __DIR__ . "/../util/urlRedirect.php";
 <!-- <div style="width: 100%;height: 20px;background: url(../../../img/brand/02.jpg);background-size:contain;"></div> -->
 
 <?php
+// Load notifications for dropdown using traditional model
+$notifications = [];
+$unreadCount = 0;
+
+if (isset($_SESSION['ADMIN_EMAIL'])) {
+    try {
+        require_once __DIR__ . "/../../models/NotificationModel.php";
+        $notificationModel = new NotificationModel();
+        $notifications = $notificationModel->getUserNotifications($_SESSION['ADMIN_EMAIL'], 5);
+        $unreadCount = $notificationModel->getUnreadCount($_SESSION['ADMIN_EMAIL']);
+    } catch (Exception $e) {
+        error_log("Notification loading error in nav: " . $e->getMessage());
+        $notifications = [];
+        $unreadCount = 0;
+    }
+}
+
 $navItems = [
     ["title" => "Home", "url" => "/"],
     ["title" => "Library", "dropdown" => [
@@ -136,24 +153,38 @@ $navItems = [
                         <div class="dropdown me-3">
                             <button class="btn btn-link text-dark p-0 position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
                                 <i class="fas fa-bell"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count" style="font-size: 0.7em;">
-                                    0
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count" style="font-size: 0.7em; <?= $unreadCount > 0 ? '' : 'display: none;' ?>">
+                                    <?= $unreadCount ?>
                                 </span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 300px;">
                                 <li class="dropdown-header d-flex justify-content-between align-items-center">
                                     <span><i class="fas fa-bell me-2"></i>Notifications</span>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="markAllAsRead()">
-                                        <i class="fas fa-check"></i> Mark All Read
-                                    </button>
+                                    <?php if ($unreadCount > 0): ?>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="markAllAsReadNav()">
+                                            <i class="fas fa-check"></i> Mark All Read
+                                        </button>
+                                    <?php endif; ?>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <div id="notificationList" class="notification-list" style="max-height: 400px; overflow-y: auto;">
-                                        <div class="text-center text-muted p-3">
-                                            <i class="fas fa-bell-slash fa-2x mb-2"></i>
-                                            <p class="mb-0">No notifications yet</p>
-                                        </div>
+                                    <div class="notification-list" style="max-height: 400px; overflow-y: auto;">
+                                        <?php if (empty($notifications)): ?>
+                                            <div class="text-center text-muted p-3">
+                                                <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                                                <p class="mb-0">No notifications yet</p>
+                                            </div>
+                                        <?php else: ?>
+                                            <?php foreach ($notifications as $notification): ?>
+                                                <div class="notification-item px-3 py-2 <?= !$notification['read'] ? 'unread' : '' ?>" 
+                                                     onclick="markAsReadNav(<?= $notification['id'] ?>, '<?= htmlspecialchars($notification['action_url'] ?? '') ?>')"
+                                                     style="cursor: <?= $notification['action_url'] ? 'pointer' : 'default' ?>;">
+                                                    <div class="notification-title"><?= htmlspecialchars($notification['title']) ?></div>
+                                                    <div class="notification-message"><?= htmlspecialchars(substr($notification['message'], 0, 60)) ?><?= strlen($notification['message']) > 60 ? '...' : '' ?></div>
+                                                    <div class="notification-time"><?= NotificationModel::formatTime($notification['created_at']) ?></div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
@@ -232,132 +263,62 @@ $navItems = [
 </style>
 
 <script>
-// Notification functionality
-let notifications = [];
-let notificationCount = 0;
-
-// Load notifications when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadNotifications();
-    
-    // Check for new notifications every 30 seconds
-    setInterval(loadNotifications, 30000);
-});
-
-function loadNotifications() {
-    fetch('/api/user/notifications')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                console.log('Notifications API returned non-JSON response, skipping...');
-                return { success: false, notifications: [] };
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.success) {
-                notifications = data.notifications || [];
-                updateNotificationDisplay();
-            }
-        })
-        .catch(error => {
-            console.log('Notifications not available:', error.message);
-            // Don't spam console with errors - notifications are optional
-        });
-}
-
-function updateNotificationDisplay() {
-    const unreadCount = notifications.filter(n => !n.read).length;
-    const countBadge = document.getElementById('notification-count');
-    const notificationList = document.getElementById('notificationList');
-    
-    // Update count badge
-    countBadge.textContent = unreadCount;
-    countBadge.style.display = unreadCount > 0 ? 'block' : 'none';
-    
-    // Update notification list
-    if (notifications.length === 0) {
-        notificationList.innerHTML = `
-            <div class="text-center text-muted p-3">
-                <i class="fas fa-bell-slash fa-2x mb-2"></i>
-                <p class="mb-0">No notifications yet</p>
-            </div>
-        `;
-    } else {
-        notificationList.innerHTML = notifications.map(notification => `
-            <div class="notification-item ${!notification.read ? 'unread' : ''}" 
-                 onclick="markAsRead(${notification.id})" 
-                 data-url="${notification.action_url || '#'}">
-                <div class="notification-title">${notification.title}</div>
-                <div class="notification-message">${notification.message}</div>
-                <div class="notification-time">${formatTime(notification.created_at)}</div>
-            </div>
-        `).join('');
-    }
-}
-
-function markAsRead(notificationId) {
-    fetch('/api/user/notifications/read', {
+// Traditional notification functionality (server-rendered with PHP)
+function markAsReadNav(notificationId, actionUrl) {
+    fetch('/notifications/action', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ notification_id: notificationId })
+        body: JSON.stringify({ 
+            action: 'mark_read',
+            notification_id: notificationId 
+        })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update local notification status
-            const notification = notifications.find(n => n.id === notificationId);
-            if (notification) {
-                notification.read = true;
-                updateNotificationDisplay();
-                
-                // Navigate to action URL if available
-                if (notification.action_url) {
-                    window.location.href = notification.action_url;
-                }
+            // Navigate to action URL if provided, otherwise refresh to update display
+            if (actionUrl && actionUrl !== '#') {
+                window.location.href = actionUrl;
+            } else {
+                window.location.reload();
             }
         }
     })
-    .catch(error => console.error('Error marking notification as read:', error));
+    .catch(error => {
+        console.error('Error marking notification as read:', error);
+        // Navigate anyway if there's an action URL
+        if (actionUrl && actionUrl !== '#') {
+            window.location.href = actionUrl;
+        }
+    });
 }
 
-function markAllAsRead() {
-    fetch('/api/user/notifications/read-all', {
+function markAllAsReadNav() {
+    fetch('/notifications/action', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ 
+            action: 'mark_all_read'
+        })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            notifications.forEach(n => n.read = true);
-            updateNotificationDisplay();
+            // Refresh page to show updated state
+            window.location.reload();
         }
     })
-    .catch(error => console.error('Error marking all notifications as read:', error));
+    .catch(error => {
+        console.error('Error marking all notifications as read:', error);
+        alert('Error updating notifications. Please refresh the page.');
+    });
 }
 
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) {
-        return 'Just now';
-    } else if (diff < 3600000) {
-        return Math.floor(diff / 60000) + 'm ago';
-    } else if (diff < 86400000) {
-        return Math.floor(diff / 3600000) + 'h ago';
-    } else {
-        return Math.floor(diff / 86400000) + 'd ago';
-    }
-}
+// formatTime functionality now handled by PHP NotificationModel::formatTime()
 </script>
 
 <div class="collapse container-fluid bg-light p-3" id="mobileSearch">
