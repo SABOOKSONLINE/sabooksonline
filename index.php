@@ -639,6 +639,60 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/index.php";
     });
 
+    $r->addRoute('GET', '/admin/purchases', function () {
+        require  "Admin/index.php";
+    });
+
+    // Mobile Management Routes
+    $r->addRoute('GET', '/admin/mobile/banners', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/notifications', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/notifications/send', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/notifications/send', function () {
+        require  "Admin/index.php";
+    });
+
+    // Mobile Banner Management Actions
+    $r->addRoute('POST', '/admin/mobile/banners/add', function () {
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/banners/edit/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "edit";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/banners/delete/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "delete";
+        $_GET["type"] = "banner";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/banners/toggle/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "toggle";
+        $_GET["type"] = "banner";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    // Mobile Notification Management Actions  
+    $r->addRoute('GET', '/admin/mobile/notifications/delete/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "delete";
+        $_GET["type"] = "notification";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
     $r->addRoute('GET', '/admin/users/impersonate/{id}', function ($id) {
         $_GET["id"] = $id;
         require  "Admin/Helpers/impersonate.php";
