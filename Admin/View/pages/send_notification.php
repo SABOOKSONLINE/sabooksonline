@@ -260,6 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetAudience = document.getElementById('targetAudience').value;
         const targetText = document.getElementById('targetAudience').options[document.getElementById('targetAudience').selectedIndex].text;
         
+        console.log('🎯 Preview Recipients called:', { targetAudience, targetText });
+        
         // Show modal and loading state
         const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
         document.getElementById('previewContent').innerHTML = `
@@ -273,6 +275,8 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.show();
         
         // Make AJAX request to preview recipients
+        console.log('🌐 Making API request to:', '/admin/mobile/notifications/preview');
+        
         fetch('/admin/mobile/notifications/preview', {
             method: 'POST',
             headers: {
@@ -282,22 +286,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 target_audience: targetAudience
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('📡 API Response status:', response.status);
+            console.log('📡 API Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return response.json();
+        })
         .then(data => {
+            console.log('✅ API Response data:', data);
+            
             if (data.success) {
                 displayRecipientPreview(data);
             } else {
                 document.getElementById('previewContent').innerHTML = `
                     <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i> Error loading preview: ${data.message || 'Unknown error'}
+                        <i class="fas fa-exclamation-triangle"></i> Error: ${data.message || 'Unknown error'}
                     </div>
                 `;
             }
         })
         .catch(error => {
+            console.error('❌ API Request failed:', error);
             document.getElementById('previewContent').innerHTML = `
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-triangle"></i> Network error: ${error.message}
+                    <br><small class="text-muted">Check browser console for details</small>
                 </div>
             `;
         });

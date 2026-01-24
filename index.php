@@ -678,6 +678,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // Mobile Banner Management Actions
     $r->addRoute('POST', '/admin/mobile/banners/add', function () {
+        $_GET["action"] = "add";
+        $_GET["type"] = "banner";
         require  "Admin/Helpers/process_mobile.php";
     });
 

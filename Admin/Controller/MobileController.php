@@ -189,22 +189,30 @@ class MobileController extends Controller
     
     public function previewNotificationRecipients(): void
     {
+        error_log("🎯 Preview Recipients API called");
         header('Content-Type: application/json');
         
         try {
             // Get JSON input
-            $input = json_decode(file_get_contents('php://input'), true);
+            $rawInput = file_get_contents('php://input');
+            error_log("📥 Raw input: " . $rawInput);
+            
+            $input = json_decode($rawInput, true);
+            error_log("📋 Decoded input: " . print_r($input, true));
             
             if (!$input || !isset($input['target_audience'])) {
+                error_log("❌ Invalid input data");
                 http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Invalid input data']);
+                echo json_encode(['success' => false, 'message' => 'Invalid input data - missing target_audience']);
                 return;
             }
             
             $targetAudience = $input['target_audience'];
+            error_log("🎯 Target audience: " . $targetAudience);
             
             // Get preview data
             $previewData = $this->getTargetAudiencePreview($targetAudience);
+            error_log("📊 Preview data: " . print_r($previewData, true));
             
             echo json_encode([
                 'success' => true,
@@ -215,7 +223,8 @@ class MobileController extends Controller
             ]);
             
         } catch (Exception $e) {
-            error_log("Preview Recipients Error: " . $e->getMessage());
+            error_log("❌ Preview Recipients Error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             http_response_code(500);
             echo json_encode([
                 'success' => false,
@@ -239,9 +248,23 @@ class MobileController extends Controller
                 FROM users 
                 WHERE ADMIN_EMAIL IS NOT NULL AND ADMIN_EMAIL != ''";
         
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        try {
+            $stmt = $this->conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Database prepare error: " . $this->conn->error);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } catch (Exception $e) {
+            error_log("Preview SQL Error: " . $e->getMessage());
+            // Return sample data on error
+            return [
+                'matching_users' => [],
+                'total_matching' => 0,
+                'total_app_users' => $totalAppUsers,
+                'summary' => []
+            ];
+        }
         
         $allUsers = [];
         while ($row = $result->fetch_assoc()) {
