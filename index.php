@@ -176,7 +176,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     // Mobile device token registration
     $r->addRoute('POST', '/api/mobile/register-token', function () {
         $_GET['action'] = 'register_token';
-        require "mobile_api.php";
+        require "Application/api.php";
+    });
+
+    // Mobile banners API
+    $r->addRoute('GET', '/api/mobile/banners', function () {
+        $_GET['action'] = 'mobileBanners';
+        require "Application/api.php";
     });
 
     // User notification API endpoints
