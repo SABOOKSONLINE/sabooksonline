@@ -671,6 +671,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/admin/mobile/notifications/send', function () {
         require  "Admin/index.php";
     });
+    
+    $r->addRoute('POST', '/admin/mobile/notifications/preview', function () {
+        require  "Admin/index.php";
+    });
 
     // Mobile Banner Management Actions
     $r->addRoute('POST', '/admin/mobile/banners/add', function () {

@@ -135,9 +135,18 @@ class MobileController extends Controller
         // Update status to sending
         $this->notificationModel->updateNotificationStatus($notificationId, 'sending');
 
-        // Get target device tokens
+        // Validate and get target device tokens
         $criteria = $notification['target_criteria'] ? json_decode($notification['target_criteria'], true) : [];
+        $validation = $this->notificationModel->validateNotificationTargets($notification['target_type'], $criteria);
         $deviceTokens = $this->notificationModel->getDeviceTokens($notification['target_type'], $criteria);
+        
+        // Log targeting validation
+        error_log("📧 Notification #{$notificationId} targeting validation:");
+        error_log("   Target Type: {$notification['target_type']}");
+        error_log("   Total Recipients: {$validation['total_recipients']}");
+        if (!empty($validation['warnings'])) {
+            error_log("   Warnings: " . implode('; ', $validation['warnings']));
+        }
 
         $successCount = 0;
         $failCount = 0;
@@ -180,6 +189,41 @@ class MobileController extends Controller
         ]);
 
         return true;
+    }
+    
+    public function previewNotificationRecipients(): void
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            // Get JSON input
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['target_type'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Invalid input data']);
+                return;
+            }
+            
+            $targetType = $input['target_type'];
+            $criteria = $input['criteria'] ?? [];
+            
+            // Validate notification targets
+            $validation = $this->notificationModel->validateNotificationTargets($targetType, $criteria);
+            
+            echo json_encode([
+                'success' => true,
+                'validation' => $validation
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Preview Recipients Error: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ]);
+        }
     }
 
     private function sendPushNotification(string $deviceToken, string $title, string $message, ?string $imageUrl, ?string $actionUrl, string $platform): bool

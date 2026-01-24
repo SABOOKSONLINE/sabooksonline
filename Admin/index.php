@@ -39,6 +39,8 @@ if ($uri === "/admin") {
     $mobileController->notifications();
 } else if ($uri === "/admin/mobile/notifications/send") {
     $mobileController->sendNotification();
+} else if ($uri === "/admin/mobile/notifications/preview") {
+    $mobileController->previewNotificationRecipients();
 } else {
     http_response_code(404);
     echo "404 Page Not Found";

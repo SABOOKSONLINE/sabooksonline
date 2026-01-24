@@ -168,7 +168,9 @@ class NotificationModel extends Model
     {
         $this->createDeviceTokenTable();
         
-        $sql = "SELECT dt.*, u.subscription_status, u.admin_subscription 
+        $sql = "SELECT DISTINCT dt.device_token, dt.user_email, dt.platform, dt.app_version,
+                       u.ADMIN_SUBSCRIPTION as admin_subscription,
+                       u.subscription_status
                 FROM device_tokens dt
                 LEFT JOIN users u ON dt.user_email = u.ADMIN_EMAIL
                 WHERE dt.is_active = 1";
@@ -177,30 +179,62 @@ class NotificationModel extends Model
         $types = "";
         
         switch ($targetType) {
+            case 'all':
+                // Send to all active device tokens - no additional filtering
+                break;
+                
             case 'subscription':
-                if (isset($criteria['subscription_type'])) {
+                if (isset($criteria['subscription_type']) && !empty($criteria['subscription_type'])) {
                     $sql .= " AND u.subscription_status = ?";
                     $params[] = $criteria['subscription_type'];
                     $types .= "s";
+                } else {
+                    // If no specific subscription type, send to users with any subscription
+                    $sql .= " AND u.subscription_status IS NOT NULL";
                 }
                 break;
                 
             case 'publishers':
-                $sql .= " AND u.subscription_status IN ('pro', 'premium', 'royalties')";
+                // Publishers are users who have uploaded books (check posts table)
+                $sql .= " AND dt.user_email IN (
+                    SELECT DISTINCT ADMIN_EMAIL FROM posts 
+                    WHERE ADMIN_EMAIL IS NOT NULL AND ADMIN_EMAIL != ''
+                )";
                 break;
                 
             case 'customers':
-                $sql .= " AND (u.subscription_status IS NULL OR u.subscription_status = 'free')";
+                // Customers are users who have made book purchases
+                $sql .= " AND dt.user_email IN (
+                    SELECT DISTINCT user_email FROM book_purchases 
+                    WHERE payment_status = 'COMPLETE'
+                )";
                 break;
                 
             case 'specific_users':
                 if (isset($criteria['emails']) && !empty($criteria['emails'])) {
-                    $placeholders = implode(',', array_fill(0, count($criteria['emails']), '?'));
-                    $sql .= " AND dt.user_email IN ($placeholders)";
-                    $params = array_merge($params, $criteria['emails']);
-                    $types .= str_repeat('s', count($criteria['emails']));
+                    // Validate and filter emails
+                    $validEmails = array_filter($criteria['emails'], function($email) {
+                        return filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+                    });
+                    
+                    if (!empty($validEmails)) {
+                        $placeholders = implode(',', array_fill(0, count($validEmails), '?'));
+                        $sql .= " AND dt.user_email IN ($placeholders)";
+                        $params = array_merge($params, $validEmails);
+                        $types .= str_repeat('s', count($validEmails));
+                    } else {
+                        // No valid emails provided, return empty result
+                        return [];
+                    }
+                } else {
+                    // No emails provided, return empty result
+                    return [];
                 }
                 break;
+                
+            default:
+                // Unknown target type, return empty result
+                return [];
         }
         
         $stmt = $this->conn->prepare($sql);
@@ -217,6 +251,52 @@ class NotificationModel extends Model
         
         $stmt->close();
         return $tokens;
+    }
+
+    public function validateNotificationTargets(string $targetType, array $criteria = []): array
+    {
+        $deviceTokens = $this->getDeviceTokens($targetType, $criteria);
+        
+        $validation = [
+            'target_type' => $targetType,
+            'criteria' => $criteria,
+            'total_recipients' => count($deviceTokens),
+            'recipients' => [],
+            'warnings' => []
+        ];
+        
+        // Group recipients by email for summary
+        $recipientEmails = [];
+        foreach ($deviceTokens as $token) {
+            if (!isset($recipientEmails[$token['user_email']])) {
+                $recipientEmails[$token['user_email']] = [
+                    'email' => $token['user_email'],
+                    'devices' => 0,
+                    'subscription_status' => $token['subscription_status'] ?? 'free',
+                    'admin_subscription' => $token['admin_subscription'] ?? null
+                ];
+            }
+            $recipientEmails[$token['user_email']]['devices']++;
+        }
+        
+        $validation['recipients'] = array_values($recipientEmails);
+        
+        // Add warnings for potential issues
+        if (count($deviceTokens) === 0) {
+            $validation['warnings'][] = "No recipients found for the selected target criteria";
+        }
+        
+        if ($targetType === 'specific_users' && isset($criteria['emails'])) {
+            $requestedEmails = $criteria['emails'];
+            $foundEmails = array_column($validation['recipients'], 'email');
+            $missingEmails = array_diff($requestedEmails, $foundEmails);
+            
+            if (!empty($missingEmails)) {
+                $validation['warnings'][] = "Some specified users don't have active device tokens: " . implode(', ', $missingEmails);
+            }
+        }
+        
+        return $validation;
     }
 
     public function updateNotificationStatus(int $id, string $status, array $stats = []): bool

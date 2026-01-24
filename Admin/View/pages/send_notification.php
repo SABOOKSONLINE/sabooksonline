@@ -122,6 +122,9 @@ renderAlerts();
                             <i class="fas fa-arrow-left me-2"></i>Back to Notifications
                         </a>
                         <div>
+                            <button type="button" class="btn btn-info me-2" onclick="previewRecipients()">
+                                <i class="fas fa-eye me-2"></i>Preview Recipients
+                            </button>
                             <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
                                 <i class="fas fa-save me-2"></i>Save as Draft
                             </button>
@@ -243,6 +246,85 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Preview Recipients Function
+    window.previewRecipients = function() {
+        const targetType = document.getElementById('targetType').value;
+        const subscriptionType = document.querySelector('select[name="target_criteria[subscription_type]"]')?.value || '';
+        const specificEmails = document.querySelector('textarea[name="target_criteria[emails]"]')?.value || '';
+        
+        // Show loading state
+        const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
+        document.getElementById('previewContent').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading recipients...</div>';
+        modal.show();
+        
+        // Prepare criteria
+        const criteria = {};
+        if (targetType === 'subscription' && subscriptionType) {
+            criteria.subscription_type = subscriptionType;
+        } else if (targetType === 'specific_users' && specificEmails) {
+            criteria.emails = specificEmails.split('\n').map(email => email.trim()).filter(email => email);
+        }
+        
+        // Make AJAX request to preview recipients
+        fetch('/admin/mobile/notifications/preview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                target_type: targetType,
+                criteria: criteria
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayRecipientPreview(data.validation);
+            } else {
+                document.getElementById('previewContent').innerHTML = '<div class="alert alert-danger">Error loading recipients: ' + data.message + '</div>';
+            }
+        })
+        .catch(error => {
+            document.getElementById('previewContent').innerHTML = '<div class="alert alert-danger">Error loading recipients: ' + error.message + '</div>';
+        });
+    };
+    
+    function displayRecipientPreview(validation) {
+        let html = `
+            <div class="mb-3">
+                <h6><i class="fas fa-bullseye text-primary"></i> Target: <span class="badge bg-primary">${validation.target_type.replace('_', ' ').toUpperCase()}</span></h6>
+                <h6><i class="fas fa-users text-success"></i> Total Recipients: <span class="badge bg-success">${validation.total_recipients}</span></h6>
+            </div>
+        `;
+        
+        if (validation.warnings && validation.warnings.length > 0) {
+            html += '<div class="alert alert-warning"><strong>Warnings:</strong><ul class="mb-0">';
+            validation.warnings.forEach(warning => {
+                html += `<li>${warning}</li>`;
+            });
+            html += '</ul></div>';
+        }
+        
+        if (validation.recipients && validation.recipients.length > 0) {
+            html += '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Email</th><th>Devices</th><th>Subscription</th></tr></thead><tbody>';
+            validation.recipients.forEach(recipient => {
+                const subscriptionBadge = recipient.subscription_status ? 
+                    `<span class="badge bg-info">${recipient.subscription_status}</span>` : 
+                    '<span class="badge bg-secondary">Free</span>';
+                html += `
+                    <tr>
+                        <td>${recipient.email}</td>
+                        <td><span class="badge bg-primary">${recipient.devices}</span></td>
+                        <td>${subscriptionBadge}</td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table></div>';
+        }
+        
+        document.getElementById('previewContent').innerHTML = html;
+    }
+    
     // Form submission handling
     form.addEventListener('submit', function(e) {
         const action = e.submitter.value;
@@ -308,6 +390,28 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-top: 2px;
 }
 </style>
+
+<!-- Recipient Preview Modal -->
+<div class="modal fade" id="recipientPreviewModal" tabindex="-1" aria-labelledby="recipientPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="recipientPreviewModalLabel">
+                    <i class="fas fa-eye text-primary"></i> Notification Recipients Preview
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();
