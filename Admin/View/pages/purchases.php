@@ -85,6 +85,7 @@ renderSectionHeader(
                                     <th>Status</th>
                                     <th>Purchase Date</th>
                                     <th>Payment ID</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -156,6 +157,14 @@ renderSectionHeader(
                                                 <?= htmlspecialchars($purchase['payment_id']) ?>
                                             </small>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#purchaseDetailModal" 
+                                                    onclick="showPurchaseDetail(<?= htmlspecialchars(json_encode($purchase)) ?>)">
+                                                <i class="fas fa-eye"></i> Details
+                                            </button>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -167,7 +176,142 @@ renderSectionHeader(
     </div>
 </div>
 
+<!-- Purchase Detail Modal -->
+<div class="modal fade" id="purchaseDetailModal" tabindex="-1" aria-labelledby="purchaseDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseDetailModalLabel">
+                    <i class="fas fa-shopping-cart me-2"></i>Purchase Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Book Information -->
+                    <div class="col-md-5">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-book me-2"></i>Book Information</h6>
+                        <div class="text-center mb-3">
+                            <img id="modalBookCover" src="" alt="Book Cover" 
+                                 class="img-fluid rounded shadow" style="max-height: 250px;">
+                        </div>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold">Title:</td>
+                                <td id="modalBookTitle">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Publisher:</td>
+                                <td id="modalBookPublisher">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Book ID:</td>
+                                <td><span id="modalBookId" class="font-monospace">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Content ID:</td>
+                                <td><span id="modalContentId" class="font-monospace">-</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- Purchase Information -->
+                    <div class="col-md-7">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-receipt me-2"></i>Purchase Information</h6>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2"><i class="fas fa-user me-2"></i>Customer</h6>
+                                        <p class="card-text mb-1"><strong id="modalCustomerEmail">-</strong></p>
+                                        <small class="text-muted">User Key: <span id="modalUserKey" class="font-monospace">-</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2"><i class="fas fa-money-bill-wave me-2"></i>Payment</h6>
+                                        <p class="card-text mb-1">
+                                            <span class="fs-5 fw-bold text-success" id="modalAmount">-</span>
+                                        </p>
+                                        <small class="text-muted">Status: <span id="modalPaymentStatus" class="badge">-</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-file-alt me-2"></i>Format:</td>
+                                <td><span id="modalFormat" class="badge">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-calendar me-2"></i>Purchase Date:</td>
+                                <td id="modalPurchaseDate">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-credit-card me-2"></i>Payment ID:</td>
+                                <td><span id="modalPaymentId" class="font-monospace">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-hashtag me-2"></i>Purchase ID:</td>
+                                <td><span id="modalPurchaseId" class="font-monospace">-</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// Show purchase details in modal
+function showPurchaseDetail(purchase) {
+    // Book Information
+    const bookCover = purchase.book_cover ? 
+        `/cms-data/book-covers/${purchase.book_cover}` : 
+        '/img/lazy-placeholder.jpg';
+    document.getElementById('modalBookCover').src = bookCover;
+    document.getElementById('modalBookTitle').textContent = purchase.book_title || 'Unknown Book';
+    document.getElementById('modalBookPublisher').textContent = purchase.book_publisher || 'Unknown Publisher';
+    document.getElementById('modalBookId').textContent = purchase.book_id;
+    document.getElementById('modalContentId').textContent = purchase.book_contentid || 'N/A';
+    
+    // Customer Information
+    document.getElementById('modalCustomerEmail').textContent = purchase.user_email;
+    document.getElementById('modalUserKey').textContent = purchase.user_key || 'N/A';
+    
+    // Payment Information
+    const amount = purchase.amount > 0 ? `R${parseFloat(purchase.amount).toFixed(2)}` : 'FREE';
+    document.getElementById('modalAmount').textContent = amount;
+    document.getElementById('modalAmount').className = purchase.amount > 0 ? 'fs-5 fw-bold text-success' : 'fs-5 fw-bold text-muted';
+    
+    // Payment Status Badge
+    const statusBadge = document.getElementById('modalPaymentStatus');
+    statusBadge.textContent = purchase.payment_status;
+    statusBadge.className = `badge ${purchase.payment_status === 'COMPLETE' ? 'bg-success' : 
+                                     purchase.payment_status === 'PENDING' ? 'bg-warning' : 'bg-danger'}`;
+    
+    // Format Badge
+    const formatBadge = document.getElementById('modalFormat');
+    formatBadge.textContent = purchase.format;
+    formatBadge.className = `badge ${purchase.format === 'Ebook' ? 'bg-primary' : 
+                                     purchase.format === 'Audiobook' ? 'bg-info' : 'bg-secondary'}`;
+    
+    // Other Information
+    const purchaseDate = new Date(purchase.payment_date);
+    document.getElementById('modalPurchaseDate').textContent = purchaseDate.toLocaleString();
+    document.getElementById('modalPaymentId').textContent = purchase.payment_id;
+    document.getElementById('modalPurchaseId').textContent = `#${purchase.id}`;
+}
+
 // Add DataTables functionality if available
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof $ !== 'undefined' && $.fn.DataTable) {
@@ -175,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "pageLength": 25,
             "order": [[ 6, "desc" ]], // Sort by date descending
             "columnDefs": [
-                { "orderable": false, "targets": [1] } // Disable sorting on book details column
+                { "orderable": false, "targets": [1, 8] } // Disable sorting on book details and actions columns
             ],
             "responsive": true,
             "language": {

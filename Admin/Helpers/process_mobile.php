@@ -44,7 +44,6 @@ if ($type === 'banner') {
                 $data = [
                     'title' => trim($_POST['title'] ?? ''),
                     'description' => trim($_POST['description'] ?? ''),
-                    'image_url' => trim($_POST['image_url'] ?? ''),
                     'action_url' => trim($_POST['action_url'] ?? ''),
                     'screen' => $_POST['screen'] ?? 'home',
                     'priority' => (int)($_POST['priority'] ?? 0),
@@ -53,8 +52,40 @@ if ($type === 'banner') {
                     'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null
                 ];
 
-                if (empty($data['title']) || empty($data['image_url'])) {
-                    setAlert("danger", "Title and image URL are required!");
+                // Handle image upload if new image provided
+                if (isset($_FILES['banner_image']) && $_FILES['banner_image']['error'] === UPLOAD_ERR_OK) {
+                    $image = $_FILES['banner_image'];
+                    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                    
+                    if (!in_array($image['type'], $allowed)) {
+                        setAlert("danger", "Invalid image format! Only JPG, PNG, or WEBP allowed.");
+                        header("Location: /admin/mobile/banners");
+                        exit;
+                    }
+
+                    $uploadDir = __DIR__ . "/../../cms-data/banners/";
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+
+                    $fileName = uniqid("mobile_banner_", true) . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
+                    $targetPath = $uploadDir . $fileName;
+
+                    if (move_uploaded_file($image['tmp_name'], $targetPath)) {
+                        $data['image_url'] = $fileName;
+                    } else {
+                        setAlert("danger", "Failed to upload image file.");
+                        header("Location: /admin/mobile/banners");
+                        exit;
+                    }
+                } else {
+                    // Keep existing image if no new image uploaded
+                    $existingBanner = $mobileBannerModel->getMobileBannerById($id);
+                    $data['image_url'] = $existingBanner['image_url'] ?? '';
+                }
+
+                if (empty($data['title'])) {
+                    setAlert("danger", "Title is required!");
                     header("Location: /admin/mobile/banners");
                     exit;
                 }
@@ -89,11 +120,10 @@ if ($type === 'notification') {
 }
 
 // Handle mobile banner add/create
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$id) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add') {
     $data = [
         'title' => trim($_POST['title'] ?? ''),
         'description' => trim($_POST['description'] ?? ''),
-        'image_url' => trim($_POST['image_url'] ?? ''),
         'action_url' => trim($_POST['action_url'] ?? ''),
         'screen' => $_POST['screen'] ?? 'home',
         'priority' => (int)($_POST['priority'] ?? 0),
@@ -102,8 +132,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$id) {
         'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null
     ];
 
-    if (empty($data['title']) || empty($data['image_url'])) {
-        setAlert("danger", "Title and image URL are required!");
+    // Handle image upload
+    if (!isset($_FILES['banner_image']) || $_FILES['banner_image']['error'] !== UPLOAD_ERR_OK) {
+        setAlert("danger", "Please select a banner image to upload!");
+        header("Location: /admin/mobile/banners");
+        exit;
+    }
+
+    $image = $_FILES['banner_image'];
+    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    
+    if (!in_array($image['type'], $allowed)) {
+        setAlert("danger", "Invalid image format! Only JPG, PNG, or WEBP allowed.");
+        header("Location: /admin/mobile/banners");
+        exit;
+    }
+
+    // Check file size (5MB max)
+    if ($image['size'] > 5 * 1024 * 1024) {
+        setAlert("danger", "Image file is too large! Maximum size is 5MB.");
+        header("Location: /admin/mobile/banners");
+        exit;
+    }
+
+    $uploadDir = __DIR__ . "/../../cms-data/banners/";
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    $fileName = uniqid("mobile_banner_", true) . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
+    $targetPath = $uploadDir . $fileName;
+
+    if (!move_uploaded_file($image['tmp_name'], $targetPath)) {
+        setAlert("danger", "Failed to upload image file.");
+        header("Location: /admin/mobile/banners");
+        exit;
+    }
+
+    $data['image_url'] = $fileName;
+
+    if (empty($data['title'])) {
+        setAlert("danger", "Title is required!");
         header("Location: /admin/mobile/banners");
         exit;
     }

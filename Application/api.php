@@ -351,6 +351,118 @@ switch ($action) {
     ]);
     break;
 
+    case 'userNotifications':
+        session_start();
+        $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        
+        if (!$userEmail) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            break;
+        }
+
+        $sql = "SELECT n.id, n.title, n.message, n.image_url, n.action_url, n.created_at,
+                       CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as `read`
+                FROM push_notifications n
+                LEFT JOIN notification_reads nr ON n.id = nr.notification_id AND nr.user_email = ?
+                WHERE (n.target_type = 'all' OR 
+                       (n.target_type = 'customers' AND ? IN (SELECT email FROM book_purchases)) OR
+                       (n.target_type = 'specific_users' AND n.target_criteria LIKE CONCAT('%', ?, '%')))
+                AND n.status = 'sent'
+                ORDER BY n.created_at DESC
+                LIMIT 20";
+        
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sss", $userEmail, $userEmail, $userEmail);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $notifications = [];
+            while ($row = $result->fetch_assoc()) {
+                $notifications[] = $row;
+            }
+            $stmt->close();
+            
+            echo json_encode(['success' => true, 'notifications' => $notifications]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+        break;
+
+    case 'markNotificationRead':
+        session_start();
+        $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $notificationId = $input['notification_id'] ?? 0;
+        
+        if (!$userEmail || !$notificationId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Missing parameters']);
+            break;
+        }
+
+        // Create notification_reads table if it doesn't exist
+        $createTableSql = "CREATE TABLE IF NOT EXISTS notification_reads (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            notification_id INT NOT NULL,
+            user_email VARCHAR(255) NOT NULL,
+            read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_read (notification_id, user_email)
+        )";
+        $conn->query($createTableSql);
+
+        $sql = "INSERT IGNORE INTO notification_reads (notification_id, user_email) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("is", $notificationId, $userEmail);
+            $success = $stmt->execute();
+            $stmt->close();
+            
+            echo json_encode(['success' => $success]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+        break;
+
+    case 'markAllNotificationsRead':
+        session_start();
+        $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        
+        if (!$userEmail) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            break;
+        }
+
+        // Create notification_reads table if it doesn't exist
+        $createTableSql = "CREATE TABLE IF NOT EXISTS notification_reads (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            notification_id INT NOT NULL,
+            user_email VARCHAR(255) NOT NULL,
+            read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_read (notification_id, user_email)
+        )";
+        $conn->query($createTableSql);
+
+        $sql = "INSERT IGNORE INTO notification_reads (notification_id, user_email)
+                SELECT n.id, ? FROM push_notifications n
+                WHERE (n.target_type = 'all' OR 
+                       (n.target_type = 'customers' AND ? IN (SELECT email FROM book_purchases)) OR
+                       (n.target_type = 'specific_users' AND n.target_criteria LIKE CONCAT('%', ?, '%')))
+                AND n.status = 'sent'";
+        
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sss", $userEmail, $userEmail, $userEmail);
+            $success = $stmt->execute();
+            $stmt->close();
+            
+            echo json_encode(['success' => $success]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+        break;
 
     default:
         http_response_code(400);

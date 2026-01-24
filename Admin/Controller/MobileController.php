@@ -48,13 +48,48 @@ class MobileController extends Controller
             $data = [
                 'title' => $_POST['title'] ?? '',
                 'message' => $_POST['message'] ?? '',
-                'image_url' => $_POST['image_url'] ?? null,
+                'image_url' => null,
                 'action_url' => $_POST['action_url'] ?? null,
                 'target_type' => $_POST['target_type'] ?? 'all',
                 'target_criteria' => $_POST['target_criteria'] ?? null,
                 'scheduled_at' => $_POST['scheduled_at'] ?? null,
                 'created_by' => $_SESSION['ADMIN_EMAIL'] ?? 'admin'
             ];
+
+            // Handle notification image upload
+            if (isset($_FILES['notification_image']) && $_FILES['notification_image']['error'] === UPLOAD_ERR_OK) {
+                $image = $_FILES['notification_image'];
+                $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                
+                if (in_array($image['type'], $allowed)) {
+                    // Check file size (2MB max for notifications)
+                    if ($image['size'] <= 2 * 1024 * 1024) {
+                        $uploadDir = __DIR__ . "/../../cms-data/notifications/";
+                        if (!file_exists($uploadDir)) {
+                            mkdir($uploadDir, 0777, true);
+                        }
+
+                        $fileName = uniqid("notification_", true) . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
+                        $targetPath = $uploadDir . $fileName;
+
+                        if (move_uploaded_file($image['tmp_name'], $targetPath)) {
+                            $data['image_url'] = $fileName;
+                        } else {
+                            $_SESSION['error'] = "Failed to upload notification image.";
+                            header("Location: /admin/mobile/notifications/send");
+                            exit;
+                        }
+                    } else {
+                        $_SESSION['error'] = "Notification image is too large! Maximum size is 2MB.";
+                        header("Location: /admin/mobile/notifications/send");
+                        exit;
+                    }
+                } else {
+                    $_SESSION['error'] = "Invalid image format! Only JPG, PNG, or WEBP allowed.";
+                    header("Location: /admin/mobile/notifications/send");
+                    exit;
+                }
+            }
 
             // Validate required fields
             if (empty($data['title']) || empty($data['message'])) {

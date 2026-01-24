@@ -24,7 +24,7 @@ renderAlerts();
                 </h5>
             </div>
             <div class="card-body">
-                <form method="POST" id="notificationForm">
+                <form method="POST" id="notificationForm" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -56,9 +56,9 @@ renderAlerts();
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Image URL</label>
-                                <input type="url" class="form-control" name="image_url">
-                                <small class="form-text text-muted">Optional image to display with notification</small>
+                                <label class="form-label">Notification Image</label>
+                                <input type="file" class="form-control" name="notification_image" accept="image/*">
+                                <small class="form-text text-muted">Optional image to display with notification (JPG, PNG, WEBP)</small>
                             </div>
                         </div>
                         <div class="col-md-6">

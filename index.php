@@ -179,6 +179,22 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "mobile_api.php";
     });
 
+    // User notification API endpoints
+    $r->addRoute('GET', '/api/user/notifications', function () {
+        $_GET['action'] = 'userNotifications';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/user/notifications/read', function () {
+        $_GET['action'] = 'markNotificationRead';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/user/notifications/read-all', function () {
+        $_GET['action'] = 'markAllNotificationsRead';
+        require "Application/api.php";
+    });
+
     // Enhanced mobile banners API with better filtering - removed to avoid class conflicts
     // Access directly via /API/mobile_banners.php?screen={screen}
 

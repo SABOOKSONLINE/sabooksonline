@@ -146,7 +146,8 @@ renderSectionHeader(
                 <h5 class="modal-title">Add Mobile Banner</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="bannerForm" method="POST" action="/admin/mobile/banners/add" enctype="multipart/form-data">
+            <form id="bannerForm" method="POST" action="/admin/mobile/banners" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="add">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -174,12 +175,12 @@ renderSectionHeader(
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
                     
-                    <div class="row">
+                        <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Image URL *</label>
-                                <input type="url" class="form-control" name="image_url" required>
-                                <small class="form-text text-muted">Enter the full URL to the banner image</small>
+                                <label class="form-label">Banner Image *</label>
+                                <input type="file" class="form-control" name="banner_image" accept="image/*" required>
+                                <small class="form-text text-muted">Upload JPG, PNG, or WEBP image (max 5MB)</small>
                             </div>
                         </div>
                         <div class="col-md-6">
