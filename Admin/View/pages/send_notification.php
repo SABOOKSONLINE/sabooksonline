@@ -136,33 +136,38 @@ renderAlerts();
                         <div class="col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <!-- Back Button -->
-                                        <div class="col-md-3">
-                                            <a href="/admin/mobile/notifications" class="btn btn-outline-secondary w-100">
-                                                <i class="fas fa-arrow-left me-2"></i>Back to List
-                                            </a>
+                                    <!-- Action Buttons - Improved Layout -->
+                                    <div class="row g-3">
+                                        <!-- Navigation Actions -->
+                                        <div class="col-12">
+                                            <div class="row g-2">
+                                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                                    <a href="/admin/mobile/notifications" class="btn btn-outline-secondary w-100">
+                                                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                                                    </a>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                                    <button type="button" class="btn btn-outline-info w-100" onclick="previewRecipients()">
+                                                        <i class="fas fa-users me-2"></i>Preview Recipients
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                         
-                                        <!-- Preview Button -->
-                                        <div class="col-md-3 mt-2 mt-md-0">
-                                            <button type="button" class="btn btn-outline-info w-100" onclick="previewRecipients()">
-                                                <i class="fas fa-users me-2"></i>Preview Recipients
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Save Draft Button -->
-                                        <div class="col-md-3 mt-2 mt-md-0">
-                                            <button type="submit" name="action" value="draft" class="btn btn-outline-primary w-100">
-                                                <i class="fas fa-save me-2"></i>Save Draft
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Send Button -->
-                                        <div class="col-md-3 mt-2 mt-md-0">
-                                            <button type="submit" name="action" value="send" class="btn btn-success w-100">
-                                                <i class="fas fa-paper-plane me-2"></i>Send Notification
-                                            </button>
+                                        <!-- Primary Actions -->
+                                        <div class="col-12">
+                                            <div class="row g-2">
+                                                <div class="col-12 col-sm-6">
+                                                    <button type="submit" name="action" value="draft" class="btn btn-outline-primary w-100">
+                                                        <i class="fas fa-save me-2"></i>Save as Draft
+                                                    </button>
+                                                </div>
+                                                <div class="col-12 col-sm-6">
+                                                    <button type="submit" name="action" value="send" class="btn btn-success w-100 fw-bold">
+                                                        <i class="fas fa-paper-plane me-2"></i>Send Notification
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     
