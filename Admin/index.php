@@ -53,10 +53,19 @@ if ($uri === "/admin") {
     // Handle optional trailing slash
     $notificationId = (int)$matches[1];
     if ($notificationId > 0) {
-        $mobileController->resendNotification($notificationId);
+        try {
+            $mobileController->resendNotification($notificationId);
+        } catch (Exception $e) {
+            error_log("Error resending notification {$notificationId}: " . $e->getMessage());
+            $_SESSION['error'] = "Failed to resend notification: " . $e->getMessage();
+            header("Location: /admin/mobile/notifications");
+            exit;
+        }
     } else {
         http_response_code(400);
-        echo "Invalid notification ID";
+        $_SESSION['error'] = "Invalid notification ID";
+        header("Location: /admin/mobile/notifications");
+        exit;
     }
 } else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
     $mobileController->deleteNotification((int)$matches[1]);
