@@ -191,6 +191,53 @@ class MobileController extends Controller
         return true;
     }
     
+    public function resendNotification(int $notificationId): void
+    {
+        $notification = $this->notificationModel->getNotificationById($notificationId);
+        
+        if (!$notification) {
+            $_SESSION['error'] = "Notification not found.";
+            header("Location: /admin/mobile/notifications");
+            exit;
+        }
+        
+        // Reset notification stats and status
+        $this->notificationModel->updateNotificationStatus($notificationId, 'sending', [
+            'total_recipients' => 0,
+            'successful_sends' => 0,
+            'failed_sends' => 0
+        ]);
+        
+        // Clear old notification logs for this notification
+        $this->notificationModel->clearNotificationLogs($notificationId);
+        
+        // Resend the notification
+        $success = $this->processNotificationSend($notificationId);
+        
+        if ($success) {
+            $_SESSION['success'] = "Notification resent successfully.";
+        } else {
+            $_SESSION['error'] = "Failed to resend notification.";
+        }
+        
+        header("Location: /admin/mobile/notifications");
+        exit;
+    }
+    
+    public function deleteNotification(int $notificationId): void
+    {
+        $success = $this->notificationModel->deleteNotification($notificationId);
+        
+        if ($success) {
+            $_SESSION['success'] = "Notification deleted successfully.";
+        } else {
+            $_SESSION['error'] = "Failed to delete notification.";
+        }
+        
+        header("Location: /admin/mobile/notifications");
+        exit;
+    }
+    
     public function previewNotificationRecipients(): void
     {
         error_log("🎯 Preview Recipients API called");

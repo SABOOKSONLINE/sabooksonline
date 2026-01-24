@@ -122,11 +122,32 @@ class NotificationModel extends Model
 
     public function deleteNotification(int $id): int
     {
-        return $this->delete(
-            "DELETE FROM push_notifications WHERE id = ? AND status = 'draft'",
-            "i",
-            [$id]
-        );
+        // Allow deleting any notification (not just drafts)
+        // Also delete associated notification logs
+        $this->conn->begin_transaction();
+        
+        try {
+            // Delete notification logs first
+            $deleteLogsSql = "DELETE FROM notification_logs WHERE notification_id = ?";
+            $deleteLogsStmt = $this->conn->prepare($deleteLogsSql);
+            $deleteLogsStmt->bind_param("i", $id);
+            $deleteLogsStmt->execute();
+            $deleteLogsStmt->close();
+            
+            // Delete the notification
+            $result = $this->delete(
+                "DELETE FROM push_notifications WHERE id = ?",
+                "i",
+                [$id]
+            );
+            
+            $this->conn->commit();
+            return $result;
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            error_log("Error deleting notification: " . $e->getMessage());
+            return 0;
+        }
     }
 
     public function getNotificationById(int $id): ?array
@@ -316,5 +337,18 @@ class NotificationModel extends Model
         $stmt->close();
         
         return $stats ?: [];
+    }
+    
+    public function clearNotificationLogs(int $notificationId): bool
+    {
+        $this->createNotificationLogTable();
+        
+        $sql = "DELETE FROM notification_logs WHERE notification_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $notificationId);
+        $result = $stmt->execute();
+        $stmt->close();
+        
+        return $result;
     }
 }

@@ -45,6 +45,10 @@ if ($uri === "/admin") {
     $mobileController->sendNotification();
 } else if ($uri === "/admin/mobile/notifications/preview") {
     $mobileController->previewNotificationRecipients();
+} else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
+    $mobileController->deleteNotification((int)$matches[1]);
+} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)$#', $uri, $matches)) {
+    $mobileController->resendNotification((int)$matches[1]);
 } else {
     http_response_code(404);
     echo "404 Page Not Found";

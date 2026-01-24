@@ -135,19 +135,29 @@ renderSectionHeader(
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <button class="btn btn-sm btn-outline-info view-notification" 
-                                                        data-notification='<?= htmlspecialchars(json_encode($notification)) ?>'>
+                                                        data-notification='<?= htmlspecialchars(json_encode($notification)) ?>'
+                                                        title="View Details">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <?php if ($notification['status'] === 'draft'): ?>
-                                                    <button class="btn btn-sm btn-outline-primary edit-notification" 
-                                                            data-id="<?= $notification['id'] ?>">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger delete-notification" 
-                                                            data-id="<?= $notification['id'] ?>">
-                                                        <i class="fas fa-trash"></i>
+                                                <?php if ($notification['status'] === 'sent' || $notification['status'] === 'failed'): ?>
+                                                    <button class="btn btn-sm btn-outline-success resend-notification" 
+                                                            data-id="<?= $notification['id'] ?>"
+                                                            title="Resend Notification">
+                                                        <i class="fas fa-redo"></i>
                                                     </button>
                                                 <?php endif; ?>
+                                                <?php if ($notification['status'] === 'draft'): ?>
+                                                    <button class="btn btn-sm btn-outline-primary edit-notification" 
+                                                            data-id="<?= $notification['id'] ?>"
+                                                            title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                                <button class="btn btn-sm btn-outline-danger delete-notification" 
+                                                        data-id="<?= $notification['id'] ?>"
+                                                        title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -309,8 +319,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.delete-notification').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;
-            if (confirm('Are you sure you want to delete this notification?')) {
+            if (confirm('Are you sure you want to delete this notification? This action cannot be undone and will also delete all associated logs.')) {
                 window.location.href = `/admin/mobile/notifications/delete/${id}`;
+            }
+        });
+    });
+    
+    // Resend notification
+    document.querySelectorAll('.resend-notification').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            if (confirm('Are you sure you want to resend this notification? It will be sent to all registered devices again.')) {
+                window.location.href = `/admin/mobile/notifications/resend/${id}`;
             }
         });
     });
