@@ -9,6 +9,7 @@ require_once __DIR__ . "/Controller/UsersController.php";
 require_once __DIR__ . "/Controller/AnalyticsController.php";
 require_once __DIR__ . "/Controller/OrdersController.php";
 require_once __DIR__ . "/Controller/PurchasesController.php";
+require_once __DIR__ . "/Controller/MobileController.php";
 
 $uri = $_SERVER['REQUEST_URI'];
 
@@ -18,6 +19,7 @@ $usersController = new UsersController($conn);
 $analyticsController = new AnalyticsController($conn);
 $ordersController = new OrdersController($conn);
 $purchasesController = new PurchasesController($conn);
+$mobileController = new MobileController($conn);
 
 if ($uri === "/admin") {
     $homeController->index();
@@ -31,6 +33,12 @@ if ($uri === "/admin") {
     $ordersController->orders();
 } else if ($uri === "/admin/purchases") {
     $purchasesController->purchases();
+} else if ($uri === "/admin/mobile/banners") {
+    $mobileController->banners();
+} else if ($uri === "/admin/mobile/notifications") {
+    $mobileController->notifications();
+} else if ($uri === "/admin/mobile/notifications/send") {
+    $mobileController->sendNotification();
 } else {
     http_response_code(404);
     echo "404 Page Not Found";

@@ -173,6 +173,19 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    // Mobile device token registration
+    $r->addRoute('POST', '/api/mobile/register-token', function () {
+        $_GET['action'] = 'registerDeviceToken';
+        require "Application/api.php";
+    });
+
+    // Enhanced mobile banners API with better filtering
+    $r->addRoute('GET', '/api/mobile/banners/{screen}', function ($screen) {
+        $_GET['action'] = 'mobileBanners';
+        $_GET['screen'] = $screen;
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
         $_GET['action'] = 'audio';
         $_GET['a_id'] = $a_id;

@@ -247,6 +247,46 @@ switch ($action) {
         $a_id = $_GET['a_id'] ?? null;
         $controller->getAudiobookDetailsApi($a_id);
         break;
+    case 'registerDeviceToken':
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        
+        if (!isset($input['user_email'], $input['device_token'], $input['platform'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'user_email, device_token, and platform are required']);
+            break;
+        }
+
+        require_once __DIR__ . '/Config/connection.php';
+        require_once __DIR__ . '/../Admin/Model/NotificationModel.php';
+        
+        $notificationModel = new NotificationModel($conn);
+        $success = $notificationModel->registerDeviceToken([
+            'user_email' => $input['user_email'],
+            'user_key' => $input['user_key'] ?? null,
+            'device_token' => $input['device_token'],
+            'platform' => $input['platform'],
+            'app_version' => $input['app_version'] ?? null
+        ]);
+
+        echo json_encode(['success' => $success]);
+        break;
+
+    case 'mobileBanners':
+        $screen = $_GET['screen'] ?? 'home';
+        require_once __DIR__ . '/Config/connection.php';
+        require_once __DIR__ . '/../Admin/Model/MobileBannerModel.php';
+        
+        $mobileBannerModel = new MobileBannerModel($conn);
+        $banners = $mobileBannerModel->getMobileBannersByScreen($screen);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'screen' => $screen,
+            'banners' => $banners
+        ]);
+        break;
+
     case 'analytics':
         $input = json_decode(file_get_contents('php://input'), true);
         $userID = $input['userID'];

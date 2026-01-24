@@ -42,6 +42,23 @@ $current_path = $_SERVER['REQUEST_URI'];
                 <a href="/admin/purchases" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/purchases' || $current_path == '/admin/purchases/') ? 'active' : ''; ?>">
                     <i class="fas fa-book me-2"></i> Book Purchases
                 </a>
+
+                <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#mobileMenu" role="button" aria-expanded="false" aria-controls="mobileMenu">
+                    <span><i class="fas fa-mobile-alt me-2"></i> Mobile App</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+
+                <div class="collapse <?php echo (strpos($current_path, '/admin/mobile') === 0) ? 'show' : ''; ?>" id="mobileMenu">
+                    <div class="nav flex-column ms-3 mt-1">
+                        <a href="/admin/mobile/banners" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/mobile/banners') ? 'active' : ''; ?>">
+                            <i class="fas fa-images me-2"></i> Mobile Banners
+                        </a>
+                        <a href="/admin/mobile/notifications" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/admin/mobile/notifications') === 0) ? 'active' : ''; ?>">
+                            <i class="fas fa-bell me-2"></i> Push Notifications
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>
