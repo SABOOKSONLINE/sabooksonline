@@ -48,27 +48,10 @@ if ($uri === "/admin") {
     $mobileController->sendNotification();
 } else if ($uri === "/admin/mobile/notifications/preview") {
     $mobileController->previewNotificationRecipients();
-} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)/?$#', $uri, $matches)) {
-    // Check resend before delete to avoid conflicts
-    // Handle optional trailing slash
-    $notificationId = (int)$matches[1];
-    if ($notificationId > 0) {
-        try {
-            $mobileController->resendNotification($notificationId);
-        } catch (Exception $e) {
-            error_log("Error resending notification {$notificationId}: " . $e->getMessage());
-            $_SESSION['error'] = "Failed to resend notification: " . $e->getMessage();
-            header("Location: /admin/mobile/notifications");
-            exit;
-        }
-    } else {
-        http_response_code(400);
-        $_SESSION['error'] = "Invalid notification ID";
-        header("Location: /admin/mobile/notifications");
-        exit;
-    }
 } else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
     $mobileController->deleteNotification((int)$matches[1]);
+} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)$#', $uri, $matches)) {
+    $mobileController->resendNotification((int)$matches[1]);
 } else {
     // Debug: Log unmatched URI
     error_log("Admin 404 - URI: " . $uri . ", Full REQUEST_URI: " . $_SERVER['REQUEST_URI']);
