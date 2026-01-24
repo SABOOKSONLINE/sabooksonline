@@ -51,6 +51,7 @@ class MobileController extends Controller
                 'image_url' => null,
                 'action_url' => $_POST['action_url'] ?? null,
                 'target_type' => $_POST['target_type'] ?? 'all',
+                'target_audience' => $_POST['target_audience'] ?? 'all', // Default to 'all' if not provided
                 'target_criteria' => $_POST['target_criteria'] ?? null,
                 'scheduled_at' => $_POST['scheduled_at'] ?? null,
                 'created_by' => $_SESSION['ADMIN_EMAIL'] ?? 'admin'
@@ -138,8 +139,11 @@ class MobileController extends Controller
         // Simple: Get ALL device tokens - app will filter locally
         $deviceTokens = $this->notificationModel->getAllDeviceTokens();
         
+        // Get target_audience with default fallback
+        $targetAudience = $notification['target_audience'] ?? 'all';
+        
         error_log("📧 Notification #{$notificationId} - Sending to ALL mobile users:");
-        error_log("   Target Audience: {$notification['target_audience']}");
+        error_log("   Target Audience: {$targetAudience}");
         error_log("   Total Devices: " . count($deviceTokens));
         error_log("   App will filter locally based on user subscription");
 
@@ -151,9 +155,9 @@ class MobileController extends Controller
                 $device['device_token'],
                 $notification['title'],
                 $notification['message'],
-                $notification['image_url'],
-                $notification['action_url'],
-                $notification['target_audience'],
+                $notification['image_url'] ?? null,
+                $notification['action_url'] ?? null,
+                $targetAudience,
                 $device['platform']
             );
 
