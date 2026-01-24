@@ -47,7 +47,7 @@ class AnalyticsModel
     ";
 
     $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("i", $userKey);
+    $stmt->bind_param("s", $userKey);  // Fixed: changed from "i" to "s" for string userKey
 
     if ($stmt->execute()) {
         $result = $stmt->get_result();
