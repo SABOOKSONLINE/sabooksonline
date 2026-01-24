@@ -13,6 +13,9 @@ require_once __DIR__ . "/Controller/MobileController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+// Debug: Log the URI for troubleshooting
+error_log("Admin routing - URI: " . $uri . ", Full REQUEST_URI: " . $_SERVER['REQUEST_URI']);
+
 $homeController = new HomeController($conn);
 $pagesController = new PagesController($conn);
 $usersController = new UsersController($conn);
@@ -45,11 +48,23 @@ if ($uri === "/admin") {
     $mobileController->sendNotification();
 } else if ($uri === "/admin/mobile/notifications/preview") {
     $mobileController->previewNotificationRecipients();
+} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)/?$#', $uri, $matches)) {
+    // Check resend before delete to avoid conflicts
+    // Handle optional trailing slash
+    $notificationId = (int)$matches[1];
+    if ($notificationId > 0) {
+        $mobileController->resendNotification($notificationId);
+    } else {
+        http_response_code(400);
+        echo "Invalid notification ID";
+    }
 } else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
     $mobileController->deleteNotification((int)$matches[1]);
-} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)$#', $uri, $matches)) {
-    $mobileController->resendNotification((int)$matches[1]);
 } else {
+    // Debug: Log unmatched URI
+    error_log("Admin 404 - URI: " . $uri . ", Full REQUEST_URI: " . $_SERVER['REQUEST_URI']);
     http_response_code(404);
     echo "404 Page Not Found";
+    echo "<br>URI: " . htmlspecialchars($uri);
+    echo "<br>Full REQUEST_URI: " . htmlspecialchars($_SERVER['REQUEST_URI']);
 }
