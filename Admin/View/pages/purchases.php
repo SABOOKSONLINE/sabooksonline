@@ -1,6 +1,7 @@
 <?php
 include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
+include __DIR__ . "/../layouts/cards/aCard.php";  // Include analysis card helper
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -15,17 +16,27 @@ renderHeading(
 renderAlerts();
 
 renderSectionHeader(
-    "Purchase Overview",
-    "Summary of book purchase statistics"
+    "Purchase Overview", 
+    "Summary of book purchase statistics including formats and revenue breakdown"
 );
 ?>
 
 <div class="row mb-4">
     <?php
+    // Calculate detailed statistics
+    $totalPurchases = count($data["book_purchases"]["all"]);
+    $completedPurchases = count(array_filter($data["book_purchases"]["all"], fn($p) => $p['payment_status'] === 'COMPLETE'));
+    $pendingPurchases = $totalPurchases - $completedPurchases;
+    $ebookPurchases = count(array_filter($data["book_purchases"]["all"], fn($p) => strtolower($p['format']) === 'ebook'));
+    $audiobookPurchases = count(array_filter($data["book_purchases"]["all"], fn($p) => strtolower($p['format']) === 'audiobook'));
+    $otherFormatPurchases = $totalPurchases - $ebookPurchases - $audiobookPurchases;
+    $freePurchases = count(array_filter($data["book_purchases"]["all"], fn($p) => floatval($p['amount']) == 0));
+    $paidPurchases = $totalPurchases - $freePurchases;
+    
     $cards = [
         [
             "title" => "Total Purchases",
-            "value" => count($data["book_purchases"]["all"]),
+            "value" => $totalPurchases,
             "icon"  => "fas fa-shopping-cart",
             "color" => "primary"
         ],
@@ -36,16 +47,40 @@ renderSectionHeader(
             "color" => "success"
         ],
         [
-            "title" => "Completed Purchases",
-            "value" => count(array_filter($data["book_purchases"]["all"], fn($p) => $p['payment_status'] === 'COMPLETE')),
+            "title" => "Ebook Purchases",
+            "value" => $ebookPurchases,
+            "icon"  => "fas fa-book",
+            "color" => "info"
+        ],
+        [
+            "title" => "Audiobook Purchases",
+            "value" => $audiobookPurchases,
+            "icon"  => "fas fa-headphones",
+            "color" => "warning"
+        ],
+        [
+            "title" => "Completed Sales",
+            "value" => $completedPurchases,
             "icon"  => "fas fa-check-circle",
             "color" => "success"
         ],
         [
-            "title" => "Pending Purchases",
-            "value" => count(array_filter($data["book_purchases"]["all"], fn($p) => $p['payment_status'] !== 'COMPLETE')),
+            "title" => "Paid Purchases",
+            "value" => $paidPurchases,
+            "icon"  => "fas fa-money-bill-wave",
+            "color" => "success"
+        ],
+        [
+            "title" => "Free Downloads",
+            "value" => $freePurchases,
+            "icon"  => "fas fa-gift",
+            "color" => "secondary"
+        ],
+        [
+            "title" => "Pending Orders",
+            "value" => $pendingPurchases,
             "icon"  => "fas fa-clock",
-            "color" => "warning"
+            "color" => "danger"
         ]
     ];
 
@@ -53,6 +88,123 @@ renderSectionHeader(
         renderAnalysisCard($card["title"], $card["value"], $card["icon"], $card["color"]);
     }
     ?>
+</div>
+
+<!-- Format Breakdown Section -->
+<?php
+renderSectionHeader(
+    "Format & Revenue Analysis",
+    "Detailed breakdown of purchases by format and payment status"
+);
+?>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Format Breakdown</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-book text-info me-2"></i>Ebooks</span>
+                        <strong><?= $ebookPurchases ?></strong>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: <?= $totalPurchases > 0 ? ($ebookPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-headphones text-warning me-2"></i>Audiobooks</span>
+                        <strong><?= $audiobookPurchases ?></strong>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: <?= $totalPurchases > 0 ? ($audiobookPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                
+                <?php if ($otherFormatPurchases > 0): ?>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-file-alt text-secondary me-2"></i>Other Formats</span>
+                        <strong><?= $otherFormatPurchases ?></strong>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-secondary" style="width: <?= $totalPurchases > 0 ? ($otherFormatPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0"><i class="fas fa-money-check-alt me-2"></i>Revenue Breakdown</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-dollar-sign text-success me-2"></i>Paid Sales</span>
+                        <strong><?= $paidPurchases ?></strong>
+                    </div>
+                    <small class="text-muted">Revenue: R<?= number_format($data["book_purchases"]["revenue"], 2) ?></small>
+                    <div class="progress mt-1" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: <?= $totalPurchases > 0 ? ($paidPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-gift text-info me-2"></i>Free Downloads</span>
+                        <strong><?= $freePurchases ?></strong>
+                    </div>
+                    <small class="text-muted">No revenue generated</small>
+                    <div class="progress mt-1" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: <?= $totalPurchases > 0 ? ($freePurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-white">
+                <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Status Overview</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-check-circle text-success me-2"></i>Completed</span>
+                        <strong><?= $completedPurchases ?></strong>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: <?= $totalPurchases > 0 ? ($completedPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span><i class="fas fa-clock text-warning me-2"></i>Pending/Failed</span>
+                        <strong><?= $pendingPurchases ?></strong>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: <?= $totalPurchases > 0 ? ($pendingPurchases / $totalPurchases * 100) : 0 ?>%;"></div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Success Rate: <strong><?= $totalPurchases > 0 ? number_format(($completedPurchases / $totalPurchases * 100), 1) : 0 ?>%</strong>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?php
@@ -74,6 +226,38 @@ renderSectionHeader(
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
+                        <!-- Filter Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <select class="form-select" id="formatFilter" onchange="filterTable()">
+                                    <option value="">All Formats</option>
+                                    <option value="Ebook">Ebooks Only</option>
+                                    <option value="Audiobook">Audiobooks Only</option>
+                                    <option value="Other">Other Formats</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="statusFilter" onchange="filterTable()">
+                                    <option value="">All Status</option>
+                                    <option value="COMPLETE">Completed</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="FAILED">Failed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="paymentFilter" onchange="filterTable()">
+                                    <option value="">All Payments</option>
+                                    <option value="paid">Paid Only</option>
+                                    <option value="free">Free Only</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                                    <i class="fas fa-times me-2"></i>Clear Filters
+                                </button>
+                            </div>
+                        </div>
+                        
                         <table class="table table-striped table-hover" id="purchasesTable">
                             <thead class="table-dark">
                                 <tr>
@@ -212,6 +396,14 @@ renderSectionHeader(
                                 <td class="fw-bold">Content ID:</td>
                                 <td><span id="modalContentId" class="font-monospace">-</span></td>
                             </tr>
+                            <tr>
+                                <td class="fw-bold">Ebook Price:</td>
+                                <td><span id="modalEbookPrice" class="text-success">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Audiobook Price:</td>
+                                <td><span id="modalAudiobookPrice" class="text-info">-</span></td>
+                            </tr>
                         </table>
                     </div>
                     
@@ -284,6 +476,12 @@ function showPurchaseDetail(purchase) {
     document.getElementById('modalBookId').textContent = purchase.book_id;
     document.getElementById('modalContentId').textContent = purchase.book_contentid || 'N/A';
     
+    // Book pricing information
+    const ebookPrice = purchase.ebook_price ? `R${parseFloat(purchase.ebook_price).toFixed(2)}` : 'Not Available';
+    const audiobookPrice = purchase.audiobook_price ? `R${parseFloat(purchase.audiobook_price).toFixed(2)}` : 'Not Available';
+    document.getElementById('modalEbookPrice').textContent = ebookPrice;
+    document.getElementById('modalAudiobookPrice').textContent = audiobookPrice;
+    
     // Customer Information
     document.getElementById('modalCustomerEmail').textContent = purchase.user_email;
     document.getElementById('modalUserKey').textContent = purchase.user_key || 'N/A';
@@ -312,6 +510,68 @@ function showPurchaseDetail(purchase) {
     document.getElementById('modalPurchaseId').textContent = `#${purchase.id}`;
 }
 
+// Filter functionality
+function filterTable() {
+    const formatFilter = document.getElementById('formatFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const paymentFilter = document.getElementById('paymentFilter').value;
+    const table = document.getElementById('purchasesTable');
+    const rows = table.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+        let showRow = true;
+        const cells = row.querySelectorAll('td');
+        
+        // Format filter
+        if (formatFilter) {
+            const formatCell = cells[3]; // Format column
+            const formatText = formatCell.textContent.trim();
+            if (formatFilter === 'Other') {
+                showRow = showRow && !formatText.includes('Ebook') && !formatText.includes('Audiobook');
+            } else {
+                showRow = showRow && formatText.includes(formatFilter);
+            }
+        }
+        
+        // Status filter
+        if (statusFilter) {
+            const statusCell = cells[5]; // Status column
+            showRow = showRow && statusCell.textContent.includes(statusFilter);
+        }
+        
+        // Payment filter
+        if (paymentFilter) {
+            const amountCell = cells[4]; // Amount column
+            const amountText = amountCell.textContent.trim();
+            if (paymentFilter === 'free') {
+                showRow = showRow && amountText.includes('FREE');
+            } else if (paymentFilter === 'paid') {
+                showRow = showRow && !amountText.includes('FREE');
+            }
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+    });
+    
+    // Update visible row count
+    updateFilterResults(rows);
+}
+
+function clearFilters() {
+    document.getElementById('formatFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('paymentFilter').value = '';
+    filterTable();
+}
+
+function updateFilterResults(rows) {
+    const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+    const resultText = document.getElementById('filterResults');
+    if (resultText) {
+        resultText.textContent = `Showing ${visibleRows.length} of ${rows.length} purchases`;
+    }
+}
+
 // Add DataTables functionality if available
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof $ !== 'undefined' && $.fn.DataTable) {
@@ -330,6 +590,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 "infoFiltered": "(filtered from _MAX_ total purchases)"
             }
         });
+    }
+    
+    // Add filter results indicator
+    const tableWrapper = document.querySelector('.table-responsive');
+    if (tableWrapper) {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'text-muted small mb-2';
+        resultDiv.id = 'filterResults';
+        tableWrapper.insertBefore(resultDiv, tableWrapper.firstChild);
+        
+        // Initial count
+        const rows = document.querySelectorAll('#purchasesTable tbody tr');
+        updateFilterResults(rows);
     }
 });
 </script>
