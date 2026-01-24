@@ -74,7 +74,7 @@ class MobileBannerModel extends Model
             error_log("📋 Parameters: " . print_r([
                 $data["title"],
                 $data["description"],
-                $data["image"],
+                $data["image_url"],
                 $data["action_url"],
                 $data["screen"],
                 $data["priority"],
