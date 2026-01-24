@@ -192,10 +192,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (notification.target_criteria) {
                 try {
                     const criteria = JSON.parse(notification.target_criteria);
-                    targetInfo = `<pre class="bg-light p-2 rounded">${JSON.stringify(criteria, null, 2)}</pre>`;
+                    
+                    // Format target criteria in a user-friendly way
+                    if (notification.target_type === 'subscription' && criteria.subscription_type) {
+                        targetInfo = `<span class="badge bg-info">${criteria.subscription_type.charAt(0).toUpperCase() + criteria.subscription_type.slice(1)} Users</span>`;
+                    } else if (notification.target_type === 'specific_users' && criteria.emails) {
+                        const emails = Array.isArray(criteria.emails) ? criteria.emails : criteria.emails.split('\n').filter(e => e.trim());
+                        targetInfo = `<div class="mb-2"><strong>Specific Users (${emails.length}):</strong></div>`;
+                        targetInfo += emails.slice(0, 3).map(email => `<span class="badge bg-secondary me-1">${email.trim()}</span>`).join('');
+                        if (emails.length > 3) {
+                            targetInfo += `<span class="text-muted">... and ${emails.length - 3} more</span>`;
+                        }
+                    } else {
+                        targetInfo = '<span class="text-muted">No specific criteria</span>';
+                    }
                 } catch (e) {
-                    targetInfo = notification.target_criteria;
+                    targetInfo = `<span class="text-muted">${notification.target_criteria}</span>`;
                 }
+            } else {
+                targetInfo = '<span class="text-muted">All users</span>';
             }
             
             detailsDiv.innerHTML = `

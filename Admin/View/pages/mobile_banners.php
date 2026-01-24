@@ -113,6 +113,12 @@ renderSectionHeader(
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-info view-banner-details" 
+                                                        data-banner='<?= htmlspecialchars(json_encode($banner)) ?>'
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#bannerDetailsModal">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
                                                 <button class="btn btn-sm btn-outline-primary edit-banner" 
                                                         data-banner='<?= htmlspecialchars(json_encode($banner)) ?>'>
                                                     <i class="fas fa-edit"></i>
@@ -231,6 +237,83 @@ renderSectionHeader(
     </div>
 </div>
 
+<!-- Banner Details Modal -->
+<div class="modal fade" id="bannerDetailsModal" tabindex="-1" aria-labelledby="bannerDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bannerDetailsModalLabel">
+                    <i class="fas fa-mobile-alt me-2"></i>Banner Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Banner Image -->
+                    <div class="col-md-5">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-image me-2"></i>Banner Preview</h6>
+                        <div class="text-center mb-3">
+                            <img id="modalBannerImage" src="" alt="Banner Image" 
+                                 class="img-fluid rounded shadow" style="max-height: 200px; max-width: 100%;">
+                        </div>
+                        <div class="text-center">
+                            <small class="text-muted">Mobile App Preview</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner Information -->
+                    <div class="col-md-7">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Banner Information</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-tag me-2"></i>Title:</td>
+                                <td id="modalBannerTitle">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-align-left me-2"></i>Description:</td>
+                                <td id="modalBannerDescription">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-mobile-alt me-2"></i>Screen:</td>
+                                <td><span id="modalBannerScreen" class="badge bg-info">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-sort-numeric-up me-2"></i>Priority:</td>
+                                <td><span id="modalBannerPriority" class="badge bg-secondary">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-toggle-on me-2"></i>Status:</td>
+                                <td><span id="modalBannerStatus" class="badge">-</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-link me-2"></i>Action URL:</td>
+                                <td id="modalBannerActionUrl">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-calendar me-2"></i>Start Date:</td>
+                                <td id="modalBannerStartDate">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-calendar-times me-2"></i>End Date:</td>
+                                <td id="modalBannerEndDate">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold"><i class="fas fa-hashtag me-2"></i>Banner ID:</td>
+                                <td><span id="modalBannerId" class="font-monospace">-</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize DataTable if available
@@ -244,6 +327,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // View banner details functionality
+    document.querySelectorAll('.view-banner-details').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const banner = JSON.parse(this.dataset.banner);
+            
+            // Banner Image
+            const bannerImage = banner.image_url ? 
+                `/cms-data/banners/${banner.image_url}` : 
+                '/img/lazy-placeholder.jpg';
+            document.getElementById('modalBannerImage').src = bannerImage;
+            
+            // Banner Information
+            document.getElementById('modalBannerTitle').textContent = banner.title || 'No Title';
+            document.getElementById('modalBannerDescription').textContent = banner.description || 'No Description';
+            document.getElementById('modalBannerScreen').textContent = (banner.screen || 'home').charAt(0).toUpperCase() + (banner.screen || 'home').slice(1);
+            document.getElementById('modalBannerPriority').textContent = banner.priority || '0';
+            document.getElementById('modalBannerId').textContent = `#${banner.id}`;
+            
+            // Status Badge
+            const now = new Date();
+            const startDate = new Date(banner.start_date);
+            const endDate = banner.end_date ? new Date(banner.end_date) : null;
+            const isActive = (banner.is_active || 1) && startDate <= now && (!endDate || endDate >= now);
+            
+            const statusBadge = document.getElementById('modalBannerStatus');
+            statusBadge.textContent = isActive ? 'Active' : 'Inactive';
+            statusBadge.className = `badge ${isActive ? 'bg-success' : 'bg-secondary'}`;
+            
+            // Action URL
+            const actionUrlElement = document.getElementById('modalBannerActionUrl');
+            if (banner.action_url) {
+                actionUrlElement.innerHTML = `<a href="${banner.action_url}" target="_blank" class="text-decoration-none">${banner.action_url} <i class="fas fa-external-link-alt"></i></a>`;
+            } else {
+                actionUrlElement.textContent = 'No Action URL';
+            }
+            
+            // Dates
+            document.getElementById('modalBannerStartDate').textContent = new Date(banner.start_date).toLocaleString();
+            document.getElementById('modalBannerEndDate').textContent = banner.end_date ? new Date(banner.end_date).toLocaleString() : 'No End Date';
+        });
+    });
+
     // Edit banner functionality
     document.querySelectorAll('.edit-banner').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -254,7 +379,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Populate form
             form.title.value = banner.title;
             form.description.value = banner.description || '';
-            form.image_url.value = banner.image_url;
             form.action_url.value = banner.action_url || '';
             form.screen.value = banner.screen;
             form.priority.value = banner.priority;
