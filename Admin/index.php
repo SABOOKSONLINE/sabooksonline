@@ -11,7 +11,7 @@ require_once __DIR__ . "/Controller/OrdersController.php";
 require_once __DIR__ . "/Controller/PurchasesController.php";
 require_once __DIR__ . "/Controller/MobileController.php";
 
-$uri = $_SERVER['REQUEST_URI'];
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $homeController = new HomeController($conn);
 $pagesController = new PagesController($conn);
