@@ -185,28 +185,34 @@ class NotificationModel extends Model
                 
             case 'subscription':
                 if (isset($criteria['subscription_type']) && !empty($criteria['subscription_type'])) {
-                    $sql .= " AND u.subscription_status = ?";
-                    $params[] = $criteria['subscription_type'];
-                    $types .= "s";
+                    if ($criteria['subscription_type'] === 'free') {
+                        // Free users: ADMIN_SUBSCRIPTION is NULL, empty, or 'Free'
+                        $sql .= " AND (u.ADMIN_SUBSCRIPTION IS NULL OR u.ADMIN_SUBSCRIPTION = '' OR LOWER(u.ADMIN_SUBSCRIPTION) = 'free')";
+                    } else {
+                        // Specific subscription level (pro, premium, standard, deluxe)
+                        $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) = ?";
+                        $params[] = strtolower($criteria['subscription_type']);
+                        $types .= "s";
+                    }
                 } else {
-                    // If no specific subscription type, send to users with any subscription
-                    $sql .= " AND u.subscription_status IS NOT NULL";
+                    // If no specific subscription type, send to users with any paid subscription
+                    $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) IN ('pro', 'premium', 'standard', 'deluxe')";
                 }
                 break;
                 
             case 'publishers':
-                // Publishers are users who have uploaded books (check posts table)
-                $sql .= " AND dt.user_email IN (
-                    SELECT DISTINCT ADMIN_EMAIL FROM posts 
-                    WHERE ADMIN_EMAIL IS NOT NULL AND ADMIN_EMAIL != ''
-                )";
+                // Publishers: Users with paid plans (pro, premium, standard, deluxe) - matching nav.php logic
+                $sql .= " AND LOWER(u.ADMIN_SUBSCRIPTION) IN ('pro', 'premium', 'standard', 'deluxe')";
                 break;
                 
             case 'customers':
-                // Customers are users who have made book purchases
-                $sql .= " AND dt.user_email IN (
-                    SELECT DISTINCT user_email FROM book_purchases 
-                    WHERE payment_status = 'COMPLETE'
+                // Customers: Free users OR users who made successful book purchases
+                $sql .= " AND (
+                    (u.ADMIN_SUBSCRIPTION IS NULL OR u.ADMIN_SUBSCRIPTION = '' OR LOWER(u.ADMIN_SUBSCRIPTION) = 'free')
+                    OR dt.user_email IN (
+                        SELECT DISTINCT user_email FROM book_purchases 
+                        WHERE payment_status = 'COMPLETE'
+                    )
                 )";
                 break;
                 
@@ -297,6 +303,20 @@ class NotificationModel extends Model
         }
         
         return $validation;
+    }
+    
+    public function testNotificationTargeting(): array
+    {
+        // Test different targeting scenarios
+        $tests = [
+            'all_users' => $this->validateNotificationTargets('all', []),
+            'free_users' => $this->validateNotificationTargets('subscription', ['subscription_type' => 'free']),
+            'publishers' => $this->validateNotificationTargets('publishers', []),
+            'premium_users' => $this->validateNotificationTargets('subscription', ['subscription_type' => 'premium']),
+            'customers' => $this->validateNotificationTargets('customers', []),
+        ];
+        
+        return $tests;
     }
 
     public function updateNotificationStatus(int $id, string $status, array $stats = []): bool

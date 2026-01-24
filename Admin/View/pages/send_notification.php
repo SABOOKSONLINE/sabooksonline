@@ -37,11 +37,11 @@ renderAlerts();
                             <div class="mb-3">
                                 <label class="form-label">Target Audience *</label>
                                 <select class="form-select" name="target_type" required id="targetType">
-                                    <option value="all">All Users</option>
-                                    <option value="subscription">By Subscription</option>
-                                    <option value="publishers">Publishers Only</option>
-                                    <option value="customers">Customers Only</option>
-                                    <option value="specific_users">Specific Users</option>
+                                    <option value="all">All Users (Everyone with app installed)</option>
+                                    <option value="subscription">By Subscription Level</option>
+                                    <option value="publishers">Publishers (Pro/Premium/Standard/Deluxe)</option>
+                                    <option value="customers">Customers (Free users + Book buyers)</option>
+                                    <option value="specific_users">Specific Users (by Email)</option>
                                 </select>
                             </div>
                         </div>
@@ -74,12 +74,17 @@ renderAlerts();
                     <div id="subscriptionCriteria" class="mb-3" style="display: none;">
                         <label class="form-label">Subscription Type</label>
                         <select class="form-select" name="target_criteria[subscription_type]">
-                            <option value="">All Subscriptions</option>
+                            <option value="">All Paid Subscriptions (Pro, Premium, Standard, Deluxe)</option>
                             <option value="free">Free Users</option>
                             <option value="pro">Pro Subscribers</option>
                             <option value="premium">Premium Subscribers</option>
-                            <option value="royalties">Royalty Publishers</option>
+                            <option value="standard">Standard Subscribers</option>
+                            <option value="deluxe">Deluxe Subscribers</option>
                         </select>
+                        <small class="form-text text-muted">
+                            <strong>Publishers:</strong> Pro/Premium/Standard/Deluxe users<br>
+                            <strong>Customers:</strong> Free users or anyone who made purchases
+                        </small>
                     </div>
                     
                     <div id="specificUsersCriteria" class="mb-3" style="display: none;">
