@@ -346,38 +346,38 @@ class MobileController extends Controller
 
     private function sendPushNotification(string $deviceToken, string $title, string $message, ?string $imageUrl, ?string $actionUrl, string $targetAudience, string $platform): bool
     {
-        // This is a placeholder for actual push notification implementation
-        // You would integrate with Firebase Cloud Messaging (FCM) or Apple Push Notification service (APNs)
+        // Use Expo Push Notification Service
+        // Device tokens are in format: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+        $url = 'https://exp.host/--/api/v2/push/send';
         
-        // For FCM (Firebase Cloud Messaging)
-        $serverKey = 'YOUR_FCM_SERVER_KEY'; // Store this in config
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        
-        $notification = [
+        // Build notification payload for Expo
+        $notificationData = [
+            'to' => $deviceToken,
             'title' => $title,
             'body' => $message,
+            'sound' => 'default',
+            'badge' => 1,
+            'data' => [
+                'action_url' => $actionUrl ?? '',
+                'target_audience' => $targetAudience,
+                'notification_id' => uniqid(),
+                'timestamp' => time()
+            ]
         ];
         
+        // Add image if provided
         if ($imageUrl) {
-            $notification['image'] = $imageUrl;
+            // If imageUrl is relative, make it absolute
+            if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                $imageUrl = 'https://www.sabooksonline.co.za/cms-data/notifications/' . $imageUrl;
+            }
+            $notificationData['data']['image'] = $imageUrl;
         }
         
-        $data = [
-            'action_url' => $actionUrl,
-            'target_audience' => $targetAudience,  // ← App will use this for local filtering
-            'notification_id' => uniqid(),         // ← For notification history
-            'timestamp' => time()
-        ];
-        
-        $payload = [
-            'to' => $deviceToken,
-            'notification' => $notification,
-            'data' => $data
-        ];
-        
         $headers = [
-            'Authorization: key=' . $serverKey,
-            'Content-Type: application/json'
+            'Content-Type: application/json',
+            'Accept: application/json',
+            'Accept-Encoding: gzip, deflate'
         ];
         
         $ch = curl_init();
@@ -385,15 +385,38 @@ class MobileController extends Controller
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notificationData));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
         
-        // For demo purposes, always return true
-        // In production, parse the response and return actual status
-        return $httpCode === 200;
+        // Log the response for debugging
+        error_log("📤 Expo Push Notification Response (HTTP $httpCode): " . $response);
+        if ($curlError) {
+            error_log("❌ cURL Error: " . $curlError);
+        }
+        
+        // Parse Expo's response
+        if ($httpCode === 200) {
+            $responseData = json_decode($response, true);
+            if (isset($responseData['data']) && isset($responseData['data'][0])) {
+                $status = $responseData['data'][0]['status'] ?? 'unknown';
+                if ($status === 'ok') {
+                    error_log("✅ Push notification sent successfully to: $deviceToken");
+                    return true;
+                } else {
+                    $error = $responseData['data'][0]['message'] ?? 'Unknown error';
+                    error_log("❌ Expo push failed: $error");
+                    return false;
+                }
+            }
+        }
+        
+        error_log("❌ Failed to send push notification. HTTP Code: $httpCode, Response: $response");
+        return false;
     }
     
     public function handleBannerForm(): void
