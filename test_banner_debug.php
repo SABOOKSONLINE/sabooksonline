@@ -7,7 +7,7 @@ echo "<h2>🔧 Banner Debug Test</h2>";
 
 try {
     // Check if table exists
-    require_once "Application/Core/Conn.php";
+    require_once "Application/Config/connection.php";
     require_once "Admin/Model/MobileBannerModel.php";
     
     echo "<h3>✅ Testing Database Connection</h3>";

@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../Core/Conn.php";
+require_once __DIR__ . "/../Config/connection.php";
 
 class NotificationModel
 {
