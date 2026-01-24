@@ -39,12 +39,16 @@ renderAlerts();
                                 <select class="form-select" name="target_audience" required id="targetAudience">
                                     <option value="all">📱 All Users (Everyone)</option>
                                     <option value="publishers">📚 Publishers (Pro/Premium/Standard/Deluxe)</option>
-                                    <option value="customers">🛒 Customers (Free users)</option>
+                                    <option value="customers">🛒 Free Users (Basic customers)</option>
+                                    <option value="book_buyers">💰 Book Buyers (Made purchases)</option>
+                                    <option value="new_users">🆕 New Users (Registered recently)</option>
+                                    <option value="active_users">🔥 Active Users (Login regularly)</option>
                                     <option value="free">🆓 Free Users Only</option>
                                     <option value="pro">⭐ Pro Subscribers</option>
                                     <option value="premium">💎 Premium Subscribers</option>
                                     <option value="standard">📖 Standard Subscribers</option>
                                     <option value="deluxe">👑 Deluxe Subscribers</option>
+                                    <option value="inactive_users">😴 Inactive Users (Bring them back)</option>
                                 </select>
                                 <small class="form-text text-muted">
                                     <i class="fas fa-info-circle text-info"></i> <strong>Simple:</strong> Sent to ALL app users, but app filters based on their subscription in localStorage.
@@ -63,8 +67,21 @@ renderAlerts();
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Notification Image</label>
-                                <input type="file" class="form-control" name="notification_image" accept="image/*">
+                                <input type="file" class="form-control" name="notification_image" accept="image/*" id="notificationImage">
                                 <small class="form-text text-muted">Optional image to display with notification (JPG, PNG, WEBP)</small>
+                                
+                                <!-- Image Preview -->
+                                <div class="mt-3" id="imagePreviewContainer" style="display: none;">
+                                    <div class="card" style="max-width: 300px;">
+                                        <img id="imagePreview" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Notification preview">
+                                        <div class="card-body p-2">
+                                            <small class="text-muted">Preview - How it will look in notifications</small>
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="clearImagePreview()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -228,6 +245,46 @@ document.addEventListener('DOMContentLoaded', function() {
             preview.textContent = `[${this.options[this.selectedIndex].text}] ${document.querySelector('input[name="title"]').value || 'Notification Title'}`;
         }
     });
+
+    // Image Preview Functionality
+    const notificationImageInput = document.getElementById('notificationImage');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+
+    if (notificationImageInput) {
+        notificationImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'block';
+                    
+                    // Update mobile preview if it exists
+                    const mobilePreviewImage = document.getElementById('previewImage');
+                    if (mobilePreviewImage) {
+                        mobilePreviewImage.src = e.target.result;
+                        document.getElementById('previewImageContainer').style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Clear image preview function
+    window.clearImagePreview = function() {
+        if (notificationImageInput) {
+            notificationImageInput.value = '';
+            imagePreviewContainer.style.display = 'none';
+            
+            // Clear mobile preview if it exists
+            const mobilePreviewContainer = document.getElementById('previewImageContainer');
+            if (mobilePreviewContainer) {
+                mobilePreviewContainer.style.display = 'none';
+            }
+        }
+    };
     
     // Form submission handling
     form.addEventListener('submit', function(e) {

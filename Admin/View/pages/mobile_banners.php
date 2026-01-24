@@ -58,10 +58,11 @@ renderSectionHeader(
                                     <tr>
                                         <td><strong>#<?= $banner['id'] ?></strong></td>
                                         <td>
-                                            <?php if (!empty($banner['image_url'])): ?>
-                                                <img src="<?= htmlspecialchars($banner['image_url']) ?>" 
+                                            <?php if (!empty($banner['image'])): ?>
+                                                <img src="https://www.sabooksonline.co.za/cms-data/banners/<?= htmlspecialchars($banner['image']) ?>" 
                                                      alt="Banner" class="img-thumbnail" 
-                                                     style="width: 60px; height: 40px; object-fit: cover;">
+                                                     style="width: 60px; height: 40px; object-fit: cover; cursor: pointer;" 
+                                                     onclick="showImageModal('https://www.sabooksonline.co.za/cms-data/banners/<?= htmlspecialchars($banner['image']) ?>', '<?= htmlspecialchars($banner['title'] ?? 'Banner') ?>')">
                                             <?php else: ?>
                                                 <div class="bg-light rounded d-flex align-items-center justify-content-center" 
                                                      style="width: 60px; height: 40px;">
@@ -431,7 +432,38 @@ document.addEventListener('DOMContentLoaded', function() {
         startDateInput.value = now.toISOString().slice(0, 16);
     }
 });
+
+// Show image modal for banners
+function showImageModal(imageUrl, title) {
+    const modal = document.getElementById('imagePreviewModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    modalImage.src = imageUrl;
+    modalTitle.textContent = title || 'Banner Image';
+    
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
 </script>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">
+                    <i class="fas fa-image text-primary me-2"></i><span id="modalTitle">Banner Image</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid rounded" style="max-height: 400px;" alt="Banner Image">
+                <p class="text-muted mt-2 mb-0">Full size banner image preview</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();

@@ -58,10 +58,21 @@ renderSectionHeader(
                                     <tr>
                                         <td><strong>#<?= $notification['id'] ?></strong></td>
                                         <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($notification['title']) ?></div>
-                                            <small class="text-muted">
-                                                <?= htmlspecialchars(substr($notification['message'], 0, 50)) ?>...
-                                            </small>
+                                            <div class="d-flex align-items-center">
+                                                <?php if (!empty($notification['image_url'])): ?>
+                                                    <img src="https://www.sabooksonline.co.za/cms-data/notifications/<?= htmlspecialchars($notification['image_url']) ?>" 
+                                                         class="me-2 rounded" 
+                                                         style="width: 40px; height: 40px; object-fit: cover;" 
+                                                         alt="Notification image"
+                                                         onclick="showImageModal('https://www.sabooksonline.co.za/cms-data/notifications/<?= htmlspecialchars($notification['image_url']) ?>', '<?= htmlspecialchars($notification['title']) ?>')">
+                                                <?php endif; ?>
+                                                <div>
+                                                    <div class="fw-bold"><?= htmlspecialchars($notification['title']) ?></div>
+                                                    <small class="text-muted">
+                                                        <?= htmlspecialchars(substr($notification['message'], 0, 50)) ?>...
+                                                    </small>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="badge bg-info">
@@ -304,7 +315,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Show image modal
+function showImageModal(imageUrl, title) {
+    const modal = document.getElementById('imagePreviewModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    modalImage.src = imageUrl;
+    modalTitle.textContent = title || 'Notification Image';
+    
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
 </script>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">
+                    <i class="fas fa-image text-primary me-2"></i><span id="modalTitle">Notification Image</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid rounded" style="max-height: 400px;" alt="Notification Image">
+                <p class="text-muted mt-2 mb-0">Full size notification image preview</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();
