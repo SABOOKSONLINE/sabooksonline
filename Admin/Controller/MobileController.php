@@ -422,17 +422,24 @@ class MobileController extends Controller
         }
         
         $headers = [
-            'Content-Type: application/json',
+            'Content-Type: application/json; charset=utf-8',
             'Accept: application/json',
             'Accept-Encoding: gzip, deflate'
         ];
+        
+        // Ensure UTF-8 encoding for emojis and special characters
+        $title = mb_convert_encoding($title, 'UTF-8', 'UTF-8');
+        $message = mb_convert_encoding($message, 'UTF-8', 'UTF-8');
+        $notificationData['title'] = $title;
+        $notificationData['body'] = $message;
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notificationData));
+        // Use JSON_UNESCAPED_UNICODE flag to preserve emojis
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notificationData, JSON_UNESCAPED_UNICODE));
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         
         $response = curl_exec($ch);
