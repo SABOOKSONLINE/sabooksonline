@@ -1,15 +1,30 @@
 <?php
 
-require_once __DIR__ . "/../Config/connection.php";
-
 class NotificationModel
 {
     private $conn;
 
     public function __construct($connection = null)
     {
-        global $conn;
-        $this->conn = $connection ?? $conn;
+        if ($connection) {
+            $this->conn = $connection;
+        } else {
+            // Create connection directly
+            $serverName = "sql58.jnb1.host-h.net";
+            $username = "sabooksonline";
+            $password = "slTFvaj07dNY6Ke";
+            $primaryDb = "sabookso_db";
+            
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+            
+            try {
+                $this->conn = new mysqli($serverName, $username, $password, $primaryDb);
+                $this->conn->set_charset("utf8mb4");
+            } catch (mysqli_sql_exception $e) {
+                error_log("NotificationModel Connection Error: " . $e->getMessage());
+                throw new Exception("Database connection failed: " . $e->getMessage());
+            }
+        }
     }
 
     /**
