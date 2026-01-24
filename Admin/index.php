@@ -42,16 +42,17 @@ if ($uri === "/admin") {
     } else {
         $mobileController->banners();
     }
+} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)$#', $uri, $matches)) {
+    // Check regex patterns BEFORE exact matches
+    $mobileController->resendNotification((int)$matches[1]);
+} else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
+    $mobileController->deleteNotification((int)$matches[1]);
 } else if ($uri === "/admin/mobile/notifications") {
     $mobileController->notifications();
 } else if ($uri === "/admin/mobile/notifications/send") {
     $mobileController->sendNotification();
 } else if ($uri === "/admin/mobile/notifications/preview") {
     $mobileController->previewNotificationRecipients();
-} else if (preg_match('#^/admin/mobile/notifications/delete/(\d+)$#', $uri, $matches)) {
-    $mobileController->deleteNotification((int)$matches[1]);
-} else if (preg_match('#^/admin/mobile/notifications/resend/(\d+)$#', $uri, $matches)) {
-    $mobileController->resendNotification((int)$matches[1]);
 } else {
     // Debug: Log unmatched URI
     error_log("Admin 404 - URI: " . $uri . ", Full REQUEST_URI: " . $_SERVER['REQUEST_URI']);
