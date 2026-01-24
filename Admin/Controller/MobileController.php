@@ -195,21 +195,23 @@ class MobileController extends Controller
             // Get JSON input
             $input = json_decode(file_get_contents('php://input'), true);
             
-            if (!$input || !isset($input['target_type'])) {
+            if (!$input || !isset($input['target_audience'])) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Invalid input data']);
                 return;
             }
             
-            $targetType = $input['target_type'];
-            $criteria = $input['criteria'] ?? [];
+            $targetAudience = $input['target_audience'];
             
-            // Validate notification targets
-            $validation = $this->notificationModel->validateNotificationTargets($targetType, $criteria);
+            // Get preview data
+            $previewData = $this->getTargetAudiencePreview($targetAudience);
             
             echo json_encode([
                 'success' => true,
-                'validation' => $validation
+                'target_audience' => $targetAudience,
+                'matching_users' => $previewData['matching_users'],
+                'total_app_users' => $previewData['total_app_users'],
+                'summary' => $previewData['summary']
             ]);
             
         } catch (Exception $e) {
@@ -220,6 +222,99 @@ class MobileController extends Controller
                 'message' => 'Server error: ' . $e->getMessage()
             ]);
         }
+    }
+    
+    private function getTargetAudiencePreview(string $targetAudience): array
+    {
+        // Get all device tokens (represents mobile app users)
+        $deviceTokens = $this->notificationModel->getAllDeviceTokens();
+        $totalAppUsers = count($deviceTokens);
+        
+        // Get all users from database
+        $sql = "SELECT ADMIN_EMAIL, ADMIN_SUBSCRIPTION, 
+                       COALESCE(ADMIN_SUBSCRIPTION, 'Free') as subscription,
+                       ADMIN_DATE,
+                       (SELECT COUNT(*) FROM book_purchases bp WHERE bp.user_email = users.ADMIN_EMAIL AND bp.payment_status = 'COMPLETE') as purchase_count,
+                       (SELECT COUNT(*) FROM device_tokens dt WHERE dt.user_email = users.ADMIN_EMAIL AND dt.is_active = 1) > 0 as has_app
+                FROM users 
+                WHERE ADMIN_EMAIL IS NOT NULL AND ADMIN_EMAIL != ''";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $allUsers = [];
+        while ($row = $result->fetch_assoc()) {
+            $allUsers[] = [
+                'email' => $row['ADMIN_EMAIL'],
+                'subscription' => $row['ADMIN_SUBSCRIPTION'] ?: 'Free',
+                'subscription_lower' => strtolower($row['ADMIN_SUBSCRIPTION'] ?: 'free'),
+                'registration_date' => $row['ADMIN_DATE'],
+                'purchase_count' => (int)$row['purchase_count'],
+                'has_app' => (bool)$row['has_app']
+            ];
+        }
+        
+        // Filter users based on target audience
+        $matchingUsers = array_filter($allUsers, function($user) use ($targetAudience) {
+            switch ($targetAudience) {
+                case 'all':
+                    return true;
+                    
+                case 'publishers':
+                    return in_array($user['subscription_lower'], ['pro', 'premium', 'standard', 'deluxe']);
+                    
+                case 'customers':
+                case 'free':
+                    return in_array($user['subscription_lower'], ['free', '']) || !$user['subscription'];
+                    
+                case 'book_buyers':
+                    return $user['purchase_count'] > 0;
+                    
+                case 'new_users':
+                    if (!$user['registration_date']) return true;
+                    $daysSinceReg = (time() - strtotime($user['registration_date'])) / (60 * 60 * 24);
+                    return $daysSinceReg <= 30;
+                    
+                case 'active_users':
+                    return $user['has_app']; // Users with mobile app are considered active
+                    
+                case 'inactive_users':
+                    return !$user['has_app']; // Users without mobile app are considered inactive
+                    
+                case 'pro':
+                case 'premium':
+                case 'standard':
+                case 'deluxe':
+                    return $user['subscription_lower'] === $targetAudience;
+                    
+                default:
+                    return true;
+            }
+        });
+        
+        // Create summary
+        $summary = [];
+        $subscriptionCounts = [];
+        
+        foreach ($matchingUsers as $user) {
+            $sub = $user['subscription'];
+            $subscriptionCounts[$sub] = ($subscriptionCounts[$sub] ?? 0) + 1;
+        }
+        
+        foreach ($subscriptionCounts as $sub => $count) {
+            $summary[] = ['label' => $sub, 'count' => $count];
+        }
+        
+        // Limit to first 50 users for display
+        $displayUsers = array_slice($matchingUsers, 0, 50);
+        
+        return [
+            'matching_users' => $displayUsers,
+            'total_matching' => count($matchingUsers),
+            'total_app_users' => $totalAppUsers,
+            'summary' => $summary
+        ];
     }
 
     private function sendPushNotification(string $deviceToken, string $title, string $message, ?string $imageUrl, ?string $actionUrl, string $targetAudience, string $platform): bool

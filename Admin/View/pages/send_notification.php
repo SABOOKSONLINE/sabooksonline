@@ -128,6 +128,9 @@ renderAlerts();
                             <i class="fas fa-arrow-left me-2"></i>Back to Notifications
                         </a>
                         <div>
+                            <button type="button" class="btn btn-info me-2" onclick="previewRecipients()">
+                                <i class="fas fa-users me-2"></i>Preview Who Will See This
+                            </button>
                             <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
                                 <i class="fas fa-save me-2"></i>Save as Draft
                             </button>
@@ -135,7 +138,7 @@ renderAlerts();
                                 <i class="fas fa-paper-plane me-2"></i>Send to All App Users
                             </button>
                             <small class="d-block text-muted mt-2">
-                                <i class="fas fa-mobile-alt"></i> Will send to ALL mobile app users. App filters based on target audience.
+                                <i class="fas fa-info-circle"></i> Sent to ALL mobile users, but only <strong id="targetText">selected audience</strong> will see it.
                             </small>
                         </div>
                     </div>
@@ -238,13 +241,152 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Simple: Update preview based on target audience selection
-    document.getElementById('targetAudience').addEventListener('change', function() {
+    // Update target text and preview based on target audience selection
+    const targetAudienceSelect = document.getElementById('targetAudience');
+    const targetText = document.getElementById('targetText');
+    
+    targetAudienceSelect.addEventListener('change', function() {
+        const selectedText = this.options[this.selectedIndex].text;
+        targetText.textContent = selectedText.toLowerCase();
+        
         const preview = document.querySelector('.notification-preview .notification-title');
         if (preview && this.value !== 'all') {
-            preview.textContent = `[${this.options[this.selectedIndex].text}] ${document.querySelector('input[name="title"]').value || 'Notification Title'}`;
+            preview.textContent = `[${selectedText}] ${document.querySelector('input[name="title"]').value || 'Notification Title'}`;
         }
     });
+    
+    // Preview Recipients Function
+    window.previewRecipients = function() {
+        const targetAudience = document.getElementById('targetAudience').value;
+        const targetText = document.getElementById('targetAudience').options[document.getElementById('targetAudience').selectedIndex].text;
+        
+        // Show modal and loading state
+        const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
+        document.getElementById('previewContent').innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Analyzing users who match "${targetText}"...</p>
+            </div>
+        `;
+        modal.show();
+        
+        // Make AJAX request to preview recipients
+        fetch('/admin/mobile/notifications/preview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                target_audience: targetAudience
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayRecipientPreview(data);
+            } else {
+                document.getElementById('previewContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Error loading preview: ${data.message || 'Unknown error'}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            document.getElementById('previewContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Network error: ${error.message}
+                </div>
+            `;
+        });
+    };
+    
+    function displayRecipientPreview(data) {
+        const { target_audience, matching_users, total_app_users, summary } = data;
+        
+        let html = `
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-0">${total_app_users}</h3>
+                            <small>Total App Users</small>
+                            <div class="mt-1"><i class="fas fa-mobile-alt"></i> Will receive push</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-0">${matching_users.length}</h3>
+                            <small>Will Actually See It</small>
+                            <div class="mt-1"><i class="fas fa-eye"></i> Matches target</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        if (summary && summary.length > 0) {
+            html += '<div class="mb-3"><h6><i class="fas fa-chart-pie text-info"></i> Breakdown:</h6>';
+            summary.forEach(item => {
+                html += `<span class="badge bg-info me-2">${item.label}: ${item.count}</span>`;
+            });
+            html += '</div>';
+        }
+        
+        if (matching_users.length > 0) {
+            html += `
+                <h6><i class="fas fa-users text-success"></i> Users Who Will See This Notification:</h6>
+                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Subscription</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            matching_users.forEach(user => {
+                const subscriptionBadge = user.subscription ? 
+                    `<span class="badge bg-primary">${user.subscription}</span>` : 
+                    '<span class="badge bg-secondary">Free</span>';
+                    
+                const statusBadge = user.has_app ? 
+                    '<span class="badge bg-success">Has App</span>' : 
+                    '<span class="badge bg-warning">Web Only</span>';
+                    
+                html += `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${subscriptionBadge}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>No users match this target audience!</strong><br>
+                    Consider selecting a different audience or wait for more users to join.
+                </div>
+            `;
+        }
+        
+        document.getElementById('previewContent').innerHTML = html;
+    }
 
     // Image Preview Functionality
     const notificationImageInput = document.getElementById('notificationImage');
@@ -352,7 +494,31 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 
-<!-- Simple approach - no preview modal needed -->
+<!-- Preview Recipients Modal -->
+<div class="modal fade" id="recipientPreviewModal" tabindex="-1" aria-labelledby="recipientPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="recipientPreviewModalLabel">
+                    <i class="fas fa-users text-primary"></i> Who Will See This Notification
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>How it works:</strong> Notification sent to ALL mobile app users, but only users matching your target audience will see it (client-side filtering).
+                </div>
+                <div id="previewContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();
