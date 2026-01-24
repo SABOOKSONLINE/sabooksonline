@@ -7,7 +7,7 @@ require_once __DIR__ . "/../Core/Model.php";
 
 class MobileBannerModel extends Model
 {
-    private function createMobileBannerTable(): bool
+    public function createMobileBannerTable(): bool
     {
         $columns = [
             "id" => "INT AUTO_INCREMENT PRIMARY KEY",
