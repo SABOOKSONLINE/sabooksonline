@@ -31,7 +31,7 @@ class MobileBannerModel extends Model
     {
         $this->createMobileBannerTable();
         
-        $sql = "SELECT * FROM Mobile_banners ORDER BY screen, priority DESC, created_at DESC";
+        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners ORDER BY screen, priority DESC, created_at DESC";
         return $this->fetchAll($sql);
     }
 
@@ -39,9 +39,8 @@ class MobileBannerModel extends Model
     {
         $this->createMobileBannerTable();
         
-        $sql = "SELECT * FROM Mobile_banners 
+        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners 
                 WHERE screen = ? 
-                AND is_active = 1 
                 AND (start_date <= NOW()) 
                 AND (end_date IS NULL OR end_date >= NOW())
                 ORDER BY priority DESC, created_at DESC";
@@ -64,20 +63,19 @@ class MobileBannerModel extends Model
     {
         $this->createMobileBannerTable();
         
-        $sql = "INSERT INTO Mobile_banners (title, description, image_url, action_url, screen, priority, is_active, start_date, end_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO Mobile_banners (title, description, image, action_url, screen, priority, start_date, end_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         return $this->insert(
             $sql,
-            "sssssiiss",
+            "sssssiis",
             [
                 $data["title"],
                 $data["description"],
-                $data["image_url"],
+                $data["image_url"], // Will be stored in 'image' column
                 $data["action_url"],
                 $data["screen"],
                 $data["priority"],
-                $data["is_active"],
                 $data["start_date"],
                 $data["end_date"]
             ]
@@ -87,21 +85,20 @@ class MobileBannerModel extends Model
     public function updateMobileBanner(int $id, array $data): bool
     {
         $sql = "UPDATE Mobile_banners 
-                SET title = ?, description = ?, image_url = ?, action_url = ?, 
-                    screen = ?, priority = ?, is_active = ?, start_date = ?, end_date = ?
+                SET title = ?, description = ?, image = ?, action_url = ?, 
+                    screen = ?, priority = ?, start_date = ?, end_date = ?
                 WHERE id = ?";
 
         return $this->update(
             $sql,
-            "sssssiissi",
+            "sssssissi",
             [
                 $data["title"],
                 $data["description"],
-                $data["image_url"],
+                $data["image_url"], // Will be stored in 'image' column
                 $data["action_url"],
                 $data["screen"],
                 $data["priority"],
-                $data["is_active"],
                 $data["start_date"],
                 $data["end_date"],
                 $id
@@ -120,7 +117,7 @@ class MobileBannerModel extends Model
 
     public function getMobileBannerById(int $id): ?array
     {
-        $sql = "SELECT * FROM Mobile_banners WHERE id = ?";
+        $sql = "SELECT id, title, description, image as image_url, action_url, screen, priority, start_date, end_date, created_at, updated_at, 1 as is_active FROM Mobile_banners WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -134,7 +131,9 @@ class MobileBannerModel extends Model
 
     public function toggleMobileBannerStatus(int $id): bool
     {
-        $sql = "UPDATE Mobile_banners SET is_active = NOT is_active WHERE id = ?";
+        // Since the existing table doesn't have is_active column, we'll use start_date/end_date
+        // Toggle by setting end_date to NOW() if null, or NULL if set
+        $sql = "UPDATE Mobile_banners SET end_date = CASE WHEN end_date IS NULL THEN NOW() ELSE NULL END WHERE id = ?";
         return $this->update($sql, "i", [$id]);
     }
 }

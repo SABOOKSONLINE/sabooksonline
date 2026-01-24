@@ -70,7 +70,7 @@ renderSectionHeader(
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($banner['title']) ?></div>
+                                            <div class="fw-bold"><?= htmlspecialchars($banner['title'] ?? '') ?></div>
                                             <?php if (!empty($banner['description'])): ?>
                                                 <small class="text-muted">
                                                     <?= htmlspecialchars(substr($banner['description'], 0, 50)) ?>...
@@ -93,7 +93,7 @@ renderSectionHeader(
                                             $startDate = new DateTime($banner['start_date']);
                                             $endDate = $banner['end_date'] ? new DateTime($banner['end_date']) : null;
                                             
-                                            $isActive = $banner['is_active'] && 
+                                            $isActive = ($banner['is_active'] ?? 0) && 
                                                        $startDate <= $now && 
                                                        (!$endDate || $endDate >= $now);
                                             ?>

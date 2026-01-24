@@ -41,11 +41,8 @@ class NotificationModel extends Model
             "platform" => "ENUM('android', 'ios') NOT NULL",
             "app_version" => "VARCHAR(50)",
             "is_active" => "TINYINT(1) DEFAULT 1",
-            "last_used" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "created_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "INDEX idx_user_email (user_email)",
-            "INDEX idx_device_token (device_token)",
-            "UNIQUE KEY unique_user_device (user_email, device_token)"
+            "last_used" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            "created_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ];
 
         return $this->createTable("device_tokens", $columns);
@@ -63,10 +60,7 @@ class NotificationModel extends Model
             "sent_at" => "TIMESTAMP NULL",
             "delivered_at" => "TIMESTAMP NULL",
             "clicked_at" => "TIMESTAMP NULL",
-            "created_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "INDEX idx_notification_id (notification_id)",
-            "INDEX idx_user_email (user_email)",
-            "FOREIGN KEY (notification_id) REFERENCES push_notifications(id) ON DELETE CASCADE"
+            "created_at" => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ];
 
         return $this->createTable("notification_logs", $columns);

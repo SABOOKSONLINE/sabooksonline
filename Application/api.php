@@ -256,17 +256,29 @@ switch ($action) {
             break;
         }
 
-        require_once __DIR__ . '/Config/connection.php';
-        require_once __DIR__ . '/../Admin/Model/NotificationModel.php';
+        // Direct SQL to avoid class conflicts
+        $sql = "INSERT INTO device_tokens (user_email, user_key, device_token, platform, app_version, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW()) 
+                ON DUPLICATE KEY UPDATE 
+                device_token = VALUES(device_token), 
+                platform = VALUES(platform), 
+                app_version = VALUES(app_version), 
+                updated_at = NOW()";
         
-        $notificationModel = new NotificationModel($conn);
-        $success = $notificationModel->registerDeviceToken([
-            'user_email' => $input['user_email'],
-            'user_key' => $input['user_key'] ?? null,
-            'device_token' => $input['device_token'],
-            'platform' => $input['platform'],
-            'app_version' => $input['app_version'] ?? null
-        ]);
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sssss", 
+                $input['user_email'],
+                $input['user_key'] ?? null,
+                $input['device_token'],
+                $input['platform'],
+                $input['app_version'] ?? null
+            );
+            $success = $stmt->execute();
+            $stmt->close();
+        } else {
+            $success = false;
+        }
 
         echo json_encode(['success' => $success]);
         break;
@@ -274,10 +286,29 @@ switch ($action) {
     case 'mobileBanners':
         $screen = $_GET['screen'] ?? 'home';
         require_once __DIR__ . '/Config/connection.php';
-        require_once __DIR__ . '/../Admin/Model/MobileBannerModel.php';
         
-        $mobileBannerModel = new MobileBannerModel($conn);
-        $banners = $mobileBannerModel->getMobileBannersByScreen($screen);
+        // Direct SQL query to avoid class conflicts
+        $sql = "SELECT * FROM Mobile_banners 
+                WHERE screen = ? 
+                AND is_active = 1 
+                AND (start_date <= NOW()) 
+                AND (end_date IS NULL OR end_date >= NOW())
+                ORDER BY priority DESC, created_at DESC";
+        
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("s", $screen);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $banners = [];
+            while ($row = $result->fetch_assoc()) {
+                $banners[] = $row;
+            }
+            $stmt->close();
+        } else {
+            $banners = [];
+        }
         
         header('Content-Type: application/json');
         echo json_encode([

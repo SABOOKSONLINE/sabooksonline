@@ -175,16 +175,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     // Mobile device token registration
     $r->addRoute('POST', '/api/mobile/register-token', function () {
-        $_GET['action'] = 'registerDeviceToken';
-        require "Application/api.php";
+        $_GET['action'] = 'register_token';
+        require "mobile_api.php";
     });
 
-    // Enhanced mobile banners API with better filtering
-    $r->addRoute('GET', '/api/mobile/banners/{screen}', function ($screen) {
-        $_GET['action'] = 'mobileBanners';
-        $_GET['screen'] = $screen;
-        require "Application/api.php";
-    });
+    // Enhanced mobile banners API with better filtering - removed to avoid class conflicts
+    // Access directly via /API/mobile_banners.php?screen={screen}
 
     $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
         $_GET['action'] = 'audio';
