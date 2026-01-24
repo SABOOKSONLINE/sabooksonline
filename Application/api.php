@@ -267,12 +267,19 @@ switch ($action) {
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
+            // Assign to variables first to avoid passing by reference error
+            $user_email = $input['user_email'];
+            $user_key = $input['user_key'] ?? null;
+            $device_token = $input['device_token'];
+            $platform = $input['platform'];
+            $app_version = $input['app_version'] ?? null;
+            
             $stmt->bind_param("sssss", 
-                $input['user_email'],
-                $input['user_key'] ?? null,
-                $input['device_token'],
-                $input['platform'],
-                $input['app_version'] ?? null
+                $user_email,
+                $user_key,
+                $device_token,
+                $platform,
+                $app_version
             );
             $success = $stmt->execute();
             $stmt->close();
