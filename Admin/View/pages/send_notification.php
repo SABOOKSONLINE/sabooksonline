@@ -192,12 +192,183 @@ renderAlerts();
 </div>
 
 <script>
+// Global functions first (outside DOMContentLoaded)
+window.previewRecipients = function() {
+    console.log('🎯 Preview Recipients called');
+    const targetAudience = document.getElementById('targetAudience').value;
+    const targetText = document.getElementById('targetAudience').options[document.getElementById('targetAudience').selectedIndex].text;
+    
+    console.log('🎯 Target data:', { targetAudience, targetText });
+    
+    // Show modal and loading state
+    const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
+    document.getElementById('previewContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Analyzing users who match "${targetText}"...</p>
+        </div>
+    `;
+    modal.show();
+    
+    // Make AJAX request to preview recipients
+    console.log('🌐 Making API request to:', '/admin/mobile/notifications/preview');
+    
+    fetch('/admin/mobile/notifications/preview', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            target_audience: targetAudience
+        })
+    })
+    .then(response => {
+        console.log('📡 API Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return response.json();
+    })
+    .then(data => {
+        console.log('✅ API Response data:', data);
+        
+        if (data.success) {
+            displayRecipientPreview(data);
+        } else {
+            document.getElementById('previewContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Error: ${data.message || 'Unknown error'}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('❌ API Request failed:', error);
+        document.getElementById('previewContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> Network error: ${error.message}
+                <br><small class="text-muted">Check browser console for details</small>
+            </div>
+        `;
+    });
+};
+
+function displayRecipientPreview(data) {
+    const { target_audience, matching_users, total_app_users, summary } = data;
+    
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0">${total_app_users}</h3>
+                        <small>Total App Users</small>
+                        <div class="mt-1"><i class="fas fa-mobile-alt"></i> Will receive push</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0">${matching_users.length}</h3>
+                        <small>Will Actually See It</small>
+                        <div class="mt-1"><i class="fas fa-eye"></i> Matches target</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    if (summary && summary.length > 0) {
+        html += '<div class="mb-3"><h6><i class="fas fa-chart-pie text-info"></i> Breakdown:</h6>';
+        summary.forEach(item => {
+            html += `<span class="badge bg-info me-2">${item.label}: ${item.count}</span>`;
+        });
+        html += '</div>';
+    }
+    
+    if (matching_users.length > 0) {
+        html += `
+            <h6><i class="fas fa-users text-success"></i> Users Who Will See This Notification:</h6>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Subscription</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        matching_users.forEach(user => {
+            const subscriptionBadge = user.subscription ? 
+                `<span class="badge bg-primary">${user.subscription}</span>` : 
+                '<span class="badge bg-secondary">Free</span>';
+                
+            const statusBadge = user.has_app ? 
+                '<span class="badge bg-success">Has App</span>' : 
+                '<span class="badge bg-warning">Web Only</span>';
+                
+            html += `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${subscriptionBadge}</td>
+                    <td>${statusBadge}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } else {
+        html += `
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <strong>No users match this target audience!</strong><br>
+                Consider selecting a different audience or wait for more users to join.
+            </div>
+        `;
+    }
+    
+    document.getElementById('previewContent').innerHTML = html;
+}
+
+// Clear image preview function
+window.clearImagePreview = function() {
+    const notificationImageInput = document.getElementById('notificationImage');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    
+    if (notificationImageInput) {
+        notificationImageInput.value = '';
+        imagePreviewContainer.style.display = 'none';
+        
+        // Clear mobile preview if it exists
+        const mobilePreviewContainer = document.getElementById('previewImageContainer');
+        if (mobilePreviewContainer) {
+            mobilePreviewContainer.style.display = 'none';
+        }
+    }
+};
+
+// DOM Ready code
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('notificationForm');
+    if (!form) {
+        console.error('❌ Notification form not found');
+        return;
+    }
+    
     const titleInput = form.querySelector('input[name="title"]');
     const messageInput = form.querySelector('textarea[name="message"]');
-    const imageInput = form.querySelector('input[name="image_url"]');
-    const targetTypeSelect = document.getElementById('targetType');
     const scheduleRadios = form.querySelectorAll('input[name="schedule_type"]');
     
     // Preview elements
@@ -245,164 +416,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const targetAudienceSelect = document.getElementById('targetAudience');
     const targetText = document.getElementById('targetText');
     
-    targetAudienceSelect.addEventListener('change', function() {
-        const selectedText = this.options[this.selectedIndex].text;
-        targetText.textContent = selectedText.toLowerCase();
-        
-        const preview = document.querySelector('.notification-preview .notification-title');
-        if (preview && this.value !== 'all') {
-            preview.textContent = `[${selectedText}] ${document.querySelector('input[name="title"]').value || 'Notification Title'}`;
-        }
-    });
-    
-    // Preview Recipients Function
-    window.previewRecipients = function() {
-        const targetAudience = document.getElementById('targetAudience').value;
-        const targetText = document.getElementById('targetAudience').options[document.getElementById('targetAudience').selectedIndex].text;
-        
-        console.log('🎯 Preview Recipients called:', { targetAudience, targetText });
-        
-        // Show modal and loading state
-        const modal = new bootstrap.Modal(document.getElementById('recipientPreviewModal'));
-        document.getElementById('previewContent').innerHTML = `
-            <div class="text-center py-4">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2 text-muted">Analyzing users who match "${targetText}"...</p>
-            </div>
-        `;
-        modal.show();
-        
-        // Make AJAX request to preview recipients
-        console.log('🌐 Making API request to:', '/admin/mobile/notifications/preview');
-        
-        fetch('/admin/mobile/notifications/preview', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                target_audience: targetAudience
-            })
-        })
-        .then(response => {
-            console.log('📡 API Response status:', response.status);
-            console.log('📡 API Response headers:', response.headers);
+    if (targetAudienceSelect && targetText) {
+        targetAudienceSelect.addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            targetText.textContent = selectedText.toLowerCase();
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const preview = document.querySelector('.notification-preview .notification-title');
+            if (preview && this.value !== 'all') {
+                const titleInput = document.querySelector('input[name="title"]');
+                const titleValue = titleInput ? titleInput.value || 'Notification Title' : 'Notification Title';
+                preview.textContent = `[${selectedText}] ${titleValue}`;
             }
-            
-            return response.json();
-        })
-        .then(data => {
-            console.log('✅ API Response data:', data);
-            
-            if (data.success) {
-                displayRecipientPreview(data);
-            } else {
-                document.getElementById('previewContent').innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i> Error: ${data.message || 'Unknown error'}
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('❌ API Request failed:', error);
-            document.getElementById('previewContent').innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle"></i> Network error: ${error.message}
-                    <br><small class="text-muted">Check browser console for details</small>
-                </div>
-            `;
         });
-    };
-    
-    function displayRecipientPreview(data) {
-        const { target_audience, matching_users, total_app_users, summary } = data;
-        
-        let html = `
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">${total_app_users}</h3>
-                            <small>Total App Users</small>
-                            <div class="mt-1"><i class="fas fa-mobile-alt"></i> Will receive push</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card bg-success text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">${matching_users.length}</h3>
-                            <small>Will Actually See It</small>
-                            <div class="mt-1"><i class="fas fa-eye"></i> Matches target</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        if (summary && summary.length > 0) {
-            html += '<div class="mb-3"><h6><i class="fas fa-chart-pie text-info"></i> Breakdown:</h6>';
-            summary.forEach(item => {
-                html += `<span class="badge bg-info me-2">${item.label}: ${item.count}</span>`;
-            });
-            html += '</div>';
-        }
-        
-        if (matching_users.length > 0) {
-            html += `
-                <h6><i class="fas fa-users text-success"></i> Users Who Will See This Notification:</h6>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                    <table class="table table-sm table-striped">
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Subscription</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            matching_users.forEach(user => {
-                const subscriptionBadge = user.subscription ? 
-                    `<span class="badge bg-primary">${user.subscription}</span>` : 
-                    '<span class="badge bg-secondary">Free</span>';
-                    
-                const statusBadge = user.has_app ? 
-                    '<span class="badge bg-success">Has App</span>' : 
-                    '<span class="badge bg-warning">Web Only</span>';
-                    
-                html += `
-                    <tr>
-                        <td>${user.email}</td>
-                        <td>${subscriptionBadge}</td>
-                        <td>${statusBadge}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i> 
-                    <strong>No users match this target audience!</strong><br>
-                    Consider selecting a different audience or wait for more users to join.
-                </div>
-            `;
-        }
-        
-        document.getElementById('previewContent').innerHTML = html;
     }
 
     // Image Preview Functionality
@@ -410,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreviewContainer = document.getElementById('imagePreviewContainer');
     const imagePreview = document.getElementById('imagePreview');
 
-    if (notificationImageInput) {
+    if (notificationImageInput && imagePreview && imagePreviewContainer) {
         notificationImageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -421,9 +446,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Update mobile preview if it exists
                     const mobilePreviewImage = document.getElementById('previewImage');
-                    if (mobilePreviewImage) {
+                    const mobilePreviewContainer = document.getElementById('previewImageContainer');
+                    if (mobilePreviewImage && mobilePreviewContainer) {
                         mobilePreviewImage.src = e.target.result;
-                        document.getElementById('previewImageContainer').style.display = 'block';
+                        mobilePreviewContainer.style.display = 'block';
                     }
                 };
                 reader.readAsDataURL(file);
@@ -431,22 +457,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Clear image preview function
-    window.clearImagePreview = function() {
-        if (notificationImageInput) {
-            notificationImageInput.value = '';
-            imagePreviewContainer.style.display = 'none';
-            
-            // Clear mobile preview if it exists
-            const mobilePreviewContainer = document.getElementById('previewImageContainer');
-            if (mobilePreviewContainer) {
-                mobilePreviewContainer.style.display = 'none';
-            }
-        }
-    };
+    // Handle schedule type changes
+    if (scheduleRadios.length > 0) {
+        scheduleRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const scheduleDateContainer = document.getElementById('scheduleDateContainer');
+                const scheduledAtInput = form.querySelector('input[name="scheduled_at"]');
+                
+                if (scheduleDateContainer && scheduledAtInput) {
+                    if (this.value === 'later') {
+                        scheduleDateContainer.style.display = 'block';
+                        scheduledAtInput.required = true;
+                    } else {
+                        scheduleDateContainer.style.display = 'none';
+                        scheduledAtInput.required = false;
+                        scheduledAtInput.value = '';
+                    }
+                }
+            });
+        });
+    }
     
     // Form submission handling
-    form.addEventListener('submit', function(e) {
+    if (form) {
+        form.addEventListener('submit', function(e) {
         const action = e.submitter.value;
         
         if (action === 'send') {
@@ -482,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         scheduledAtInput.min = now.toISOString().slice(0, 16);
     }
+    } // Close form if statement
 });
 </script>
 
