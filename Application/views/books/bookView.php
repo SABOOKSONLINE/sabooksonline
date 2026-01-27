@@ -92,9 +92,9 @@ $_SESSION['action'] = $_SERVER['REQUEST_URI'];
 
 $email = $_SESSION['ADMIN_EMAIL'] ?? '';
 
-echo "<pre>";
-print_r($book);
-echo "</pre>";
+// echo "<pre>";
+// print_r($book);
+// echo "</pre>";
 
 $userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
 
