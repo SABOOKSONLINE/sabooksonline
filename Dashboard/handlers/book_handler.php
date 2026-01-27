@@ -32,16 +32,16 @@ function formDataArray()
     $Aprice   = htmlspecialchars($_POST["Abook_price"] ?? '0');
 
     /* ========= HARDCOPY DATA ========= */
-    $hcPrice            = htmlspecialchars($_POST["hc_price"] ?? 0);
-    $hcDiscountPercent  = htmlspecialchars($_POST["hc_discount_percent"] ?? 0);
+    $hcPrice            = !empty($_POST["hc_price"]) ? htmlspecialchars($_POST["hc_price"]) : 0;
+    $hcDiscountPercent  = !empty($_POST["hc_discount_percent"]) ? htmlspecialchars($_POST["hc_discount_percent"]) : 0;
     $hcCountry          = htmlspecialchars($_POST["hc_country"] ?? '');
-    $hcPages            = htmlspecialchars($_POST["hc_pages"] ?? 0);
-    $hcWeight           = htmlspecialchars($_POST["hc_weight_kg"] ?? 0);
-    $hcHeight           = htmlspecialchars($_POST["hc_height_cm"] ?? 0);
-    $hcWidth            = htmlspecialchars($_POST["hc_width_cm"] ?? 0);
-    $hcDate             = htmlspecialchars($_POST["hc_release_date"] ?? null);
+    $hcPages            = !empty($_POST["hc_pages"]) ? htmlspecialchars($_POST["hc_pages"]) : 0;
+    $hcWeight           = !empty($_POST["hc_weight_kg"]) ? htmlspecialchars($_POST["hc_weight_kg"]) : 0;
+    $hcHeight           = !empty($_POST["hc_height_cm"]) ? htmlspecialchars($_POST["hc_height_cm"]) : 0;
+    $hcWidth            = !empty($_POST["hc_width_cm"]) ? htmlspecialchars($_POST["hc_width_cm"]) : 0;
+    $hcDate             = !empty($_POST["hc_release_date"]) ? htmlspecialchars($_POST["hc_release_date"]) : null;
     $hcContributors     = htmlspecialchars($_POST["hc_contributors"] ?? '');
-    $hcStockCount       = htmlspecialchars($_POST["hc_stock_count"] ?? 0);
+    $hcStockCount       = !empty($_POST["hc_stock_count"]) ? htmlspecialchars($_POST["hc_stock_count"]) : 0;
 
     /* ========= DISCOUNTED HARDCOPY PRICE ========= */
     $hcFinalPrice = $hcPrice;
@@ -277,6 +277,7 @@ function updateBookHandler($bookController)
 
         if (empty($bookData['bookId'])) {
             throw new Exception("Missing bookId in update request.");
+            die;
         }
 
         $bookId = $bookData['bookId'];
@@ -284,6 +285,7 @@ function updateBookHandler($bookController)
 
         if (!$contentId) {
             throw new Exception("Invalid content ID.");
+            die;
         }
 
         // Clear cache
@@ -334,22 +336,17 @@ function updateBookHandler($bookController)
 
         if ($hasHardcopy) {
 
-            // Attach book_id
             $hardcopyData = ['book_id' => $bookId];
 
-            // Only include present fields
             foreach ($hardcopyFields as $field) {
                 $hardcopyData[$field] = $bookData[$field] ?? null;
             }
 
-            // Check if this book already has hardcopy details
             $existing = $bookController->getHardcopyByBookId($bookId);
 
             if ($existing) {
-                // Update existing
                 $bookController->updateHardcopy($hardcopyData);
             } else {
-                // Insert new
                 $bookController->insertHardcopy($hardcopyData);
             }
         }
@@ -386,7 +383,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["action"] == "insert") {
     insertBookHandler($bookController);
 }
 
-if ($_GET["id"] && $_GET['action'] == "update") {
+if (isset($_GET["id"]) && $_GET['action'] == "update") {
     updateBookHandler($bookController);
 }
 
