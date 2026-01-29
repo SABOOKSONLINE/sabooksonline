@@ -21,7 +21,13 @@ class BookListingController
     public function renderBookByContentId($userKey, $contentId)
     {
         $book = $this->booksModel->selectBookByContentId($userKey, $contentId);
-        include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
+        // include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
+        include __DIR__ . "/../views/includes/layouts/forms/temp_book_form.php";
+    }
+
+    public function getBookByContent($userId, $contentId)
+    {
+        return $this->booksModel->selectBookByContentId($userId, $contentId);
     }
 
     public function getAdminName($userKey)
@@ -31,7 +37,9 @@ class BookListingController
 
     public function insertBookData($data)
     {
-        return $this->booksModel->insertBook($data);
+        $result = $this->booksModel->insertBook($data);
+
+        return $result;
     }
 
     public function updateBookData($bookId, $data)
