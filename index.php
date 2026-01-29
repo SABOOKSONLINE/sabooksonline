@@ -127,6 +127,41 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
+    // =================== Mobile-compatible Cart & Address endpoints ===================
+    // Mobile: add to cart (expects JSON body with admin_id, book_id, quantity, etc.)
+    $r->addRoute('POST', '/api/cart/add', function () {
+        $_GET['action'] = 'addBookMobile';
+        require "Application/api.php";
+    });
+
+    // Mobile: update quantity by cart row id
+    $r->addRoute('PUT', '/api/cart/update/{cartId}', function ($cartId) {
+        $_GET['action'] = 'updateCartByCartId';
+        $_GET['cartId'] = $cartId;
+        require "Application/api.php";
+    });
+
+    // Mobile: remove item by cart row id
+    $r->addRoute('DELETE', '/api/cart/remove/{cartId}', function ($cartId) {
+        $_GET['action'] = 'removeCartByCartId';
+        $_GET['cartId'] = $cartId;
+        require "Application/api.php";
+    });
+
+    // Mobile: save address directly to /api/address/{userID} with address fields in JSON
+    $r->addRoute('POST', '/api/address/{userID}', function ($userID) {
+        $_GET['action'] = 'saveAddressMobile';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
+
+    // Mobile: update address by address row id
+    $r->addRoute('PUT', '/api/address/{addressId}', function ($addressId) {
+        $_GET['action'] = 'updateAddressById';
+        $_GET['addressId'] = $addressId;
+        require "Application/api.php";
+    });
+
     $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
         $_GET['action'] = 'getOrderDetails';
         $_GET['userID'] = $userID;
@@ -137,6 +172,51 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['action'] = 'analytics';
         require "Application/api.php";
     });
+
+    // Mobile device token registration
+    $r->addRoute('POST', '/api/mobile/register-token', function () {
+        $_GET['action'] = 'register_token';
+        require "Application/api.php";
+    });
+
+    // Mobile banners API
+    $r->addRoute('GET', '/api/mobile/banners', function () {
+        $_GET['action'] = 'mobileBanners';
+        require "Application/api.php";
+    });
+
+    // User notification API endpoints
+    $r->addRoute('GET', '/api/user/notifications', function () {
+        $_GET['action'] = 'userNotifications';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/user/notifications/read', function () {
+        $_GET['action'] = 'markNotificationRead';
+        require "Application/api.php";
+    });
+
+    $r->addRoute('POST', '/api/user/notifications/read-all', function () {
+        $_GET['action'] = 'markAllNotificationsRead';
+        require "Application/api.php";
+    });
+
+    // Website notifications page (traditional)
+    $r->addRoute('GET', '/notifications', function () {
+        require_once "Application/controllers/NotificationController.php";
+        $controller = new NotificationController();
+        $controller->index();
+    });
+
+    // Notifications action handler
+    $r->addRoute('POST', '/notifications/action', function () {
+        require_once "Application/controllers/NotificationController.php";
+        $controller = new NotificationController();
+        $controller->handleAction();
+    });
+
+    // Enhanced mobile banners API with better filtering - removed to avoid class conflicts
+    // Access directly via /API/mobile_banners.php?screen={screen}
 
     $r->addRoute('GET', '/api/audio/chapters/{a_id}', function ($a_id) {
         $_GET['action'] = 'audio';
@@ -589,6 +669,70 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('GET', '/admin/orders', function () {
         require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/purchases', function () {
+        require  "Admin/index.php";
+    });
+
+    // Mobile Management Routes
+    $r->addRoute('GET', '/admin/mobile/banners', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/banners', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/notifications', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/notifications/send', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/notifications/send', function () {
+        require  "Admin/index.php";
+    });
+    
+    $r->addRoute('POST', '/admin/mobile/notifications/preview', function () {
+        require  "Admin/index.php";
+    });
+
+    // Mobile Banner Management Actions
+    $r->addRoute('POST', '/admin/mobile/banners/add', function () {
+        $_GET["action"] = "add";
+        $_GET["type"] = "banner";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('POST', '/admin/mobile/banners/edit/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "edit";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/banners/delete/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "delete";
+        $_GET["type"] = "banner";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    $r->addRoute('GET', '/admin/mobile/banners/toggle/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "toggle";
+        $_GET["type"] = "banner";
+        require  "Admin/Helpers/process_mobile.php";
+    });
+
+    // Mobile Notification Management Actions  
+    $r->addRoute('GET', '/admin/mobile/notifications/delete/{id}', function ($id) {
+        $_GET["id"] = $id;
+        $_GET["action"] = "delete";
+        $_GET["type"] = "notification";
+        require  "Admin/Helpers/process_mobile.php";
     });
 
     $r->addRoute('GET', '/admin/users/impersonate/{id}', function ($id) {

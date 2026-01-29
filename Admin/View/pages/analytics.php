@@ -127,6 +127,92 @@ renderSectionHeader(
 
 <?php
 renderSectionHeader(
+    "Recent Book Purchases",
+    "Latest book purchases with detailed information"
+);
+?>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <?php if (empty($data["book_purchases"]["all"])): ?>
+                    <p class="text-muted">No book purchases yet.</p>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Book</th>
+                                    <th>Customer</th>
+                                    <th>Format</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach (array_slice($data["book_purchases"]["all"], 0, 10) as $purchase): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <?php if (!empty($purchase['book_cover'])): ?>
+                                                    <img src="/cms-data/book-covers/<?= htmlspecialchars($purchase['book_cover']) ?>" 
+                                                         alt="Cover" class="me-2 rounded" style="width: 40px; height: 60px; object-fit: cover;">
+                                                <?php endif; ?>
+                                                <div>
+                                                    <div class="fw-bold">
+                                                        <?= htmlspecialchars($purchase['book_title'] ?? 'Unknown Book') ?>
+                                                    </div>
+                                                    <small class="text-muted">
+                                                        <?= htmlspecialchars($purchase['book_publisher'] ?? 'Unknown Publisher') ?>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <?= htmlspecialchars($purchase['user_email']) ?>
+                                            </div>
+                                            <small class="text-muted">ID: <?= htmlspecialchars($purchase['user_key']) ?></small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<?= $purchase['format'] === 'Ebook' ? 'primary' : 'secondary' ?>">
+                                                <?= htmlspecialchars(ucfirst($purchase['format'])) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <strong>R<?= number_format($purchase['amount'], 2) ?></strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<?= $purchase['payment_status'] === 'COMPLETE' ? 'success' : 'warning' ?>">
+                                                <?= htmlspecialchars($purchase['payment_status']) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <?= date('M j, Y', strtotime($purchase['payment_date'])) ?>
+                                            <br>
+                                            <small class="text-muted"><?= date('g:i A', strtotime($purchase['payment_date'])) ?></small>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php if (count($data["book_purchases"]["all"]) > 10): ?>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                Showing 10 of <?= count($data["book_purchases"]["all"]) ?> total purchases
+                            </small>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+renderSectionHeader(
     "Traffic Analytics",
     "Still under development (Coming Soon)!"
 );

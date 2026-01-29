@@ -8,6 +8,12 @@ jQuery(document).ready(function () {
     const tracker = $("#ctrl-tracker .tracker");
     const ctrlTracker = $("#ctrl-tracker");
 
+    // Exit early if audio player elements don't exist (e.g., on admin pages)
+    if (!play || backward.length === 0 || forward.length === 0) {
+        console.log('Audio player elements not found - skipping audio functionality');
+        return;
+    }
+
     const DEFAULT_VOLUME = 0.7;
 
     const volumeCtrl = $("#ctrl-volume");

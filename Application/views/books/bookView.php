@@ -92,7 +92,9 @@ $_SESSION['action'] = $_SERVER['REQUEST_URI'];
 
 $email = $_SESSION['ADMIN_EMAIL'] ?? '';
 
-
+// echo "<pre>";
+// print_r($book);
+// echo "</pre>";
 
 $userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
 
@@ -287,7 +289,18 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 </span>
 
                 <!-- Hardcopy -->
-                <?php if (!$book['hc_id']): ?>
+                <?php
+                // Check if internal hardcopy has meaningful data
+                $hasValidInternalHardcopy = !empty($book['hc_id']) && (
+                    (float)$hc_price > 0 ||
+                    (int)$hc_stock_count > 0 ||
+                    !empty($hc_country) ||
+                    (int)$hc_pages > 0
+                );
+                ?>
+
+                <?php if (!$hasValidInternalHardcopy): ?>
+                    <!-- External Hardcopy (website link) -->
                     <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
                         <span class="bv-purchase-select-h">Hardcopy</span>
                         <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
@@ -299,11 +312,12 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         <?php endif; ?>
                     </span>
                 <?php else: ?>
-                    <span class="bv-purchase-select" price="<?= $book['hc_price'] ?>" available="<?= !empty($book['hc_id']) ?>">
+                    <!-- Internal Hardcopy (SABO stock) -->
+                    <span class="bv-purchase-select" price="<?= $hc_price ?>" available="true">
                         <span class="bv-purchase-select-h">Hardcopy</span>
-                        <?php if ((int)$book['hc_price'] !== 0): ?>
-                            <span class="bv-purchase-select-hL">R<?= $book['hc_price'] ?></span>
-                        <?php elseif ((int)$book['hc_price']): ?>
+                        <?php if ((float)$hc_price > 0): ?>
+                            <span class="bv-purchase-select-hL">R<?= number_format($hc_price, 2) ?></span>
+                        <?php elseif ((int)$hc_stock_count > 0): ?>
                             <span class="bv-purchase-select-hL">FREE</span>
                         <?php else: ?>
                             <span>Not available</span>

@@ -14,11 +14,11 @@ $newspaperData = $controller->getNewspaperByPublicKey($_GET['publicKey']);
 $id = $newspaperData['id'];
 $newspaperId = $newspaperData['public_key'];
 
-$title = $newspaperData['title'];
-$description = $newspaperData['description'];
+$title = htmlspecialchars($newspaperData['title']);
+$description = htmlspecialchars($newspaperData['description']);
 
-$cover_image_path = $newspaperData['cover_image_path'];
-$category = $newspaperData['category'];
+$cover_image_path = htmlspecialchars($newspaperData['cover_image_path']);
+$category = htmlspecialchars($newspaperData['category']);
 
 $publisher_id = $newspaperData['publisher_id'];
 $publish_date = $newspaperData['publish_date'];
@@ -90,7 +90,18 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <div class="bv-view row">
             <!-- Magazine Cover -->
             <div class="bv-img">
-                <img src="/cms-data/newspaper/covers/<?= $cover_image_path ?>" alt="Magazine Cover">
+                <?php if ($cover_image_path): ?>
+                    <img src="/cms-data/newspaper/covers/<?= $cover_image_path ?>" alt="<?= $title ?> Cover" 
+                         onerror="console.log('Image failed to load: /cms-data/newspaper/covers/<?= $cover_image_path ?>'); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; text-center;">
+                        <p>Image not available</p>
+                        <small>Path: /cms-data/newspaper/covers/<?= $cover_image_path ?></small>
+                    </div>
+                <?php else: ?>
+                    <div style="padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; text-center;">
+                        <p>No cover image available</p>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Magazine Details -->

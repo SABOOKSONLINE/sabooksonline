@@ -259,6 +259,7 @@ function updateBookHandler($bookController)
 
         if (empty($bookData['bookId'])) {
             throw new Exception("Missing bookId in update request.");
+            die;
         }
 
         $bookId = $bookData['bookId'];

@@ -176,10 +176,14 @@ class BookModel
                 a.id AS a_id,
                 a.book_id AS a_book_id,
                 a.narrator AS a_narrator,
-                l.CATEGORY AS listing_category
+                l.CATEGORY AS listing_category,
+                h.hc_id,
+                h.hc_price,
+                h.hc_stock_count
             FROM posts AS p
             LEFT JOIN audiobooks AS a ON a.book_id = p.ID
-            LEFT JOIN listings AS l ON p.CONTENTID = l.CONTENTID";
+            LEFT JOIN listings AS l ON p.CONTENTID = l.CONTENTID
+            LEFT JOIN book_hardcopy AS h ON h.book_id = p.ID";
 
         // Add a conditional WHERE clause for delta syncing
         if ($updatedSince) {
