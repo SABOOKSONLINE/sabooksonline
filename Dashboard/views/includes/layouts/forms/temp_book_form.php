@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 $book = $book ?? [];
 
 $bookId       = html_entity_decode($book['ID'] ?? '');
+$bookPk    = $book['CONTENTID'] ?? '';
 $title        = html_entity_decode($book['TITLE'] ?? '');
 $cover        = html_entity_decode($book['COVER'] ?? '');
 $category     = $book['CATEGORY'] ?? '';
@@ -37,10 +38,9 @@ $hcReleaseDate      = html_entity_decode($book['hc_release_date'] ?? '');
 $hcContributors     = html_entity_decode($book['hc_contributors'] ?? '');
 $hcStockCount       = html_entity_decode($book['hc_stock_count'] ?? '');
 
-
+// -------------------- AUDIOBOOK VARIABLES --------------------
 $narrator = htmlspecialchars_decode($book['narrator'] ?? '');
-$releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
-
+$releaseDate = htmlspecialchars_decode($book['audiobook_release_date'] ?? '');
 $audiobookSampleId = htmlspecialchars_decode($book['audiobook_sample_id'] ?? '');
 $audiobookSampleUrl = htmlspecialchars_decode($book['sample_url'] ?? '');
 $AbookPrice = html_entity_decode($book['ABOOKPRICE'] ?? '');
@@ -67,32 +67,19 @@ $isExistingBook = !empty($bookId);
 ?>
 
 <?php
-// Display success/error messages
-if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle"></i>
-        <strong>Success!</strong> Book created successfully. You can now add additional details.
+// Display session-based alerts
+if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
+    <div class="alert alert-<?= $_SESSION['alert_type'] ?> alert-dismissible fade show" role="alert">
+        <i class="fas fa-<?= $_SESSION['alert_type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+        <strong><?= $_SESSION['alert_type'] === 'success' ? 'Success!' : 'Error!' ?></strong>
+        <?= htmlspecialchars($_SESSION['alert_message']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['update']) && $_GET['update'] === 'success'): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle"></i>
-        <strong>Saved!</strong> Your changes have been saved successfully.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['update']) && $_GET['update'] === 'fail'): ?>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle"></i>
-        <strong>Error!</strong> Failed to save changes.
-        <?php if (isset($_GET['error'])): ?>
-            <?= htmlspecialchars($_GET['error']) ?>
-        <?php endif; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <?php
+    // Clear the session variables after displaying
+    unset($_SESSION['alert_type']);
+    unset($_SESSION['alert_message']);
+    ?>
 <?php endif; ?>
 
 <form method="POST"
@@ -103,6 +90,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
 
     <!-- Hidden Fields -->
     <input type="hidden" name="user_id" value="<?= $userKey ?>">
+    <input type="hidden" name="book_public_key" value="<?= $bookPk ?>">
     <input type="hidden" name="book_id" value="<?= $bookId ?>">
     <input type="hidden" name="existing_pdf" value="<?= $pdf ?>">
     <input type="hidden" name="existing_cover" value="<?= html_entity_decode($cover) ?>">
@@ -357,7 +345,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">E-Book Price (PDF)</label>
-                    <input type="number" name="Ebook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $EbookPrice ?>">
+                    <input type="number" step="0.01" name="Ebook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $EbookPrice ?>">
                 </div>
 
                 <div class="col-md-6">
@@ -373,16 +361,16 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
             </div>
 
             <div class="mt-4 d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-secondary px-4"
-                    onclick="document.getElementById('book-details-tab').click()">
+                <button type="button" class="btn btn-outline-secondary px-4 nav-button"
+                    data-target-tab="book-details-tab">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <div>
                     <button type="submit" class="btn btn-success px-4 me-2">
                         Save & Continue
                     </button>
-                    <button type="button" class="btn btn-outline-dark px-4"
-                        onclick="document.getElementById('audiobook-details-tab').click()">
+                    <button type="button" class="btn btn-outline-dark px-4 nav-button"
+                        data-target-tab="audiobook-details-tab">
                         Next <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -434,7 +422,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
 
                 <div class="col-md-6">
                     <label class="form-label">Audio book Price (R)</label>
-                    <input type="number" name="Abook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $AbookPrice ?>">
+                    <input type="number" step="0.01" name="Abook_price" class="form-control" placeholder="e.g. 49.99" value="<?= $AbookPrice ?>">
                 </div>
 
                 <?php if ($audiobookSampleUrl): ?>
@@ -511,16 +499,16 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
             </div>
 
             <div class="mt-4 d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-secondary px-4"
-                    onclick="document.getElementById('ebook-details-tab').click()">
+                <button type="button" class="btn btn-outline-secondary px-4 nav-button"
+                    data-target-tab="ebook-details-tab">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <div>
                     <button type="submit" class="btn btn-success px-4 me-2">
                         Save & Continue
                     </button>
-                    <button type="button" class="btn btn-outline-dark px-4"
-                        onclick="document.getElementById('hardcopy-details-tab').click()">
+                    <button type="button" class="btn btn-outline-dark px-4 nav-button"
+                        data-target-tab="hardcopy-details-tab">
                         Next <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -554,10 +542,14 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Discount Percent (%)
-                            <span class="text-danger small">Note: percentage will be deducted from the price.</span>
-                        </label>
+                        <label class="form-label">Discount Percent (%) </label>
                         <input type="number" name="hc_discount_percent" class="form-control" placeholder="e.g. 10" min="0" max="100" value="<?= $hcDiscountPercent ?>">
+                        <i class="text-muted small">Note: percentage will be deducted from the price.</i>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Contributors</label>
+                        <input type="text" name="hc_contributors" class="form-control" value="<?= $hcContributors ?>">
                     </div>
 
                     <div class="col-md-6">
@@ -567,28 +559,28 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
                         <input type="text" name="hc_country" class="form-control" value="<?= $hcCountry ?>">
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label">Number of Pages
                             <span class="text-danger small">*</span>
                         </label>
                         <input type="number" name="hc_pages" class="form-control" value="<?= $hcPages ?>">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Weight (kg)
                             <span class="text-danger small">*</span>
                         </label>
                         <input type="number" step="0.01" name="hc_weight_kg" class="form-control" value="<?= $hcWeightKg ?>">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Height (cm)
                             <span class="text-danger small">*</span>
                         </label>
                         <input type="number" step="0.01" name="hc_height_cm" class="form-control" value="<?= $hcHeightCm ?>">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Width (cm)
                             <span class="text-danger small">*</span>
                         </label>
@@ -600,11 +592,6 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
                             <span class="text-danger small">*</span>
                         </label>
                         <input type="date" name="hc_release_date" class="form-control" value="<?= $hcReleaseDate ?>">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Contributors</label>
-                        <input type="text" name="hc_contributors" class="form-control" value="<?= $hcContributors ?>">
                     </div>
 
                     <div class="col-md-6">
@@ -621,8 +608,8 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
             <?php endif; ?>
 
             <div class="mt-4 d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-secondary px-4"
-                    onclick="document.getElementById('audiobook-details-tab').click()">
+                <button type="button" class="btn btn-outline-secondary px-4 nav-button"
+                    data-target-tab="audiobook-details-tab">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <button type="submit" class="btn btn-success px-5">
@@ -633,62 +620,6 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
 
     </div>
 </form>
-
-<!-- AUDIOBOOK INFO POPUP -->
-<?php if ($narrator): ?>
-    <div class="pop_bg" id="audiobook_info">
-        <div class="pop_form">
-            <form method="POST"
-                action="/dashboards/listings/insertAudioChapter"
-                enctype="multipart/form-data" id="chapter_form">
-
-                <input type="hidden" name="content_id" value="<?= $contentId ?>">
-                <input type="hidden" name="audiobook_id" value="<?= $book['audiobook_id'] ?>">
-                <input type="hidden" name="chapter_id" id="chapter_id" value="<?= $chapter['chapter_id'] ?>">
-
-                <div class="card border-0 p-4">
-                    <span class="close_pop_form">
-                        <i class="fas fa-times"></i>
-                    </span>
-
-                    <div class="row g-3">
-                        <h4 class="fw-bold my-4">Audiobook Chapter Information</h4>
-
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Chapter Number <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="chapter_number" id="chapter_number" required>
-                        </div>
-
-                        <div class="col-md-8">
-                            <label class="form-label fw-semibold">Chapter Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="chapter_title" id="chapter_title" required>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold">Audio File <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" name="audio_url" accept=".mp3">
-                        </div>
-
-                        <?php if (count($book['chapters'])): ?>
-                            <div class="col-md-12">
-                                <label class="form-label fw-semibold">Current Audio:</label> <br>
-                                <audio id="audio_url" controls>
-                                    <source src="" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
-                                <input type="hidden" name="audio_url" value="<?= $audioUrl ?>">
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="col-12">
-                            <button class="btn btn-success" type="submit" id="chapter_btn">Add Chapter</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-<?php endif; ?>
 
 <!-- AUDIOBOOK DETAILS POPUP -->
 <div class="ab_pop_bg">
@@ -829,41 +760,124 @@ if (isset($_GET['status']) && $_GET['status'] === 'created'): ?>
 </style>
 
 <script>
-    document.getElementById("book_pdf").addEventListener("change", function() {
-        const file = this.files[0];
-        if (file && file.type !== "application/pdf") {
-            alert("Only PDF files are allowed!");
-            this.value = "";
-        }
-    });
+    // ============================================================================
+    // IMPROVED TAB STATE MANAGEMENT
+    // ============================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentTabInput = document.getElementById('current_tab');
+        const bookForm = document.getElementById('bookForm');
 
-    // Store the current active tab before form submission
-    document.getElementById('bookForm').addEventListener('submit', function() {
-        const activeTab = document.querySelector('.nav-link.active');
-        if (activeTab) {
-            document.getElementById('current_tab').value = activeTab.getAttribute('data-tab');
-        }
-    });
-
-    // On page load, restore the previously active tab if available
-    window.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeTab = urlParams.get('tab');
-
-        if (activeTab) {
-            const tabButton = document.querySelector(`[data-tab="${activeTab}"]`);
-            if (tabButton && !tabButton.classList.contains('disabled')) {
-                tabButton.click();
+        // Function to update the current tab hidden field
+        function updateCurrentTab(tabElement) {
+            if (tabElement && currentTabInput) {
+                const tabName = tabElement.getAttribute('data-tab');
+                if (tabName) {
+                    currentTabInput.value = tabName;
+                    console.log('✓ Current tab updated to:', tabName);
+                }
             }
         }
 
-        // Auto-dismiss success alerts after 5 seconds
+        // ========================================================================
+        // LISTEN TO TAB CLICKS - Update hidden field immediately when tab changes
+        // ========================================================================
+        const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+        tabButtons.forEach(button => {
+            // Method 1: Click event
+            button.addEventListener('click', function(e) {
+                updateCurrentTab(this);
+            });
+
+            // Method 2: Bootstrap's shown.bs.tab event (fires after tab is shown)
+            button.addEventListener('shown.bs.tab', function(e) {
+                updateCurrentTab(this);
+            });
+        });
+
+        // ========================================================================
+        // NAVIGATION BUTTONS - Handle Back/Next buttons
+        // ========================================================================
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetTabId = this.getAttribute('data-target-tab');
+                const targetTab = document.getElementById(targetTabId);
+
+                if (targetTab && !targetTab.classList.contains('disabled')) {
+                    // Use Bootstrap Tab API to switch tabs
+                    const tab = new bootstrap.Tab(targetTab);
+                    tab.show();
+                    updateCurrentTab(targetTab);
+                }
+            });
+        });
+
+        // ========================================================================
+        // SET INITIAL TAB on page load
+        // ========================================================================
+        const activeTab = document.querySelector('.nav-link.active');
+        if (activeTab) {
+            updateCurrentTab(activeTab);
+        }
+
+        // ========================================================================
+        // DOUBLE-CHECK before form submission
+        // ========================================================================
+        if (bookForm) {
+            bookForm.addEventListener('submit', function(e) {
+                const currentActive = document.querySelector('.nav-link.active');
+                if (currentActive) {
+                    updateCurrentTab(currentActive);
+                }
+                console.log('📝 Form submitting with tab:', currentTabInput.value);
+            });
+        }
+
+        // ========================================================================
+        // RESTORE TAB from URL parameter
+        // ========================================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabParam = urlParams.get('tab');
+
+        if (activeTabParam) {
+            console.log('🔄 Restoring tab from URL:', activeTabParam);
+            const tabButton = document.querySelector(`[data-tab="${activeTabParam}"]`);
+            if (tabButton && !tabButton.classList.contains('disabled')) {
+                // Use Bootstrap's Tab API to properly switch tabs
+                const tab = new bootstrap.Tab(tabButton);
+                tab.show();
+                updateCurrentTab(tabButton);
+            }
+        }
+
+        // ========================================================================
+        // AUTO-DISMISS success alerts after 5 seconds
+        // ========================================================================
         const successAlerts = document.querySelectorAll('.alert-success');
         successAlerts.forEach(alert => {
             setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
+                const bsAlert = bootstrap.Alert.getInstance(alert);
+                if (bsAlert) {
+                    bsAlert.close();
+                }
             }, 5000);
         });
+    });
+
+    // ============================================================================
+    // PDF VALIDATION
+    // ============================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const pdfInput = document.getElementById('book_pdf');
+        if (pdfInput) {
+            pdfInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file && file.type !== 'application/pdf') {
+                    alert('Only PDF files are allowed!');
+                    this.value = '';
+                }
+            });
+        }
     });
 </script>
