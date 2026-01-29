@@ -90,31 +90,29 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             $dataTypeAttr = implode(' ', $types);
         ?>
             <div class="col-xl-6 col-lg-6 col-md-12" data-type="<?= $dataTypeAttr ?>">
-                <div class="d-flex gap-4 p-3 border shadow-sm rounded-4 bg-white flex-wrap flex-md-nowrap">
+                <div class="d-flex gap-3 p-3 shadow-sm rounded-5 bg-white flex-wrap flex-lg-nowrap align-items-center">
 
                     <!-- Cover Image -->
                     <div class="flex-shrink-0" style="width: 200px; margin-left: auto; margin-right: auto;">
                         <a href="/library/book/<?= $contentId ?>">
                             <img src="/cms-data/book-covers/<?= $cover ?>"
                                 alt="<?= htmlspecialchars($title) ?>"
-                                class="img-fluid rounded"
+                                class="img-fluid rounded-4"
                                 style="object-fit: cover; width: 100%; height: 300px;">
                         </a>
                     </div>
 
                     <!-- Details -->
-                    <div class="flex-grow-1 align-items-center justify-content-center">
-                        <div class="d-flex justify-content-between align-items-start flex-wrap">
+                    <div class="flex-grow-1">
+                        <div class="d-block">
                             <div>
                                 <a class="h5 fw-bold text-decoration-none text-dark" href="/library/book/<?= $contentId ?>">
                                     <?= strlen($title) > 40 ? substr($title, 0, 40) . '...' : $title ?>
                                 </a>
                             </div>
 
-                            <hr class="mt-2" />
-
                             <!-- Badges -->
-                            <div class="text-end my-2">
+                            <!-- <div class="my-2">
                                 <?php if ($hPrice !== 0): ?>
                                     <span class="badge bg-secondary rounded-pill">Book</span>
                                 <?php endif; ?>
@@ -124,7 +122,9 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                                 <?php if (!empty($book['ABOOKPRICE'])): ?>
                                     <span class="badge bg-info text-dark rounded-pill">Audiobook</span>
                                 <?php endif; ?>
-                            </div>
+                            </div> -->
+
+                            <hr class="mt-3" />
 
                             <p class="small text-muted mb-2"><?= substr($desc, 0, 100) ?>...</p>
                         </div>
