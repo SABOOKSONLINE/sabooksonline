@@ -390,6 +390,19 @@ footer {
     opacity: 1;
 }
 
+/* Hide footer on mobile for book views - app-like experience */
+@media (max-width: 991px) {
+    /* Completely hide footer on book view pages for cleaner mobile experience */
+    body:has(.bv-view) footer {
+        display: none !important;
+    }
+    
+    /* Hide the decorative div after footer too */
+    body:has(.bv-view) footer + div {
+        display: none !important;
+    }
+}
+
 /* ===============================
    CREATOR / STYLING
 ================================= */
