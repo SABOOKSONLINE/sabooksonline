@@ -14,19 +14,10 @@ renderHeading(
 );
 
 renderAlerts();
-?>
 
-<?php
 $users = $data["details"];
-// echo "<pre>";
-// print_r($users);
-// echo "</pre>";
 
 renderUserTable($users);
 
-
-?>
-
-<?php
 $content = ob_get_clean();
 require __DIR__ . "/../layouts/base.php";

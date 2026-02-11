@@ -667,6 +667,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/index.php";
     });
 
+    $r->addRoute('GET', '/admin/books', function () {
+        require  "Admin/index.php";
+    });
+
     $r->addRoute('GET', '/admin/orders', function () {
         require  "Admin/index.php";
     });
@@ -695,7 +699,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/admin/mobile/notifications/send', function () {
         require  "Admin/index.php";
     });
-    
+
     $r->addRoute('POST', '/admin/mobile/notifications/preview', function () {
         require  "Admin/index.php";
     });

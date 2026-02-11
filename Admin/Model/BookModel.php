@@ -69,6 +69,11 @@ class BookModel extends Model
         return $this->fetchAll("SELECT COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
     }
 
+    public function getFullBooks(): array
+    {
+        return $this->fetchAll("SELECT * FROM posts");
+    }
+
     public function addListing(string $publicKey, string $category): int
     {
         return $this->insert(
