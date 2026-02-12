@@ -11,6 +11,7 @@ require_once __DIR__ . "/Controller/OrdersController.php";
 require_once __DIR__ . "/Controller/PurchasesController.php";
 require_once __DIR__ . "/Controller/MobileController.php";
 require_once __DIR__ . "/Controller/BooksController.php";
+require_once __DIR__ . "/Controller/UploadManagementController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -25,6 +26,7 @@ $ordersController = new OrdersController($conn);
 $purchasesController = new PurchasesController($conn);
 $mobileController = new MobileController($conn);
 $booksController = new BooksController($conn);
+$uploadManagementController = new UploadManagementController($conn);
 
 if ($uri === "/admin") {
     $homeController->index();
@@ -34,6 +36,8 @@ if ($uri === "/admin") {
     $usersController->users();
 } else if ($uri === "/admin/books") {
     $booksController->books();
+} else if ($uri === "/admin/books/upload-management") {
+    $uploadManagementController->index();
 } else if ($uri === "/admin/analytics") {
     $analyticsController->analytics();
 } else if ($uri === "/admin/orders") {

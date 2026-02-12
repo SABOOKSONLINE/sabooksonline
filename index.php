@@ -671,6 +671,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/index.php";
     });
 
+    $r->addRoute('GET', '/admin/books/upload-management', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/books/upload-management/process', function () {
+        require  "Admin/Helpers/processUploadManagement.php";
+    });
+
     $r->addRoute('GET', '/admin/orders', function () {
         require  "Admin/index.php";
     });
