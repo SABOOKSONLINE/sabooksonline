@@ -58,7 +58,7 @@ require_once __DIR__ . "/layout/sectionHeading.php";
     }
     
     // Only render section if there are related books (entire section including heading is hidden when empty)
-    if ($hasRelatedBooks):
+    if ($hasRelatedBooks && !empty($category)):
     ?>
     <section class="section">
         <div class="container">
@@ -79,7 +79,10 @@ require_once __DIR__ . "/layout/sectionHeading.php";
             </div>
         </div>
     </section>
-    <?php endif; ?>
+    <?php 
+    endif; 
+    // Section is completely hidden when $hasRelatedBooks is false or category is empty
+    ?>
 
 
     <?php
