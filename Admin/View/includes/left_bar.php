@@ -63,7 +63,7 @@ $current_path = $_SERVER['REQUEST_URI'];
                                         <i class="fas fa-list me-2"></i>All Books
                                     </a>
                                     <a href="/admin/publishers/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/publishers/books' || $current_path == '/admin/publishers/books/') ? 'active' : ''; ?>">
-                                        <i class="fas fa-book me-2"></i>Publisher Books
+                                        <i class="fas fa-book me-2"></i>Booksite Books
                                     </a>
                                     <a href="/admin/books/upload-management" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/') ? 'active' : ''; ?>">
                                         <i class="fas fa-cog me-2"></i>Upload Management
