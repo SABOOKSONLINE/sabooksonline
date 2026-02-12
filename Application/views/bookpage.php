@@ -41,18 +41,20 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     // Get books by category to check if any exist (excluding current book)
     $relatedBooks = [];
-    if ($category !== null) {
+    if ($category !== null && !empty($category)) {
         $allBooks = $Book->getBooksByCategory($category);
-        $currentBookId = $_GET['q'] ?? '';
-        // Filter out the current book
-        $relatedBooks = array_filter($allBooks, function($book) use ($currentBookId) {
-            $bookId = strtolower($book['CONTENTID'] ?? '');
-            return $bookId !== strtolower($currentBookId);
-        });
+        if (!empty($allBooks)) {
+            $currentBookId = strtolower($_GET['q'] ?? '');
+            // Filter out the current book and reindex array
+            $relatedBooks = array_values(array_filter($allBooks, function($book) use ($currentBookId) {
+                $bookId = strtolower($book['CONTENTID'] ?? '');
+                return $bookId !== $currentBookId;
+            }));
+        }
     }
     
-    // Only render section if there are related books
-    if (!empty($relatedBooks)):
+    // Only render section if there are related books (entire section including heading is hidden when empty)
+    if (!empty($relatedBooks) && count($relatedBooks) > 0):
     ?>
     <section class="section">
         <div class="container">
