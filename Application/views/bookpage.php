@@ -28,6 +28,23 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     ?>
 
+    <?php
+    // Check if there are books to show before rendering the section
+    $Book = new BookModel($conn);
+    $bookData = $Book->getBookById($_GET['q']);
+
+    if (!isset($bookData['category'])) {
+        $category = $bookData['CATEGORY'] ?? null;
+    } else {
+        $category = $bookData['category'];
+    }
+
+    // Get books by category to check if any exist
+    $relatedBooks = $Book->getBooksByCategory($category);
+    
+    // Only render section if there are books
+    if (!empty($relatedBooks) && $category !== null):
+    ?>
     <section class="section">
         <div class="container">
             <?php renderSectionHeading("You might also like:", "Carefully selected for their depth, relevance, and lasting impact.", "Show more", "/library") ?>
@@ -35,19 +52,6 @@ require_once __DIR__ . "/layout/sectionHeading.php";
             <div class="book-cards mt-4" id="editors_choice">
                 <div class="book-card-slide">
                     <?php
-                    $Book = new BookModel($conn);
-                    $bookData = $Book->getBookById($_GET['q']);
-
-                    if (!isset($bookData['category'])) {
-                        $category = $bookData['CATEGORY'] ?? null;
-
-                        if ($category === null) {
-                            die("Book exists but has no category assigned");
-                        }
-                    } else {
-                        $category = $bookData['category'];
-                    }
-
                     $controller->renderBooksByCategory($category, 10);
                     ?>
                 </div>
@@ -60,6 +64,7 @@ require_once __DIR__ . "/layout/sectionHeading.php";
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
 
     <?php
