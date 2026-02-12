@@ -53,14 +53,17 @@ $current_path = $_SERVER['REQUEST_URI'];
                             <a href="#booksSubmenu"
                                 class="nav-link py-2 px-3 rounded-3 text-dark"
                                 data-bs-toggle="collapse"
-                                aria-expanded="<?php echo (strpos($current_path, '/admin/books') === 0) ? 'true' : 'false'; ?>">
+                                aria-expanded="<?php echo (strpos($current_path, '/admin/books') === 0 || strpos($current_path, '/admin/publishers/books') === 0) ? 'true' : 'false'; ?>">
                                 <i class="fas fa-book me-2"></i>Books
                                 <i class="fas fa-chevron-down float-end mt-1"></i>
                             </a>
-                            <div class="collapse <?php echo (strpos($current_path, '/admin/books') === 0) ? 'show' : ''; ?>" id="booksSubmenu">
+                            <div class="collapse <?php echo (strpos($current_path, '/admin/books') === 0 || strpos($current_path, '/admin/publishers/books') === 0) ? 'show' : ''; ?>" id="booksSubmenu">
                                 <div class="nav flex-column ms-4">
                                     <a href="/admin/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books' || $current_path == '/admin/books/') ? 'active' : ''; ?>">
                                         <i class="fas fa-list me-2"></i>All Books
+                                    </a>
+                                    <a href="/admin/publishers/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/publishers/books' || $current_path == '/admin/publishers/books/') ? 'active' : ''; ?>">
+                                        <i class="fas fa-book me-2"></i>Publisher Books
                                     </a>
                                     <a href="/admin/books/upload-management" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/') ? 'active' : ''; ?>">
                                         <i class="fas fa-cog me-2"></i>Upload Management
