@@ -30,7 +30,7 @@
                 <h6 class="text-uppercase fw-bold mb-3">Useful Links</h6>
                 <ul class="list-unstyled footer-links">
                     <li><a href="/library" class="text-light">Library Listings</a></li>
-                    <li><a href="#" class="text-light">How it works</a></li>
+                    <li><a href="/sell" class="text-light">How it works</a></li>
                     <li><a href="/dashboards" class="text-light">Member Dashboard</a></li>
                     <li><a href="/dashboards/profile" class="text-light">My Account</a></li>
                     <li><a href="/contact" class="text-light">Help Center</a></li>
