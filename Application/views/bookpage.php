@@ -39,11 +39,20 @@ require_once __DIR__ . "/layout/sectionHeading.php";
         $category = $bookData['category'];
     }
 
-    // Get books by category to check if any exist
-    $relatedBooks = $Book->getBooksByCategory($category);
+    // Get books by category to check if any exist (excluding current book)
+    $relatedBooks = [];
+    if ($category !== null) {
+        $allBooks = $Book->getBooksByCategory($category);
+        $currentBookId = $_GET['q'] ?? '';
+        // Filter out the current book
+        $relatedBooks = array_filter($allBooks, function($book) use ($currentBookId) {
+            $bookId = strtolower($book['CONTENTID'] ?? '');
+            return $bookId !== strtolower($currentBookId);
+        });
+    }
     
-    // Only render section if there are books
-    if (!empty($relatedBooks) && $category !== null):
+    // Only render section if there are related books
+    if (!empty($relatedBooks)):
     ?>
     <section class="section">
         <div class="container">
