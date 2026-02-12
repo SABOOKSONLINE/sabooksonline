@@ -44,6 +44,8 @@ if ($uri === "/admin") {
     $ordersController->orders();
 } else if ($uri === "/admin/purchases") {
     $purchasesController->purchases();
+} else if ($uri === "/admin/books" || $uri === "/admin/books/") {
+    $pagesController->books();
 } else if ($uri === "/admin/mobile/banners") {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mobileController->handleBannerForm();

@@ -687,6 +687,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/index.php";
     });
 
+    $r->addRoute('GET', '/admin/books', function () {
+        require  "Admin/index.php";
+    });
+
     // Mobile Management Routes
     $r->addRoute('GET', '/admin/mobile/banners', function () {
         require  "Admin/index.php";

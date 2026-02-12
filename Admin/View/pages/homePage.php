@@ -54,7 +54,7 @@ foreach ($listings as $book) {
     $booksBySection[$section][] = $book;
 }
 
-$headers = ["Cover", "Title", "Public Key", "Publisher Name"];
+$headers = ["ID", "Cover", "Title", "Public Key", "Publisher Name"];
 
 foreach ($booksBySection as $sectionName => $books) {
     renderSectionHeader(

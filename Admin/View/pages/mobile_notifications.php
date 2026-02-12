@@ -327,14 +327,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Resend notification
     document.querySelectorAll('.resend-notification').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const id = this.getAttribute('data-id');
-            if (!id || isNaN(id)) {
-                alert('Invalid notification ID');
-                return;
-            }
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
             if (confirm('Are you sure you want to resend this notification? It will be sent to all registered devices again.')) {
                 window.location.href = `/admin/mobile/notifications/resend/${id}`;
             }

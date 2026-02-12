@@ -29,6 +29,9 @@ $current_path = $_SERVER['REQUEST_URI'];
                         <a href="/admin/pages/home" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/pages/home') ? 'active' : ''; ?>">
                             <i class="fas fa-home me-2"></i>Home Page
                         </a>
+                        <a href="/admin/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books' || $current_path == '/admin/books/') ? 'active' : ''; ?>">
+                            <i class="fas fa-book me-2"></i>Books
+                        </a>
                     </div>
                 </div>
 

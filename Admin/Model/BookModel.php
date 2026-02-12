@@ -66,7 +66,7 @@ class BookModel extends Model
 
     public function getAllBooks(): array
     {
-        return $this->fetchAll("SELECT COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
+        return $this->fetchAll("SELECT ID, COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
     }
 
     public function getFullBooks(): array
@@ -154,5 +154,10 @@ class BookModel extends Model
             [$email]
         );
         return $result[0] ?? [];
+    }
+
+    public function getBooksTable(): array
+    {
+        return $this->fetchAll("SELECT * FROM books ORDER BY pub_date DESC, title ASC");
     }
 }

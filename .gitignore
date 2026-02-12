@@ -3,3 +3,8 @@ cms-data/
 vendor/
 .vscode/
 sessions/
+
+# Cache files
+*.cache
+cache/
+Admin/cache/
