@@ -31,28 +31,28 @@ require_once __DIR__ . "/layout/sectionHeading.php";
     <?php
     // Check if there are books to show before rendering the section
     $Book = new BookModel($conn);
-    $bookData = $Book->getBookById($_GET['q']);
+    $bookData = $Book->getBookById($_GET['q'] ?? '');
 
-    if (!isset($bookData['category'])) {
-        $category = $bookData['CATEGORY'] ?? null;
-    } else {
-        $category = $bookData['category'];
+    // Get category
+    $category = null;
+    if (!empty($bookData)) {
+        $category = $bookData['category'] ?? $bookData['CATEGORY'] ?? null;
     }
 
     // Get books by category to check if any exist (excluding current book)
-    $relatedBooks = [];
     $hasRelatedBooks = false;
     
-    if ($category !== null && !empty(trim($category))) {
+    if (!empty($category) && !empty(trim($category))) {
         $allBooks = $Book->getBooksByCategory($category);
-        if (!empty($allBooks) && is_array($allBooks)) {
+        if (!empty($allBooks) && is_array($allBooks) && count($allBooks) > 0) {
             $currentBookId = strtolower(trim($_GET['q'] ?? ''));
-            // Filter out the current book and reindex array
-            $relatedBooks = array_values(array_filter($allBooks, function($book) use ($currentBookId) {
-                if (empty($currentBookId)) return true; // If no current book ID, show all
+            // Filter out the current book
+            $relatedBooks = array_filter($allBooks, function($book) use ($currentBookId) {
+                if (empty($currentBookId)) return true;
                 $bookId = strtolower(trim($book['CONTENTID'] ?? ''));
                 return !empty($bookId) && $bookId !== $currentBookId;
-            }));
+            });
+            // Check if we have any books after filtering
             $hasRelatedBooks = !empty($relatedBooks) && count($relatedBooks) > 0;
         }
     }
