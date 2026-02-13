@@ -11,6 +11,7 @@ require_once __DIR__ . "/Controller/OrdersController.php";
 require_once __DIR__ . "/Controller/PurchasesController.php";
 require_once __DIR__ . "/Controller/MobileController.php";
 require_once __DIR__ . "/Controller/BooksController.php";
+require_once __DIR__ . "/Controller/PublishersBooksController.php";
 require_once __DIR__ . "/Controller/UploadManagementController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -26,6 +27,7 @@ $ordersController = new OrdersController($conn);
 $purchasesController = new PurchasesController($conn);
 $mobileController = new MobileController($conn);
 $booksController = new BooksController($conn);
+$publishersBooksController = new PublishersBooksController($conn);
 $uploadManagementController = new UploadManagementController($conn);
 
 if ($uri === "/admin") {
@@ -45,7 +47,7 @@ if ($uri === "/admin") {
 } else if ($uri === "/admin/purchases") {
     $purchasesController->purchases();
 } else if ($uri === "/admin/publishers/books" || $uri === "/admin/publishers/books/") {
-    $pagesController->books();
+    $publishersBooksController->books();
 } else if ($uri === "/admin/mobile/banners") {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mobileController->handleBannerForm();
