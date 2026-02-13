@@ -94,14 +94,14 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         $bookViewsByCity = $analysisController->getBookViewsByCity($userKey);
 
 
-                        renderAnalysisCard("Downloads", $downloads, "fas fa-cloud-download-alt");
-                        renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt");
-                        renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card");
-                        renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open");
-                        renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye");
-                        renderAnalysisCard("Media Views", $mediaView['unique_user_count'], "fas fa-newspaper");
-                        renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user");
-                        renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt");
+                        renderAnalysisCard("Downloads", $downloads, "fas fa-cloud-download-alt", "primary");
+                        renderAnalysisCard("Audiobook Plays", "0", "fas fa-headphones-alt", "info");
+                        renderAnalysisCard("Total Revenue", $revenue['total_revenue'], "fas fa-credit-card", "success");
+                        renderAnalysisCard("Published Titles", $titlesCount, "fas fa-book-open", "primary");
+                        renderAnalysisCard("Book Views", $bookView['unique_user_count'], "fas fa-eye", "info");
+                        renderAnalysisCard("Media Views", $mediaView['unique_user_count'], "fas fa-newspaper", "warning");
+                        renderAnalysisCard("Profile Views", $profileView['visit_count'], "fas fa-user", "success");
+                        renderAnalysisCard("Events Views", $eventView['visit_count'], "fas fa-calendar-alt", "danger");
                         renderPurchaseCard($purchasesWithTitle);
 
                         ?>
