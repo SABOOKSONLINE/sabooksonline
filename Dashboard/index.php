@@ -1,4 +1,11 @@
 <?php
+// Start session before any output
+if (session_status() === PHP_SESSION_NONE) {
+    $cookieDomain = ".sabooksonline.co.za";
+    session_set_cookie_params(0, '/', $cookieDomain);
+    session_start();
+}
+
 include __DIR__ . "/views/includes/header.php";
 
 include __DIR__ . "/views/includes/layouts/card.php";
