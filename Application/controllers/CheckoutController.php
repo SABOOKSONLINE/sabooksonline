@@ -173,7 +173,7 @@ public function generatePayment($price, $user) {
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
     
-    $yocoSecretKey = 'sk_test_960bfde0VBrLlpK098e4ffeb53e1';
+    $yocoSecretKey = 'sk_live_0e215527YB2LEB798e04dd09d32e';
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
