@@ -345,7 +345,7 @@ body {
 /* Education Banner */
 .education-banner {
     width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
     padding: 3rem 2rem;
     display: flex;
     align-items: center;
