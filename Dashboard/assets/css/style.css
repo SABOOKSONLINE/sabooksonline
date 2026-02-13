@@ -93,6 +93,48 @@ body {
     opacity: 0.25;
 }
 
+/* Mobile responsive adjustments for book cards */
+@media (max-width: 575.98px) {
+    .book-card-num {
+        font-size: 80px;
+        left: -25px;
+        opacity: 0.1;
+    }
+    
+    .book-card:hover .book-card-num {
+        font-size: 90px;
+        left: -30px;
+    }
+    
+    .book-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .book-card-num {
+        font-size: 120px;
+        left: -35px;
+    }
+    
+    .book-card:hover .book-card-num {
+        font-size: 135px;
+        left: -40px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .book-card-num {
+        font-size: 150px;
+        left: -45px;
+    }
+    
+    .book-card:hover .book-card-num {
+        font-size: 165px;
+        left: -50px;
+    }
+}
+
 /* View count */
 .view-count {
     margin-top: 2px;
