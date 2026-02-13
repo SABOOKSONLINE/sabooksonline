@@ -122,14 +122,15 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                             <div class="row g-3 g-md-4">
                                 <?php foreach ($topBooks as $index => $book): ?>
                                     <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                                        <div class="book-card position-relative text-center h-100">
+                                        <div class="book-card position-relative text-center">
                                             <span class="book-card-num"><?= $index + 1 ?></span>
-                                            <div class="card shadow-sm rounded-4 overflow-hidden h-100" style="max-width: 100%;">
+                                            <div class="card shadow-sm rounded-4 overflow-hidden book-cover-container">
                                                 <a href="/library/book/<?= htmlspecialchars($book['CONTENTID']) ?>" class="d-block">
-                                                    <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" 
-                                                         class="card-img-top w-100" 
-                                                         alt="<?= htmlspecialchars($book['TITLE']) ?>"
-                                                         style="object-fit: cover; height: auto; min-height: 200px;">
+                                                    <div class="book-cover-wrapper">
+                                                        <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" 
+                                                             class="book-cover-image" 
+                                                             alt="<?= htmlspecialchars($book['TITLE']) ?>">
+                                                    </div>
                                                 </a>
                                             </div>
                                         </div>

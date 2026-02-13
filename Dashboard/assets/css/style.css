@@ -109,6 +109,14 @@ body {
     .book-card {
         margin-bottom: 1rem;
     }
+    
+    .book-cover-container {
+        max-width: 140px;
+    }
+    
+    .book-cover-wrapper {
+        padding-bottom: 150%; /* Maintain book aspect ratio */
+    }
 }
 
 @media (min-width: 576px) and (max-width: 767.98px) {
@@ -121,6 +129,10 @@ body {
         font-size: 135px;
         left: -40px;
     }
+    
+    .book-cover-container {
+        max-width: 160px;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
@@ -132,6 +144,16 @@ body {
     .book-card:hover .book-card-num {
         font-size: 165px;
         left: -50px;
+    }
+    
+    .book-cover-container {
+        max-width: 180px;
+    }
+}
+
+@media (min-width: 992px) {
+    .book-cover-container {
+        max-width: 200px;
     }
 }
 
@@ -162,6 +184,39 @@ body {
     display: block;
     border-top-left-radius: 0.75rem;
     border-top-right-radius: 0.75rem;
+}
+
+/* Book cover styling - portrait aspect ratio like real books */
+.book-cover-container {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+    background: transparent;
+    border: none;
+}
+
+.book-cover-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 150%; /* 2:3 aspect ratio (book-like: tall and narrow) */
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+.book-cover-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.book-cover-wrapper:hover .book-cover-image {
+    transform: scale(1.05);
 }
 
 h2,
