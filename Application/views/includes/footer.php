@@ -56,7 +56,7 @@
                         68 Melville Rd, Illovo, Sandton, 2196</p>
                     <p><strong>Enquiries:</strong><br>
                         +27 67 852 3593 (MON to FRI 9am–6pm)</p>
-                    <p><a href="mailto:admin@sabooksonline.co.za" class="text-light">admin@sabooksonline.co.za</a></p>
+                    <p><a href="mailto:support@sabooksonline.co.za" class="text-light">support@sabooksonline.co.za</a></p>
                 </div>
             </div>
 
