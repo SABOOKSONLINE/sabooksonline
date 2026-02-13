@@ -20,7 +20,7 @@ class BooksController extends Controller
     {
         $books = $this->booksModel->getFullBooks();
 
-        $this->render("books_posts", [
+        $this->render("books", [
             "title" => "Books",
             "books" => $books
         ]);
