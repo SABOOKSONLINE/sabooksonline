@@ -77,7 +77,7 @@ class PagesController extends Controller
     {
         $books = $this->bookModel->getBooksTable();
         
-        $this->render("books_table", [
+        $this->render("books", [
             "books" => $books
         ]);
     }
