@@ -124,7 +124,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                                     <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3">
                                         <div class="book-card position-relative text-center">
                                             <span class="book-card-num"><?= $index + 1 ?></span>
-                                            <div class="card shadow-sm rounded-4 overflow-hidden book-cover-container">
+                                            <div class="book-cover-container">
                                                 <a href="/library/book/<?= htmlspecialchars($book['CONTENTID']) ?>" class="d-block">
                                                     <div class="book-cover-wrapper">
                                                         <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" 

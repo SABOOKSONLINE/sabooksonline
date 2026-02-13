@@ -191,8 +191,10 @@ body {
     width: 100%;
     max-width: 150px;
     margin: 0 auto;
-    background: transparent;
-    border: none;
+    padding: 0;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+    overflow: hidden;
 }
 
 .book-cover-wrapper {
@@ -201,6 +203,7 @@ body {
     padding-bottom: 200%; /* Much taller book-like aspect ratio */
     overflow: hidden;
     border-radius: 0.5rem;
+    margin: 0;
 }
 
 .book-cover-image {
@@ -213,6 +216,8 @@ body {
     display: block;
     border-radius: 0.5rem;
     transition: transform 0.3s ease;
+    margin: 0;
+    padding: 0;
 }
 
 .book-cover-wrapper:hover .book-cover-image {
