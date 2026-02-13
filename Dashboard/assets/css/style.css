@@ -93,70 +93,6 @@ body {
     opacity: 0.25;
 }
 
-/* Mobile responsive adjustments for book cards */
-@media (max-width: 575.98px) {
-    .book-card-num {
-        font-size: 80px;
-        left: -25px;
-        opacity: 0.1;
-    }
-    
-    .book-card:hover .book-card-num {
-        font-size: 90px;
-        left: -30px;
-    }
-    
-    .book-card {
-        margin-bottom: 1rem;
-    }
-    
-    .book-cover-container {
-        max-width: 110px;
-    }
-    
-    .book-cover-wrapper {
-        padding-bottom: 200%; /* Maintain book aspect ratio */
-    }
-}
-
-@media (min-width: 576px) and (max-width: 767.98px) {
-    .book-card-num {
-        font-size: 120px;
-        left: -35px;
-    }
-    
-    .book-card:hover .book-card-num {
-        font-size: 135px;
-        left: -40px;
-    }
-    
-    .book-cover-container {
-        max-width: 130px;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) {
-    .book-card-num {
-        font-size: 150px;
-        left: -45px;
-    }
-    
-    .book-card:hover .book-card-num {
-        font-size: 165px;
-        left: -50px;
-    }
-    
-    .book-cover-container {
-        max-width: 140px;
-    }
-}
-
-@media (min-width: 992px) {
-    .book-cover-container {
-        max-width: 150px;
-    }
-}
-
 /* View count */
 .view-count {
     margin-top: 2px;
@@ -186,43 +122,6 @@ body {
     border-top-right-radius: 0.75rem;
 }
 
-/* Book cover styling - portrait aspect ratio like real books */
-.book-cover-container {
-    width: 100%;
-    max-width: 150px;
-    margin: 0 auto;
-    padding: 0;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.book-cover-wrapper {
-    position: relative;
-    width: 100%;
-    padding-bottom: 200%; /* Much taller book-like aspect ratio */
-    overflow: hidden;
-    border-radius: 0.5rem;
-    margin: 0;
-}
-
-.book-cover-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 0.5rem;
-    transition: transform 0.3s ease;
-    margin: 0;
-    padding: 0;
-}
-
-.book-cover-wrapper:hover .book-cover-image {
-    transform: scale(1.05);
-}
 
 h2,
 h5.most-viewed-title {

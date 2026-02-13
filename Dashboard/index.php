@@ -115,28 +115,24 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                     </div>
 
                     <?php if (!empty($topBooks)): ?>
-                        <div class="mb-4">
-                            <h5 class="display-6 small fw-semibold mb-3">
+                        <div class="row">
+                            <h5 class="display-6 small fw-semibold">
                                 <small>Top Performing Books</small>
                             </h5>
-                            <div class="row g-3 g-md-4">
-                                <?php foreach ($topBooks as $index => $book): ?>
-                                    <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                                        <div class="book-card position-relative text-center">
-                                            <span class="book-card-num"><?= $index + 1 ?></span>
-                                            <div class="book-cover-container">
-                                                <a href="/library/book/<?= htmlspecialchars($book['CONTENTID']) ?>" class="d-block">
-                                                    <div class="book-cover-wrapper">
-                                                        <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" 
-                                                             class="book-cover-image" 
-                                                             alt="<?= htmlspecialchars($book['TITLE']) ?>">
-                                                    </div>
-                                                </a>
-                                            </div>
+                            <?php foreach ($topBooks as $index => $book): ?>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                                    <div class="book-card position-relative text-center">
+                                        <span class="book-card-num"><?= $index + 1 ?></span>
+
+                                        <div class="card shadow-sm rounded-4 overflow-hidden" style="width: 100%; max-width: 260px;">
+                                            <a href="/library/book/<?= htmlspecialchars($book['CONTENTID']) ?>">
+                                            <img src="/cms-data/book-covers/<?= htmlspecialchars($book['COVER']) ?>" class="card-img-top" alt="<?= htmlspecialchars($book['TITLE']) ?>">
+                                        </a>
+
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     <?php else: ?>
                         <p class="text-muted">No views yet. Share your books to get more readers!</p>
