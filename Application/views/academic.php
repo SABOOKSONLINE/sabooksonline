@@ -10,6 +10,13 @@ $controller = new AcademicBookController($conn);
 <body class="d-flex flex-column min-vh-100">
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
+    <!-- Education Banner -->
+    <div class="container-fluid px-0 mb-4">
+        <div class="education-banner">
+            <img src="/public/images/Education-cuate.svg" alt="Education" class="education-banner-img">
+        </div>
+    </div>
+
     <div class="container py-4 flex-grow-1">
         <h1 class="fw-bold mb-0">Academic Books</h1>
         <span class="text-muted">Explore a world of knowledge and learning</span>

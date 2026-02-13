@@ -342,6 +342,38 @@ body {
     z-index: 10;
 }
 
+/* Education Banner */
+.education-banner {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.education-banner-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .education-banner {
+        padding: 2rem 1rem;
+        min-height: 250px;
+    }
+    
+    .education-banner-img {
+        max-height: 300px;
+    }
+}
+
 .section {
     position: relative;
 }
