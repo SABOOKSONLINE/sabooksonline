@@ -346,13 +346,14 @@ body {
 .education-banner {
     width: 100%;
     background: #f8f9fa;
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 200px;
     position: relative;
     overflow: hidden;
+    border-radius: 15px;
 }
 
 .education-banner-img {
@@ -367,6 +368,7 @@ body {
     .education-banner {
         padding: 1rem;
         min-height: 150px;
+        margin-bottom: 2rem;
     }
     
     .education-banner-img {
