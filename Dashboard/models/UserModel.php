@@ -214,4 +214,40 @@ class UserModel
             return false;
         }
     }
+
+    public function getHardcopyPublishers()
+    {
+        try {
+            $sql = "SELECT email FROM hardcopy_publishers";
+            $stmt = mysqli_prepare($this->conn, $sql);
+
+            if (!$stmt) {
+                error_log("Failed to prepare statement: " . mysqli_error($this->conn));
+                return null;
+            }
+
+            if (!mysqli_stmt_execute($stmt)) {
+                error_log("Failed to execute statement: " . mysqli_stmt_error($stmt));
+                mysqli_stmt_close($stmt);
+                return null;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+
+            if (!$result) {
+                error_log("Failed to get result: " . mysqli_stmt_error($stmt));
+                mysqli_stmt_close($stmt);
+                return null;
+            }
+
+            $publishers = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+            mysqli_stmt_close($stmt);
+
+            return $publishers ?: null;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return null;
+        }
+    }
 }

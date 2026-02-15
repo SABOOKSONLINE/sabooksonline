@@ -6,10 +6,12 @@ error_reporting(E_ALL);
 class BookListingController
 {
     private $booksModel;
+    private $usersModel;
 
     public function __construct($conn)
     {
         $this->booksModel = new BookListingsModel($conn);
+        $this->usersModel = new UserModel($conn);
     }
 
     public function renderBookListing($userId)
@@ -21,6 +23,11 @@ class BookListingController
     public function renderBookByContentId($userKey, $contentId)
     {
         $book = $this->booksModel->selectBookByContentId($userKey, $contentId);
+        $hcPublishers = $this->usersModel->getHardcopyPublishers();
+        $publisherEmails = array_column($hcPublishers, 'email');
+        // echo "<pre>";
+        // print_r($publisherEmails);
+        // echo "</pre>";
         // include __DIR__ . "/../views/includes/layouts/forms/book_form.php";
         include __DIR__ . "/../views/includes/layouts/forms/temp_book_form.php";
     }
