@@ -63,7 +63,6 @@ if (!empty($book['DATEPOSTED'])) {
 
 // Check if this is an existing book (has ID)
 $isExistingBook = !empty($bookId);
-
 ?>
 
 <?php
@@ -525,14 +524,11 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
             <?php
             if (
                 !empty($book['ID']) &&
-                (
-                    $_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" ||
-                    $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" ||
-                    $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com" ||
-                    $_SESSION['ADMIN_EMAIL'] == "sbusisomanqa@gmail.com"
-                )
+                isset($_SESSION['ADMIN_EMAIL']) &&
+                in_array($_SESSION['ADMIN_EMAIL'], $publisherEmails)
             ):
             ?>
+
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Hardcopy Price (R)
