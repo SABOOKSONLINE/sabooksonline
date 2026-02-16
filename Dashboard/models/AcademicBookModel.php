@@ -32,7 +32,10 @@ class AcademicBookModel
                     ebook_price,
                     pdf_path,
                     physical_book_price,
-                    link
+                    link,
+                    approved,
+                    aligned,
+                    status
                 ) VALUES (
                     ?,
                     ?,
@@ -51,6 +54,9 @@ class AcademicBookModel
                     ?, 
                     ?, 
                     ?, 
+                    ?,
+                    ?,
+                    ?,
                     ?
                 )";
 
@@ -59,9 +65,14 @@ class AcademicBookModel
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
 
+        // Prepare variables for binding (null values need to be converted)
+        $approved = $data['approved'] ?? 0;
+        $aligned = $data['aligned'] ?? 0;
+        $status = $data['status'] ?? '';
+        
         mysqli_stmt_bind_param(
             $stmt,
-            "isssssssssssssdsss",
+            "isssssssssssssdsssiis",
             $data['publisher_id'],
             $data['public_key'],
             $data['title'],
@@ -79,7 +90,10 @@ class AcademicBookModel
             $data['ebook_price'],
             $data['pdf_path'],
             $data['physical_book_price'],
-            $data['link']
+            $data['link'],
+            $approved,
+            $aligned,
+            $status
         );
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -109,7 +123,10 @@ class AcademicBookModel
                     pdf_path = ?,
                     ebook_price = ?,
                     physical_book_price = ?,
-                    link = ?
+                    link = ?,
+                    approved = ?,
+                    aligned = ?,
+                    status = ?
                 WHERE id = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -119,7 +136,7 @@ class AcademicBookModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssssddsi",
+            "sssssssssssssddsiiisi",
             $data['title'],
             $data['author'],
             $data['editor'],
@@ -136,6 +153,9 @@ class AcademicBookModel
             $data['ebook_price'],
             $data['physical_book_price'],
             $data['link'],
+            $data['approved'] ?? 0,
+            $data['aligned'] ?? 0,
+            $data['status'] ?? '',
             $data['id']
         );
 
