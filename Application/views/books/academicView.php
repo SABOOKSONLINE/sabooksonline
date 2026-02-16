@@ -1,25 +1,25 @@
 <?php
 
-$academicBookId = $book['public_key'];
-$title = $book['title'];
-$author = $book['author'];
-$editor = $book['editor'];
-$description = $book['description'];
-$subject = $book['subject'];
-$level = $book['level'];
-$language = $book['language'];
-$edition = $book['edition'];
-$pages = $book['pages'];
-$isbn = $book['ISBN'];
-$publishDate = $book['publish_date'];
-$coverImagePath = $book['cover_image_path'];
-$ebookPrice = $book['ebook_price'];
-$pdfPath = $book['pdf_path'];
-$physicalBookPrice = $book['physical_book_price'];
-$externalLink = $book['link'];
+$academicBookId = $book['public_key'] ?? '';
+$title = $book['title'] ?? '';
+$author = $book['author'] ?? '';
+$editor = $book['editor'] ?? '';
+$description = $book['description'] ?? '';
+$subject = $book['subject'] ?? '';
+$level = $book['level'] ?? '';
+$language = $book['language'] ?? '';
+$edition = $book['edition'] ?? '';
+$pages = $book['pages'] ?? '';
+$isbn = $book['ISBN'] ?? '';
+$publishDate = $book['publish_date'] ?? null;
+$coverImagePath = $book['cover_image_path'] ?? '';
+$ebookPrice = $book['ebook_price'] ?? 0;
+$pdfPath = $book['pdf_path'] ?? '';
+$physicalBookPrice = $book['physical_book_price'] ?? 0;
+$externalLink = $book['link'] ?? '';
 
-$publisher = $book['ADMIN_NAME'];
-$publisherPublicKey = $book['ADMIN_USERKEY'];
+$publisher = $book['ADMIN_NAME'] ?? '';
+$publisherPublicKey = $book['ADMIN_USERKEY'] ?? '';
 
 $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
@@ -78,9 +78,51 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 <div class="container">
     <div class="bv-view row">
-        <!-- Magazine Cover -->
+        <!-- Book Cover -->
         <div class="bv-img">
-            <img src="/cms-data/academic/covers/<?= $coverImagePath ?>" alt="Book Cover">
+            <?php if (!empty($coverImagePath)): ?>
+                <img src="/cms-data/academic/covers/<?= htmlspecialchars($coverImagePath) ?>" 
+                     alt="Book Cover"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,<?= base64_encode('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"450\" viewBox=\"0 0 300 450\"><defs><filter id=\"blur\"><feGaussianBlur in=\"SourceGraphic\" stdDeviation=\"12\"/></filter><linearGradient id=\"redGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\"><stop offset=\"0%\" style=\"stop-color:#DE3831;stop-opacity:0.9\"/><stop offset=\"100%\" style=\"stop-color:#DE3831;stop-opacity:0.6\"/></linearGradient><linearGradient id=\"blueGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\"><stop offset=\"0%\" style=\"stop-color:#002395;stop-opacity:0.6\"/><stop offset=\"100%\" style=\"stop-color:#002395;stop-opacity:0.9\"/></linearGradient><linearGradient id=\"greenGrad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\"><stop offset=\"0%\" style=\"stop-color:#007A4D;stop-opacity:0.8\"/><stop offset=\"100%\" style=\"stop-color:#007A4D;stop-opacity:0.4\"/></linearGradient><linearGradient id=\"yellowGrad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\"><stop offset=\"0%\" style=\"stop-color:#FFB612;stop-opacity:0.4\"/><stop offset=\"100%\" style=\"stop-color:#FFB612;stop-opacity:0.8\"/></linearGradient></defs><rect width=\"300\" height=\"450\" fill=\"#FFFFFF\"/><rect width=\"300\" height=\"150\" fill=\"url(#redGrad)\" filter=\"url(#blur)\"/><rect y=\"300\" width=\"300\" height=\"150\" fill=\"url(#blueGrad)\" filter=\"url(#blur)\"/><polygon points=\"0,0 0,450 150,225\" fill=\"url(#greenGrad)\" filter=\"url(#blur)\"/><polygon points=\"300,0 300,450 150,225\" fill=\"url(#yellowGrad)\" filter=\"url(#blur)\"/><polygon points=\"0,0 300,0 150,225\" fill=\"#000000\" opacity=\"0.3\" filter=\"url(#blur)\"/><text x=\"50%\" y=\"50%\" font-family=\"Arial, sans-serif\" font-size=\"20\" fill=\"#FFFFFF\" text-anchor=\"middle\" dominant-baseline=\"middle\" font-weight=\"bold\" opacity=\"0.9\">No Cover</text></svg>') ?>'; this.style.border='1px solid #dee2e6';">
+            <?php else: ?>
+                <div style="width: 100%; height: 100%; min-height: 450px; border: 1px solid #dee2e6; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #FFFFFF;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 300 450" style="position: absolute; top: 0; left: 0; z-index: 0;">
+                        <defs>
+                            <filter id="blurLarge"><feGaussianBlur in="SourceGraphic" stdDeviation="12"/></filter>
+                            <linearGradient id="redGradLarge" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#DE3831;stop-opacity:0.9"/>
+                                <stop offset="100%" style="stop-color:#DE3831;stop-opacity:0.6"/>
+                            </linearGradient>
+                            <linearGradient id="blueGradLarge" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#002395;stop-opacity:0.6"/>
+                                <stop offset="100%" style="stop-color:#002395;stop-opacity:0.9"/>
+                            </linearGradient>
+                            <linearGradient id="greenGradLarge" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#007A4D;stop-opacity:0.8"/>
+                                <stop offset="100%" style="stop-color:#007A4D;stop-opacity:0.4"/>
+                            </linearGradient>
+                            <linearGradient id="yellowGradLarge" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FFB612;stop-opacity:0.4"/>
+                                <stop offset="100%" style="stop-color:#FFB612;stop-opacity:0.8"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="300" height="450" fill="#FFFFFF"/>
+                        <rect width="300" height="150" fill="url(#redGradLarge)" filter="url(#blurLarge)"/>
+                        <rect y="300" width="300" height="150" fill="url(#blueGradLarge)" filter="url(#blurLarge)"/>
+                        <polygon points="0,0 0,450 150,225" fill="url(#greenGradLarge)" filter="url(#blurLarge)"/>
+                        <polygon points="300,0 300,450 150,225" fill="url(#yellowGradLarge)" filter="url(#blurLarge)"/>
+                        <polygon points="0,0 300,0 150,225" fill="#000000" opacity="0.3" filter="url(#blurLarge)"/>
+                    </svg>
+                    <div style="position: relative; z-index: 1; text-align: center; color: #FFFFFF;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <p style="margin: 0; font-size: 18px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">No Cover Image</p>
+                        <small style="color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Cover image not available</small>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Magazine Details -->
