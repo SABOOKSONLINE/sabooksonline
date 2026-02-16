@@ -1,12 +1,12 @@
 <?php
+// Session should already be started in index.php
 if (session_status() === PHP_SESSION_NONE) {
-    $cookieDomain = ".sabooksonline.co.za";
-    session_set_cookie_params(0, '/', $cookieDomain);
     session_start();
 }
-$userKey = $_SESSION['ADMIN_USERKEY'];
-$userId = $_SESSION['ADMIN_ID'];
-$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
+
+$userKey = $_SESSION['ADMIN_USERKEY'] ?? null;
+$userId = $_SESSION['ADMIN_ID'] ?? null;
+$adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;
 
 if (isset($userKey)) {
     if (!empty($adminProfileImage)) {

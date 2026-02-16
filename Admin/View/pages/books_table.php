@@ -1,6 +1,7 @@
 <?php
 include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
+include __DIR__ . "/../layouts/cards/aCard.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -9,17 +10,16 @@ ob_start();
 
 renderHeading(
     "Books Management",
-    "View and manage all books from the posts table."
+    "Comprehensive view and management of all books in the system."
 );
 
 renderAlerts();
-
 // Calculate statistics
 $totalBooks = count($data["books"]);
-$activeBooks = count(array_filter($data["books"], fn($b) => !empty($b['STATUS']) && strtolower($b['STATUS']) === 'active'));
-$inactiveBooks = count(array_filter($data["books"], fn($b) => !empty($b['STATUS']) && strtolower($b['STATUS']) !== 'active'));
-$withPrice = count(array_filter($data["books"], fn($b) => !empty($b['RETAILPRICE']) && (float)$b['RETAILPRICE'] > 0));
-$totalValue = array_sum(array_map(fn($b) => (float)($b['RETAILPRICE'] ?? 0), $data["books"]));
+$inStock = count(array_filter($data["books"], fn($b) => !empty($b['stock_status']) && strtolower($b['stock_status']) === 'in stock'));
+$outOfStock = count(array_filter($data["books"], fn($b) => !empty($b['stock_status']) && strtolower($b['stock_status']) !== 'in stock'));
+$withPrice = count(array_filter($data["books"], fn($b) => !empty($b['price']) && (float)$b['price'] > 0));
+$totalValue = array_sum(array_map(fn($b) => (float)($b['price'] ?? 0) * (int)($b['quantity'] ?? 0), $data["books"]));
 ?>
 
 <style>
@@ -256,6 +256,7 @@ $totalValue = array_sum(array_map(fn($b) => (float)($b['RETAILPRICE'] ?? 0), $da
     display: inline-block;
 }
 
+
 .badge-custom {
     padding: 0.4rem 0.75rem;
     border-radius: 6px;
@@ -320,12 +321,27 @@ $totalValue = array_sum(array_map(fn($b) => (float)($b['RETAILPRICE'] ?? 0), $da
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 768px) {
+    .table-responsive {
+        max-height: 400px;
+    }
+    
+    .stat-card-value {
+        font-size: 1.5rem;
+    }
+    
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
 </style>
 
 <?php
 renderSectionHeader(
     "Overview Statistics",
-    "Key metrics and insights about your books"
+    "Key metrics and insights about your book inventory"
 );
 ?>
 
@@ -344,8 +360,8 @@ renderSectionHeader(
             <div class="stat-card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
                 <i class="fas fa-check-circle"></i>
             </div>
-            <div class="stat-card-value"><?= number_format($activeBooks) ?></div>
-            <div class="stat-card-label">Active Books</div>
+            <div class="stat-card-value"><?= number_format($inStock) ?></div>
+            <div class="stat-card-label">In Stock</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
@@ -353,8 +369,8 @@ renderSectionHeader(
             <div class="stat-card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <div class="stat-card-value"><?= number_format($inactiveBooks) ?></div>
-            <div class="stat-card-label">Inactive Books</div>
+            <div class="stat-card-value"><?= number_format($outOfStock) ?></div>
+            <div class="stat-card-label">Out of Stock</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
@@ -363,7 +379,7 @@ renderSectionHeader(
                 <i class="fas fa-dollar-sign"></i>
             </div>
             <div class="stat-card-value">R<?= number_format($totalValue, 2) ?></div>
-            <div class="stat-card-label">Total Value</div>
+            <div class="stat-card-label">Total Inventory Value</div>
         </div>
     </div>
 </div>
@@ -371,7 +387,7 @@ renderSectionHeader(
 <?php
 renderSectionHeader(
     "Books Catalog",
-    "Search, filter, and manage your books"
+    "Search, filter, and manage your book inventory"
 );
 ?>
 
@@ -394,7 +410,7 @@ renderSectionHeader(
                     type="text" 
                     id="bookSearch" 
                     class="form-control" 
-                    placeholder="Search by title, ISBN, publisher, category..."
+                    placeholder="Search by ISBN, title, author, publisher, or any field..."
                     autocomplete="off">
                 <button class="clear-search" id="clearSearch" title="Clear search">
                     <i class="fas fa-times"></i>
@@ -402,8 +418,8 @@ renderSectionHeader(
             </div>
             <div class="filter-badges">
                 <span class="filter-badge active" data-filter="all">All Books</span>
-                <span class="filter-badge" data-filter="active">Active</span>
-                <span class="filter-badge" data-filter="inactive">Inactive</span>
+                <span class="filter-badge" data-filter="in-stock">In Stock</span>
+                <span class="filter-badge" data-filter="out-of-stock">Out of Stock</span>
                 <span class="filter-badge" data-filter="with-price">With Price</span>
                 <span class="filter-badge" data-filter="no-price">No Price</span>
             </div>
@@ -425,64 +441,95 @@ renderSectionHeader(
                 <table class="table table-hover align-middle" id="booksTable">
                     <thead>
                         <tr>
-                            <th><i class="fas fa-hashtag me-1"></i>ID</th>
-                            <th><i class="fas fa-book me-1"></i>Title</th>
-                            <th><i class="fas fa-tags me-1"></i>Category</th>
                             <th><i class="fas fa-barcode me-1"></i>ISBN</th>
+                            <th><i class="fas fa-book me-1"></i>Title</th>
+                            <th><i class="fas fa-user me-1"></i>Author</th>
                             <th><i class="fas fa-building me-1"></i>Publisher</th>
+                            <th><i class="fas fa-calendar me-1"></i>Pub Date</th>
                             <th><i class="fas fa-tag me-1"></i>Price</th>
+                            <th><i class="fas fa-boxes me-1"></i>Quantity</th>
                             <th><i class="fas fa-info-circle me-1"></i>Status</th>
-                            <th><i class="fas fa-calendar me-1"></i>Posted</th>
+                            <th><i class="fas fa-warehouse me-1"></i>Stock</th>
+                            <th><i class="fas fa-weight me-1"></i>Weight</th>
+                            <th><i class="fas fa-exchange-alt me-1"></i>Substitute ISBN</th>
                         </tr>
                     </thead>
                     <tbody id="booksTableBody">
                         <?php foreach ($data["books"] as $index => $book): ?>
                             <tr class="book-row" 
-                                data-status="<?= strtolower($book['STATUS'] ?? '') ?>"
-                                data-has-price="<?= !empty($book['RETAILPRICE']) && (float)$book['RETAILPRICE'] > 0 ? 'yes' : 'no' ?>">
-                                <td><?= htmlspecialchars($book['ID'] ?? 'N/A') ?></td>
+                                data-stock-status="<?= strtolower($book['stock_status'] ?? '') ?>"
+                                data-has-price="<?= !empty($book['price']) && (float)$book['price'] > 0 ? 'yes' : 'no' ?>">
                                 <td>
-                                    <div class="book-title" title="<?= htmlspecialchars($book['TITLE'] ?? 'N/A') ?>">
-                                        <a href="/library/book/<?= htmlspecialchars($book['CONTENTID'] ?? '') ?>" target="_blank" class="text-decoration-none">
-                                            <?= htmlspecialchars($book['TITLE'] ?? 'N/A') ?>
-                                        </a>
+                                    <span class="book-isbn"><?= htmlspecialchars($book['isbn'] ?? 'N/A') ?></span>
+                                </td>
+                                <td>
+                                    <div class="book-title" title="<?= htmlspecialchars($book['title'] ?? 'N/A') ?>">
+                                        <?= htmlspecialchars($book['title'] ?? 'N/A') ?>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge-custom bg-info text-white">
-                                        <?= htmlspecialchars($book['CATEGORY'] ?? 'N/A') ?>
-                                    </span>
+                                    <span><?= htmlspecialchars($book['author'] ?? 'N/A') ?></span>
                                 </td>
                                 <td>
-                                    <span class="book-isbn"><?= htmlspecialchars($book['ISBN'] ?? 'N/A') ?></span>
+                                    <span><?= htmlspecialchars($book['publisher'] ?? 'N/A') ?></span>
                                 </td>
                                 <td>
-                                    <span><?= htmlspecialchars($book['PUBLISHER'] ?? 'N/A') ?></span>
-                                </td>
-                                <td>
-                                    <?php if (!empty($book['RETAILPRICE'])): ?>
-                                        <span class="price-tag">R<?= number_format((float)$book['RETAILPRICE'], 2) ?></span>
+                                    <?php if (!empty($book['pub_date'])): ?>
+                                        <span><?= date('M d, Y', strtotime($book['pub_date'])) ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if (!empty($book['STATUS'])): ?>
-                                        <?php 
-                                        $statusLower = strtolower($book['STATUS']);
-                                        $statusClass = ($statusLower === 'active') ? 'success' : 'danger';
-                                        ?>
-                                        <span class="badge-custom bg-<?= $statusClass ?> text-white">
-                                            <i class="fas fa-<?= $statusLower === 'active' ? 'check-circle' : 'times-circle' ?>"></i>
-                                            <?= htmlspecialchars($book['STATUS']) ?>
+                                    <?php if (!empty($book['price'])): ?>
+                                        <span class="price-tag">R<?= number_format((float)$book['price'], 2) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (isset($book['quantity'])): ?>
+                                        <span class="badge-custom bg-<?= (int)$book['quantity'] > 0 ? 'success' : 'danger' ?> text-white">
+                                            <i class="fas fa-<?= (int)$book['quantity'] > 0 ? 'check' : 'times' ?>"></i>
+                                            <?= (int)$book['quantity'] ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if (!empty($book['DATEPOSTED'])): ?>
-                                        <span><?= date('M d, Y', strtotime($book['DATEPOSTED'])) ?></span>
+                                    <?php if (!empty($book['item_status'])): ?>
+                                        <span class="badge-custom bg-info text-white">
+                                            <?= htmlspecialchars($book['item_status']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($book['stock_status'])): ?>
+                                        <?php 
+                                        $stockLower = strtolower($book['stock_status']);
+                                        $stockClass = ($stockLower === 'in stock') ? 'success' : 'warning';
+                                        ?>
+                                        <span class="badge-custom bg-<?= $stockClass ?> text-white">
+                                            <i class="fas fa-<?= $stockLower === 'in stock' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                                            <?= htmlspecialchars($book['stock_status']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($book['weight'])): ?>
+                                        <span><?= number_format((float)$book['weight'], 2) ?> kg</span>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($book['substitute_isbn'])): ?>
+                                        <span class="book-isbn"><?= htmlspecialchars($book['substitute_isbn']) ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
@@ -515,6 +562,7 @@ renderSectionHeader(
 </div>
 
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('bookSearch');
     const clearSearchBtn = document.getElementById('clearSearch');
@@ -528,6 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 1;
     const rowsPerPage = 20;
     
+    // Search functionality
     function updateClearButton() {
         if (searchInput && clearSearchBtn) {
             if (searchInput.value.trim().length > 0) {
@@ -547,13 +596,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const cells = Array.from(row.querySelectorAll('td'));
             const rowText = cells.map(cell => cell.textContent || cell.innerText).join(' ').toLowerCase();
             
+            // Check search filter
             const matchesSearch = !searchValue || rowText.includes(searchValue);
             
+            // Check category filter
             let matchesFilter = true;
-            if (currentFilter === 'active') {
-                matchesFilter = row.dataset.status === 'active';
-            } else if (currentFilter === 'inactive') {
-                matchesFilter = row.dataset.status !== 'active' && row.dataset.status !== '';
+            if (currentFilter === 'in-stock') {
+                matchesFilter = row.dataset.stockStatus === 'in stock';
+            } else if (currentFilter === 'out-of-stock') {
+                matchesFilter = row.dataset.stockStatus !== 'in stock' && row.dataset.stockStatus !== '';
             } else if (currentFilter === 'with-price') {
                 matchesFilter = row.dataset.hasPrice === 'yes';
             } else if (currentFilter === 'no-price') {
@@ -569,6 +620,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Update pagination
         updatePagination(visibleRows);
         updateBookCount(visibleCount);
     }
@@ -604,6 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Update pagination controls
         const prevBtn = document.getElementById('prevPage');
         const nextBtn = document.getElementById('nextPage');
         const pageInfo = document.getElementById('pageInfo');
@@ -615,6 +668,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Event listeners
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             updateClearButton();
@@ -643,6 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Filter badges
     filterBadges.forEach(badge => {
         badge.addEventListener('click', function() {
             filterBadges.forEach(b => b.classList.remove('active'));
@@ -653,6 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Pagination
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
     
@@ -676,11 +732,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Export functionality
     const exportBtn = document.getElementById('exportBtn');
     if (exportBtn) {
         exportBtn.addEventListener('click', function() {
             const visibleRows = bookRows.filter(row => row.style.display !== 'none');
-            const headers = ['ID', 'Title', 'Category', 'ISBN', 'Publisher', 'Price', 'Status', 'Date Posted'];
+            const headers = ['ISBN', 'Title', 'Author', 'Publisher', 'Publication Date', 'Price', 'Quantity', 'Item Status', 'Stock Status', 'Weight', 'Substitute ISBN'];
             
             let csv = [headers.join(',')];
             
@@ -696,13 +753,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `books_posts_export_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.download = `books_export_${new Date().toISOString().slice(0, 10)}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         });
     }
     
+    // Initialize
     filterBooks();
     updateClearButton();
 });

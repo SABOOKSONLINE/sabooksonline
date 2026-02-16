@@ -11,10 +11,20 @@ $controller = new AcademicBookController($conn);
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
 
     <div class="container py-4 flex-grow-1">
-        <h1 class="fw-bold mb-0">Academic Books</h1>
-        <span class="text-muted">Explore a world of knowledge and learning</span>
-
-        <br class="my-3">
+        <div class="row align-items-center mb-4">
+            <!-- Content on the left -->
+            <div class="col-md-4 col-lg-5">
+                <h1 class="fw-bold mb-0">Academic Books</h1>
+                <span class="text-muted">Explore a world of knowledge and learning</span>
+            </div>
+            
+            <!-- Image on the right -->
+            <div class="col-md-8 col-lg-7">
+                <div class="education-banner">
+                    <img src="/public/images/Education-cuate.svg" alt="Education" class="education-banner-img">
+                </div>
+            </div>
+        </div>
 
         <div class="py-3">
             <?php

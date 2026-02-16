@@ -205,10 +205,10 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
 
                     <h4 class="mb-3">Payment Method</h4>
                     <label class="w-100 border rounded-3 p-0">
-                        <div class="d-flex justify-content-between align-items-center p-3 bg-light border-bottom">
+                        <div class="d-flex justify-content-between align-items-center p-3 bg-light border rounded-2">
                             <div class="d-flex align-items-center gap-2">
                                 <input type="radio" name="payment_method" value="payfast" checked>
-                                <strong>Payfast</strong>
+                                <strong>Yoco</strong>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" style="height: 20px;">
