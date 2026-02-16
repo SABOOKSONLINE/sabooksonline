@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../database/connection.php";
 require_once __DIR__ . "/../models/BookListingsModel.php";
 require_once __DIR__ . "/../controllers/BookListingsController.php";
+require_once __DIR__ . "/../models/UserModel.php";
 
 include __DIR__ . "/includes/header.php";
 include __DIR__ . "/includes/dashboard_heading.php";
