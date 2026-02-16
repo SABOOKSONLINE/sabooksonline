@@ -8,3 +8,22 @@ sessions/
 *.cache
 cache/
 Admin/cache/
+
+# Test scripts and temporary files
+*_test.php
+test.php
+db_viewer.php
+make_*.php
+add_status_columns*.php
+populate_*.php
+clear_*.php
+create_*_table.php
+
+# Excel/CSV files
+*.xlsx
+*.xls
+*.csv
+
+# Temporary import scripts (keep import_chase_books.php as it's the main import)
+# But exclude test versions
+*_test_import.php
