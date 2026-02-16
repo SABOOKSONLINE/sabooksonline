@@ -12,13 +12,23 @@ class AcademicBookController
         $this->academicBookModel = new AcademicBookModel($conn);
     }
 
-    public function getAllBooks(): array
+    public function getAllBooks(array $filters = []): array
     {
         try {
-            return $this->academicBookModel->selectBooks();
+            return $this->academicBookModel->selectBooks($filters);
         } catch (Exception $e) {
             error_log("Get all academic books error: " . $e->getMessage());
             return [];
+        }
+    }
+    
+    public function getFilterOptions(): array
+    {
+        try {
+            return $this->academicBookModel->getFilterOptions();
+        } catch (Exception $e) {
+            error_log("Get filter options error: " . $e->getMessage());
+            return ['subjects' => [], 'levels' => [], 'languages' => [], 'price_range' => ['min_price' => 0, 'max_price' => 0]];
         }
     }
 
