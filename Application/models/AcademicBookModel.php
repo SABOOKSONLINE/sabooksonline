@@ -17,6 +17,9 @@ class AcademicBookModel
         $where = [];
         $params = [];
         $types = '';
+
+        // Only show academic books that have a PDF available
+        $where[] = "(academic_books.pdf_path IS NOT NULL AND academic_books.pdf_path <> '')";
         
         // Always exclude teacher guides/resources (case-insensitive check on title)
         $where[] = "(LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ?)";
@@ -133,9 +136,13 @@ class AcademicBookModel
         $levels = [];
         $languages = [];
         $priceRange = ['min_price' => 0, 'max_price' => 1000];
+
+        // Keep filter options aligned with the Academic listing rules
+        // NOTE: use SQL string literal escaping (''), not backslashes, for portability
+        $baseWhere = "WHERE pdf_path IS NOT NULL AND pdf_path <> '' AND (LOWER(title) NOT LIKE '%teacher%' AND LOWER(title) NOT LIKE '%teacher''s guide%' AND LOWER(title) NOT LIKE '%guide%')";
         
         // Get distinct subjects
-        $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books WHERE subject IS NOT NULL AND subject != '' ORDER BY subject");
+        $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books {$baseWhere} AND subject IS NOT NULL AND subject != '' ORDER BY subject");
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $subjects[] = $row['subject'];
@@ -143,7 +150,7 @@ class AcademicBookModel
         }
         
         // Get distinct levels
-        $result = mysqli_query($this->conn, "SELECT DISTINCT level FROM academic_books WHERE level IS NOT NULL AND level != '' ORDER BY level");
+        $result = mysqli_query($this->conn, "SELECT DISTINCT level FROM academic_books {$baseWhere} AND level IS NOT NULL AND level != '' ORDER BY level");
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $levels[] = $row['level'];
@@ -151,7 +158,7 @@ class AcademicBookModel
         }
         
         // Get distinct languages
-        $result = mysqli_query($this->conn, "SELECT DISTINCT language FROM academic_books WHERE language IS NOT NULL AND language != '' ORDER BY language");
+        $result = mysqli_query($this->conn, "SELECT DISTINCT language FROM academic_books {$baseWhere} AND language IS NOT NULL AND language != '' ORDER BY language");
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $languages[] = $row['language'];
@@ -159,7 +166,7 @@ class AcademicBookModel
         }
         
         // Get price range
-        $result = mysqli_query($this->conn, "SELECT MIN(ebook_price) as min_price, MAX(ebook_price) as max_price FROM academic_books WHERE ebook_price > 0");
+        $result = mysqli_query($this->conn, "SELECT MIN(ebook_price) as min_price, MAX(ebook_price) as max_price FROM academic_books {$baseWhere} AND ebook_price > 0");
         if ($result) {
             $priceData = mysqli_fetch_assoc($result);
             if ($priceData) {
@@ -182,7 +189,9 @@ class AcademicBookModel
                 FROM academic_books
                 LEFT JOIN users
                     ON academic_books.publisher_id = users.ADMIN_ID
-                WHERE public_key = ?";
+                WHERE public_key = ?
+                  AND academic_books.pdf_path IS NOT NULL
+                  AND academic_books.pdf_path <> ''";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
