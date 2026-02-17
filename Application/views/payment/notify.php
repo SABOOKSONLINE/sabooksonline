@@ -107,7 +107,14 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     $email = $pfData['email_address'] ?? '';
     $type = $pfData['name_last'] ?? '';
     $paymentDate = date("Y-m-d");
-    $endDate = date("Y-m-d", strtotime("+30 days"));
+    
+    // Calculate end_date based on billing cycle (monthly = 30 days, yearly = 365 days)
+    if (strtolower($type) === 'yearly') {
+        $endDate = date("Y-m-d", strtotime("+365 days"));
+    } else {
+        $endDate = date("Y-m-d", strtotime("+30 days"));
+    }
+    
     $status = 'COMPLETE';
 
     $logDetails = '';
@@ -142,13 +149,35 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
         $result = $stmtCheck->get_result();
 
         if ($result->num_rows > 0) {
-            // Update existing payment record
-            $updateSql = "UPDATE payment_plans SET invoice_id = ?, payment_date = ?, amount_paid = ?, updated_at = NOW() WHERE token = ?";
+            // This is a recurring payment renewal - update existing payment record and extend end_date
+            $existingPlan = $result->fetch_assoc();
+            
+            // Calculate new end_date based on billing cycle
+            if (strtolower($type) === 'yearly') {
+                $newEndDate = date("Y-m-d", strtotime("+365 days"));
+            } else {
+                $newEndDate = date("Y-m-d", strtotime("+30 days"));
+            }
+            
+            // Update existing payment record and extend subscription
+            $updateSql = "UPDATE payment_plans 
+                         SET invoice_id = ?, 
+                             payment_date = ?, 
+                             amount_paid = ?, 
+                             end_date = ?,
+                             renewal_status = 'active',
+                             updated_at = NOW() 
+                         WHERE token = ?";
             $stmtUpdate = $conn->prepare($updateSql);
-            $stmtUpdate->bind_param("ssds", $invoiceId, $paymentDate, $amount, $token);
+            $stmtUpdate->bind_param("ssdss", $invoiceId, $paymentDate, $amount, $newEndDate, $token);
 
             if ($stmtUpdate->execute()) {
-                echo "✅ Existing payment updated.\n";
+                echo "✅ Recurring payment renewal processed - subscription extended.\n";
+                
+                // Update user subscription to keep it active
+                require_once __DIR__ . '/../../models/UserModel.php';
+                $userModel = new UserModel($conn);
+                $userModel->updateUserPlanMonthly($invoiceId, $plan, $type);
             } else {
                 echo "❌ Payment update failed: " . $stmtUpdate->error . "\n";
             }
