@@ -75,7 +75,7 @@ class CheckoutController {
     }
     $academicBook = $this->academicBookModel->selectBookByPublicKey($bookId);
 
-    if (empty($media)) {
+    if (empty($academicBook)) {
         die("$format with ID $bookId not found.");
     }
     
