@@ -107,20 +107,51 @@ $navItems = [
             <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" height="42">
         </a>
 
-        <div class="d-flex order-xl-last">
-            <button class="btn border-0 me-2 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch">
-                <i class="fas fa-search"></i>
-            </button>
+        <div class="d-flex order-xl-last align-items-center" style="gap: 0.75rem;">
+            <!-- Burger Menu (Leftmost) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fas fa-bars"></span>
             </button>
+
+            <!-- Search (Middle) -->
+            <button class="btn border-0 navbar-toggler d-xl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch">
+                <i class="fas fa-search"></i>
+            </button>
+
+            <?php if ($profile != null && isset($_SESSION['ADMIN_USERKEY'])): ?>
+                <!-- Mobile Cart (After Search) -->
+                <a href="/cart" class="position-relative text-decoration-none text-dark d-xl-none" title="Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-mobile" style="font-size: 0.7em;">
+                        <?= $cartItemsCount ?>
+                    </span>
+                </a>
+
+                <!-- Mobile Profile Dropdown (Far Right) -->
+                <div class="dropdown d-xl-none" style="margin-right: 0.75rem; position: relative; z-index: 1001;">
+                    <button class="btn btn-outline-secondary rounded-circle p-0 dropdown-toggle" type="button" id="mobileProfileDropdownHeader" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px;">
+                        <img src="<?= $profile ?>" alt="Admin Profile" class="rounded-circle" style="width:100%; height:100%; object-fit:cover; border:2px solid #dee2e6; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdownHeader" style="z-index: 1001; position: absolute;">
+                        <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <?php foreach ($navItems as $item): ?>
+                    <?php 
+                    // Hide Library items on mobile since they have their own nav bar
+                    $isLibraryItem = ($item['title'] === 'Library');
+                    $libraryClass = $isLibraryItem ? ' d-none d-xl-block' : '';
+                    ?>
                     <?php if (isset($item['dropdown'])): ?>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown<?= $libraryClass ?>">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <?= $item['title'] ?>
                             </a>
@@ -131,7 +162,7 @@ $navItems = [
                             </ul>
                         </li>
                     <?php else: ?>
-                        <li class="nav-item">
+                        <li class="nav-item<?= $libraryClass ?>">
                             <a class="nav-link" href="<?= $item['url'] ?>"><?= $item['title'] ?></a>
                         </li>
                     <?php endif; ?>
@@ -225,9 +256,36 @@ $navItems = [
 
             <!-- Mobile Sign In -->
             <div class="d-xl-none bg-light p-3">
-                <div class="d-grid gap-2">
-                    <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
-                </div>
+                <?php if (!isset($_SESSION['ADMIN_USERKEY'])): ?>
+                    <div class="d-grid gap-2">
+                        <a href="/login" class="btn btn-danger btn-red">Login <i class="fas fa-sign-in-alt"></i></a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Library Quick Access Bar - Simple Text Links -->
+<nav class="navbar navbar-expand d-xl-none bg-white border-bottom fixed-top" style="top: 60px; z-index: 999; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 0.5rem 0;">
+    <div class="container-fluid px-2">
+        <div class="d-flex overflow-x-auto w-100" style="scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="d-flex gap-3 align-items-center" style="flex-wrap: nowrap; padding: 0 1rem;">
+                <a href="/" class="text-decoration-none text-dark" style="white-space: nowrap; font-size: 14px; font-weight: 500;">
+                    Home
+                </a>
+                <a href="/library" class="text-decoration-none text-dark" style="white-space: nowrap; font-size: 14px; font-weight: 500;">
+                    All Books
+                </a>
+                <a href="/library/academic" class="text-decoration-none text-dark" style="white-space: nowrap; font-size: 14px; font-weight: 500;">
+                    Academic
+                </a>
+                <a href="/media" class="text-decoration-none text-dark" style="white-space: nowrap; font-size: 14px; font-weight: 500;">
+                    Media
+                </a>
+                <a href="/events" class="text-decoration-none text-dark" style="white-space: nowrap; font-size: 14px; font-weight: 500;">
+                    Events
+                </a>
             </div>
         </div>
     </div>
