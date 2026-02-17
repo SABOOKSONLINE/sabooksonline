@@ -53,4 +53,14 @@ class UserModel extends Model
         return $this->fetchAll("SELECT *
                                 FROM users ORDER BY ADMIN_ID DESC");
     }
+
+    public function getUsersForPublisherSelection(): array
+    {
+        return $this->fetchAll(
+            "SELECT ADMIN_ID as user_id, ADMIN_NAME as name, ADMIN_EMAIL as email, ADMIN_USERKEY as userkey
+        FROM users 
+        WHERE LOWER(subscription_status) IN ('royalties', 'premium', 'pro')
+        ORDER BY ADMIN_NAME ASC"
+        );
+    }
 }

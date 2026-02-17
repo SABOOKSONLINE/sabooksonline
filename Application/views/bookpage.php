@@ -28,6 +28,41 @@ require_once __DIR__ . "/layout/sectionHeading.php";
 
     ?>
 
+    <?php
+    // Check if there are books to show before rendering the section
+    $Book = new BookModel($conn);
+    $bookData = $Book->getBookById($_GET['q'] ?? '');
+
+    // Get category
+    $category = null;
+    if (!empty($bookData)) {
+        $category = $bookData['category'] ?? $bookData['CATEGORY'] ?? null;
+    }
+
+    // Get books by category to check if any exist (excluding current book)
+    $hasRelatedBooks = false;
+    $relatedBooksCount = 0;
+    
+    if (!empty($category) && !empty(trim($category))) {
+        $allBooks = $Book->getBooksByCategory($category);
+        if (!empty($allBooks) && is_array($allBooks) && count($allBooks) > 0) {
+            $currentBookId = strtolower(trim($_GET['q'] ?? ''));
+            // Filter out the current book
+            $relatedBooks = array_filter($allBooks, function($book) use ($currentBookId) {
+                if (empty($currentBookId)) return true;
+                $bookId = strtolower(trim($book['CONTENTID'] ?? ''));
+                return !empty($bookId) && $bookId !== $currentBookId;
+            });
+            // Reindex and count
+            $relatedBooks = array_values($relatedBooks);
+            $relatedBooksCount = count($relatedBooks);
+            $hasRelatedBooks = $relatedBooksCount > 0;
+        }
+    }
+    
+    // Only render section if there are related books (entire section including heading is completely hidden when empty)
+    if ($hasRelatedBooks === true && $relatedBooksCount > 0 && !empty($category)):
+    ?>
     <section class="section">
         <div class="container">
             <?php renderSectionHeading("You might also like:", "Carefully selected for their depth, relevance, and lasting impact.", "Show more", "/library") ?>
@@ -35,19 +70,6 @@ require_once __DIR__ . "/layout/sectionHeading.php";
             <div class="book-cards mt-4" id="editors_choice">
                 <div class="book-card-slide">
                     <?php
-                    $Book = new BookModel($conn);
-                    $bookData = $Book->getBookById($_GET['q']);
-
-                    if (!isset($bookData['category'])) {
-                        $category = $bookData['CATEGORY'] ?? null;
-
-                        if ($category === null) {
-                            die("Book exists but has no category assigned");
-                        }
-                    } else {
-                        $category = $bookData['category'];
-                    }
-
                     $controller->renderBooksByCategory($category, 10);
                     ?>
                 </div>
@@ -60,6 +82,10 @@ require_once __DIR__ . "/layout/sectionHeading.php";
             </div>
         </div>
     </section>
+    <?php 
+    endif; 
+    // Section is completely hidden when $hasRelatedBooks is false or category is empty
+    ?>
 
 
     <?php

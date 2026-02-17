@@ -5,6 +5,7 @@
 <script src="/public/js/jquery-3.6.0.min.js"></script>
 <script src="/public/js/auth_form.js"></script>
 <script src="/public/js/banners.js"></script>
+<script src="/public/js/mobile-home.js"></script>
 
 <!-- AUDIO BOOK SCRIPTS -->
 <script src="/public/js/jquery-1.7.2.min.js"></script>

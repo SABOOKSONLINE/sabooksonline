@@ -66,7 +66,12 @@ class BookModel extends Model
 
     public function getAllBooks(): array
     {
-        return $this->fetchAll("SELECT COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
+        return $this->fetchAll("SELECT ID, COVER, TITLE, CONTENTID, PUBLISHER FROM posts");
+    }
+
+    public function getFullBooks(): array
+    {
+        return $this->fetchAll("SELECT * FROM posts");
     }
 
     public function addListing(string $publicKey, string $category): int
@@ -84,5 +89,75 @@ class BookModel extends Model
     public function deleteListing(string $publicKey): int
     {
         return $this->delete("DELETE FROM listings WHERE CONTENTID = ?", "s", [$publicKey]);
+    }
+
+    public function createHardcopyPublishersTable(): bool
+    {
+        return $this->createTable('hardcopy_publishers', [
+            'id' => 'INT AUTO_INCREMENT PRIMARY KEY',
+            'user_id' => 'VARCHAR(255) NOT NULL',
+            'email' => 'VARCHAR(255) NOT NULL UNIQUE',
+            'name' => 'VARCHAR(255)',
+            'can_publish' => 'TINYINT(1) DEFAULT 1',
+            'created_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            'updated_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+        ]);
+    }
+
+    public function addHardcopyPublisher(string $userId, string $email, string $name = ''): int
+    {
+        return $this->insert(
+            "INSERT INTO hardcopy_publishers (user_id, email, name) VALUES (?, ?, ?)",
+            "sss",
+            [$userId, $email, $name]
+        );
+    }
+
+    public function removeHardcopyPublisher(string $email): int
+    {
+        return $this->delete(
+            "DELETE FROM hardcopy_publishers WHERE email = ?",
+            "s",
+            [$email]
+        );
+    }
+
+    public function isAllowedToPublishHardcopy(string $userId): bool
+    {
+        $result = $this->fetch(
+            "SELECT can_publish FROM hardcopy_publishers WHERE user_id = ? AND can_publish = 1"
+        );
+        return !empty($result);
+    }
+
+    public function getAllHardcopyPublishers(): array
+    {
+        return $this->fetchAll(
+            "SELECT * FROM hardcopy_publishers ORDER BY created_at DESC"
+        );
+    }
+
+    public function toggleHardcopyPublisher(string $email, bool $canPublish): int
+    {
+        return $this->update(
+            "UPDATE hardcopy_publishers SET can_publish = ? WHERE email = ?",
+            "is",
+            [$canPublish ? 1 : 0, $email]
+        );
+    }
+
+    public function getHardcopyPublisherByEmail(string $email): array
+    {
+        $result = $this->fetchPrepared(
+            "SELECT * FROM hardcopy_publishers WHERE email = ?",
+            "s",
+            [$email]
+        );
+        return $result[0] ?? [];
+    }
+
+    public function getBooksTable(): array
+    {
+        return $this->fetchAll("SELECT * FROM books ORDER BY pub_date DESC, title ASC");
     }
 }

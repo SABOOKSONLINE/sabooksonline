@@ -12,12 +12,15 @@ function sendEmail($to, $link, $message)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'no-reply@sabooksonline.co.za';
-        $mail->Password = 'DehKaDRqASgW4rB&';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+        $mail->Username = 'opensource@sabooksonline.co.za'; // owner account
+        $mail->Password = 'deddipdvujyayzxa'; // app password
 
-        $mail->setFrom('no-reply@sabooksonline.co.za', 'SA Books Online');
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // port 587 requires STARTTLS
+        $mail->Port = 587;
+
+        $mail->setFrom('no-reply@sabooksonline.co.za', 'SA Books Online'); // alias
+        $mail->addReplyTo('support@sabooksonline.co.za', 'SA Books Online Support'); // optional
+
         $mail->addAddress($to);
         $mail->isHTML(true);
         $mail->Subject = 'Verify your email';

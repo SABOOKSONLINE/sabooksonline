@@ -30,7 +30,7 @@
                 <h6 class="text-uppercase fw-bold mb-3">Useful Links</h6>
                 <ul class="list-unstyled footer-links">
                     <li><a href="/library" class="text-light">Library Listings</a></li>
-                    <li><a href="#" class="text-light">How it works</a></li>
+                    <li><a href="/sell" class="text-light">How it works</a></li>
                     <li><a href="/dashboards" class="text-light">Member Dashboard</a></li>
                     <li><a href="/dashboards/profile" class="text-light">My Account</a></li>
                     <li><a href="/contact" class="text-light">Help Center</a></li>
@@ -56,7 +56,7 @@
                         68 Melville Rd, Illovo, Sandton, 2196</p>
                     <p><strong>Enquiries:</strong><br>
                         +27 67 852 3593 (MON to FRI 9am–6pm)</p>
-                    <p><a href="mailto:admin@sabooksonline.co.za" class="text-light">admin@sabooksonline.co.za</a></p>
+                    <p><a href="mailto:support@sabooksonline.co.za" class="text-light">support@sabooksonline.co.za</a></p>
                 </div>
             </div>
 

@@ -12,8 +12,8 @@ function sendVerificationEmail($to, $userName, $verificationLink = null, $device
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'no-reply@sabooksonline.co.za';
-        $mail->Password = 'DehKaDRqASgW4rB&';
+        $mail->Username = 'opensource@sabooksonline.co.za';
+        $mail->Password = 'deddipdvujyayzxa';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 

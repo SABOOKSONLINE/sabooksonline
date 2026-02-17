@@ -26,6 +26,11 @@ class CartController
         return $this->cartModel->getCartItemsByUserId($userId);
     }
 
+     public function getOrders($userId)
+    {
+        return $this->cartModel->getOrders($userId);
+    }
+
     public function getItemsCount()
     {
         $userId = $_SESSION['ADMIN_ID'] ?? null;
@@ -35,20 +40,23 @@ class CartController
 
     public function addCartItem($userId, $bookId, $qty)
     {
-        $userId = $_SESSION['ADMIN_ID'];
-        return $this->cartModel->addItem($userId, $bookId, $qty);
+        $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
+        if (!$effectiveUserId) return false;
+        return $this->cartModel->addItem((int)$effectiveUserId, (int)$bookId, (int)$qty);
     }
 
     public function removeCartItem($userId, $bookId)
     {
-        $userId = $_SESSION['ADMIN_ID'];
-        return $this->cartModel->removeItem($userId, $bookId);
+        $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
+        if (!$effectiveUserId) return false;
+        return $this->cartModel->removeItem((int)$effectiveUserId, (int)$bookId);
     }
 
     public function updateCartItem($userId, $bookId, $qty)
     {
-        $userId = $_SESSION['ADMIN_ID'];
-        return $this->cartModel->updateItemCount($userId, $bookId, $qty);
+        $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
+        if (!$effectiveUserId) return false;
+        return $this->cartModel->updateItemCount((int)$effectiveUserId, (int)$bookId, (int)$qty);
     }
 
     public function saveDeliveryAddress($userId, array $data)
@@ -82,5 +90,23 @@ class CartController
     public function updateOrderTotals(int $orderId, ?float $totalAmount = null, ?float $shippingFee = null, ?string $paymentMethod = null): bool
     {
         return $this->cartModel->updateOrderTotals($orderId, $totalAmount, $shippingFee, $paymentMethod);
+    }
+
+    // =========================
+    // Mobile API helpers
+    // =========================
+    public function updateCartItemByCartId(int $cartId, int $qty): bool
+    {
+        return $this->cartModel->updateItemCountByCartId($cartId, $qty);
+    }
+
+    public function removeCartItemByCartId(int $cartId): bool
+    {
+        return $this->cartModel->removeItemByCartId($cartId);
+    }
+
+    public function updateDeliveryAddressById(int $addressId, array $data): bool
+    {
+        return $this->cartModel->updateDeliveryAddressById($addressId, $data);
     }
 }

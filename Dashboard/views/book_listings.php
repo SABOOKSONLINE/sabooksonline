@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../database/connection.php";
 require_once __DIR__ . "/../models/BookListingsModel.php";
 require_once __DIR__ . "/../controllers/BookListingsController.php";
+require_once __DIR__ . "/../models/UserModel.php";
 
 include __DIR__ . "/includes/header.php";
 include __DIR__ . "/includes/dashboard_heading.php";
@@ -19,61 +20,26 @@ include __DIR__ . "/includes/dashboard_heading.php";
                 <div class="col offset-lg-3 offset-xl-2 p-2 p-lg-5 overflow-y-scroll mt-5">
                     <?php
                     renderHeading("Your Book Catalogue", "Easily view, edit, or remove books you’ve published.", "/dashboards/add/listings", "Publish New Book");
+                    ?>
 
-                    $deleteBook = $_GET["delete"] ?? null;
-                    $addBookStatus = $_GET["status"] ?? null;
-                    $updateBook = $_GET["update"] ?? null;
+                    <?php
+                    // Display session-based alerts
+                    if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
+                        <div class="alert alert-<?= $_SESSION['alert_type'] ?> alert-dismissible fade show" role="alert">
+                            <i class="fas fa-<?= $_SESSION['alert_type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                            <strong><?= $_SESSION['alert_type'] === 'success' ? 'Success!' : 'Error!' ?></strong>
+                            <?= htmlspecialchars($_SESSION['alert_message']) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <?php
+                        // Clear the session variables after displaying
+                        unset($_SESSION['alert_type']);
+                        unset($_SESSION['alert_message']);
+                        ?>
+                    <?php endif; ?>
 
-                    if ($deleteBook === 'success') {
-                        echo '
-                        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
-                            Book successfully deleted!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    } else if ($deleteBook === 'fail') {
-                        echo '
-                        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-                            Something went wrong while deleting book!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    }
-
-                    if ($addBookStatus === 'success') {
-                        echo '
-                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-                            Book successfully added!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    } else if ($addBookStatus === 'fail') {
-                        echo '
-                        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-                            Something went wrong while adding book!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    }
-
-                    if ($updateBook === 'success') {
-                        echo '
-                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-                            Book successfully updated!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    } else if ($updateBook === 'fail') {
-                        echo '
-                        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-                            Something went wrong while updating book!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        ';
-                    }
-
+                    <?php
                     $userKey = $_SESSION["ADMIN_USERKEY"];
-
                     $bookListingController = new BookListingController($conn);
                     $bookListingController->renderBookListing($userKey);
                     ?>
@@ -148,6 +114,19 @@ include __DIR__ . "/includes/dashboard_heading.php";
             widget.open();
         }
     </script> -->
+    <script>
+        // On page load, restore the previously active tab if available
+        window.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss success alerts after 5 seconds
+            const successAlerts = document.querySelectorAll('.alert-success');
+            successAlerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
 
 </body>
 

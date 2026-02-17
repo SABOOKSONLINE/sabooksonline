@@ -73,6 +73,15 @@ class PagesController extends Controller
         return $this->bannerModel->addPopupBanner($data);
     }
 
+    public function books(): void
+    {
+        $books = $this->bookModel->getBooksTable();
+        
+        $this->render("books", [
+            "books" => $books
+        ]);
+    }
+
     public function deletePopupBanner($id): int
     {
         return $this->bannerModel->removePopupBanner($id);

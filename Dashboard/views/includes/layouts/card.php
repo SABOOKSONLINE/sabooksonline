@@ -1,34 +1,51 @@
 <?php
-function renderAnalysisCard($title, $amount, $iconName)
+function renderAnalysisCard($title, $amount, $iconName, $theme = 'primary')
 {
+    // Map theme to gradient
+    $gradients = [
+        'primary' => 'var(--primary-gradient)',
+        'success' => 'var(--success-gradient)',
+        'warning' => 'var(--warning-gradient)',
+        'info' => 'var(--info-gradient)',
+        'danger' => 'var(--danger-gradient)',
+        'dark' => 'var(--dark-gradient)'
+    ];
+    
+    $gradient = $gradients[$theme] ?? $gradients['primary'];
+    
+    // Format amount - check if it's a number or currency
+    $isRevenue = (strpos($title, 'Revenue') !== false || strpos($title, 'Income') !== false);
+    $displayValue = $amount;
+    $countTarget = 0;
+    
+    if (is_numeric($amount)) {
+        $countTarget = (int)$amount;
+        if ($isRevenue) {
+            $displayValue = 'R' . number_format((float)$amount, 2);
+        } else {
+            $displayValue = number_format((int)$amount);
+        }
+    } else {
+        $displayValue = htmlspecialchars($amount);
+    }
 ?>
     <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-3">
-        <div class="card analysis-card rounded-4 shadow-sm h-100 p-3 p-4">
-            <div class="d-flex align-items-center justify-content-between h-100">
-
-                <!-- Icon left -->
-                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
-                    <i class="<?= htmlspecialchars($iconName) ?> fs-4"></i>
-                </div>
-
-                <!-- Text content right -->
-                <div class="flex-grow-1">
-                    <p class="fw-semibold text-muted text-capitalize small mb-1"><?= htmlspecialchars($title) ?></p>
-                    <h4 class="fw-bold mb-1">
-                    <span class="count-up" data-target="<?= (int) $amount ?>">0</span>
-                    </h4>
-
-
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-primary" style="width: <?= $amount > 100 ? 100 : $amount ?>%;"></div>
-                    </div>
-
-                    <p class="small text-muted mt-1 mb-0 <?= ($amount == 0) ? '' : 'd-none' ?>">
-                        No data yet
-                    </p>
-                </div>
-
+        <div class="stat-card-enhanced" style="--card-gradient: <?= $gradient ?>;">
+            <div class="stat-card-icon-wrapper">
+                <i class="<?= htmlspecialchars($iconName) ?>"></i>
             </div>
+            <div class="stat-card-value">
+                <?php if (is_numeric($amount)): ?>
+                    <?php if ($isRevenue): ?>
+                        R<span class="count-up" data-target="<?= $countTarget ?>">0</span>
+                    <?php else: ?>
+                        <span class="count-up" data-target="<?= $countTarget ?>">0</span>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <?= $displayValue ?>
+                <?php endif; ?>
+            </div>
+            <div class="stat-card-label"><?= htmlspecialchars($title) ?></div>
         </div>
     </div>
 

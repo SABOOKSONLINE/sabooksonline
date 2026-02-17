@@ -9,22 +9,15 @@ require_once __DIR__ . "/../controllers/BookListingsController.php";
 
 $bookController = new BookListingController($conn);
 
-// echo $hcPrice = htmlspecialchars($_POST["hc_price"]);
-// echo $hcDiscountPercent = htmlspecialchars($_POST["hc_discount_percent"]);
-// echo $hcCountry = htmlspecialchars($_POST["hc_country"]);
-// echo $hcPages = htmlspecialchars($_POST["hc_pages"]);
-// echo $hcWeight = htmlspecialchars($_POST["hc_weight_kg"]);
-// echo $hcHeight = htmlspecialchars($_POST["hc_height_cm"]);
-// echo $hcwidth = htmlspecialchars($_POST["hc_width_cm"]);
-// echo $hcDate = htmlspecialchars($_POST["hc_release_date"]);
-// echo $hcContributors = htmlspecialchars($_POST["hc_contributors"]);
-// echo $hcStockCount = htmlspecialchars($_POST["hc_stock_count"]);
-// die;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 function formDataArray()
 {
     /* ========= BASIC BOOK DATA ========= */
     $bookId   = htmlspecialchars($_POST["book_id"]);
+    $bookPk   = $_POST["book_public_key"];
     $userId   = htmlspecialchars($_POST["user_id"]);
     $title    = $_POST["book_title"];
     $price    = htmlspecialchars($_POST["book_price"] ?? '0');
@@ -32,16 +25,16 @@ function formDataArray()
     $Aprice   = htmlspecialchars($_POST["Abook_price"] ?? '0');
 
     /* ========= HARDCOPY DATA ========= */
-    $hcPrice            = htmlspecialchars($_POST["hc_price"] ?? 0);
-    $hcDiscountPercent  = htmlspecialchars($_POST["hc_discount_percent"] ?? 0);
-    $hcCountry          = htmlspecialchars($_POST["hc_country"] ?? '');
-    $hcPages            = htmlspecialchars($_POST["hc_pages"] ?? 0);
-    $hcWeight           = htmlspecialchars($_POST["hc_weight_kg"] ?? 0);
-    $hcHeight           = htmlspecialchars($_POST["hc_height_cm"] ?? 0);
-    $hcWidth            = htmlspecialchars($_POST["hc_width_cm"] ?? 0);
-    $hcDate             = htmlspecialchars($_POST["hc_release_date"] ?? null);
-    $hcContributors     = htmlspecialchars($_POST["hc_contributors"] ?? '');
-    $hcStockCount       = htmlspecialchars($_POST["hc_stock_count"] ?? 0);
+    $hcPrice            = !empty($_POST["hc_price"]) ? htmlspecialchars($_POST["hc_price"]) : null;
+    $hcDiscountPercent  = !empty($_POST["hc_discount_percent"]) ? htmlspecialchars($_POST["hc_discount_percent"]) : null;
+    $hcCountry          = !empty($_POST["hc_country"]) ? htmlspecialchars($_POST["hc_country"]) : null;
+    $hcPages            = !empty($_POST["hc_pages"]) ? htmlspecialchars($_POST["hc_pages"]) : null;
+    $hcWeight           = !empty($_POST["hc_weight_kg"]) ? htmlspecialchars($_POST["hc_weight_kg"]) : null;
+    $hcHeight           = !empty($_POST["hc_height_cm"]) ? htmlspecialchars($_POST["hc_height_cm"]) : null;
+    $hcWidth            = !empty($_POST["hc_width_cm"]) ? htmlspecialchars($_POST["hc_width_cm"]) : null;
+    $hcDate             = !empty($_POST["hc_release_date"]) ? htmlspecialchars($_POST["hc_release_date"]) : null;
+    $hcContributors     = !empty($_POST["hc_contributors"]) ? htmlspecialchars($_POST["hc_contributors"]) : null;
+    $hcStockCount       = !empty($_POST["hc_stock_count"]) ? htmlspecialchars($_POST["hc_stock_count"]) : null;
 
     /* ========= DISCOUNTED HARDCOPY PRICE ========= */
     $hcFinalPrice = $hcPrice;
@@ -114,6 +107,7 @@ function formDataArray()
         // Book main data
         'userid'         => $userId,
         'bookId'         => $bookId,
+        'bookPk'         => $bookPk,
         'title'          => $title,
         'price'          => $price,
         'Eprice'         => $Eprice,
@@ -158,33 +152,8 @@ function insertBookHandler($bookController)
 {
     $bookData = formDataArray();
 
-    /* ===========================================================
-        DEBUG CHECK
-    ============================================================ */
-    echo "<pre>";
-    foreach (
-        [
-            'userid',
-            'title',
-            'cover',
-            'category',
-            'authors',
-            'description',
-            'isbn',
-            'languages',
-            'status',
-            'stock',
-            'type',
-            'dateposted'
-        ] as $key
-    ) {
-        if (empty($bookData[$key])) {
-            echo "❌ '$key' is empty or missing.\n";
-        } else {
-            echo "✅ '$key' = " . $bookData[$key] . "\n";
-        }
-    }
-    echo "</pre>";
+    // Get the current tab from POST data (default to book-details)
+    $currentTab = isset($_POST['current_tab']) ? htmlspecialchars($_POST['current_tab']) : 'book-details';
 
     /* ===========================================================
         VALIDATION
@@ -203,20 +172,25 @@ function insertBookHandler($bookController)
         empty($bookData['type']) ||
         empty($bookData['dateposted'])
     ) {
-        die("Validation failed: Missing required fields.");
+        $_SESSION['alert_type'] = 'danger';
+        $_SESSION['alert_message'] = 'Validation failed: Missing required fields.';
+        header("Location: /dashboards/add/listings?tab=" . $currentTab);
+        exit;
     }
 
     try {
         /* ===========================================================
             1. INSERT MAIN BOOK
         ============================================================ */
-        $bookId = $bookController->insertBookData($bookData);
+        $bookDetails = $bookController->insertBookData($bookData);
+        $bookId = $bookDetails["id"];
+        $contentId = $bookDetails["content_id"];
+
         $bookData['bookId'] = $bookId;
 
         /* ===========================================================
             2. INSERT HARDCOPY IF ANY FIELD PROVIDED
         ============================================================ */
-
         $hasHardcopyData = false;
 
         $hardcopyKeys = [
@@ -240,7 +214,6 @@ function insertBookHandler($bookController)
         }
 
         if ($hasHardcopyData) {
-
             $hardcopyPayload = [
                 'book_id'             => $bookId,
                 'hc_price'            => $bookData['hc_price'],
@@ -259,15 +232,24 @@ function insertBookHandler($bookController)
         }
 
         /* ===========================================================
-            3. REDIRECT
+            3. SET SUCCESS MESSAGE AND REDIRECT
         ============================================================ */
-        header("Location: /dashboards/listings?status=success");
+        $_SESSION['alert_type'] = 'success';
+        $_SESSION['alert_message'] = 'Book created successfully! You can now add additional details.';
+
+        // After successful insert, move to ebook-details tab
+        $nextTab = "ebook-details";
+
+        header("Location: /dashboards/listings/" . $contentId . "?tab=" . $nextTab);
         exit;
     } catch (Exception $e) {
-        die("Insert failed: " . $e->getMessage());
+        error_log("Insert failed: " . $e->getMessage());
+        $_SESSION['alert_type'] = 'danger';
+        $_SESSION['alert_message'] = 'Failed to create book: ' . $e->getMessage();
+        header("Location: /dashboards/add/listings?tab=" . $currentTab);
+        exit;
     }
 }
-
 
 
 function updateBookHandler($bookController)
@@ -277,39 +259,27 @@ function updateBookHandler($bookController)
 
         if (empty($bookData['bookId'])) {
             throw new Exception("Missing bookId in update request.");
+            die;
         }
 
         $bookId = $bookData['bookId'];
-        $contentId = htmlspecialchars(trim($_GET["id"] ?? ''));
 
-        if (!$contentId) {
-            throw new Exception("Invalid content ID.");
+        if (!isset($_GET["id"]) || empty(trim($_GET["id"]))) {
+            throw new Exception("Invalid or missing content ID.");
         }
 
-        // Clear cache
-        $cacheDir = __DIR__ . '/../../Application/cache/';
-
-        if (!is_dir($cacheDir)) {
-            mkdir($cacheDir, 0775, true);
-        }
-
-        $cacheFile = $cacheDir . 'book_' . $contentId . '.html';
-
-        if (file_exists($cacheFile)) {
-            unlink($cacheFile);
-        }
+        // Get current tab from POST data (preserve the tab user was on)
+        $currentTab = isset($_POST['current_tab']) ? htmlspecialchars($_POST['current_tab']) : 'book-details';
 
         // Update Main Book
         $bookController->updateBookData($bookId, $bookData);
+        $contentId = $bookData['bookPk'];
 
         /*
         |--------------------------------------------------------------------------
         | Hardcopy Insert or Update
         |--------------------------------------------------------------------------
-        | If the hardcopy fields exist AND contain values,
-        | then update or insert depending on DB presence.
         */
-
         $hardcopyFields = [
             'hc_price',
             'hc_discount_percent',
@@ -333,32 +303,42 @@ function updateBookHandler($bookController)
         }
 
         if ($hasHardcopy) {
-
-            // Attach book_id
             $hardcopyData = ['book_id' => $bookId];
 
-            // Only include present fields
             foreach ($hardcopyFields as $field) {
                 $hardcopyData[$field] = $bookData[$field] ?? null;
             }
 
-            // Check if this book already has hardcopy details
             $existing = $bookController->getHardcopyByBookId($bookId);
 
             if ($existing) {
-                // Update existing
                 $bookController->updateHardcopy($hardcopyData);
             } else {
-                // Insert new
                 $bookController->insertHardcopy($hardcopyData);
             }
         }
 
-        header("Location: /dashboards/listings?update=success");
+        $_SESSION['alert_type'] = 'success';
+        $_SESSION['alert_message'] = 'Your changes have been saved successfully.';
+
+        // Redirect back to the same tab they were on
+        header("Location: /dashboards/listings/" . $contentId . "?tab=" . $currentTab);
         exit;
     } catch (Exception $e) {
         error_log("Update failed: " . $e->getMessage());
-        header("Location: /dashboards/listings?update=fail&error=" . urlencode($e->getMessage()));
+
+        $_SESSION['alert_type'] = 'danger';
+        $_SESSION['alert_message'] = 'Failed to save changes: ' . $e->getMessage();
+
+        // Get current tab or default
+        $currentTab = isset($_POST['current_tab']) ? htmlspecialchars($_POST['current_tab']) : 'book-details';
+        $contentId = $bookData['bookPk'] ?? '';
+
+        if (!empty($contentId)) {
+            header("Location: /dashboards/listings/" . $contentId . "?tab=" . $currentTab);
+        } else {
+            header("Location: /dashboards/listings?tab=" . $currentTab);
+        }
         exit;
     }
 }
@@ -367,29 +347,40 @@ function updateBookHandler($bookController)
 function deleteBookHandler($bookController)
 {
     try {
-        $bookContentId = $_GET["id"];
-
-        $cacheFile = __DIR__ . '/../../Application/cache/book_' . $bookContentId . '.html';
-        if (file_exists($cacheFile)) {
-            unlink($cacheFile);
+        if (!isset($_GET["id"]) || empty(trim($_GET["id"]))) {
+            throw new Exception("Invalid or missing book ID.");
         }
 
-        $bookController->deleteBookListing($bookContentId);
-        header("Location: /dashboards/listings?delete=success");
+        $bookContentId = htmlspecialchars(trim($_GET["id"]));
+
+        if ($bookController->deleteBookListing($bookContentId)) {
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = 'Book deleted successfully.';
+            header("Location: /dashboards/listings");
+            exit;
+        }
     } catch (Exception $e) {
-        header("Location: /dashboards/listings?delete=fail");
+        error_log("Delete book failed: " . $e->getMessage());
+
+        $_SESSION['alert_type'] = 'danger';
+        $_SESSION['alert_message'] = 'Failed to delete book: ' . $e->getMessage();
+
+        header("Location: /dashboards/listings");
         exit;
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["action"] == "insert") {
+// Handle POST request for inserting a book
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET["action"]) && $_GET["action"] == "insert") {
     insertBookHandler($bookController);
 }
 
-if ($_GET["id"] && $_GET['action'] == "update") {
+// Handle POST request for updating a book
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET["id"]) && isset($_GET['action']) && $_GET['action'] == "update") {
     updateBookHandler($bookController);
 }
 
-if ($_GET["id"] && $_GET["action"] == "delete") {
+// Handle GET request for deleting a book
+if (isset($_GET["id"]) && isset($_GET["action"]) && $_GET["action"] == "delete") {
     deleteBookHandler($bookController);
 }

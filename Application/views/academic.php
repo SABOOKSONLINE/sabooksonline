@@ -14,29 +14,37 @@ $controller = new AcademicBookController($conn);
         <h1 class="fw-bold mb-0">Academic Books</h1>
         <span class="text-muted">Explore a world of knowledge and learning</span>
 
-        <br class="my-3">
-
-        <div class="row py-3">
+        <div class="py-3">
             <?php
-            $books = $controller->getAllBooks();
+            // Get filter parameters
+            $filters = [
+                'search' => $_GET['search'] ?? '',
+                'subject' => $_GET['subject'] ?? '',
+                'level' => $_GET['level'] ?? '',
+                'language' => $_GET['language'] ?? '',
+                'min_price' => $_GET['min_price'] ?? '',
+                'max_price' => $_GET['max_price'] ?? '',
+                'sort' => $_GET['sort'] ?? 'newest'
+            ];
+            
+            // Get filtered books
+            $books = $controller->getAllBooks($filters);
 
-            // COMING SOON
-            // $books = [];
-            require_once __DIR__ . "/books/catalogueView.php";
+            if (!empty($books) || !empty(array_filter($filters))) {
+                require_once __DIR__ . "/books/academicFilters.php";
+            } else {
             ?>
-
-            <?php if (empty($books)): ?>
-                <div class="alert alert-warning alert-dismissible fade show d-flex align-items-start" role="alert">
+                <div class="alert alert-info alert-dismissible fade show d-flex align-items-start" role="alert">
                     <div>
-                        <strong>Academic Books Catalog
-                            (Coming Soon).
-                        </strong>
+                        <strong>No Academic Books Available</strong>
                         <div class="mt-1">
-                            Try exploring our <a href="/library">library</a>.
+                            Check back soon or explore our <a href="/library">main library</a>.
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+            <?php 
+            }
+            ?>
         </div>
     </div>
     <?php require_once __DIR__ . "/includes/payfast.php" ?>

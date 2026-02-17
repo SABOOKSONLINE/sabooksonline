@@ -1,5 +1,10 @@
 const stickyBanner = document.querySelector("#sticky-banner");
 const stickySlider = document.querySelector(".sticky-slider");
+
+// Exit early if sticky banner elements don't exist (e.g., on admin pages)
+if (!stickyBanner || !stickySlider) {
+    console.log('Sticky banner elements not found - skipping banner functionality');
+} else {
 let stickyChildId = Math.floor(Math.random() * stickySlider.childElementCount);
 let sliderInterval;
 
@@ -38,11 +43,17 @@ stickyBanner.addEventListener("mouseleave", () =>
 );
 
 startStickySlider(stickySlider, 7000);
+}
 
+// Popup Banner Functionality
 const closePopupBannerBtn = document.querySelector("#close-popup-banner");
 const popupBannerBg = document.querySelector(".popup-banner-bg");
 const popupBanner = document.querySelector(".popup-banner");
 
+// Exit early if popup banner elements don't exist (e.g., on admin pages)
+if (!closePopupBannerBtn || !popupBannerBg || !popupBanner) {
+    console.log('Popup banner elements not found - skipping popup functionality');
+} else {
 const openPopupBanner = () => {
     popupBannerBg.classList.remove("hide-banner-bg");
     popupBanner.classList.remove("hide-banner");
@@ -73,3 +84,4 @@ closePopupBannerBtn.addEventListener("click", () => {
     closePopupBanner();
     console.log("closed");
 });
+}

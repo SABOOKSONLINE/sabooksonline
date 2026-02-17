@@ -47,7 +47,7 @@ class AnalyticsModel
     ";
 
     $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("i", $userKey);
+    $stmt->bind_param("s", $userKey);  // Fixed: changed from "i" to "s" for string userKey
 
     if ($stmt->execute()) {
         $result = $stmt->get_result();
@@ -210,7 +210,15 @@ public function getUserRevenue($userKey)
 
     public function getUserMostViewedBooks($user_id)
     {
-        $query = "SELECT CONTENTID, TITLE, COVER FROM posts WHERE USERID = ? LIMIT 4";
+        // Optimized: Get top books with view counts in a single query, limit to top 4
+        $query = "SELECT p.CONTENTID, p.TITLE, p.COVER, COUNT(DISTINCT pv.user_ip) AS view_count
+                    FROM posts AS p
+                    LEFT JOIN page_visits AS pv ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
+                    WHERE p.USERID = ?
+                    GROUP BY p.CONTENTID, p.TITLE, p.COVER
+                    ORDER BY view_count DESC
+                    LIMIT 4";
+
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $user_id);
         $stmt->execute();
@@ -218,26 +226,7 @@ public function getUserRevenue($userKey)
         $books = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
-        if (empty($books)) return [];
-
-        $contentIds = array_column($books, 'CONTENTID');
-        $placeholders = implode(',', array_fill(0, count($contentIds), '?'));
-
-        $query = "SELECT p.CONTENTID, p.TITLE, p.COVER, COUNT(DISTINCT pv.user_ip) AS view_count
-                    FROM page_visits AS pv
-                    INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
-                    WHERE p.CONTENTID IN ($placeholders)
-                    GROUP BY p.CONTENTID, p.TITLE, p.COVER
-                    ORDER BY view_count DESC";
-
-        $stmt = $this->conn->prepare($query);
-        $types = str_repeat("s", count($contentIds));
-        $stmt->bind_param($types, ...$contentIds);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-
-        return $result->fetch_all(MYSQLI_ASSOC);
+        return $books;
     }
 
 
@@ -411,7 +400,8 @@ public function getUserRevenue($userKey)
               FROM page_visits AS pv
               INNER JOIN posts AS p ON pv.page_url LIKE CONCAT('%', p.CONTENTID, '%')
               WHERE pv.page_url LIKE ? AND p.CONTENTID IN ($placeholders)
-              GROUP BY month_year ORDER BY month_year DESC";
+              GROUP BY month_year ORDER BY month_year DESC
+              LIMIT 24";
 
         $likePattern = "%book%";
         $params = array_merge([$likePattern], $contentIds);
@@ -525,7 +515,8 @@ public function getUserRevenue($userKey)
           WHERE pv.page_url LIKE ? AND p.CONTENTID IN ($placeholders) 
           AND pv.user_country IS NOT NULL AND pv.user_country != 'Unknown'
           GROUP BY pv.user_country
-          ORDER BY views DESC";
+          ORDER BY views DESC
+          LIMIT 10";
 
         $stmt = $this->conn->prepare($query);
         $params = array_merge([$likePattern], $book_ids);
@@ -563,7 +554,7 @@ public function getUserRevenue($userKey)
             $types .= "s";
         }
 
-        $query .= " GROUP BY pv.user_province ORDER BY views DESC";
+        $query .= " GROUP BY pv.user_province ORDER BY views DESC LIMIT 10";
 
         $params = array_merge($params, $book_ids);
         $types .= str_repeat("s", count($book_ids));
@@ -608,7 +599,7 @@ public function getUserRevenue($userKey)
             $types .= "s";
         }
 
-        $query .= " GROUP BY pv.user_city ORDER BY views DESC";
+        $query .= " GROUP BY pv.user_city ORDER BY views DESC LIMIT 10";
 
         $params = array_merge($params, $book_ids);
         $types .= str_repeat("s", count($book_ids));

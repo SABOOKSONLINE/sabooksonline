@@ -43,6 +43,7 @@ $releaseDate = htmlspecialchars_decode($book['release_date'] ?? '');
 
 $audiobookSampleId = htmlspecialchars_decode($book['audiobook_sample_id'] ?? '');
 $audiobookSampleUrl = htmlspecialchars_decode($book['sample_url'] ?? '');
+$AbookPrice = html_entity_decode($book['ABOOKPRICE'] ?? '');
 
 if (!empty($narrator)) {
     $chapters = $book['chapters'];
@@ -220,10 +221,10 @@ if (!empty($book['DATEPOSTED'])) {
     <h4 class="fw-bold mb-3">Digital Content Pricing</h4>
     <div class="row g-3">
 
-        <!-- <div class="col-md-6">
+        <div class="col-md-6">
             <label class="form-label">Retail Price (Hard Copy)</label>
             <input type="number" name="book_price" class="form-control" placeholder="e.g. 199.99" value="<?= $retailPrice ?>">
-        </div> -->
+        </div>
 
         <div class="col-md-6">
             <label class="form-label">Ebook Price (PDF)</label>

@@ -1,0 +1,782 @@
+/* ============================================
+   Mobile App-Like Home Page Styles
+   Step 1: Hero/Jumbotron Section
+   ============================================ */
+
+/* Mobile-First Hero Section */
+@media (max-width: 767px) {
+    /* Hide jumbotron/hero section on mobile */
+    .jumbotron-lg,
+    .jumbotron-md,
+    .jumbotron-sm,
+    .jumbotron {
+        display: none !important;
+    }
+
+    /* Fixed header/navbar on mobile */
+    .navbar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background-color: #fff !important;
+    }
+
+    /* Add padding to body to account for fixed navbar and library bar */
+    body {
+        padding-top: 110px !important; /* 60px header + 50px library bar */
+    }
+
+    /* Hide scrollbar for library quick access bar */
+    .navbar-expand.d-xl-none::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Style library quick access links */
+    .navbar-expand.d-xl-none a {
+        transition: color 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .navbar-expand.d-xl-none a:active {
+        color: var(--red) !important;
+    }
+
+    /* Hide sticky banner on mobile if it exists */
+    #sticky-banner {
+        display: none !important;
+    }
+
+    /* Hide footer on mobile */
+    footer,
+    .footer,
+    #footer {
+        display: none !important;
+    }
+
+    /* Hide newsletter section on mobile */
+    .nl-section,
+    #newsletter,
+    .newsletter-section {
+        display: none !important;
+    }
+
+    /* ============================================
+       Mobile App Section - Show 2 images instead of 4
+       ============================================ */
+
+    /* Hide 2 of the 4 mockup images on mobile */
+    .mockup:nth-child(3),
+    .mockup:nth-child(4) {
+        display: none !important;
+    }
+
+    /* Show only first 2 mockups */
+    .mockup:nth-child(1),
+    .mockup:nth-child(2) {
+        display: block !important;
+    }
+
+    /* Adjust mockup container for 2 images */
+    .mockups {
+        gap: 20px !important;
+        padding: 30px 15px 40px 15px !important;
+    }
+
+    /* Make mockups wider on mobile for 2 images */
+    .mockup {
+        width: calc((100vw - 2rem - 20px) / 2) !important;
+        min-width: 150px !important;
+        max-width: 180px !important;
+    }
+
+    /* Adjust download buttons for mobile - side by side */
+    .download-buttons {
+        flex-direction: row !important;
+        gap: 12px !important;
+        padding: 0 1rem !important;
+        flex-wrap: wrap;
+        justify-content: center !important;
+    }
+
+    .download-buttons a {
+        flex: 1 1 calc(50% - 6px) !important;
+        min-width: 140px !important;
+        max-width: 180px !important;
+        justify-content: center !important;
+    }
+
+
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent horizontal scroll */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* Make Library dropdown items visible on mobile */
+    .navbar-collapse .dropdown-menu {
+        display: block !important;
+        position: static !important;
+        float: none !important;
+        width: 100% !important;
+        margin-top: 0.5rem !important;
+        background-color: #f8f9fa !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .navbar-collapse .dropdown-item {
+        padding: 0.75rem 1rem !important;
+        color: #333 !important;
+        border-bottom: 1px solid #e9ecef !important;
+    }
+
+    .navbar-collapse .dropdown-item:hover {
+        background-color: #e9ecef !important;
+    }
+
+    .navbar-collapse .dropdown-toggle::after {
+        display: inline-block !important;
+    }
+
+    /* ============================================
+       Step 2: Book Card Sections - Mobile App Style
+       ============================================ */
+
+    /* Section spacing - mobile friendly */
+    .section {
+        padding: 2rem 0 !important;
+        margin: 0;
+    }
+
+    /* Section headings - mobile optimized */
+    .section .row {
+        padding: 0 1rem;
+        margin-bottom: 1rem !important; /* Reduced since subtitle is hidden */
+    }
+
+    /* Remove extra spacing when subtitle is hidden */
+    .section .row .col-md-8,
+    .section .row .col-12 {
+        margin-bottom: 0 !important;
+    }
+
+    .typo-heading {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0 !important; /* Remove bottom margin since subtitle is hidden */
+        letter-spacing: -0.3px;
+    }
+
+    .typo-subheading {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+        opacity: 0.8;
+        margin: 0 !important; /* Remove all margins */
+        padding: 0 !important; /* Remove all padding */
+        display: none !important; /* Hide all subtitles on mobile */
+        height: 0 !important; /* Remove height */
+        line-height: 0 !important; /* Remove line height */
+    }
+
+    .typo-link {
+        font-size: 14px !important;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .typo-link:active {
+        background-color: rgba(0,0,0,0.05);
+        transform: scale(0.98);
+    }
+
+    /* Book cards container - smooth horizontal scroll */
+    .book-cards {
+        position: relative;
+        padding: 0 1rem;
+        margin: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .book-cards::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    /* Book card slide - horizontal layout */
+    .book-card-slide {
+        display: flex;
+        gap: 0.75rem; /* 12px - dynamic gap */
+        padding: 0.5rem 0;
+        width: max-content;
+    }
+
+    /* Individual book cards - dynamic size (shows 2.5 books) */
+    /* Formula: (viewport width - container padding - gap) / 2.5 */
+    .book-card {
+        flex-shrink: 0;
+        /* Dynamic width calculation: (100vw - 2rem padding - 0.75rem gap) / 2.5 */
+        width: calc((100vw - 2rem - 0.75rem) / 2.5) !important;
+        min-width: 120px; /* Minimum for very small screens - wider */
+        max-width: 150px; /* Maximum to prevent oversized cards - wider */
+        margin: 0 !important;
+        padding: 0 !important; /* Remove all padding */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+
+    .book-card:active {
+        transform: scale(0.95);
+    }
+
+    .book-card-cover {
+        /* Dynamic height: maintains 1.35:1 aspect ratio (wider, less skinny) */
+        height: calc((100vw - 2rem - 0.75rem) / 2.5 * 1.35) !important;
+        min-height: 162px; /* Minimum height (120px * 1.35) */
+        max-height: 203px; /* Maximum height (150px * 1.35) */
+        border-radius: 0 !important; /* No rounded corners */
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .book-card-cover img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.3s ease;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+
+    .book-card:hover .book-card-cover img {
+        transform: scale(1.05);
+    }
+
+    .book-card-little {
+        font-size: 14px !important;
+        line-height: 1.4;
+        margin-top: 0.75rem;
+        font-weight: 600;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Scroll buttons - hide on mobile, use native scroll */
+    .book-card-btn {
+        display: none !important;
+    }
+
+    /* ============================================
+       Mobile styles for Latest/Fiction/Children's Collections
+       These sections use .bk-card instead of .book-card
+       ============================================ */
+
+    /* Ensure these sections use the same mobile-friendly layout */
+    #latest_collections,
+    #fiction_collections,
+    #childrens_collections {
+        padding: 0 1rem !important;
+        margin: 0 !important;
+    }
+
+    #latest_collections .book-card-slide,
+    #fiction_collections .book-card-slide,
+    #childrens_collections .book-card-slide {
+        display: flex !important;
+        gap: 0.75rem !important;
+        padding: 0.5rem 0 !important;
+        width: max-content !important;
+    }
+
+    /* Style .bk-card to match .book-card on mobile */
+    #latest_collections .bk-card,
+    #fiction_collections .bk-card,
+    #childrens_collections .bk-card {
+        flex-shrink: 0;
+        width: calc((100vw - 2rem - 0.75rem) / 2.5) !important;
+        min-width: 120px !important; /* Wider */
+        max-width: 150px !important; /* Wider */
+        margin: 0 !important;
+        padding: 0 !important; /* Remove all padding */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        overflow: visible !important;
+    }
+
+    #latest_collections .bk-card:active,
+    #fiction_collections .bk-card:active,
+    #childrens_collections .bk-card:active {
+        transform: scale(0.95);
+    }
+
+    /* Style book cover images - match card width exactly, wider aspect ratio */
+    #latest_collections .bk-img,
+    #fiction_collections .bk-img,
+    #childrens_collections .bk-img {
+        width: 100% !important;
+        height: calc((100vw - 2rem - 0.75rem) / 2.5 * 1.35) !important;
+        min-height: 162px !important; /* Wider */
+        max-height: 203px !important; /* Wider */
+        border-radius: 0 !important; /* No rounded corners */
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    #latest_collections .bk-img img,
+    #fiction_collections .bk-img img,
+    #childrens_collections .bk-img img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.3s ease;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+
+    #latest_collections .bk-img a,
+    #fiction_collections .bk-img a,
+    #childrens_collections .bk-img a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #latest_collections .bk-card:hover .bk-img img,
+    #fiction_collections .bk-card:hover .bk-img img,
+    #childrens_collections .bk-card:hover .bk-img img {
+        transform: scale(1.05);
+    }
+
+    /* Style book details text */
+    #latest_collections .bk-details,
+    #fiction_collections .bk-details,
+    #childrens_collections .bk-details {
+        margin-top: 0.75rem;
+        padding: 0;
+    }
+
+    #latest_collections .bk-heading-md,
+    #fiction_collections .bk-heading-md,
+    #childrens_collections .bk-heading-md {
+        font-size: 14px !important;
+        line-height: 1.4;
+        font-weight: 600;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    #latest_collections .bk-text-meta,
+    #fiction_collections .bk-text-meta,
+    #childrens_collections .bk-text-meta {
+        font-size: 11px !important;
+        color: #666;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    /* Hide book-card-num on mobile */
+    #latest_collections .book-card-num,
+    #fiction_collections .book-card-num,
+    #childrens_collections .book-card-num {
+        display: none !important;
+    }
+
+    /* Ensure container doesn't add extra padding */
+    #latest_collections .container,
+    #fiction_collections .container,
+    #childrens_collections .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* ============================================
+       Mobile styles for Recommended For You & Editor's Choice
+       These sections use .bk-card from bkCard.php
+       ============================================ */
+
+    /* Recommended For You section */
+    #recommended,
+    #editors_choice {
+        padding: 0 1rem !important;
+        margin: 0 !important;
+    }
+
+    #recommended .book-card-slide,
+    #editors_choice .book-card-slide {
+        display: flex !important;
+        gap: 0.75rem !important;
+        padding: 0.5rem 0 !important;
+        width: max-content !important;
+    }
+
+    /* Style .bk-card and .bk-card-lg to match other sections on mobile */
+    #recommended .bk-card,
+    #recommended .bk-card-lg,
+    #editors_choice .bk-card,
+    #editors_choice .bk-card-lg {
+        flex-shrink: 0;
+        width: calc((100vw - 2rem - 0.75rem) / 2.5) !important;
+        min-width: 120px !important; /* Wider */
+        max-width: 150px !important; /* Wider */
+        margin: 0 !important;
+        padding: 0 !important; /* Remove all padding */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex !important;
+        flex-direction: column !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        overflow: visible !important;
+    }
+
+    #recommended .bk-card:active,
+    #recommended .bk-card-lg:active,
+    #editors_choice .bk-card:active,
+    #editors_choice .bk-card-lg:active {
+        transform: scale(0.95);
+    }
+
+    /* Style book cover images - ensure image comes first and matches card width, wider aspect ratio */
+    #recommended .bk-img,
+    #recommended .bk-card-lg .bk-img,
+    #editors_choice .bk-img,
+    #editors_choice .bk-card-lg .bk-img {
+        order: 1 !important;
+        width: 100% !important;
+        height: calc((100vw - 2rem - 0.75rem) / 2.5 * 1.35) !important;
+        min-height: 162px !important; /* Wider */
+        max-height: 203px !important; /* Wider */
+        border-radius: 0 !important; /* No rounded corners */
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    #recommended .bk-img img,
+    #recommended .bk-card-lg .bk-img img,
+    #editors_choice .bk-img img,
+    #editors_choice .bk-card-lg .bk-img img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.3s ease;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+
+    #recommended .bk-img a,
+    #recommended .bk-card-lg .bk-img a,
+    #editors_choice .bk-img a,
+    #editors_choice .bk-card-lg .bk-img a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #recommended .bk-card:hover .bk-img img,
+    #recommended .bk-card-lg:hover .bk-img img,
+    #editors_choice .bk-card:hover .bk-img img,
+    #editors_choice .bk-card-lg:hover .bk-img img {
+        transform: scale(1.05);
+    }
+
+    /* Style book details text - ensure details come after image */
+    #recommended .bk-details,
+    #recommended .bk-card-lg .bk-details,
+    #editors_choice .bk-details,
+    #editors_choice .bk-card-lg .bk-details {
+        order: 2 !important;
+        margin-top: 0.75rem;
+        padding: 0;
+        text-align: left !important;
+    }
+
+    #recommended .bk-heading-md,
+    #recommended .bk-heading-xl,
+    #recommended .bk-card-lg .bk-heading-md,
+    #recommended .bk-card-lg .bk-heading-xl,
+    #editors_choice .bk-heading-md,
+    #editors_choice .bk-heading-xl,
+    #editors_choice .bk-card-lg .bk-heading-md,
+    #editors_choice .bk-card-lg .bk-heading-xl {
+        font-size: 14px !important;
+        line-height: 1.4;
+        font-weight: 600;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+        text-align: left !important;
+    }
+
+    #recommended .bk-text-meta,
+    #recommended .bk-card-lg .bk-text-meta,
+    #editors_choice .bk-text-meta,
+    #editors_choice .bk-card-lg .bk-text-meta {
+        font-size: 11px !important;
+        color: #666;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    /* Hide book-card-num and other desktop-only elements */
+    #recommended .book-card-num,
+    #editors_choice .book-card-num {
+        display: none !important;
+    }
+
+    /* Hide text paragraphs and tags on mobile for cleaner look */
+    #recommended .bk-text-para,
+    #recommended .bk-tags,
+    #recommended .bk-card-lg .bk-text-para,
+    #recommended .bk-card-lg .bk-tags,
+    #editors_choice .bk-text-para,
+    #editors_choice .bk-tags,
+    #editors_choice .bk-card-lg .bk-text-para,
+    #editors_choice .bk-card-lg .bk-tags {
+        display: none !important;
+    }
+
+    /* Ensure container-fluid and container don't add extra padding */
+    #stylish-section .container-fluid,
+    #stylish-section .container,
+    #editors_choice .container-fluid,
+    #editors_choice .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #stylish-section .book-cards,
+    #editors_choice .book-cards {
+        padding: 0 1rem !important;
+        margin: 0 !important;
+    }
+
+    /* Smooth scroll indicator */
+    .book-cards::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 30px;
+        background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .book-cards.scrollable::after {
+        opacity: 1;
+    }
+
+    /* ============================================
+       Step 3: Section Headings & Container - Mobile App Style
+       ============================================ */
+
+    /* Container padding - mobile friendly */
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .container-fluid {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Banner section - mobile optimized */
+    #myCarousel {
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #myCarousel .carousel-item img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    /* Newsletter section - mobile friendly */
+    .nl-section {
+        padding: 3rem 1rem !important;
+        text-align: center;
+    }
+
+    .nl-heading {
+        font-size: 24px !important;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+    }
+
+    .nl-subheading {
+        font-size: 15px !important;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .nl-input {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    /* ============================================
+       Step 4: Mobile App-Like Enhancements
+       ============================================ */
+
+    /* Smooth page transitions */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Touch-friendly interactions */
+    a, button {
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+        touch-action: manipulation;
+    }
+
+    /* Loading states */
+    .book-card {
+        opacity: 1;
+        animation: fadeInCard 0.4s ease-out;
+    }
+
+    @keyframes fadeInCard {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Stagger animation for cards */
+    .book-card:nth-child(1) { animation-delay: 0.05s; }
+    .book-card:nth-child(2) { animation-delay: 0.1s; }
+    .book-card:nth-child(3) { animation-delay: 0.15s; }
+    .book-card:nth-child(4) { animation-delay: 0.2s; }
+    .book-card:nth-child(5) { animation-delay: 0.25s; }
+
+    /* Pull-to-refresh indicator (visual only) */
+    body::before {
+        content: '';
+        position: fixed;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-top-color: var(--red);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    /* Safe area for notched devices */
+    @supports (padding: max(0px)) {
+        .container {
+            padding-left: max(1rem, env(safe-area-inset-left)) !important;
+            padding-right: max(1rem, env(safe-area-inset-right)) !important;
+        }
+    }
+
+    /* Prevent text size adjustment on orientation change */
+    html {
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 991px) {
+    .book-card {
+        /* Show 3.5 books on tablet */
+        width: calc((100vw - 4rem - 1.5rem) / 3.5) !important;
+        min-width: 150px;
+        max-width: 180px;
+    }
+
+    .book-card-cover {
+        height: calc((100vw - 4rem - 1.5rem) / 3.5 * 1.52) !important;
+        min-height: 228px;
+        max-height: 274px;
+    }
+
+    .section-heading h2 {
+        font-size: 28px !important;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 991px) {
+    .jumbotron-lg {
+        min-height: 50vh !important;
+        padding: 3rem 2rem !important;
+    }
+
+    .jumbo-details .display-4 {
+        font-size: 42px !important;
+    }
+
+    .jumbo-details .lead {
+        font-size: 18px !important;
+    }
+
+    .jumbo-details .btn {
+        padding: 12px 28px !important;
+        font-size: 16px !important;
+    }
+}

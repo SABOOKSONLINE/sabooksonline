@@ -342,6 +342,40 @@ body {
     z-index: 10;
 }
 
+/* Education Banner */
+.education-banner {
+    width: 100%;
+    background: #ffffff;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.education-banner-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: contain;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .education-banner {
+        padding: 1rem;
+        min-height: 150px;
+        margin-bottom: 2rem;
+    }
+    
+    .education-banner-img {
+        max-height: 180px;
+    }
+}
+
 .section {
     position: relative;
 }
@@ -388,6 +422,19 @@ footer {
 .footer-links a:hover {
     text-decoration: underline;
     opacity: 1;
+}
+
+/* Hide footer on mobile for book views - app-like experience */
+@media (max-width: 991px) {
+    /* Completely hide footer on book view pages for cleaner mobile experience */
+    body:has(.bv-view) footer {
+        display: none !important;
+    }
+    
+    /* Hide the decorative div after footer too */
+    body:has(.bv-view) footer + div {
+        display: none !important;
+    }
 }
 
 /* ===============================

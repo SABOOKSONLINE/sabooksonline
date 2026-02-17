@@ -13,19 +13,19 @@ $magazineData = $controller->getMagazineByPublicKey($_GET['publicKey']);
 $id = $magazineData['id'];
 $magazineId = $magazineData['public_key'];
 
-$title = $magazineData['title'];
-$description = $magazineData['description'];
+$title = html_entity_decode($magazineData['title']);
+$description = html_entity_decode($magazineData['description']);
 
-$cover_image_path = $magazineData['cover_image_path'];
-$category = $magazineData['category'];
+$cover_image_path = html_entity_decode($magazineData['cover_image_path']);
+$category = html_entity_decode($magazineData['category']);
 
-$frequency = $magazineData['frequency'];
-$issn = $magazineData['issn'];
+$frequency = html_entity_decode($magazineData['frequency']);
+$issn = html_entity_decode($magazineData['issn']);
 
-$editor = $magazineData['editor'];
-$language = $magazineData['language'];
+$editor = html_entity_decode($magazineData['editor']);
+$language = html_entity_decode($magazineData['language']);
 
-$country = $magazineData['country'];
+$country = html_entity_decode($magazineData['country']);
 $publisher_id = $magazineData['publisher_id'];
 
 $publish_date = $magazineData['publish_date'];
@@ -97,7 +97,18 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <div class="bv-view row">
             <!-- Magazine Cover -->
             <div class="bv-img">
-                <img src="/cms-data/magazine/covers/<?= $cover_image_path ?>" alt="Magazine Cover">
+                <?php if ($cover_image_path): ?>
+                    <img src="/cms-data/magazine/covers/<?= $cover_image_path ?>" alt="<?= $title ?> Cover" 
+                         onerror="console.log('Image failed to load: /cms-data/magazine/covers/<?= $cover_image_path ?>'); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; text-center;">
+                        <p>Image not available</p>
+                        <small>Path: /cms-data/magazine/covers/<?= $cover_image_path ?></small>
+                    </div>
+                <?php else: ?>
+                    <div style="padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; text-center;">
+                        <p>No cover image available</p>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Magazine Details -->

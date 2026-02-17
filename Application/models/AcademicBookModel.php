@@ -12,18 +12,105 @@ class AcademicBookModel
         $this->conn = $connection;
     }
 
-    public function selectBooks(): array
+    public function selectBooks(array $filters = []): array
     {
+        $where = [];
+        $params = [];
+        $types = '';
+        
+        // Always exclude teacher guides/resources (case-insensitive check on title)
+        $where[] = "(LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ?)";
+        $params[] = '%teacher%';
+        $params[] = '%teacher\'s guide%';
+        $params[] = '%guide%';
+        $types .= 'sss';
+        
+        // Search filter
+        if (!empty($filters['search'])) {
+            $where[] = "(academic_books.title LIKE ? OR academic_books.author LIKE ? OR academic_books.ISBN LIKE ? OR academic_books.description LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= 'ssss';
+        }
+        
+        // Subject filter
+        if (!empty($filters['subject'])) {
+            $where[] = "academic_books.subject = ?";
+            $params[] = $filters['subject'];
+            $types .= 's';
+        }
+        
+        // Level filter
+        if (!empty($filters['level'])) {
+            $where[] = "academic_books.level = ?";
+            $params[] = $filters['level'];
+            $types .= 's';
+        }
+        
+        // Language filter
+        if (!empty($filters['language'])) {
+            $where[] = "academic_books.language = ?";
+            $params[] = $filters['language'];
+            $types .= 's';
+        }
+        
+        // Price range filter
+        if (isset($filters['min_price']) && $filters['min_price'] !== '') {
+            $where[] = "academic_books.ebook_price >= ?";
+            $params[] = floatval($filters['min_price']);
+            $types .= 'd';
+        }
+        if (isset($filters['max_price']) && $filters['max_price'] !== '') {
+            $where[] = "academic_books.ebook_price <= ?";
+            $params[] = floatval($filters['max_price']);
+            $types .= 'd';
+        }
+        
+        // Build WHERE clause
+        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        
+        // Sort order
+        $orderBy = 'created_at DESC';
+        if (!empty($filters['sort'])) {
+            switch ($filters['sort']) {
+                case 'price_low':
+                    $orderBy = 'ebook_price ASC';
+                    break;
+                case 'price_high':
+                    $orderBy = 'ebook_price DESC';
+                    break;
+                case 'title_asc':
+                    $orderBy = 'title ASC';
+                    break;
+                case 'title_desc':
+                    $orderBy = 'title DESC';
+                    break;
+                case 'newest':
+                    $orderBy = 'created_at DESC';
+                    break;
+                case 'oldest':
+                    $orderBy = 'created_at ASC';
+                    break;
+            }
+        }
+        
         $sql = "SELECT academic_books.*, users.ADMIN_NAME, users.ADMIN_USERKEY
                 FROM academic_books
                 LEFT JOIN users
                     ON academic_books.publisher_id = users.ADMIN_ID
-                WHERE academic_books.publish_date <= CURDATE();
-                ";
+                {$whereClause}
+                ORDER BY academic_books.{$orderBy}";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
+        }
+        
+        if (!empty($params)) {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
         }
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -38,6 +125,54 @@ class AcademicBookModel
 
         mysqli_stmt_close($stmt);
         return $books;
+    }
+    
+    public function getFilterOptions(): array
+    {
+        $subjects = [];
+        $levels = [];
+        $languages = [];
+        $priceRange = ['min_price' => 0, 'max_price' => 1000];
+        
+        // Get distinct subjects
+        $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books WHERE subject IS NOT NULL AND subject != '' ORDER BY subject");
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $subjects[] = $row['subject'];
+            }
+        }
+        
+        // Get distinct levels
+        $result = mysqli_query($this->conn, "SELECT DISTINCT level FROM academic_books WHERE level IS NOT NULL AND level != '' ORDER BY level");
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $levels[] = $row['level'];
+            }
+        }
+        
+        // Get distinct languages
+        $result = mysqli_query($this->conn, "SELECT DISTINCT language FROM academic_books WHERE language IS NOT NULL AND language != '' ORDER BY language");
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $languages[] = $row['language'];
+            }
+        }
+        
+        // Get price range
+        $result = mysqli_query($this->conn, "SELECT MIN(ebook_price) as min_price, MAX(ebook_price) as max_price FROM academic_books WHERE ebook_price > 0");
+        if ($result) {
+            $priceData = mysqli_fetch_assoc($result);
+            if ($priceData) {
+                $priceRange = $priceData;
+            }
+        }
+        
+        return [
+            'subjects' => $subjects,
+            'levels' => $levels,
+            'languages' => $languages,
+            'price_range' => $priceRange
+        ];
     }
 
 
@@ -54,7 +189,7 @@ class AcademicBookModel
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
 
-        mysqli_stmt_bind_param($stmt, "i", $public_key);
+        mysqli_stmt_bind_param($stmt, "s", $public_key);
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));

@@ -13,6 +13,8 @@ body {
     border-right: 1px solid #eee;
     /* margin-top: 70px; */
     height: calc(100vh - 70px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .dashboard__sidebar .nav .nav-link {
