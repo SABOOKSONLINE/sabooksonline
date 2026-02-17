@@ -1,11 +1,4 @@
 <?php
-// Start session before any output
-if (session_status() === PHP_SESSION_NONE) {
-    $cookieDomain = ".sabooksonline.co.za";
-    session_set_cookie_params(0, '/', $cookieDomain);
-    session_start();
-}
-
 include __DIR__ . "/views/includes/header.php";
 
 include __DIR__ . "/views/includes/layouts/card.php";
@@ -70,13 +63,13 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         }
 
                         // Merge book title into purchases
-                        $purchasesWithTitle = array_map(function($purchase) use ($booksMap) {
+                        $purchasesWithTitle = array_map(function ($purchase) use ($booksMap) {
                             return array_merge($purchase, [
                                 'title' => $booksMap[$purchase['book_id']] ?? 'Unknown Book'
                             ]);
                         }, $revenue['purchases']);
 
-                        $titlesCount = $analysisController->getTitlesCount($userKey,$userID);
+                        $titlesCount = $analysisController->getTitlesCount($userKey, $userID);
                         $subscriptionDetails = $analysisController->viewSubscription($userKey);
                         $bookView = $analysisController->getBookViews($userKey, $start_date, $end_date);
                         $profileView = $analysisController->getProfileViews($userKey, $start_date, $end_date);
@@ -85,7 +78,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                         // $serviceView = $analysisController->getServiceViews($_SESSION['ADMIN_ID'], $start_date, $end_date);
                         $eventView = $analysisController->getEventViews($userKey, $start_date, $end_date);
                         $downloads = $analysisController->getDownloadsByEmail($email);
-                        
+
                         // Heavy analytics will be loaded via AJAX for better performance
                         // Only load critical stats immediately
 
@@ -152,7 +145,7 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
 
             // Load top books first (faster)
             loadTopBooks(params);
-            
+
             // Load charts after a short delay
             setTimeout(() => {
                 loadCharts(params);
@@ -167,20 +160,20 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                     if (result.success && result.data.topBooks) {
                         renderTopBooks(result.data.topBooks);
                     } else {
-                        document.getElementById('topBooksSection').innerHTML = 
+                        document.getElementById('topBooksSection').innerHTML =
                             '<div class="row"><h5 class="display-6 small fw-semibold"><small>Top Performing Books</small></h5><p class="text-muted">No views yet. Share your books to get more readers!</p></div>';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading top books:', error);
-                    document.getElementById('topBooksSection').innerHTML = 
+                    document.getElementById('topBooksSection').innerHTML =
                         '<div class="row"><h5 class="display-6 small fw-semibold"><small>Top Performing Books</small></h5><p class="text-danger">Error loading data. Please refresh the page.</p></div>';
                 });
         }
 
         function renderTopBooks(topBooks) {
             if (!topBooks || topBooks.length === 0) {
-                document.getElementById('topBooksSection').innerHTML = 
+                document.getElementById('topBooksSection').innerHTML =
                     '<div class="row"><h5 class="display-6 small fw-semibold"><small>Top Performing Books</small></h5><p class="text-muted">No views yet. Share your books to get more readers!</p></div>';
                 return;
             }
@@ -212,13 +205,13 @@ include __DIR__ . "/views/includes/dashboard_heading.php";
                     if (result.success && result.data) {
                         renderCharts(result.data);
                     } else {
-                        document.getElementById('chartsSection').innerHTML = 
+                        document.getElementById('chartsSection').innerHTML =
                             '<div class="row"><h5 class="display-6 small fw-semibold"><small>Content Performance Graphs</small></h5><p class="text-danger">Error loading charts.</p></div>';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading charts:', error);
-                    document.getElementById('chartsSection').innerHTML = 
+                    document.getElementById('chartsSection').innerHTML =
                         '<div class="row"><h5 class="display-6 small fw-semibold"><small>Content Performance Graphs</small></h5><p class="text-danger">Error loading charts. Please refresh the page.</p></div>';
                 });
         }
