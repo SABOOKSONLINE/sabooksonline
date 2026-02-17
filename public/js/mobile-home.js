@@ -50,40 +50,11 @@
     }
 
     /**
-     * Add touch gesture enhancements
+     * Add touch gesture enhancements - disabled to prevent interference with scrolling
      */
     function enableTouchGestures() {
-        // Add swipe detection for better UX
-        const sections = document.querySelectorAll('.section');
-        
-        sections.forEach(section => {
-            let touchStartY = 0;
-            let touchEndY = 0;
-
-            section.addEventListener('touchstart', (e) => {
-                touchStartY = e.changedTouches[0].screenY;
-            });
-
-            section.addEventListener('touchend', (e) => {
-                touchEndY = e.changedTouches[0].screenY;
-                handleSwipe(section);
-            });
-
-            function handleSwipe(element) {
-                const swipeThreshold = 50;
-                const diff = touchStartY - touchEndY;
-
-                if (Math.abs(diff) > swipeThreshold) {
-                    // Add subtle feedback
-                    element.style.transition = 'transform 0.2s';
-                    element.style.transform = diff > 0 ? 'translateY(-5px)' : 'translateY(5px)';
-                    
-                    setTimeout(() => {
-                        element.style.transform = '';
-                    }, 200);
-                }
-            }
-        });
+        // Disabled - let native scrolling handle everything
+        // Custom touch handlers were interfering with horizontal scroll
     }
 
     /**
@@ -93,12 +64,10 @@
         const bookCards = document.querySelectorAll('.book-cards');
         
         bookCards.forEach(container => {
-            const slide = container.querySelector('.book-card-slide');
-            if (!slide) return;
-
+            // Check scroll on the container itself, not the slide
             function checkScroll() {
-                const isScrollable = slide.scrollWidth > slide.clientWidth;
-                const isAtEnd = slide.scrollLeft + slide.clientWidth >= slide.scrollWidth - 10;
+                const isScrollable = container.scrollWidth > container.clientWidth;
+                const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
                 
                 if (isScrollable && !isAtEnd) {
                     container.classList.add('scrollable');
@@ -107,7 +76,7 @@
                 }
             }
 
-            slide.addEventListener('scroll', checkScroll);
+            container.addEventListener('scroll', checkScroll, { passive: true });
             checkScroll(); // Initial check
         });
     }
@@ -146,8 +115,8 @@
         let lastTouchEnd = 0;
         
         document.addEventListener('touchend', (e) => {
-            // Don't prevent default on scrollable containers
-            const isScrollable = e.target.closest('.book-cards');
+            // Don't prevent default on scrollable containers or their children
+            const isScrollable = e.target.closest('.book-cards, .book-card-slide, .book-card, .bk-card');
             if (isScrollable) {
                 return; // Let scrolling work normally
             }
@@ -157,7 +126,7 @@
                 e.preventDefault();
             }
             lastTouchEnd = now;
-        }, false);
+        }, { passive: false });
     }
 
     // Handle orientation change
