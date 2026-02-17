@@ -213,6 +213,7 @@
         scroll-behavior: smooth;
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* IE/Edge */
+        touch-action: pan-x; /* Allow horizontal panning/swiping */
     }
 
     .book-cards::-webkit-scrollbar {
@@ -593,6 +594,10 @@
     #editors_choice .book-cards {
         padding: 0 1rem !important;
         margin: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-x !important;
     }
 
     /* Smooth scroll indicator */

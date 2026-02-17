@@ -35,32 +35,17 @@
 
     /**
      * Enable smooth horizontal scrolling for book cards
+     * Let native scrolling handle it - just ensure containers are scrollable
      */
     function enableSmoothScroll() {
-        const bookCardSlides = document.querySelectorAll('.book-card-slide');
+        // Remove custom touch handling - let native browser scrolling work
+        // The CSS already handles overflow-x: auto and -webkit-overflow-scrolling: touch
+        const bookCards = document.querySelectorAll('.book-cards');
         
-        bookCardSlides.forEach(slide => {
-            let isScrolling = false;
-            let startX = 0;
-            let scrollLeft = 0;
-
-            slide.addEventListener('touchstart', (e) => {
-                isScrolling = true;
-                startX = e.touches[0].pageX - slide.offsetLeft;
-                scrollLeft = slide.scrollLeft;
-            });
-
-            slide.addEventListener('touchmove', (e) => {
-                if (!isScrolling) return;
-                e.preventDefault();
-                const x = e.touches[0].pageX - slide.offsetLeft;
-                const walk = (x - startX) * 2; // Scroll speed
-                slide.scrollLeft = scrollLeft - walk;
-            });
-
-            slide.addEventListener('touchend', () => {
-                isScrolling = false;
-            });
+        bookCards.forEach(container => {
+            // Ensure the container allows native scrolling
+            container.style.overflowX = 'auto';
+            container.style.webkitOverflowScrolling = 'touch';
         });
     }
 
@@ -155,12 +140,18 @@
     }
 
     /**
-     * Prevent zoom on double tap (iOS)
+     * Prevent zoom on double tap (iOS) - but only on non-scrollable elements
      */
     function preventDoubleTapZoom() {
         let lastTouchEnd = 0;
         
         document.addEventListener('touchend', (e) => {
+            // Don't prevent default on scrollable containers
+            const isScrollable = e.target.closest('.book-cards');
+            if (isScrollable) {
+                return; // Let scrolling work normally
+            }
+            
             const now = Date.now();
             if (now - lastTouchEnd <= 300) {
                 e.preventDefault();
