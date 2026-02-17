@@ -1,9 +1,4 @@
 <?php
-// Session should already be started in index.php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 $userKey = $_SESSION['ADMIN_USERKEY'] ?? null;
 $userId = $_SESSION['ADMIN_ID'] ?? null;
 $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'] ?? null;

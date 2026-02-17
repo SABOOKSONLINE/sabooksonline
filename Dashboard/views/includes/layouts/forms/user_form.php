@@ -123,8 +123,12 @@ if (isset($userKey)) {
         <div class="col-sm-12">
             <div class="mb-3">
                 <label class="form-label fw-semibold">Author Bio</label>
-                <textarea type="text" class="form-control" rows="6" maxlength="600" name="ADMIN_BIO"><?= $adminBio ?></textarea>
+                <textarea
+                    class="form-control"
+                    rows="6"
+                    name="ADMIN_BIO"><?= htmlspecialchars($adminBio ?? '') ?></textarea>
             </div>
+
         </div>
     </div>
 
