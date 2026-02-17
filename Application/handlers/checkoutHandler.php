@@ -29,10 +29,10 @@ $data = json_decode($input, true);
 $collection_address = [
     "type" => "business",
     "company" => "www.sabooksonline.co.za",
-    "street_address" => "13th Floor, Illovo Point, 68 Melville Rd",
-    "local_area" => "Illovo",
-    "city" => "Sandton",
-    "code" => "2196",
+    "street_address" => "130 Wentworth road",
+    "local_area" => "Jackal Creek Golf Estate",
+    "city" => "Roodepoort",
+    "code" => "2169",
     "zone" => "Gauteng",
     "country" => "ZA"
 ];
