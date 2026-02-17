@@ -38,6 +38,7 @@
 
     <link href="/public/css/custom/responsive.css" rel="stylesheet" />
     <link href="/public/css/custom/audioBook.css" rel="stylesheet" />
+    <link href="/public/css/custom/mobile-home.css" rel="stylesheet" />
 
     <script>
         (function(w, d, s, l, i) {
