@@ -508,7 +508,7 @@ class BookModel
         }
         
         // Query with joins for format detection
-        $sql = "SELECT DISTINCT
+        $sql = "SELECT 
                     p.*,
                     a.id AS a_id,
                     hc.hc_id,
@@ -522,7 +522,8 @@ class BookModel
                 LEFT JOIN audiobooks a ON a.book_id = p.ID
                 LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
                 {$whereClause}
-                ORDER BY p.{$orderBy}";
+                GROUP BY p.ID
+                ORDER BY {$orderBy}";
         
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
