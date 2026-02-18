@@ -424,7 +424,7 @@ class BookModel
     }
 
     /**
-     * Get books with filters - combines regular books and academic books
+     * Get books with filters - only regular books (posts table)
      */
     public function selectBooksWithFilters(array $filters = []): array
     {
@@ -432,250 +432,97 @@ class BookModel
         $params = [];
         $types = '';
         
+        // Base condition - only active books
+        $where[] = "p.STATUS = 'active'";
+        
         // Search filter
         if (!empty($filters['search'])) {
-            $where[] = "(p.TITLE LIKE ? OR p.PUBLISHER LIKE ? OR p.DESCRIPTION LIKE ? OR ab.title LIKE ? OR ab.author LIKE ? OR ab.ISBN LIKE ?)";
+            $where[] = "(p.TITLE LIKE ? OR p.PUBLISHER LIKE ? OR p.DESCRIPTION LIKE ?)";
             $searchTerm = '%' . $filters['search'] . '%';
             $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $types .= 'ssssss';
+            $types .= 'sss';
         }
         
-        // Category filter (for regular books)
+        // Category filter
         if (!empty($filters['category'])) {
             $where[] = "p.CATEGORY = ?";
             $params[] = $filters['category'];
             $types .= 's';
         }
         
-        // Subject filter (for academic books)
-        if (!empty($filters['subject'])) {
-            $where[] = "ab.subject = ?";
-            $params[] = $filters['subject'];
-            $types .= 's';
+        // Format filter (ebook, audiobook, hardcopy)
+        if (!empty($filters['format'])) {
+            switch ($filters['format']) {
+                case 'ebook':
+                    $where[] = "p.PDFURL IS NOT NULL AND p.PDFURL != ''";
+                    break;
+                case 'audiobook':
+                    $where[] = "a.id IS NOT NULL";
+                    break;
+                case 'hardcopy':
+                    $where[] = "hc.hc_id IS NOT NULL";
+                    break;
+            }
         }
         
         // Price range filter
         if (isset($filters['min_price']) && $filters['min_price'] !== '') {
-            $where[] = "(p.RETAILPRICE >= ? OR ab.ebook_price >= ?)";
+            $where[] = "p.RETAILPRICE >= ?";
             $params[] = floatval($filters['min_price']);
-            $params[] = floatval($filters['min_price']);
-            $types .= 'dd';
+            $types .= 'd';
         }
         if (isset($filters['max_price']) && $filters['max_price'] !== '') {
-            $where[] = "(p.RETAILPRICE <= ? OR ab.ebook_price <= ?)";
+            $where[] = "p.RETAILPRICE <= ?";
             $params[] = floatval($filters['max_price']);
-            $params[] = floatval($filters['max_price']);
-            $types .= 'dd';
+            $types .= 'd';
         }
         
         // Build WHERE clause
-        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        $whereClause = 'WHERE ' . implode(' AND ', $where);
         
         // Sort order
-        $orderBy = 'p.CREATED_AT DESC, ab.created_at DESC';
+        $orderBy = 'p.CREATED_AT DESC';
         if (!empty($filters['sort'])) {
             switch ($filters['sort']) {
                 case 'price_low':
-                    $orderBy = 'COALESCE(p.RETAILPRICE, ab.ebook_price) ASC';
+                    $orderBy = 'p.RETAILPRICE ASC';
                     break;
                 case 'price_high':
-                    $orderBy = 'COALESCE(p.RETAILPRICE, ab.ebook_price) DESC';
+                    $orderBy = 'p.RETAILPRICE DESC';
                     break;
                 case 'title_asc':
-                    $orderBy = 'COALESCE(p.TITLE, ab.title) ASC';
+                    $orderBy = 'p.TITLE ASC';
                     break;
                 case 'title_desc':
-                    $orderBy = 'COALESCE(p.TITLE, ab.title) DESC';
+                    $orderBy = 'p.TITLE DESC';
                     break;
                 case 'newest':
-                    $orderBy = 'COALESCE(p.CREATED_AT, ab.created_at) DESC';
+                    $orderBy = 'p.CREATED_AT DESC';
                     break;
                 case 'oldest':
-                    $orderBy = 'COALESCE(p.CREATED_AT, ab.created_at) ASC';
+                    $orderBy = 'p.CREATED_AT ASC';
                     break;
             }
         }
         
-        // UNION query to combine regular books and academic books
-        $sql = "SELECT 
-                    'book' as book_type,
-                    p.CONTENTID as content_id,
-                    p.TITLE as title,
-                    p.CATEGORY as category,
-                    p.PUBLISHER as publisher,
-                    p.DESCRIPTION as description,
-                    p.COVER as cover_image,
-                    p.RETAILPRICE as price,
-                    p.CREATED_AT as created_at,
-                    p.STATUS as status,
-                    NULL as subject,
-                    NULL as level,
-                    NULL as language,
-                    NULL as ISBN,
-                    NULL as author
+        // Query with joins for format detection
+        $sql = "SELECT DISTINCT
+                    p.*,
+                    a.id AS a_id,
+                    hc.hc_id,
+                    CASE 
+                        WHEN p.PDFURL IS NOT NULL AND p.PDFURL != '' THEN 'ebook'
+                        WHEN a.id IS NOT NULL THEN 'audiobook'
+                        WHEN hc.hc_id IS NOT NULL THEN 'hardcopy'
+                        ELSE NULL
+                    END as book_format
                 FROM posts p
-                WHERE p.STATUS = 'active'
-                " . (!empty($whereClause) ? "AND " . str_replace(['ab.', 'p.TITLE', 'p.PUBLISHER', 'p.DESCRIPTION', 'p.RETAILPRICE'], ['p.', 'p.TITLE', 'p.PUBLISHER', 'p.DESCRIPTION', 'p.RETAILPRICE'], $whereClause) : '') . "
-                
-                UNION ALL
-                
-                SELECT 
-                    'academic' as book_type,
-                    ab.public_key as content_id,
-                    ab.title as title,
-                    NULL as category,
-                    u.ADMIN_NAME as publisher,
-                    ab.description as description,
-                    ab.cover_image_path as cover_image,
-                    ab.ebook_price as price,
-                    ab.created_at as created_at,
-                    'active' as status,
-                    ab.subject as subject,
-                    ab.level as level,
-                    ab.language as language,
-                    ab.ISBN as ISBN,
-                    ab.author as author
-                FROM academic_books ab
-                LEFT JOIN users u ON ab.publisher_id = u.ADMIN_ID
-                WHERE ab.pdf_path IS NOT NULL AND ab.pdf_path != ''
-                " . (!empty($whereClause) ? "AND " . str_replace(['p.', 'p.TITLE', 'p.PUBLISHER', 'p.DESCRIPTION', 'p.RETAILPRICE'], ['ab.', 'ab.title', 'u.ADMIN_NAME', 'ab.description', 'ab.ebook_price'], $whereClause) : '') . "
-                
-                ORDER BY {$orderBy}";
-
-        // For UNION queries with filters, we need to handle parameters differently
-        // Let's use a simpler approach - get books separately and combine
-        $regularBooks = $this->getBooksWithFilters($filters, 'regular');
-        $academicBooks = $this->getBooksWithFilters($filters, 'academic');
-        
-        $allBooks = array_merge($regularBooks, $academicBooks);
-        
-        // Sort combined results
-        if (!empty($filters['sort'])) {
-            usort($allBooks, function($a, $b) use ($filters) {
-                switch ($filters['sort']) {
-                    case 'price_low':
-                        $priceA = $a['price'] ?? $a['RETAILPRICE'] ?? $a['ebook_price'] ?? 0;
-                        $priceB = $b['price'] ?? $b['RETAILPRICE'] ?? $b['ebook_price'] ?? 0;
-                        return $priceA <=> $priceB;
-                    case 'price_high':
-                        $priceA = $a['price'] ?? $a['RETAILPRICE'] ?? $a['ebook_price'] ?? 0;
-                        $priceB = $b['price'] ?? $b['RETAILPRICE'] ?? $b['ebook_price'] ?? 0;
-                        return $priceB <=> $priceA;
-                    case 'title_asc':
-                        $titleA = $a['title'] ?? $a['TITLE'] ?? '';
-                        $titleB = $b['title'] ?? $b['TITLE'] ?? '';
-                        return strcasecmp($titleA, $titleB);
-                    case 'title_desc':
-                        $titleA = $a['title'] ?? $a['TITLE'] ?? '';
-                        $titleB = $b['title'] ?? $b['TITLE'] ?? '';
-                        return strcasecmp($titleB, $titleA);
-                    case 'newest':
-                        $dateA = $a['created_at'] ?? $a['CREATED_AT'] ?? '';
-                        $dateB = $b['created_at'] ?? $b['CREATED_AT'] ?? '';
-                        return strtotime($dateB) - strtotime($dateA);
-                    case 'oldest':
-                        $dateA = $a['created_at'] ?? $a['CREATED_AT'] ?? '';
-                        $dateB = $b['created_at'] ?? $b['CREATED_AT'] ?? '';
-                        return strtotime($dateA) - strtotime($dateB);
-                    default:
-                        return 0;
-                }
-            });
-        }
-        
-        return $allBooks;
-    }
-
-    /**
-     * Get books with filters (internal helper)
-     */
-    private function getBooksWithFilters(array $filters, string $type): array
-    {
-        $where = [];
-        $params = [];
-        $types = '';
-        
-        if ($type === 'regular') {
-            $where[] = "p.STATUS = 'active'";
-            
-            // Search filter
-            if (!empty($filters['search'])) {
-                $where[] = "(p.TITLE LIKE ? OR p.PUBLISHER LIKE ? OR p.DESCRIPTION LIKE ?)";
-                $searchTerm = '%' . $filters['search'] . '%';
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $types .= 'sss';
-            }
-            
-            // Category filter
-            if (!empty($filters['category'])) {
-                $where[] = "p.CATEGORY = ?";
-                $params[] = $filters['category'];
-                $types .= 's';
-            }
-            
-            // Price range
-            if (isset($filters['min_price']) && $filters['min_price'] !== '') {
-                $where[] = "p.RETAILPRICE >= ?";
-                $params[] = floatval($filters['min_price']);
-                $types .= 'd';
-            }
-            if (isset($filters['max_price']) && $filters['max_price'] !== '') {
-                $where[] = "p.RETAILPRICE <= ?";
-                $params[] = floatval($filters['max_price']);
-                $types .= 'd';
-            }
-            
-            $whereClause = 'WHERE ' . implode(' AND ', $where);
-            
-            $sql = "SELECT p.* FROM posts p {$whereClause}";
-            
-        } else { // academic
-            $where[] = "ab.pdf_path IS NOT NULL AND ab.pdf_path != ''";
-            
-            // Search filter
-            if (!empty($filters['search'])) {
-                $where[] = "(ab.title LIKE ? OR ab.author LIKE ? OR ab.ISBN LIKE ? OR ab.description LIKE ?)";
-                $searchTerm = '%' . $filters['search'] . '%';
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $types .= 'ssss';
-            }
-            
-            // Subject filter
-            if (!empty($filters['subject'])) {
-                $where[] = "ab.subject = ?";
-                $params[] = $filters['subject'];
-                $types .= 's';
-            }
-            
-            // Price range
-            if (isset($filters['min_price']) && $filters['min_price'] !== '') {
-                $where[] = "ab.ebook_price >= ?";
-                $params[] = floatval($filters['min_price']);
-                $types .= 'd';
-            }
-            if (isset($filters['max_price']) && $filters['max_price'] !== '') {
-                $where[] = "ab.ebook_price <= ?";
-                $params[] = floatval($filters['max_price']);
-                $types .= 'd';
-            }
-            
-            $whereClause = 'WHERE ' . implode(' AND ', $where);
-            
-            $sql = "SELECT ab.*, u.ADMIN_NAME, u.ADMIN_USERKEY 
-                    FROM academic_books ab
-                    LEFT JOIN users u ON ab.publisher_id = u.ADMIN_ID
-                    {$whereClause}";
-        }
+                LEFT JOIN audiobooks a ON a.book_id = p.ID
+                LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
+                {$whereClause}
+                ORDER BY p.{$orderBy}";
         
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -698,15 +545,13 @@ class BookModel
         
         mysqli_stmt_close($stmt);
         return $books;
-    }
 
     /**
-     * Get filter options for library (categories, subjects, price range)
+     * Get filter options for library (categories, formats, price range)
      */
     public function getFilterOptions(): array
     {
         $categories = [];
-        $subjects = [];
         $priceRange = ['min_price' => 0, 'max_price' => 1000];
         
         // Get categories from regular books
@@ -717,43 +562,20 @@ class BookModel
             }
         }
         
-        // Get subjects from academic books
-        $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books WHERE pdf_path IS NOT NULL AND pdf_path != '' AND subject IS NOT NULL AND subject != '' ORDER BY subject");
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $subjects[] = $row['subject'];
-            }
-        }
-        
-        // Get price range from both tables
-        $minPrice = 0;
-        $maxPrice = 1000;
-        
-        // Get min/max from regular books
+        // Get price range from regular books
         $result = mysqli_query($this->conn, "SELECT MIN(RETAILPRICE) as min_price, MAX(RETAILPRICE) as max_price FROM posts WHERE STATUS = 'active' AND RETAILPRICE > 0");
         if ($result) {
             $data = mysqli_fetch_assoc($result);
             if ($data && $data['min_price'] !== null) {
-                $minPrice = min($minPrice, floatval($data['min_price']));
-                $maxPrice = max($maxPrice, floatval($data['max_price']));
+                $priceRange = [
+                    'min_price' => floatval($data['min_price']),
+                    'max_price' => floatval($data['max_price'])
+                ];
             }
         }
-        
-        // Get min/max from academic books
-        $result = mysqli_query($this->conn, "SELECT MIN(ebook_price) as min_price, MAX(ebook_price) as max_price FROM academic_books WHERE pdf_path IS NOT NULL AND pdf_path != '' AND ebook_price > 0");
-        if ($result) {
-            $data = mysqli_fetch_assoc($result);
-            if ($data && $data['min_price'] !== null) {
-                $minPrice = min($minPrice, floatval($data['min_price']));
-                $maxPrice = max($maxPrice, floatval($data['max_price']));
-            }
-        }
-        
-        $priceRange = ['min_price' => $minPrice, 'max_price' => $maxPrice];
         
         return [
             'categories' => $categories,
-            'subjects' => $subjects,
             'price_range' => $priceRange
         ];
     }

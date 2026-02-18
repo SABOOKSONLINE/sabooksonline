@@ -2,13 +2,12 @@
 // Get filter options
 $filterOptions = $controller->getFilterOptions();
 $categories = $filterOptions['categories'] ?? [];
-$subjects = $filterOptions['subjects'] ?? [];
 $priceRange = $filterOptions['price_range'] ?? ['min_price' => 0, 'max_price' => 1000];
 
 // Get current filter values
 $currentSearch = $_GET['search'] ?? '';
 $currentCategory = $_GET['category'] ?? '';
-$currentSubject = $_GET['subject'] ?? '';
+$currentFormat = $_GET['format'] ?? '';
 $currentMinPrice = $_GET['min_price'] ?? '';
 $currentMaxPrice = $_GET['max_price'] ?? '';
 $currentSort = $_GET['sort'] ?? 'newest';
@@ -19,7 +18,7 @@ $currentSort = $_GET['sort'] ?? 'newest';
     <div class="mb-3 position-relative">
         <button type="button" class="btn btn-primary btn-lg" id="filterToggleBtn">
             <i class="fas fa-filter me-2"></i>Filters
-            <?php if ($currentSearch || $currentCategory || $currentSubject || $currentMinPrice || $currentMaxPrice): ?>
+            <?php if ($currentSearch || $currentCategory || $currentFormat || $currentMinPrice || $currentMaxPrice): ?>
                 <span class="badge bg-light text-dark ms-2">Active</span>
             <?php endif; ?>
             <i class="fas fa-chevron-down ms-2" id="filterChevron"></i>
@@ -74,21 +73,16 @@ $currentSort = $_GET['sort'] ?? 'newest';
                         </div>
                         <?php endif; ?>
 
-                        <!-- Subject Filter (Academic Books) -->
-                        <?php if (!empty($subjects)): ?>
+                        <!-- Format Filter -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Subject</label>
-                            <select class="form-select" name="subject" id="subjectFilter">
-                                <option value="">All Subjects</option>
-                                <?php foreach ($subjects as $subject): ?>
-                                    <option value="<?= htmlspecialchars($subject) ?>" 
-                                            <?= $currentSubject === $subject ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($subject) ?>
-                                    </option>
-                                <?php endforeach; ?>
+                            <label class="form-label fw-bold">Format</label>
+                            <select class="form-select" name="format" id="formatFilter">
+                                <option value="">All Formats</option>
+                                <option value="ebook" <?= $currentFormat === 'ebook' ? 'selected' : '' ?>>Ebook</option>
+                                <option value="audiobook" <?= $currentFormat === 'audiobook' ? 'selected' : '' ?>>Audiobook</option>
+                                <option value="hardcopy" <?= $currentFormat === 'hardcopy' ? 'selected' : '' ?>>Hardcopy</option>
                             </select>
                         </div>
-                        <?php endif; ?>
 
                         <!-- Price Range -->
                         <div class="mb-3">
@@ -148,7 +142,7 @@ $currentSort = $_GET['sort'] ?? 'newest';
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
                             <strong><?= count($books) ?></strong> book<?= count($books) !== 1 ? 's' : '' ?> found
-                            <?php if ($currentSearch || $currentCategory || $currentSubject || $currentMinPrice || $currentMaxPrice): ?>
+                            <?php if ($currentSearch || $currentCategory || $currentFormat || $currentMinPrice || $currentMaxPrice): ?>
                                 <span class="badge bg-info ms-2">Filtered</span>
                             <?php endif; ?>
                         </div>
