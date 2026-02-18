@@ -546,6 +546,7 @@ class BookModel
         
         mysqli_stmt_close($stmt);
         return $books;
+    }
 
     /**
      * Get filter options for library (categories, formats, price range)
