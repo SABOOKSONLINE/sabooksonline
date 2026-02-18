@@ -37,32 +37,36 @@ $keyword = $_GET['k'] ?? null;
         include_once __DIR__ . "/includes/banner.php";
         ?>
 
-        <?php if (!$category && $keyword): ?>
-            <h5 class="mt-3 text-capitalize">Search results for: <strong><?= htmlspecialchars($keyword) ?></strong></h5>
-        <?php endif; ?>
-
-        <?php if ($category && !$keyword): ?>
-            <h5 class="mt-3 text-capitalize">Category selected: <strong><?= htmlspecialchars($category) ?></strong></h5>
-        <?php endif; ?>
-
-        <div class="row py-3">
+        <div class="py-3">
             <?php
-            if ($category && !$keyword) {
-                $controller->renderLibraryByCategory($category, $page);
-            } else if (!$category && $keyword) {
-                $controller->RenderSearchedBooks($keyword);
+            // Get filter parameters
+            $filters = [
+                'search' => $_GET['search'] ?? ($keyword ?? ''),
+                'category' => $_GET['category'] ?? ($category ?? ''),
+                'subject' => $_GET['subject'] ?? '',
+                'min_price' => $_GET['min_price'] ?? '',
+                'max_price' => $_GET['max_price'] ?? '',
+                'sort' => $_GET['sort'] ?? 'newest'
+            ];
+            
+            // Get filtered books (combines regular and academic books)
+            $books = $controller->getAllBooksWithFilters($filters);
+
+            if (!empty($books) || !empty(array_filter($filters))) {
+                require_once __DIR__ . "/books/libraryFilters.php";
             } else {
-                $controller->renderAllBooks($page);
+            ?>
+                <div class="alert alert-info alert-dismissible fade show d-flex align-items-start" role="alert">
+                    <div>
+                        <strong>No Books Available</strong>
+                        <div class="mt-1">
+                            Check back soon or explore our <a href="/library/academic">academic collection</a>.
+                        </div>
+                    </div>
+                </div>
+            <?php 
             }
             ?>
-        </div>
-
-        <div class="py-3">
-            <nav aria-label="Page navigation">
-                <?php
-                $controller->renderPagination();
-                ?>
-            </nav>
         </div>
     </div>
     <?php require_once __DIR__ . "/includes/payfast.php" ?>
