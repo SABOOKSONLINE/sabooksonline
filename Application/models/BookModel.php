@@ -422,4 +422,163 @@ class BookModel
         mysqli_stmt_close($stmt);
         return $books;
     }
+
+    /**
+     * Get books with filters - only regular books (posts table)
+     */
+    public function selectBooksWithFilters(array $filters = []): array
+    {
+        $where = [];
+        $params = [];
+        $types = '';
+        
+        // Base condition - only active books
+        $where[] = "p.STATUS = 'active'";
+        
+        // Search filter
+        if (!empty($filters['search'])) {
+            $where[] = "(p.TITLE LIKE ? OR p.PUBLISHER LIKE ? OR p.DESCRIPTION LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= 'sss';
+        }
+        
+        // Category filter
+        if (!empty($filters['category'])) {
+            $where[] = "p.CATEGORY = ?";
+            $params[] = $filters['category'];
+            $types .= 's';
+        }
+        
+        // Format filter (ebook, audiobook, hardcopy)
+        if (!empty($filters['format'])) {
+            switch ($filters['format']) {
+                case 'ebook':
+                    $where[] = "p.PDFURL IS NOT NULL AND p.PDFURL != ''";
+                    break;
+                case 'audiobook':
+                    $where[] = "a.id IS NOT NULL";
+                    break;
+                case 'hardcopy':
+                    $where[] = "hc.hc_id IS NOT NULL";
+                    break;
+            }
+        }
+        
+        // Price range filter
+        if (isset($filters['min_price']) && $filters['min_price'] !== '') {
+            $where[] = "p.RETAILPRICE >= ?";
+            $params[] = floatval($filters['min_price']);
+            $types .= 'd';
+        }
+        if (isset($filters['max_price']) && $filters['max_price'] !== '') {
+            $where[] = "p.RETAILPRICE <= ?";
+            $params[] = floatval($filters['max_price']);
+            $types .= 'd';
+        }
+        
+        // Build WHERE clause
+        $whereClause = 'WHERE ' . implode(' AND ', $where);
+        
+        // Sort order
+        $orderBy = 'p.CREATED_AT DESC';
+        if (!empty($filters['sort'])) {
+            switch ($filters['sort']) {
+                case 'price_low':
+                    $orderBy = 'p.RETAILPRICE ASC';
+                    break;
+                case 'price_high':
+                    $orderBy = 'p.RETAILPRICE DESC';
+                    break;
+                case 'title_asc':
+                    $orderBy = 'p.TITLE ASC';
+                    break;
+                case 'title_desc':
+                    $orderBy = 'p.TITLE DESC';
+                    break;
+                case 'newest':
+                    $orderBy = 'p.CREATED_AT DESC';
+                    break;
+                case 'oldest':
+                    $orderBy = 'p.CREATED_AT ASC';
+                    break;
+            }
+        }
+        
+        // Query with joins for format detection
+        $sql = "SELECT 
+                    p.*,
+                    a.id AS a_id,
+                    hc.hc_id,
+                    CASE 
+                        WHEN p.PDFURL IS NOT NULL AND p.PDFURL != '' THEN 'ebook'
+                        WHEN a.id IS NOT NULL THEN 'audiobook'
+                        WHEN hc.hc_id IS NOT NULL THEN 'hardcopy'
+                        ELSE NULL
+                    END as book_format
+                FROM posts p
+                LEFT JOIN audiobooks a ON a.book_id = p.ID
+                LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
+                {$whereClause}
+                GROUP BY p.ID
+                ORDER BY {$orderBy}";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return [];
+        }
+        
+        if (!empty($params)) {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+        }
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            return [];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $books = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
+        
+        mysqli_stmt_close($stmt);
+        return $books;
+    }
+
+    /**
+     * Get filter options for library (categories, formats, price range)
+     */
+    public function getFilterOptions(): array
+    {
+        $categories = [];
+        $priceRange = ['min_price' => 0, 'max_price' => 1000];
+        
+        // Get categories from regular books
+        $result = mysqli_query($this->conn, "SELECT DISTINCT CATEGORY FROM posts WHERE STATUS = 'active' AND CATEGORY IS NOT NULL AND CATEGORY != '' ORDER BY CATEGORY");
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $categories[] = $row['CATEGORY'];
+            }
+        }
+        
+        // Get price range from regular books
+        $result = mysqli_query($this->conn, "SELECT MIN(RETAILPRICE) as min_price, MAX(RETAILPRICE) as max_price FROM posts WHERE STATUS = 'active' AND RETAILPRICE > 0");
+        if ($result) {
+            $data = mysqli_fetch_assoc($result);
+            if ($data && $data['min_price'] !== null) {
+                $priceRange = [
+                    'min_price' => floatval($data['min_price']),
+                    'max_price' => floatval($data['max_price'])
+                ];
+            }
+        }
+        
+        return [
+            'categories' => $categories,
+            'price_range' => $priceRange
+        ];
+    }
 }

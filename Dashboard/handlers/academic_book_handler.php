@@ -72,7 +72,9 @@ function academicBookFormDataArray(bool $isUpdate = false): array
     if (!empty($_FILES['pdf']['name'])) {
         $pdf_path = fileProcessor("/../../cms-data/academic/pdfs/", "pdf", ["pdf"]);
     } elseif ($isUpdate) {
-        $pdf_path = $_POST['existing_pdf'] ?? null;
+        // Allow empty/null pdf_path on update - use existing_pdf if provided, otherwise null
+        $existing_pdf = $_POST['existing_pdf'] ?? '';
+        $pdf_path = !empty($existing_pdf) ? $existing_pdf : null;
     }
 
     return [

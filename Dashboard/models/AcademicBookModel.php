@@ -107,6 +107,9 @@ class AcademicBookModel
 
     public function updateBook(array $data): bool
     {
+        // Convert empty pdf_path to null for proper NULL handling in database
+        $pdf_path = (!empty($data['pdf_path']) && trim($data['pdf_path']) !== '') ? $data['pdf_path'] : null;
+        
         $sql = "UPDATE academic_books SET
                     title = ?,
                     author = ?,
@@ -149,7 +152,7 @@ class AcademicBookModel
             $data['isbn'],
             $data['publish_date'],
             $data['cover_image_path'],
-            $data['pdf_path'],
+            $pdf_path,
             $data['ebook_price'],
             $data['physical_book_price'],
             $data['link'],

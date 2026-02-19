@@ -302,6 +302,32 @@ class BookController
         }
     }
 
+    /**
+     * Get all books with filters (combines regular and academic books)
+     */
+    public function getAllBooksWithFilters(array $filters = []): array
+    {
+        try {
+            return $this->bookModel->selectBooksWithFilters($filters);
+        } catch (Exception $e) {
+            error_log("Get all books with filters error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get filter options for library
+     */
+    public function getFilterOptions(): array
+    {
+        try {
+            return $this->bookModel->getFilterOptions();
+        } catch (Exception $e) {
+            error_log("Get filter options error: " . $e->getMessage());
+            return ['categories' => [], 'subjects' => [], 'price_range' => ['min_price' => 0, 'max_price' => 1000]];
+        }
+    }
+
     public function renderPagination()
     {
         // this code will be changed later does follow MVC

@@ -35,70 +35,26 @@
 
     /**
      * Enable smooth horizontal scrolling for book cards
+     * Let native scrolling handle it - just ensure containers are scrollable
      */
     function enableSmoothScroll() {
-        const bookCardSlides = document.querySelectorAll('.book-card-slide');
+        // Remove custom touch handling - let native browser scrolling work
+        // The CSS already handles overflow-x: auto and -webkit-overflow-scrolling: touch
+        const bookCards = document.querySelectorAll('.book-cards');
         
-        bookCardSlides.forEach(slide => {
-            let isScrolling = false;
-            let startX = 0;
-            let scrollLeft = 0;
-
-            slide.addEventListener('touchstart', (e) => {
-                isScrolling = true;
-                startX = e.touches[0].pageX - slide.offsetLeft;
-                scrollLeft = slide.scrollLeft;
-            });
-
-            slide.addEventListener('touchmove', (e) => {
-                if (!isScrolling) return;
-                e.preventDefault();
-                const x = e.touches[0].pageX - slide.offsetLeft;
-                const walk = (x - startX) * 2; // Scroll speed
-                slide.scrollLeft = scrollLeft - walk;
-            });
-
-            slide.addEventListener('touchend', () => {
-                isScrolling = false;
-            });
+        bookCards.forEach(container => {
+            // Ensure the container allows native scrolling
+            container.style.overflowX = 'auto';
+            container.style.webkitOverflowScrolling = 'touch';
         });
     }
 
     /**
-     * Add touch gesture enhancements
+     * Add touch gesture enhancements - disabled to prevent interference with scrolling
      */
     function enableTouchGestures() {
-        // Add swipe detection for better UX
-        const sections = document.querySelectorAll('.section');
-        
-        sections.forEach(section => {
-            let touchStartY = 0;
-            let touchEndY = 0;
-
-            section.addEventListener('touchstart', (e) => {
-                touchStartY = e.changedTouches[0].screenY;
-            });
-
-            section.addEventListener('touchend', (e) => {
-                touchEndY = e.changedTouches[0].screenY;
-                handleSwipe(section);
-            });
-
-            function handleSwipe(element) {
-                const swipeThreshold = 50;
-                const diff = touchStartY - touchEndY;
-
-                if (Math.abs(diff) > swipeThreshold) {
-                    // Add subtle feedback
-                    element.style.transition = 'transform 0.2s';
-                    element.style.transform = diff > 0 ? 'translateY(-5px)' : 'translateY(5px)';
-                    
-                    setTimeout(() => {
-                        element.style.transform = '';
-                    }, 200);
-                }
-            }
-        });
+        // Disabled - let native scrolling handle everything
+        // Custom touch handlers were interfering with horizontal scroll
     }
 
     /**
@@ -108,12 +64,10 @@
         const bookCards = document.querySelectorAll('.book-cards');
         
         bookCards.forEach(container => {
-            const slide = container.querySelector('.book-card-slide');
-            if (!slide) return;
-
+            // Check scroll on the container itself, not the slide
             function checkScroll() {
-                const isScrollable = slide.scrollWidth > slide.clientWidth;
-                const isAtEnd = slide.scrollLeft + slide.clientWidth >= slide.scrollWidth - 10;
+                const isScrollable = container.scrollWidth > container.clientWidth;
+                const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
                 
                 if (isScrollable && !isAtEnd) {
                     container.classList.add('scrollable');
@@ -122,7 +76,7 @@
                 }
             }
 
-            slide.addEventListener('scroll', checkScroll);
+            container.addEventListener('scroll', checkScroll, { passive: true });
             checkScroll(); // Initial check
         });
     }
@@ -155,18 +109,24 @@
     }
 
     /**
-     * Prevent zoom on double tap (iOS)
+     * Prevent zoom on double tap (iOS) - but only on non-scrollable elements
      */
     function preventDoubleTapZoom() {
         let lastTouchEnd = 0;
         
         document.addEventListener('touchend', (e) => {
+            // Don't prevent default on scrollable containers or their children
+            const isScrollable = e.target.closest('.book-cards, .book-card-slide, .book-card, .bk-card');
+            if (isScrollable) {
+                return; // Let scrolling work normally
+            }
+            
             const now = Date.now();
             if (now - lastTouchEnd <= 300) {
                 e.preventDefault();
             }
             lastTouchEnd = now;
-        }, false);
+        }, { passive: false });
     }
 
     // Handle orientation change
