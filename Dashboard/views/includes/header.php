@@ -1,11 +1,16 @@
 <?php
-// Start session before any output
 if (session_status() === PHP_SESSION_NONE) {
     $cookieDomain = ".sabooksonline.co.za";
     session_set_cookie_params(0, '/', $cookieDomain);
     session_start();
 }
+
+if (empty($_SESSION['ADMIN_USERKEY'])) {
+    header("Location: /login");
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
