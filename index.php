@@ -774,6 +774,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Admin/Helpers/process_order.php";
     });
 
+    // =================== Admin Shipping ===================
+    $r->addRoute('GET', '/admin/shipping/collection-addresses', function () {
+        require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/shipping/collection-addresses/process', function () {
+        require  "Admin/Helpers/processCollectionAddress.php";
+    });
+
     $r->addRoute('GET', '/401', function () {
         require  "Application/views/401.php";
     });

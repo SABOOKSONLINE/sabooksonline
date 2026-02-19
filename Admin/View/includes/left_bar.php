@@ -7,6 +7,10 @@ $books_active = (
     $current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/' ||
     $current_path == '/admin/purchases' || $current_path == '/admin/purchases/'
 );
+
+$shipping_active = (
+    strpos($current_path, '/admin/shipping') === 0
+);
 ?>
 
 <div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
@@ -75,6 +79,25 @@ $books_active = (
                                     </a>
                                     <a href="/admin/purchases" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/purchases' || $current_path == '/admin/purchases/') ? 'active' : ''; ?>">
                                         <i class="fas fa-shopping-cart me-2"></i>Book Purchases
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping & Collection Dropdown -->
+                        <div class="nav-item">
+                            <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between <?php echo $shipping_active ? 'active' : ''; ?>"
+                                href="#shippingDropdown"
+                                data-bs-toggle="collapse"
+                                aria-expanded="<?php echo $shipping_active ? 'true' : 'false'; ?>"
+                                aria-controls="shippingDropdown">
+                                <span><i class="fas fa-truck me-2"></i>Shipping</span>
+                                <i class="fas fa-chevron-down small transition-icon"></i>
+                            </a>
+                            <div class="collapse <?php echo $shipping_active ? 'show' : ''; ?>" id="shippingDropdown">
+                                <div class="nav flex-column ms-2 mt-1 gap-1">
+                                    <a href="/admin/shipping/collection-addresses" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/admin/shipping/collection-addresses') === 0) ? 'active' : ''; ?>">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Collection Addresses
                                     </a>
                                 </div>
                             </div>
