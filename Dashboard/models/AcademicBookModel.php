@@ -137,29 +137,50 @@ class AcademicBookModel
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
 
+        // Extract values to variables for mysqli_stmt_bind_param (requires variables by reference)
+        $title = $data['title'];
+        $author = $data['author'];
+        $editor = $data['editor'];
+        $description = $data['description'];
+        $subject = $data['subject'];
+        $level = $data['level'];
+        $language = $data['language'];
+        $edition = $data['edition'];
+        $pages = $data['pages'];
+        $isbn = $data['isbn'];
+        $publish_date = $data['publish_date'];
+        $cover_image_path = $data['cover_image_path'];
+        $ebook_price = $data['ebook_price'];
+        $physical_book_price = $data['physical_book_price'];
+        $link = $data['link'];
+        $approved = $data['approved'] ?? 0;
+        $aligned = $data['aligned'] ?? 0;
+        $status = $data['status'] ?? '';
+        $id = $data['id'];
+        
         mysqli_stmt_bind_param(
             $stmt,
             "sssssssssssssddsiiisi",
-            $data['title'],
-            $data['author'],
-            $data['editor'],
-            $data['description'],
-            $data['subject'],
-            $data['level'],
-            $data['language'],
-            $data['edition'],
-            $data['pages'],
-            $data['isbn'],
-            $data['publish_date'],
-            $data['cover_image_path'],
+            $title,
+            $author,
+            $editor,
+            $description,
+            $subject,
+            $level,
+            $language,
+            $edition,
+            $pages,
+            $isbn,
+            $publish_date,
+            $cover_image_path,
             $pdf_path,
-            $data['ebook_price'],
-            $data['physical_book_price'],
-            $data['link'],
-            $data['approved'] ?? 0,
-            $data['aligned'] ?? 0,
-            $data['status'] ?? '',
-            $data['id']
+            $ebook_price,
+            $physical_book_price,
+            $link,
+            $approved,
+            $aligned,
+            $status,
+            $id
         );
 
         if (!mysqli_stmt_execute($stmt)) {
