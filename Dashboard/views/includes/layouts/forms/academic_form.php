@@ -313,7 +313,17 @@ $languages = [
         publishBookButton.disabled = false;
     }
 
+    // Check if this is an update (public_key exists)
+    const isUpdate = <?php echo $public_key ? 'true' : 'false'; ?>;
+
     const validateForm = () => {
+        // If updating, always enable the button (can save without PDF)
+        if (isUpdate) {
+            enableSubmitButton();
+            return;
+        }
+
+        // For new books, validate required fields and price
         let allRequiredFilled = true;
         fields.forEach(field => {
             if (!field.value.trim()) allRequiredFilled = false;
@@ -327,6 +337,9 @@ $languages = [
             disableSubmitButton();
         }
     };
+
+    // Initial validation
+    validateForm();
 
     fields.forEach(field => field.addEventListener("input", validateForm));
     ebookPrice.addEventListener("input", validateForm);
