@@ -159,6 +159,9 @@ class AcademicBookModel
         $status = $data['status'] ?? '';
         $id = $data['id'];
         
+        // Type string: 20 parameters (19 SET values + 1 WHERE id)
+        // s=string, d=double, i=integer
+        // Order: title(s), author(s), editor(s), description(s), subject(s), level(s), language(s), edition(s), pages(s), ISBN(s), publish_date(s), cover_image_path(s), pdf_path(s), ebook_price(d), physical_book_price(d), link(s), approved(i), aligned(i), status(s), id(i)
         mysqli_stmt_bind_param(
             $stmt,
             "sssssssssssssddsiiisi",
