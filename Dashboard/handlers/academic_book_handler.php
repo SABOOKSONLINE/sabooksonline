@@ -1,4 +1,5 @@
 <?php
+// Updated: Academic book handler now allows updates without PDF
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
