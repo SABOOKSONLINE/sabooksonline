@@ -1,10 +1,21 @@
 <?php
 $current_path = $_SERVER['REQUEST_URI'];
+
+$books_active = (
+    $current_path == '/admin/books' || $current_path == '/admin/books/' ||
+    $current_path == '/admin/publishers/books' || $current_path == '/admin/publishers/books/' ||
+    $current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/' ||
+    $current_path == '/admin/purchases' || $current_path == '/admin/purchases/'
+);
+
+$shipping_active = (
+    strpos($current_path, '/admin/shipping') === 0
+);
 ?>
 
 <div class="col-lg-3 col-xl-2 position-fixed dash-sidebar p-0 bg-white">
     <div class="dashboard__sidebar d-none d-lg-flex flex-column hv-100 pe-3 ps-3 pb-3" id="dashboardSidebar">
-        <div class=" mb-auto">
+        <div class="mb-auto">
             <p class="text-muted py-3 ps-2 small fw-bold border-bottom">
                 <i class="fas fa-tachometer-alt me-1"></i> Dashboard
             </p>
@@ -29,9 +40,6 @@ $current_path = $_SERVER['REQUEST_URI'];
                         <a href="/admin/pages/home" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/pages/home') ? 'active' : ''; ?>">
                             <i class="fas fa-home me-2"></i>Home Page
                         </a>
-                        <a href="/admin/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books' || $current_path == '/admin/books/') ? 'active' : ''; ?>">
-                            <i class="fas fa-book me-2"></i>Books
-                        </a>
                     </div>
                 </div>
 
@@ -47,18 +55,54 @@ $current_path = $_SERVER['REQUEST_URI'];
                         <a href="/admin/orders" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/orders' || $current_path == '/admin/orders/') ? 'active' : ''; ?>">
                             <i class="fa-solid fa-bag-shopping me-2"></i>Orders
                         </a>
-                        <a href="/admin/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books' || $current_path == '/admin/books/') ? 'active' : ''; ?>">
-                            <i class="fas fa-list me-2"></i>All Books
-                        </a>
-                        <a href="/admin/publishers/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/publishers/books' || $current_path == '/admin/publishers/books/') ? 'active' : ''; ?>">
-                            <i class="fas fa-book me-2"></i>Booksite Books
-                        </a>
-                        <a href="/admin/books/upload-management" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/') ? 'active' : ''; ?>">
-                            <i class="fas fa-cog me-2"></i>Upload Management
-                        </a>
-                        <a href="/admin/purchases" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/purchases' || $current_path == '/admin/purchases/') ? 'active' : ''; ?>">
-                            <i class="fas fa-book me-2"></i>Book Purchases
-                        </a>
+
+                        <!-- Books Dropdown -->
+                        <div class="nav-item">
+                            <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between <?php echo $books_active ? 'active' : ''; ?>"
+                                href="#booksDropdown"
+                                data-bs-toggle="collapse"
+                                aria-expanded="<?php echo $books_active ? 'true' : 'false'; ?>"
+                                aria-controls="booksDropdown">
+                                <span><i class="fas fa-book me-2"></i>Books</span>
+                                <i class="fas fa-chevron-down small transition-icon"></i>
+                            </a>
+                            <div class="collapse <?php echo $books_active ? 'show' : ''; ?>" id="booksDropdown">
+                                <div class="nav flex-column ms-2 mt-1 gap-1">
+                                    <a href="/admin/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books' || $current_path == '/admin/books/') ? 'active' : ''; ?>">
+                                        <i class="fas fa-list me-2"></i>All Books
+                                    </a>
+                                    <a href="/admin/publishers/books" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/publishers/books' || $current_path == '/admin/publishers/books/') ? 'active' : ''; ?>">
+                                        <i class="fas fa-book me-2"></i>Booksite Books
+                                    </a>
+                                    <a href="/admin/books/upload-management" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/books/upload-management' || $current_path == '/admin/books/upload-management/') ? 'active' : ''; ?>">
+                                        <i class="fas fa-cog me-2"></i>Upload Management
+                                    </a>
+                                    <a href="/admin/purchases" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo ($current_path == '/admin/purchases' || $current_path == '/admin/purchases/') ? 'active' : ''; ?>">
+                                        <i class="fas fa-shopping-cart me-2"></i>Book Purchases
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping & Collection Dropdown -->
+                        <div class="nav-item">
+                            <a class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between <?php echo $shipping_active ? 'active' : ''; ?>"
+                                href="#shippingDropdown"
+                                data-bs-toggle="collapse"
+                                aria-expanded="<?php echo $shipping_active ? 'true' : 'false'; ?>"
+                                aria-controls="shippingDropdown">
+                                <span><i class="fas fa-truck me-2"></i>Shipping</span>
+                                <i class="fas fa-chevron-down small transition-icon"></i>
+                            </a>
+                            <div class="collapse <?php echo $shipping_active ? 'show' : ''; ?>" id="shippingDropdown">
+                                <div class="nav flex-column ms-2 mt-1 gap-1">
+                                    <a href="/admin/shipping/collection-addresses" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/admin/shipping/collection-addresses') === 0) ? 'active' : ''; ?>">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Collection Addresses
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

@@ -17,9 +17,6 @@ if (isset($userKey)) {
     } else {
         $profile = "/public/images/user-3296.png";
     }
-} else {
-    header("Location: /login");
-    exit;
 }
 
 $current_path = $_SERVER['REQUEST_URI'];
