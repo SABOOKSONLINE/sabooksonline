@@ -161,8 +161,8 @@ $languages = [
 
         <!-- Book Subject -->
         <div class="col-md-6">
-            <label class="form-label">Book Subject <span class="text-danger">*</span></label>
-            <select name="subject" class="form-select" required>
+            <label class="form-label">Book Subject</label>
+            <select name="subject" class="form-select">
                 <option value="">Choose a Subject</option>
                 <?php foreach ($subjects as $sub): ?>
                     <?php if ($sub === $subject): ?>
@@ -176,8 +176,8 @@ $languages = [
 
         <!-- Book Academic Level -->
         <div class="col-md-6">
-            <label class="form-label">Academic Level <span class="text-danger">*</span></label>
-            <select name="level" class="form-select" required>
+            <label class="form-label">Academic Level</label>
+            <select name="level" class="form-select">
                 <option value="">Choose a Level</option>
                 <?php foreach ($academicLevel as $lvl): ?>
                     <option value="<?= clean($lvl) ?>" <?= ($lvl === $level) ? 'selected' : '' ?>>
@@ -189,8 +189,8 @@ $languages = [
 
         <!-- Book Language -->
         <div class="col-md-6">
-            <label class="form-label">Book Language <span class="text-danger">*</span></label>
-            <select name="language" class="form-select" required>
+            <label class="form-label">Book Language</label>
+            <select name="language" class="form-select">
                 <option value="">Choose a Language</option>
                 <?php foreach ($languages as $lang): ?>
                     <option value="<?= clean($lang) ?>" <?= ($lang === $language) ? 'selected' : '' ?>>
@@ -314,29 +314,9 @@ $languages = [
         publishBookButton.disabled = false;
     }
 
-    // Check if this is an update (public_key exists)
-    const isUpdate = <?php echo $public_key ? 'true' : 'false'; ?>;
-
     const validateForm = () => {
-        // If updating, always enable the button (can save without PDF)
-        if (isUpdate) {
-            enableSubmitButton();
-            return;
-        }
-
-        // For new books, validate required fields and price
-        let allRequiredFilled = true;
-        fields.forEach(field => {
-            if (!field.value.trim()) allRequiredFilled = false;
-        });
-
-        const priceFilled = ebookPrice.value.trim() || physicalPrice.value.trim();
-
-        if (allRequiredFilled && priceFilled) {
-            enableSubmitButton();
-        } else {
-            disableSubmitButton();
-        }
+        // Always enable the button - allow saving without selecting all options
+        enableSubmitButton();
     };
 
     // Initial validation
@@ -345,6 +325,4 @@ $languages = [
     fields.forEach(field => field.addEventListener("input", validateForm));
     ebookPrice.addEventListener("input", validateForm);
     physicalPrice.addEventListener("input", validateForm);
-
-    validateForm();
 </script>
