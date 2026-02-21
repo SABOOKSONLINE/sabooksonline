@@ -92,7 +92,7 @@ $checkout_payload = [
 
 // --- cURL request to Courier Guy rates ---
 $apiUrl = "https://api.portal.thecourierguy.co.za/v2/rates";
-$apiKey = "bb8b36e0b0eb41aa91c292674aeaf503"; // <-- keep secret
+$apiKey = getenv('COURIER_GUY_API_KEY') ?: '';
 
 $ch = curl_init($apiUrl);
 curl_setopt($ch, CURLOPT_POST, true);

@@ -32,6 +32,34 @@ jobs:
             - name: Install LFTP
               run: sudo apt-get update && sudo apt-get install -y lftp
 
+            - name: Create .env from GitHub Secrets
+              env:
+                  DB_HOST: ${{ secrets.DB_HOST }}
+                  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+                  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                  DB_NAME: ${{ secrets.DB_NAME }}
+                  SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+                  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+                  COURIER_GUY_API_KEY: ${{ secrets.COURIER_GUY_API_KEY }}
+                  YOCO_SECRET_KEY: ${{ secrets.YOCO_SECRET_KEY }}
+                  PAYFAST_MERCHANT_ID: ${{ secrets.PAYFAST_MERCHANT_ID }}
+                  PAYFAST_MERCHANT_KEY: ${{ secrets.PAYFAST_MERCHANT_KEY }}
+                  PAYFAST_PASSPHRASE: ${{ secrets.PAYFAST_PASSPHRASE }}
+                  PAYFAST_SANDBOX_MODE: ${{ secrets.PAYFAST_SANDBOX_MODE }}
+                  FLUTTERWAVE_WEBHOOK_HASH: ${{ secrets.FLUTTERWAVE_WEBHOOK_HASH }}
+                  MOBILE_API_MASTER_KEY: ${{ secrets.MOBILE_API_MASTER_KEY }}
+              run: |
+                  printf 'DB_HOST=%s\nDB_USERNAME=%s\nDB_PASSWORD=%s\nDB_NAME=%s\n' \
+                    "$DB_HOST" "$DB_USERNAME" "$DB_PASSWORD" "$DB_NAME" > .env
+                  printf 'SMTP_USERNAME=%s\nSMTP_PASSWORD=%s\n' \
+                    "$SMTP_USERNAME" "$SMTP_PASSWORD" >> .env
+                  printf 'COURIER_GUY_API_KEY=%s\nYOCO_SECRET_KEY=%s\n' \
+                    "$COURIER_GUY_API_KEY" "$YOCO_SECRET_KEY" >> .env
+                  printf 'PAYFAST_MERCHANT_ID=%s\nPAYFAST_MERCHANT_KEY=%s\nPAYFAST_PASSPHRASE=%s\nPAYFAST_SANDBOX_MODE=%s\n' \
+                    "$PAYFAST_MERCHANT_ID" "$PAYFAST_MERCHANT_KEY" "$PAYFAST_PASSPHRASE" "$PAYFAST_SANDBOX_MODE" >> .env
+                  printf 'FLUTTERWAVE_WEBHOOK_HASH=%s\nMOBILE_API_MASTER_KEY=%s\n' \
+                    "$FLUTTERWAVE_WEBHOOK_HASH" "$MOBILE_API_MASTER_KEY" >> .env
+
             - name: Deploy via FTP (only changed files, safe)
               env:
                   FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -56,7 +84,6 @@ jobs:
                           --exclude-glob composer.* \
                           --exclude-glob README.md \
                           --exclude-glob .gitignore \
-                          --exclude-glob .env \
                           ./ $REMOTE_DIR;
                     bye
                   "

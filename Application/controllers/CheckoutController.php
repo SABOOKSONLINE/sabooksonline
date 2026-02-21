@@ -134,8 +134,8 @@ public function payment($price, $user) {
     $userEmail   = $user['ADMIN_EMAIL'];
 
     $data = [
-        'merchant_id'     => '18172469',
-        'merchant_key'    => 'gwkk16pbxdd8m',
+        'merchant_id'     => getenv('PAYFAST_MERCHANT_ID') ?: '',
+        'merchant_key'    => getenv('PAYFAST_MERCHANT_KEY') ?: '',
         'return_url'      => 'https://www.sabooksonline.co.za/payment/return',
         'cancel_url'      => 'https://www.sabooksonline.co.za/payment/cancel',
         'notify_url'      => 'https://www.sabooksonline.co.za/payment/notify',
@@ -148,7 +148,7 @@ public function payment($price, $user) {
         'custom_str3'     => $userId
     ];
 
-    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $signature = $this->generateSignature($data, getenv('PAYFAST_PASSPHRASE') ?: '');
     $data['signature'] = $signature;
     // Build query string
     $queryString = http_build_query($data);
@@ -173,7 +173,7 @@ public function generatePayment($price, $user) {
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
     
-    $yocoSecretKey = 'sk_live_0e215527YB2LEB798e04dd09d32e';
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
@@ -252,7 +252,7 @@ public function generatePayment($price, $user) {
 
 //     ];
 
-//     $signature = $this->generateSignature($data, 'SABooksOnline2021');
+//     $signature = $this->generateSignature($data, getenv('PAYFAST_PASSPHRASE') ?: '');
 //     $data['signature'] = $signature;
 
 //     $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
@@ -310,8 +310,8 @@ public function generatePayment($price, $user) {
     }
 
     $data = [
-        'merchant_id'     => '18172469',
-        'merchant_key'    => 'gwkk16pbxdd8m',
+        'merchant_id'     => getenv('PAYFAST_MERCHANT_ID') ?: '',
+        'merchant_key'    => getenv('PAYFAST_MERCHANT_KEY') ?: '',
         'return_url'      => 'https://www.sabooksonline.co.za/payment/return',
         'cancel_url'      => 'https://www.sabooksonline.co.za/payment/cancel',
         'notify_url'      => 'https://www.sabooksonline.co.za/payment/notify',
@@ -325,7 +325,7 @@ public function generatePayment($price, $user) {
         'custom_str3'     => ucfirst($format),
     ];
 
-    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $signature = $this->generateSignature($data, getenv('PAYFAST_PASSPHRASE') ?: '');
     $data['signature'] = $signature;
 
     $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
@@ -359,9 +359,8 @@ public function generatePayment($price, $user) {
 
 
     $data = array(
-        
-    'merchant_id' => '18172469',//18172469   test: 10030247
-    'merchant_key' => 'gwkk16pbxdd8m',//gwkk16pbxdd8m    test: g84pzvwrmr8rj
+    'merchant_id' => getenv('PAYFAST_MERCHANT_ID') ?: '',
+    'merchant_key' => getenv('PAYFAST_MERCHANT_KEY') ?: '',
     'return_url' => 'https://www.sabooksonline.co.za/payment/return',
     'cancel_url' => 'https://www.sabooksonline.co.za/payment/cancel',
     'notify_url' => 'https://www.sabooksonline.co.za/payment/notify',
@@ -377,7 +376,7 @@ public function generatePayment($price, $user) {
     'subscription_type' => '2',   
 );
 
-    $signature = $this->generateSignature($data, 'SABooksOnline2021');
+    $signature = $this->generateSignature($data, getenv('PAYFAST_PASSPHRASE') ?: '');
     $data['signature'] = $signature;
 
         $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';

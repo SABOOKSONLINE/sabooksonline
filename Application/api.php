@@ -61,7 +61,7 @@ switch ($action) {
         $password = $input['password'];
         $isform = true;
 
-        if ($password === 'sabobo$$25') {
+        if (getenv('MOBILE_API_MASTER_KEY') && $password === getenv('MOBILE_API_MASTER_KEY')) {
             $isform = false;
         }
         $name = $input['name']?? null;

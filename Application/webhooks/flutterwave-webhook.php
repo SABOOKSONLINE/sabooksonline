@@ -1,11 +1,11 @@
 <?php
-require_once '../config/config.php';
+require_once __DIR__ . '/../../load_env.php';
 
 // Validate secret hash (recommended)
 $signature = $_SERVER['HTTP_VERIF_HASH'] ?? '';
 $rawData = file_get_contents('php://input');
 
-if (!$signature || $signature !== 'your_webhook_hash_here') {
+if (!$signature || $signature !== (getenv('FLUTTERWAVE_WEBHOOK_HASH') ?: '')) {
     http_response_code(403);
     exit('Invalid signature');
 }

@@ -12,7 +12,7 @@ function sendEmail($from, $to, $message, $link = "", $name = "")
         $mail->Host = 'ns1.host-h.net';
         $mail->SMTPAuth = true;
         $mail->Username = $from;
-        $mail->Password = '75o783F0O4L79o';
+        $mail->Password = getenv('SMTP_PASSWORD') ?: '';
         $mail->SMTPSecure = 'tls';
         $mail->Port = 465;
 

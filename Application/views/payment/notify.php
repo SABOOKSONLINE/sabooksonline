@@ -3,9 +3,10 @@
 header('HTTP/1.0 200 OK');
 flush();
 
-define('SANDBOX_MODE', false);
+require_once __DIR__ . '/../../load_env.php';
+define('SANDBOX_MODE', filter_var(getenv('PAYFAST_SANDBOX_MODE') ?: 'false', FILTER_VALIDATE_BOOLEAN));
 $pfHost = SANDBOX_MODE ? 'sandbox.payfast.co.za' : 'www.payfast.co.za';
-$pfPassphrase = 'SABooksOnline2021';
+$pfPassphrase = getenv('PAYFAST_PASSPHRASE') ?: '';
 
 
 // Get posted PayFast data

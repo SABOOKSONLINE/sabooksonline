@@ -9,11 +9,11 @@ class NotificationModel
         if ($connection) {
             $this->conn = $connection;
         } else {
-            // Create connection directly
-            $serverName = "sql58.jnb1.host-h.net";
-            $username = "sabooksonline";
-            $password = "slTFvaj07dNY6Ke";
-            $primaryDb = "sabookso_db";
+            require_once __DIR__ . '/../../load_env.php';
+            $serverName = getenv('DB_HOST') ?: 'localhost';
+            $username   = getenv('DB_USERNAME') ?: 'root';
+            $password   = getenv('DB_PASSWORD') ?: '';
+            $primaryDb  = getenv('DB_NAME') ?: 'sabookso_db';
             
             mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
             

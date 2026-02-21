@@ -13,8 +13,8 @@ function sendEmail($to, $subject, $message)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'opensource@sabooksonline.co.za';
-        $mail->Password = 'deddipdvujyayzxa';
+        $mail->Username = getenv('SMTP_USERNAME') ?: 'opensource@sabooksonline.co.za';
+        $mail->Password = getenv('SMTP_PASSWORD') ?: '';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 

@@ -12,8 +12,8 @@ function sendEmail($to, $link, $message)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'opensource@sabooksonline.co.za'; // owner account
-        $mail->Password = 'deddipdvujyayzxa'; // app password
+        $mail->Username = getenv('SMTP_USERNAME') ?: 'opensource@sabooksonline.co.za';
+        $mail->Password = getenv('SMTP_PASSWORD') ?: '';
 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // port 587 requires STARTTLS
         $mail->Port = 587;
