@@ -180,16 +180,12 @@ public function generatePayment($price, $user) {
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
     
-<<<<<<< HEAD
-    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
-=======
     if (empty($userId) || empty($userEmail)) {
         error_log("Missing user data for Yoco payment - User ID: $userId, Email: $userEmail");
         die("Invalid user data. Please log in again.");
     }
     
-    $yocoSecretKey = 'sk_live_0e215527YB2LEB798e04dd09d32e';
->>>>>>> ba1e2a9f (Fix Yoco payment SSL for localhost, add order tracking, fix book editing, and improve checkout flow)
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: 'sk_live_0e215527YB2LEB798e04dd09d32e';
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
