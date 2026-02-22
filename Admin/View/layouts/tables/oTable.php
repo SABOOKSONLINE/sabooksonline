@@ -42,6 +42,7 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                     <th>#</th>
                     <th>Order Number</th>
                     <th>User ID</th>
+                    <th>Items</th>
                     <th>Total Amount</th>
                     <th>Shipping Fee</th>
                     <th>Payment Method</th>
@@ -53,11 +54,45 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orders as $order): ?>
+                <?php foreach ($orders as $order): 
+                    $orderId = $order['id'];
+                    $items = $itemsByOrder[$orderId] ?? [];
+                    
+                    // Count book types in this order
+                    $hasAcademic = false;
+                    $hasRegular = false;
+                    $itemCount = count($items);
+                    
+                    foreach ($items as $item) {
+                        $bookType = $item['book_type'] ?? 'regular';
+                        if ($bookType === 'academic') {
+                            $hasAcademic = true;
+                        } else {
+                            $hasRegular = true;
+                        }
+                    }
+                ?>
                     <tr>
                         <td><?= $order['id'] ?></td>
                         <td><?= $order['order_number'] ?></td>
                         <td><?= $order['user_id'] ?></td>
+                        <td>
+                            <?php if ($itemCount > 0): ?>
+                                <div class="d-flex flex-column gap-1">
+                                    <small class="text-muted"><?= $itemCount ?> item<?= $itemCount > 1 ? 's' : '' ?></small>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <?php if ($hasAcademic): ?>
+                                            <span class="badge bg-info" style="font-size: 0.7rem;">Academic</span>
+                                        <?php endif; ?>
+                                        <?php if ($hasRegular): ?>
+                                            <span class="badge bg-secondary" style="font-size: 0.7rem;">Regular</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-muted">No items</span>
+                            <?php endif; ?>
+                        </td>
                         <td>R<?= number_format($order['total_amount'], 2) ?></td>
                         <td>R<?= number_format($order['shipping_fee'], 2) ?></td>
                         <td><?= ucfirst($order['payment_method']) ?></td>
@@ -209,12 +244,15 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                 let itemsHTML = '';
                 if (orderData.length > 0) {
                     itemsHTML = '<h6>Items:</h6><table class="table table-sm table-bordered">';
-                    itemsHTML += '<thead><tr><th>Book ID</th><th>Title</th><th>Authors</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+                    itemsHTML += '<thead><tr><th>Type</th><th>Book ID</th><th>Title</th><th>Authors</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
                     orderData.forEach(it => {
+                        const bookType = it.book_type || 'regular';
+                        const typeLabel = bookType === 'academic' ? '<span class="badge bg-info">Academic</span>' : '<span class="badge bg-secondary">Regular</span>';
                         itemsHTML += `<tr>
+                            <td>${typeLabel}</td>
                             <td>${it.book_id}</td>
-                            <td>${it.TITLE}</td>
-                            <td>${it.AUTHORS}</td>
+                            <td>${it.TITLE || 'N/A'}</td>
+                            <td>${it.AUTHORS || 'N/A'}</td>
                             <td>${it.quantity}</td>
                             <td>R${parseFloat(it.unit_price).toFixed(2)}</td>
                             <td>R${parseFloat(it.total_price).toFixed(2)}</td>

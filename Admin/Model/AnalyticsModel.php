@@ -57,6 +57,7 @@ class AnalyticsModel extends Model
 
     public function getDetailedBookPurchases(): array
     {
+        // Try to match regular books first (numeric book_id)
         $sql = "SELECT 
                     bp.id,
                     bp.user_email,
@@ -67,14 +68,20 @@ class AnalyticsModel extends Model
                     bp.amount,
                     bp.payment_status,
                     bp.payment_date,
-                    p.title AS book_title,
-                    p.cover AS book_cover,
-                    p.publisher AS book_publisher,
-                    p.contentid AS book_contentid,
-                    p.ebookprice AS ebook_price,
-                    p.abookprice AS audiobook_price
+                    COALESCE(p.title, ab.title) AS book_title,
+                    COALESCE(p.cover, ab.cover_image_path) AS book_cover,
+                    COALESCE(p.publisher, CAST(ab.publisher_id AS CHAR)) AS book_publisher,
+                    COALESCE(p.contentid, ab.public_key) AS book_contentid,
+                    COALESCE(p.ebookprice, ab.ebook_price) AS ebook_price,
+                    COALESCE(p.abookprice, 0) AS audiobook_price,
+                    CASE 
+                        WHEN p.id IS NOT NULL THEN 'regular'
+                        WHEN ab.public_key IS NOT NULL THEN 'academic'
+                        ELSE 'unknown'
+                    END AS book_type
                 FROM book_purchases bp
-                LEFT JOIN posts p ON bp.book_id = p.id
+                LEFT JOIN posts p ON bp.book_id REGEXP '^[0-9]+$' AND CAST(bp.book_id AS UNSIGNED) = p.id
+                LEFT JOIN academic_books ab ON bp.book_id NOT REGEXP '^[0-9]+$' AND bp.book_id = ab.public_key
                 ORDER BY bp.payment_date DESC";
         return $this->fetchAll($sql);
     }

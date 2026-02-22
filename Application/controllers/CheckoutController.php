@@ -169,18 +169,34 @@ public function generatePayment($price, $user) {
         die("Invalid book or user data.");
     }
     
+    // Ensure price is a valid float
+    $price = (float)$price;
+    if ($price <= 0 || !is_numeric($price)) {
+        error_log("Invalid price for Yoco payment: $price");
+        die("Invalid payment amount. Please contact support.");
+    }
+    
     $userId = $user['ADMIN_ID'] ?? '';
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
     
+<<<<<<< HEAD
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
+=======
+    if (empty($userId) || empty($userEmail)) {
+        error_log("Missing user data for Yoco payment - User ID: $userId, Email: $userEmail");
+        die("Invalid user data. Please log in again.");
+    }
+    
+    $yocoSecretKey = 'sk_live_0e215527YB2LEB798e04dd09d32e';
+>>>>>>> ba1e2a9f (Fix Yoco payment SSL for localhost, add order tracking, fix book editing, and improve checkout flow)
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
     }
     
     $checkoutData = [
-        'amount' => (int)($price * 100), // Amount in cents
+        'amount' => (int)round($price * 100), // Amount in cents (rounded to avoid precision issues)
         'currency' => 'ZAR',
         'cancelUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
         'successUrl' => 'https://www.sabooksonline.co.za/payment/return',
@@ -204,14 +220,60 @@ public function generatePayment($price, $user) {
         'Content-Type: application/json'
     ]);
     
+    // SSL configuration - disable verification for local development
+    // In production, you should have proper SSL certificates configured
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+               strpos($httpHost, 'localhost') !== false ||
+               strpos($httpHost, '127.0.0.1') !== false ||
+               strpos($httpHost, 'localhost:') !== false ||
+               strpos($httpHost, '127.0.0.1:') !== false;
+    
+    if ($isLocal) {
+        // Disable SSL verification for local development
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        // Additional options for localhost testing
+        curl_setopt($ch, CURLOPT_CAINFO, '');
+        curl_setopt($ch, CURLOPT_CAPATH, '');
+    } else {
+        // Enable SSL verification for production
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    }
+    
+    // Set timeout to prevent hanging requests
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    
+    // Follow redirects
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+    
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
-    curl_close($ch);
+    // curl_close() is deprecated in PHP 8.5+ - handles are automatically closed when out of scope
+    
+    if ($curlError) {
+        error_log("Yoco Payment cURL Error: $curlError");
+        die("Payment initialization failed: Network error. Please try again or contact support.");
+    }
     
     if ($httpCode !== 200 && $httpCode !== 201) {
-        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response");
-        die("Payment initialization failed. Please try again or contact support.");
+        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response, Price: $price, User ID: $userId");
+        $errorMsg = "Payment initialization failed. ";
+        if ($response) {
+            $errorData = json_decode($response, true);
+            if (isset($errorData['message'])) {
+                $errorMsg .= "Error: " . $errorData['message'];
+            } else {
+                $errorMsg .= "HTTP $httpCode";
+            }
+        } else {
+            $errorMsg .= "Please try again or contact support.";
+        }
+        die($errorMsg);
     }
     
     $responseData = json_decode($response, true);
@@ -275,7 +337,11 @@ public function generatePayment($price, $user) {
         die("Invalid book or user data.");
     }
 
+    // For academic books, use public_key; for regular books, use ID
     $bookId = $book['ID'] ?? $book['id'] ?? '';
+    if (isset($book['public_key'])) {
+        $bookId = $book['public_key']; // Academic books use public_key
+    }
     $title = html_entity_decode($book['TITLE'] ?? $book['title'] ?? 'Untitled Book');
 
     $userKey = $user['ADMIN_USERKEY'] ?? '';
@@ -301,7 +367,12 @@ public function generatePayment($price, $user) {
             $price = $book['price'] ?? 0;
             break; 
         case 'hardcopy':
-            $price = $book['price'] ?? 0;
+            // For academic books, use physical_book_price; for regular books, use price
+            if (isset($book['physical_book_price'])) {
+                $price = $book['physical_book_price'] ?? 0;
+            } else {
+                $price = $book['price'] ?? 0;
+            }
             break;   
     }
 
@@ -328,19 +399,8 @@ public function generatePayment($price, $user) {
     $signature = $this->generateSignature($data, getenv('PAYFAST_PASSPHRASE') ?: '');
     $data['signature'] = $signature;
 
-    $htmlForm = '<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="post" style="display:none;">';
-    foreach ($data as $name => $value) {
-        $htmlForm .= '<input name="'.$name.'" type="hidden" value="'.htmlspecialchars($value, ENT_QUOTES).'" />';
-    }
-    $htmlForm .= '</form>';
-
-    // $htmlForm .= '<script>
-    //     document.addEventListener("DOMContentLoaded", function() {
-    //         document.getElementById("payfastForm").submit();
-    //     });
-    // </script>';
-
-    // echo $htmlForm;
+    // Pass variables to the checkout view
+    // The view expects: $book, $user, $format, $data, $price
     include __DIR__ . '/../views/payment/checkout.php';
 
 }

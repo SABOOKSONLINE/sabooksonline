@@ -93,12 +93,13 @@ switch ($action) {
     ]);
         break; 
 
-    // Mobile: POST /api/cart/add  { admin_id, book_id, quantity }
+    // Mobile: POST /api/cart/add  { admin_id, book_id, quantity, book_type }
     case 'addBookMobile':
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $adminId = $input['admin_id'] ?? $input['userID'] ?? $userID ?? null;
         $bookId = $input['book_id'] ?? $input['bookID'] ?? null;
         $qty = $input['quantity'] ?? $input['qty'] ?? 1;
+        $bookType = $input['book_type'] ?? 'regular';
 
         if (!$adminId || !$bookId) {
             http_response_code(400);
@@ -106,7 +107,7 @@ switch ($action) {
             break;
         }
 
-        $ok = $cart->addCartItem((int)$adminId, (int)$bookId, (int)$qty);
+        $ok = $cart->addCartItem((int)$adminId, $bookId, (int)$qty, $bookType);
         echo json_encode(["success" => (bool)$ok]);
         break;
 
@@ -139,16 +140,17 @@ switch ($action) {
         break;
 
     case 'addBook':
-        // Legacy: POST /api/cart/add/{userID}  { bookID, qty }
+        // Legacy: POST /api/cart/add/{userID}  { bookID, qty, book_type }
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $bookID = $input['bookID'] ?? null;
         $qty = $input['qty'] ?? 1;
+        $bookType = $input['book_type'] ?? 'regular';
         if (!$userID || !$bookID) {
             http_response_code(400);
             echo json_encode(["success" => false, "message" => "userID and bookID are required"]);
             break;
         }
-        $ok = $cart->addCartItem((int)$userID, (int)$bookID, (int)$qty);
+        $ok = $cart->addCartItem((int)$userID, $bookID, (int)$qty, $bookType);
         echo json_encode(["success" => (bool)$ok]);
         break;
 

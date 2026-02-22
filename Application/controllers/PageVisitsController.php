@@ -52,7 +52,14 @@ class PageVisitsController
         }
 
         try {
-            $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=country,city,regionName");
+            // Use stream context with timeout to prevent hanging
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 2, // 2 second timeout
+                    'ignore_errors' => true
+                ]
+            ]);
+            $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=country,city,regionName", false, $context);
             if ($response) {
                 $data = json_decode($response, true);
                 if ($data && !isset($data['message'])) {

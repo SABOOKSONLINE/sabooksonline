@@ -41,4 +41,18 @@ class AcademicBookController
             return null;
         }
     }
+
+    public function renderAcademicBooksForHome($limit = 10)
+    {
+        try {
+            $books = $this->academicBookModel->selectBooks(['sort' => 'newest']);
+            $books = array_slice($books, 0, $limit);
+            
+            if ($books) {
+                include __DIR__ . '/../views/books/academicCard.php';
+            }
+        } catch (Exception $e) {
+            error_log("Render academic books for home error: " . $e->getMessage());
+        }
+    }
 }

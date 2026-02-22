@@ -38,25 +38,25 @@ class CartController
         return 0;
     }
 
-    public function addCartItem($userId, $bookId, $qty)
+    public function addCartItem($userId, $bookId, $qty, $bookType = 'regular')
     {
         $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
         if (!$effectiveUserId) return false;
-        return $this->cartModel->addItem((int)$effectiveUserId, (int)$bookId, (int)$qty);
+        return $this->cartModel->addItem((int)$effectiveUserId, $bookId, (int)$qty, $bookType);
     }
 
-    public function removeCartItem($userId, $bookId)
+    public function removeCartItem($userId, $bookId, $bookType = 'regular')
     {
         $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
         if (!$effectiveUserId) return false;
-        return $this->cartModel->removeItem((int)$effectiveUserId, (int)$bookId);
+        return $this->cartModel->removeItem((int)$effectiveUserId, $bookId, $bookType);
     }
 
-    public function updateCartItem($userId, $bookId, $qty)
+    public function updateCartItem($userId, $bookId, $qty, $bookType = 'regular')
     {
         $effectiveUserId = $userId ?: ($_SESSION['ADMIN_ID'] ?? null);
         if (!$effectiveUserId) return false;
-        return $this->cartModel->updateItemCount((int)$effectiveUserId, (int)$bookId, (int)$qty);
+        return $this->cartModel->updateItemCount((int)$effectiveUserId, $bookId, (int)$qty, $bookType);
     }
 
     public function saveDeliveryAddress($userId, array $data)

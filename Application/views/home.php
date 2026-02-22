@@ -6,8 +6,11 @@ require_once __DIR__ . "/../models/BookModel.php";
 require_once __DIR__ . "/../controllers/BookController.php";
 require_once __DIR__ . "/../models/BannerModel.php";
 require_once __DIR__ . "/../controllers/BannerController.php";
+require_once __DIR__ . "/../models/AcademicBookModel.php";
+require_once __DIR__ . "/../controllers/AcademicBookController.php";
 
 $bookController = new BookController($conn);
+$academicBookController = new AcademicBookController($conn);
 
 ?>
 
@@ -63,6 +66,65 @@ $bookController = new BookController($conn);
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <?php renderSectionHeading("Textbooks", "Educational Resources for Learning and Growth.", "Show more", "/academic") ?>
+
+            <div class="row mt-4" id="textbooks">
+                <?php
+                $academicBooks = $academicBookController->getAllBooks(['sort' => 'newest']);
+                $academicBooks = array_slice($academicBooks, 0, 10);
+                foreach ($academicBooks as $book):
+                    $publicKey = html_entity_decode($book['public_key'] ?? '');
+                    $cover = html_entity_decode($book['cover_image_path'] ?? '');
+                    $title = html_entity_decode($book['title'] ?? '');
+                    $author = html_entity_decode($book['author'] ?? '');
+                    $ebookPrice = $book['ebook_price'] ?? 0;
+                    $shortTitle = strlen($title) > 30 ? substr($title, 0, 30) . '...' : $title;
+                ?>
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="bk-card h-100">
+                            <div class="bk-img">
+                                <a href="library/academic/<?= $publicKey ?>">
+                                    <?php if (!empty($cover)): ?>
+                                        <img src="/cms-data/academic/covers/<?= $cover ?>" alt="<?= $title ?>" class="w-100">
+                                    <?php else: ?>
+                                        <div style="width: 100%; height: 100%; min-height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            No Cover
+                                        </div>
+                                    <?php endif; ?>
+                                </a>
+                            </div>
+                            <div class="bk-details">
+                                <div>
+                                    <a href="library/academic/<?= $publicKey ?>" class="text-decoration-none">
+                                        <p class="bk-heading">
+                                            <?= $shortTitle ?>
+                                        </p>
+                                    </a>
+                                    <?php if ($author): ?>
+                                        <p class="bk-text-meta">
+                                            Author: <span class="text-muted"><?= $author ?></span>
+                                        </p>
+                                    <?php endif; ?>
+                                    <?php if ($ebookPrice > 0): ?>
+                                        <p class="bk-text-meta">
+                                            Price: <span class="text-muted">R<?= number_format($ebookPrice, 2) ?></span>
+                                        </p>
+                                    <?php else: ?>
+                                        <p class="bk-text-meta">
+                                            <span class="text-success">FREE</span>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

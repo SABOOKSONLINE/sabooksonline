@@ -100,30 +100,89 @@ class OrdersModel extends Model
             return [];
         }
 
-        return $this->fetchPrepared(
-            "SELECT 
-                oi.*, 
-                b.TITLE, 
-                b.AUTHORS,
-                da.full_name,
-                da.company,
-                da.phone,
-                da.email,
-                da.street_address,
-                da.street_address2,
-                da.delivery_type,
-                da.local_area,
-                da.zone,
-                da.postal_code,
-                da.country
-            FROM order_items oi
-            LEFT JOIN posts b ON oi.book_id = b.ID
-            LEFT JOIN orders o ON oi.order_id = o.id
-            LEFT JOIN delivery_addresses da ON o.delivery_address_id = da.id
-            WHERE oi.order_id = ?",
-            "i",
-            [$orderId]
-        );
+        // Ensure book_type column exists (migration)
+        $this->ensureBookTypeColumn();
+
+        // Check if book_type column exists
+        $hasBookType = $this->columnExists("order_items", "book_type");
+
+        // Build query based on whether book_type exists
+        if ($hasBookType) {
+            return $this->fetchPrepared(
+                "SELECT 
+                    oi.*, 
+                    COALESCE(b.TITLE, ab.title) AS TITLE,
+                    COALESCE(b.AUTHORS, ab.author) AS AUTHORS,
+                    da.full_name,
+                    da.company,
+                    da.phone,
+                    da.email,
+                    da.street_address,
+                    da.street_address2,
+                    da.delivery_type,
+                    da.local_area,
+                    da.zone,
+                    da.postal_code,
+                    da.country,
+                    COALESCE(oi.book_type, 'regular') AS book_type
+                FROM order_items oi
+                LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND (oi.book_type = 'regular' OR oi.book_type IS NULL)
+                LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
+                LEFT JOIN orders o ON oi.order_id = o.id
+                LEFT JOIN delivery_addresses da ON o.delivery_address_id = da.id
+                WHERE oi.order_id = ?",
+                "i",
+                [$orderId]
+            );
+        } else {
+            // Fallback for tables without book_type column (assume all are regular books)
+            return $this->fetchPrepared(
+                "SELECT 
+                    oi.*, 
+                    b.TITLE,
+                    b.AUTHORS,
+                    da.full_name,
+                    da.company,
+                    da.phone,
+                    da.email,
+                    da.street_address,
+                    da.street_address2,
+                    da.delivery_type,
+                    da.local_area,
+                    da.zone,
+                    da.postal_code,
+                    da.country,
+                    'regular' AS book_type
+                FROM order_items oi
+                LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR)
+                LEFT JOIN orders o ON oi.order_id = o.id
+                LEFT JOIN delivery_addresses da ON o.delivery_address_id = da.id
+                WHERE oi.order_id = ?",
+                "i",
+                [$orderId]
+            );
+        }
+    }
+
+    private function columnExists(string $table, string $column): bool
+    {
+        try {
+            $result = $this->conn->query("SHOW COLUMNS FROM `$table` LIKE '$column'");
+            return ($result && $result->num_rows > 0);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    private function ensureBookTypeColumn(): void
+    {
+        if (!$this->columnExists("order_items", "book_type")) {
+            try {
+                $this->conn->query("ALTER TABLE order_items ADD COLUMN book_type ENUM('regular', 'academic') DEFAULT 'regular' AFTER book_id");
+            } catch (Exception $e) {
+                error_log("Failed to add book_type column to order_items: " . $e->getMessage());
+            }
+        }
     }
 
 

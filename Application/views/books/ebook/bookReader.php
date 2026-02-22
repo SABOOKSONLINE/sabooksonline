@@ -1,9 +1,15 @@
 <?php
-require_once __DIR__ . "/../../includes/header.php";
+// Don't include header.php as it has its own DOCTYPE/html tags
+// We'll add necessary meta tags and scripts here
 ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading - <?= htmlspecialchars($content['title'] ?? $content['TITLE'] ?? 'Book') ?></title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
   body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -98,6 +104,30 @@ require_once __DIR__ . "/../../includes/header.php";
     pointer-events: none;
     z-index: 999;
   }
+
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 18px;
+  }
+
+  .error {
+    text-align: center;
+    padding: 60px 20px;
+    color: #dc2626;
+    font-size: 18px;
+    background: #fee;
+    border-radius: 8px;
+    margin: 20px;
+  }
+
+  .error-details {
+    font-size: 14px;
+    color: #666;
+    margin-top: 12px;
+    word-break: break-all;
+  }
 </style>
 </head>
 <body>
@@ -120,7 +150,15 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 <script>
-  const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";
+  // Ensure pdfUrl is set
+  <?php if (!isset($pdfUrl) || empty($pdfUrl)): ?>
+    console.error('PDF URL is not set!');
+    document.getElementById("pdf-pages").innerHTML = '<div class="error">Error: PDF URL is missing. Please contact support.</div>';
+  <?php else: ?>
+    const url = "<?= htmlspecialchars($pdfUrl, ENT_QUOTES, 'UTF-8') ?>";
+    console.log('PDF URL:', url);
+  <?php endif; ?>
+  
   let pdfDoc = null,
       zoom = 1.5,
       chapterTitles = [];
@@ -232,12 +270,29 @@ require_once __DIR__ . "/../../includes/header.php";
     });
   }
 
-  // Load the PDF
-  pdfjsLib.getDocument(url).promise.then(pdf => {
+  <?php if (isset($pdfUrl) && !empty($pdfUrl)): ?>
+  // Show loading state
+  pdfPagesContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading PDF...</div>';
+
+  // Load the PDF with error handling
+  pdfjsLib.getDocument({
+    url: url,
+    withCredentials: false,
+    httpHeaders: {}
+  }).promise.then(pdf => {
     pdfDoc = pdf;
+    console.log('PDF loaded successfully. Total pages:', pdfDoc.numPages);
     observePages();
     extractTextFromPDF();
+  }).catch(error => {
+    console.error('Error loading PDF:', error);
+    let errorMsg = 'Error loading PDF. ';
+    if (error.message) {
+      errorMsg += error.message;
+    }
+    pdfPagesContainer.innerHTML = '<div class="error">' + errorMsg + '<div class="error-details">URL: ' + url + '</div><div class="error-details">If the PDF exists, this might be a CORS issue. Please contact support.</div></div>';
   });
+  <?php endif; ?>
 </script>
 
 </body>

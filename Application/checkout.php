@@ -30,7 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     elseif ($hardcopy) {
-        $checkout->purchase($hardcopy,$userId);
+        // Convert price to float and validate
+        $price = (float)$hardcopy;
+        if ($price <= 0) {
+            die("Invalid price amount. Please contact support.");
+        }
+        $checkout->purchase($price, $userId);
     }
      elseif ($audiobookId) {
         $checkout->purchaseBook($audiobookId, $userId, 'Audiobook');
@@ -43,7 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkout->purchaseMedia($newspaperId, $userId, 'Newspaper');
     }
     elseif ($academicBookId) {
-        $checkout->purchaseAcademicBook($academicBookId, $userId, 'AcademicBook');
+        $format = $_POST['format'] ?? 'digital';
+        // Map format: 'digital' -> 'AcademicBook', 'hardcopy' -> 'hardcopy'
+        $formatForController = ($format === 'hardcopy') ? 'hardcopy' : 'AcademicBook';
+        $checkout->purchaseAcademicBook($academicBookId, $userId, $formatForController);
     }
 }
 

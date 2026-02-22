@@ -128,7 +128,22 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <!-- Magazine Details -->
         <div class="bv-details">
             <div class="">
-                <h4 class="bv-heading"><?= $title ?></h4>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="bv-heading mb-0"><?= $title ?></h4>
+                    <?php
+                    // Check if logged-in user owns this book
+                    $isOwner = false;
+                    if (isset($_SESSION['ADMIN_ID']) && isset($book['publisher_id'])) {
+                        $isOwner = (int)$_SESSION['ADMIN_ID'] === (int)$book['publisher_id'];
+                    }
+                    if ($isOwner && isset($book['id'])):
+                    ?>
+                        <a href="/dashboards/update/academic/<?= $book['id'] ?>" 
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                    <?php endif; ?>
+                </div>
                 <?php if ($author): ?>
                     <p class="bv-text-meta">
                         <b>Author:</b> <span class=""><?= $author ?></span>
@@ -186,35 +201,75 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <?php endif; ?>
                 </span>
 
-                <!-- Print Version (if available) -->
-                <!-- <span class="bv-purchase-select" price="<?= (float)$price + 50 ?>" available="0">
-                        <span class="bv-purchase-select-h d-block mb-1">Print Version</span>
-                        <span>Not available</span>
-                    </span> -->
+                <!-- Hardcopy Version (if physical price exists) -->
+                <?php if ((float)$physicalBookPrice > 0): ?>
+                    <span class="bv-purchase-select" price="<?= $physicalBookPrice ?>" available="1">
+                        <span class="bv-purchase-select-h">Hardcopy</span>
+                        <span class="bv-purchase-select-hL">R<?= $physicalBookPrice ?></span>
+                    </span>
+                <?php endif; ?>
 
                 <div class="bv-purchase-details">
                     <span class="bv-price"><span></span><small>00</small></span>
-                    <span class="bv-note-muted">This price applies to the digital version.</span>
+                    <span class="bv-note-muted">This price applies to the format shown.</span>
 
-                    <!-- Digital purchase button -->
-                    <div class="">
+                    <!-- Digital Version purchase buttons -->
+                    <div id="digital version" class="hide">
                         <?php if ((float)$ebookPrice > 0): ?>
-                            <!-- BUY FORM -->
-                            <form method="POST" action="/checkout" id="digital-version" class="w-100 mt-3">
-                                <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
-                                <input type="hidden" name="format" value="digital">
-                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
-                                    <i class="fas fa-shopping-cart me-2"></i> Purchase Digital Issue
-                                </button>
-                            </form>
+                            <!-- Paid Digital Version - Only Purchase Now (PayFast) -->
+                            <?php if (isset($_SESSION['ADMIN_ID'])): ?>
+                                <form method="POST" action="/checkout" class="w-100 mt-3">
+                                    <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
+                                    <input type="hidden" name="format" value="digital">
+                                    <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                        <i class="fas fa-credit-card me-2"></i> Purchase Now
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-credit-card me-2"></i> Purchase Now
+                                </a>
+                            <?php endif; ?>
                         <?php else: ?>
-                            <!-- READ BUTTON -->
-
-                            <a href="/read/<?=$academicBookId ?>?category=academic" id="digital-version" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
-                                Read Now  
-                            </a>
+                            <!-- FREE Digital Version - Show Read Now -->
+                            <?php if (isset($_SESSION['ADMIN_ID'])): ?>
+                                <a href="/read/<?=$academicBookId ?>?category=academic" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-book me-2"></i> Read Now  
+                                </a>
+                            <?php else: ?>
+                                <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-book me-2"></i> Read Now  
+                                </a>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
+
+                    <!-- Hardcopy Version purchase buttons -->
+                    <?php if ((float)$physicalBookPrice > 0): ?>
+                        <div id="hardcopy" class="hide">
+                            <!-- Hardcopy always has price - Show Add to Cart and Purchase Now -->
+                            <?php if (isset($_SESSION['ADMIN_ID'])): ?>
+                                <button class="btn btn-blue w-100 mt-3 d-flex justify-content-center align-items-center add-to-cart-academic"
+                                    data-book-id="<?= $academicBookId ?>"
+                                    data-book-type="academic"
+                                    data-format="hardcopy">
+                                    <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                                </button>
+                            <?php else: ?>
+                                <a href="/login" class="btn btn-blue w-100 mt-3 d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                                </a>
+                            <?php endif; ?>
+                            
+                            <form method="POST" action="/checkout" class="w-100 mt-2">
+                                <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
+                                <input type="hidden" name="format" value="hardcopy">
+                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                    <i class="fas fa-credit-card me-2"></i> Purchase Now
+                                </button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -249,6 +304,122 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 }
             }
         }
+
+        // Format selector functionality (similar to bookView.php)
+        const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
+        const bvDetails = document.querySelector(".bv-purchase-details");
+        const selectedPrice = document.querySelector(".bv-price");
+
+        const updatePrice = (value) => {
+            let price = parseFloat(value);
+
+            if (isNaN(price) || price === 0 || price === "") {
+                selectedPrice.innerHTML = "FREE";
+                selectedPrice.classList.add("bv-text-green");
+            } else {
+                selectedPrice.innerHTML = "R" + price.toFixed(2);
+                selectedPrice.classList.remove("bv-text-green");
+            }
+        };
+
+        const removePriceDetail = (btn) => {
+            const contentAvailable = btn.getAttribute("available");
+            if (!contentAvailable || contentAvailable === "0") {
+                bvDetails.style.display = "none";
+            } else {
+                bvDetails.style.display = "grid";
+            }
+        };
+
+        const resetBvBuyBtn = () => {
+            const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
+            bvBuyBtns.forEach((btn) => {
+                btn.classList.add("hide");
+            });
+        };
+
+        const showPurchaseOption = (optionId) => {
+            const btn = document.getElementById(optionId);
+            resetBvBuyBtn();
+            if (btn && btn.classList.contains("hide")) {
+                btn.classList.remove("hide");
+            }
+        };
+
+        const selectFirstBvBtn = () => {
+            for (let i = 0; i < bvSelectBtn.length; i++) {
+                bvSelectBtn[i].classList.add("bv-active");
+                const price = bvSelectBtn[i].getAttribute("price");
+                updatePrice(price);
+                removePriceDetail(bvSelectBtn[i]);
+                const formatText = bvSelectBtn[i].querySelector(".bv-purchase-select-h").innerText.toLowerCase().trim();
+                // Map format names to div IDs: "digital version" -> "digital version", "hardcopy" -> "hardcopy"
+                const formatName = formatText === "hardcopy" ? "hardcopy" : "digital version";
+                showPurchaseOption(formatName);
+                break;
+            }
+        };
+
+        selectFirstBvBtn();
+
+        const removeBvActive = () => {
+            bvSelectBtn.forEach((otherBtns) => {
+                otherBtns.classList.remove("bv-active");
+            });
+        };
+
+        bvSelectBtn.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                removeBvActive();
+                btn.classList.add("bv-active");
+                removePriceDetail(btn);
+                updatePrice(btn.getAttribute("price"));
+                const formatText = btn.querySelector(".bv-purchase-select-h").innerText.toLowerCase().trim();
+                // Map format names to div IDs: "digital version" -> "digital version", "hardcopy" -> "hardcopy"
+                const formatName = formatText === "hardcopy" ? "hardcopy" : "digital version";
+                showPurchaseOption(formatName);
+            });
+        });
+
+        // Add to cart functionality for academic books
+        const addToCartBtns = document.querySelectorAll('.add-to-cart-academic');
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const bookId = this.dataset.bookId;
+                const bookType = this.dataset.bookType || 'academic';
+                const format = this.dataset.format || 'digital';
+
+                try {
+                    const response = await fetch("/cart/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            book_id: bookId,
+                            book_type: bookType,
+                            format: format,
+                            qty: 1
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert("Added to cart!");
+                        // Optionally update cart count in header if it exists
+                        if (typeof updateCartCount === 'function') {
+                            updateCartCount();
+                        }
+                    } else {
+                        alert("Failed to add to cart. " + (data.error || ""));
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    alert("Something went wrong while adding to cart.");
+                }
+            });
+        });
     });
 </script>
 

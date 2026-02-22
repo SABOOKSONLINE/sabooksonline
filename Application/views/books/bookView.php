@@ -166,7 +166,22 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <!-- Book Details -->
         <div class="bv-details">
             <div class="">
-                <h4 class="bv-heading"><?= $title ?></h4>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="bv-heading mb-0"><?= $title ?></h4>
+                    <?php
+                    // Check if logged-in user owns this book
+                    $isOwner = false;
+                    if (isset($_SESSION['ADMIN_USERKEY']) && isset($book['USERID'])) {
+                        $isOwner = strtolower($_SESSION['ADMIN_USERKEY']) === strtolower($book['USERID']);
+                    }
+                    if ($isOwner && isset($book['CONTENTID'])):
+                    ?>
+                        <a href="/dashboards/listings/<?= $book['CONTENTID'] ?>" 
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                    <?php endif; ?>
+                </div>
                 <?php if ($authors): ?>
                     <p class="bv-text-meta">
                         <b>Author:</b> <span class=""><?= $authors ?></span>

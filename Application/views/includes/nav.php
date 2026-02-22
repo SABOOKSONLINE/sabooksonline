@@ -6,21 +6,29 @@ require_once __DIR__ . "/../layout/sectionHeading.php";
 // saveRedirectPage();
 // echo $_SESSION["redirect_after_login"];
 
-require_once __DIR__ . "/../../Config/connection.php";
+if (!isset($conn)) {
+    require_once __DIR__ . "/../../Config/connection.php";
+}
+
 require_once __DIR__ . "/../../models/PageVisitsModel.php";
 require_once __DIR__ . "/../../controllers/PageVisitsController.php";
 
-require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/../../models/CartModel.php";
 require_once __DIR__ . "/../../controllers/CartController.php";
-$cartController = new CartController($conn);
-$cartItemsCount = 0;
+
+if (isset($conn)) {
+    $cartController = new CartController($conn);
+    $cartItemsCount = $cartController->getItemsCount();
+} else {
+    $cartItemsCount = 0;
+}
 
 require_once __DIR__ . "/../../controllers/HomeController.php";
-$homeController = new HomeController($conn);
-
-$tracker = new PageVisitsController($conn);
-$tracker->trackVisits();
+if (isset($conn)) {
+    $homeController = new HomeController($conn);
+    $tracker = new PageVisitsController($conn);
+    $tracker->trackVisits();
+}
 
 if (session_status() === PHP_SESSION_NONE) {
     $cookieDomain = ".sabooksonline.co.za";
@@ -35,7 +43,9 @@ if (isset($_SESSION['ADMIN_PROFILE_IMAGE'])) {
 }
 
 if (isset($userKey)) {
-    $cartItemsCount = $cartController->getItemsCount();
+    if (isset($cartController)) {
+        $cartItemsCount = $cartController->getItemsCount();
+    }
     if (!empty($profileImage)) {
         if (strpos($profileImage, 'vecteezy.com/free-vector/default-profile-picture') !== false) {
             $profile = "/public/images/user-3296.png";
@@ -135,6 +145,7 @@ $navItems = [
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdownHeader" style="z-index: 1001; position: absolute;">
                         <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                         <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
+                        <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> My Orders</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
@@ -242,6 +253,7 @@ $navItems = [
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                                 <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
+                                <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> My Orders</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>

@@ -9,12 +9,51 @@ class CartModel extends Model
         $columns = [
             "id"              => "INT AUTO_INCREMENT PRIMARY KEY",
             "user_id"         => "INT NOT NULL",
-            "book_id"         => "INT NOT NULL",
+            "book_id"         => "VARCHAR(255) NOT NULL",
+            "book_type"       => "ENUM('regular', 'academic') DEFAULT 'regular'",
             "cart_item_count" => "INT DEFAULT 1",
             "created_at"      => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
             "updated_at"      => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
         ];
-        return $this->createTable("book_cart", $columns);
+        $created = $this->createTable("book_cart", $columns);
+        
+        // Migrate existing data: add book_type column if table exists but column doesn't
+        $this->migrateCartTable();
+        
+        return $created;
+    }
+    
+    private function migrateCartTable(): void
+    {
+        // Check if book_type column exists by trying to describe the table
+        try {
+            $result = $this->conn->query("DESCRIBE book_cart");
+            $columns = [];
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $columns[] = $row['Field'];
+                }
+            }
+            
+            if (!in_array('book_type', $columns)) {
+                // Add book_type column and migrate existing data
+                $this->conn->query("ALTER TABLE book_cart ADD COLUMN book_type ENUM('regular', 'academic') DEFAULT 'regular' AFTER book_id");
+            }
+            
+            // Check if book_id is INT and convert to VARCHAR
+            $result = $this->conn->query("DESCRIBE book_cart");
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    if ($row['Field'] === 'book_id' && strpos(strtolower($row['Type']), 'int') !== false) {
+                        $this->conn->query("ALTER TABLE book_cart MODIFY COLUMN book_id VARCHAR(255) NOT NULL");
+                        break;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Table might not exist yet, that's okay
+            error_log("Cart table migration: " . $e->getMessage());
+        }
     }
 
     private function createDeliveryAddressTable(): bool
@@ -63,58 +102,128 @@ class CartModel extends Model
         $columns = [
             "id"          => "INT AUTO_INCREMENT PRIMARY KEY",
             "order_id"    => "INT NOT NULL",
-            "book_id"     => "INT NOT NULL",
+            "book_id"     => "VARCHAR(255) NOT NULL",
+            "book_type"   => "ENUM('regular', 'academic') DEFAULT 'regular'",
             "quantity"    => "INT NOT NULL DEFAULT 1",
             "unit_price"  => "DECIMAL(10,2) NOT NULL",
             "total_price" => "DECIMAL(10,2) NOT NULL",
             "created_at"  => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ];
-        return $this->createTable("order_items", $columns);
+        $created = $this->createTable("order_items", $columns);
+        
+        // Migrate existing data
+        $this->migrateOrderItemsTable();
+        
+        return $created;
+    }
+    
+    private function migrateOrderItemsTable(): void
+    {
+        // Check if book_type column exists by trying to describe the table
+        try {
+            $result = $this->conn->query("DESCRIBE order_items");
+            $columns = [];
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $columns[] = $row['Field'];
+                }
+            }
+            
+            if (!in_array('book_type', $columns)) {
+                // Add book_type column and migrate existing data
+                $this->conn->query("ALTER TABLE order_items ADD COLUMN book_type ENUM('regular', 'academic') DEFAULT 'regular' AFTER book_id");
+            }
+            
+            // Check if book_id is INT and convert to VARCHAR
+            $result = $this->conn->query("DESCRIBE order_items");
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    if ($row['Field'] === 'book_id' && strpos(strtolower($row['Type']), 'int') !== false) {
+                        $this->conn->query("ALTER TABLE order_items MODIFY COLUMN book_id VARCHAR(255) NOT NULL");
+                        break;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Table might not exist yet, that's okay
+            error_log("Order items table migration: " . $e->getMessage());
+        }
     }
 
     public function getCartItemsByUserId(int $userId): array
     {
         $this->createCartTable();
-        $sql = "SELECT bc.*, hc.*, b.COVER AS cover_image, b.TITLE AS title, b.DESCRIPTION AS description,
+        
+        // Get regular books
+        $sqlRegular = "SELECT bc.*, hc.*, b.COVER AS cover_image, b.TITLE AS title, b.DESCRIPTION AS description,
                        b.ISBN AS isbn, b.CATEGORY AS category, b.LANGUAGES AS language,
                        b.CONTENTID AS book_public_key, b.PUBLISHER AS publisher_name,
-                       b.DATEPOSTED AS date, b.AUTHORS AS authors
+                       b.DATEPOSTED AS date, b.AUTHORS AS authors,
+                       'regular' AS item_type
                 FROM book_cart AS bc
-                JOIN posts AS b ON bc.book_id = b.ID
+                JOIN posts AS b ON bc.book_id = CAST(b.ID AS CHAR) AND bc.book_type = 'regular'
                 LEFT JOIN book_hardcopy AS hc ON hc.book_id = b.ID
-                WHERE bc.user_id = ?
-                ORDER BY bc.created_at DESC";
-        return $this->fetchPrepared($sql, "i", [$userId]);
+                WHERE bc.user_id = ?";
+        
+        // Get academic books (only hardcopy should be in cart, so use physical_book_price)
+        $sqlAcademic = "SELECT bc.*, NULL AS hc_id, ab.physical_book_price AS hc_price, NULL AS hc_stock_count,
+                       ab.cover_image_path AS cover_image, ab.title, ab.description,
+                       ab.ISBN AS isbn, ab.subject AS category, ab.language,
+                       ab.public_key AS book_public_key, NULL AS publisher_name,
+                       ab.created_at AS date, ab.author AS authors,
+                       'academic' AS item_type
+                FROM book_cart AS bc
+                JOIN academic_books AS ab ON bc.book_id = ab.public_key AND bc.book_type = 'academic'
+                WHERE bc.user_id = ?";
+        
+        $regularBooks = $this->fetchPrepared($sqlRegular, "i", [$userId]);
+        $academicBooks = $this->fetchPrepared($sqlAcademic, "i", [$userId]);
+        
+        // Combine and sort by created_at
+        $allItems = array_merge($regularBooks, $academicBooks);
+        usort($allItems, function($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        });
+        
+        return $allItems;
     }
 
-    public function addItem(int $userId, int $bookId, int $qty = 1): bool
+    public function addItem(int $userId, $bookId, int $qty = 1, string $bookType = 'regular'): bool
     {
         $this->createCartTable();
-        $sqlCheck = "SELECT cart_item_count FROM book_cart WHERE user_id = ? AND book_id = ?";
-        $existing = $this->fetchPrepared($sqlCheck, "ii", [$userId, $bookId]);
+        $bookIdStr = (string)$bookId;
+        $sqlCheck = "SELECT cart_item_count FROM book_cart WHERE user_id = ? AND book_id = ? AND book_type = ?";
+        $stmt = $this->conn->prepare($sqlCheck);
+        $stmt->bind_param("iss", $userId, $bookIdStr, $bookType);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existing = $result->fetch_assoc();
+        $stmt->close();
+        
         if (!empty($existing)) {
-            $sql = "UPDATE book_cart SET cart_item_count = ? WHERE user_id = ? AND book_id = ?";
+            $sql = "UPDATE book_cart SET cart_item_count = ? WHERE user_id = ? AND book_id = ? AND book_type = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("iii", $qty, $userId, $bookId);
+            $stmt->bind_param("isss", $qty, $userId, $bookIdStr, $bookType);
             $stmt->execute();
             $stmt->close();
             return true;
         }
-        $sql = "INSERT INTO book_cart (user_id, book_id, cart_item_count) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO book_cart (user_id, book_id, book_type, cart_item_count) VALUES (?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $userId, $bookId, $qty);
+        $stmt->bind_param("issi", $userId, $bookIdStr, $bookType, $qty);
         $stmt->execute();
         $stmt->close();
         return true;
     }
 
-    public function updateItemCount(int $userId, int $bookId, int $qty): bool
+    public function updateItemCount(int $userId, $bookId, int $qty, string $bookType = 'regular'): bool
     {
         $this->createCartTable();
-        if ($qty <= 0) return $this->removeItem($userId, $bookId);
-        $sql = "UPDATE book_cart SET cart_item_count = ? WHERE user_id = ? AND book_id = ?";
+        if ($qty <= 0) return $this->removeItem($userId, $bookId, $bookType);
+        $bookIdStr = (string)$bookId;
+        $sql = "UPDATE book_cart SET cart_item_count = ? WHERE user_id = ? AND book_id = ? AND book_type = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $qty, $userId, $bookId);
+        $stmt->bind_param("isss", $qty, $userId, $bookIdStr, $bookType);
         return $stmt->execute();
     }
 
@@ -128,12 +237,13 @@ class CartModel extends Model
         return $stmt->execute();
     }
 
-    public function removeItem(int $userId, int $bookId): bool
+    public function removeItem(int $userId, $bookId, string $bookType = 'regular'): bool
     {
         $this->createCartTable();
-        $sql = "DELETE FROM book_cart WHERE user_id = ? AND book_id = ?";
+        $bookIdStr = (string)$bookId;
+        $sql = "DELETE FROM book_cart WHERE user_id = ? AND book_id = ? AND book_type = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $userId, $bookId);
+        $stmt->bind_param("iss", $userId, $bookIdStr, $bookType);
         return $stmt->execute();
     }
 
@@ -251,9 +361,11 @@ class CartModel extends Model
             $price = $item["hc_price"] ?? 0;
             $qty = $item["cart_item_count"];
             $totalPrice = $price * $qty;
-            $sqlItem = "INSERT INTO order_items (order_id, book_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)";
+            $bookId = (string)$item["book_id"];
+            $bookType = $item["item_type"] ?? $item["book_type"] ?? 'regular';
+            $sqlItem = "INSERT INTO order_items (order_id, book_id, book_type, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?)";
             $stmtItem = $this->conn->prepare($sqlItem);
-            $stmtItem->bind_param("iiidd", $orderId, $item["book_id"], $qty, $price, $totalPrice);  
+            $stmtItem->bind_param("issidd", $orderId, $bookId, $bookType, $qty, $price, $totalPrice);  
             $stmtItem->execute();
             $stmtItem->close();
         }
@@ -269,7 +381,22 @@ class CartModel extends Model
         $sql = "SELECT o.*, d.* FROM orders AS o JOIN delivery_addresses AS d ON o.delivery_address_id=d.id WHERE o.id=?";
         $order = $this->fetchPrepared($sql, "i", [$orderId]);
         if (empty($order)) return null;
-        $items = $this->fetchPrepared("SELECT * FROM order_items WHERE order_id=?", "i", [$orderId]);
+        
+        // Fetch items with book details in one query using JOINs
+        $sqlItems = "SELECT 
+            oi.*,
+            COALESCE(b.TITLE, ab.title) AS title,
+            COALESCE(b.AUTHORS, ab.author) AS author,
+            COALESCE(b.COVER, ab.cover_image_path) AS cover,
+            CASE 
+                WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
+                ELSE '/cms-data/book-covers/'
+            END AS cover_path
+        FROM order_items oi
+        LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
+        LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
+        WHERE oi.order_id = ?";
+        $items = $this->fetchPrepared($sqlItems, "i", [$orderId]);
         return ["order" => $order[0], "items" => $items];
     }
 
@@ -292,10 +419,25 @@ class CartModel extends Model
 
     // Extract order IDs
     $orderIds = array_column($orders, 'id');
+    if (empty($orderIds)) return null;
+    
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
 
-    // 2. Fetch all order items in one query
-    $sqlItems = "SELECT * FROM order_items WHERE order_id IN ($placeholders)";
+    // 2. Fetch all order items with book details in one query using JOINs
+    $sqlItems = "SELECT 
+        oi.*,
+        COALESCE(b.TITLE, ab.title) AS title,
+        COALESCE(b.AUTHORS, ab.author) AS author,
+        COALESCE(b.COVER, ab.cover_image_path) AS cover,
+        CASE 
+            WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
+            ELSE '/cms-data/book-covers/'
+        END AS cover_path
+    FROM order_items oi
+    LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
+    LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
+    WHERE oi.order_id IN ($placeholders)";
+    
     $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
 
     // 3. Group items by order_id

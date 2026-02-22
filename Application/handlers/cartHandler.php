@@ -36,20 +36,23 @@ $action   = str_replace($basePath . '/cart/', '', $requestPath);
 
 switch ($action) {
     case 'add':
-        $bookId = intval($input['book_id']);
+        $bookId = $input['book_id'] ?? null;
         $qty    = intval($input['qty'] ?? 1);
-        $result = $cartController->addCartItem($userId, $bookId, $qty);
+        $bookType = $input['book_type'] ?? 'regular';
+        $result = $cartController->addCartItem($userId, $bookId, $qty, $bookType);
         break;
 
     case 'remove':
-        $bookId = intval($input['book_id']);
-        $result = $cartController->removeCartItem($userId, $bookId);
+        $bookId = $input['book_id'] ?? null;
+        $bookType = $input['book_type'] ?? 'regular';
+        $result = $cartController->removeCartItem($userId, $bookId, $bookType);
         break;
 
     case 'update':
-        $bookId = intval($input['book_id']);
+        $bookId = $input['book_id'] ?? null;
         $qty    = intval($input['qty'] ?? 1);
-        $result = $cartController->updateCartItem($userId, $bookId, $qty);
+        $bookType = $input['book_type'] ?? 'regular';
+        $result = $cartController->updateCartItem($userId, $bookId, $qty, $bookType);
         break;
 
     default:

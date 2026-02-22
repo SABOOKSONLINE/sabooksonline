@@ -1,6 +1,11 @@
 <?php
 $uri = $_SERVER["REQUEST_URI"];
-$popupBanners = $homeController->banners()['banners']['popup_banners'];
+$popupBanners = [];
+
+if (isset($homeController)) {
+    $bannersData = $homeController->banners();
+    $popupBanners = $bannersData['banners']['popup_banners'] ?? [];
+}
 
 if ($popupBanners):
     foreach ($popupBanners as $banner):

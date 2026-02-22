@@ -101,7 +101,7 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     $amount = floatval($pfData['amount_gross']);
     $orderName = $pfData['item_name'] ?? '';
     $token = $pfData['token'] ?? '';
-    $bookId = isset($pfData['custom_str1']) ? (int)$pfData['custom_str1'] : null;
+    $bookId = $pfData['custom_str1'] ?? null; // Can be integer (regular) or string (academic public_key)
     $invoiceId = $pfData['m_payment_id'] ?? '';
     $plan = $pfData['custom_str2'] ?? '';
     $format = $pfData['custom_str3'] ?? '';
@@ -127,11 +127,17 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     }
 
     elseif ($bookId) {
+    // Determine if it's an academic book (string public_key) or regular book (integer ID)
+    $isAcademic = !is_numeric($bookId);
+    $bookIdValue = $isAcademic ? $bookId : (int)$bookId;
+    
     $sql = "INSERT INTO book_purchases (user_email, book_id, user_key, format, payment_id, amount, payment_status, payment_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sisssdss", $email, $bookId, $plan, $format, $invoiceId, $amount, $status, $paymentDate);
+    // Use 's' for string if academic (public_key), 'i' for integer if regular
+    $paramType = $isAcademic ? "sssssdss" : "sisssdss";
+    $stmt->bind_param($paramType, $email, $bookIdValue, $plan, $format, $invoiceId, $amount, $status, $paymentDate);
 
     if ($stmt->execute()) {
         echo "✅ Book purchase saved.\n";

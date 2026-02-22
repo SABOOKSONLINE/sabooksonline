@@ -816,6 +816,20 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/checkout-book', function () {
         require "Application/handlers/checkoutPayfast.php";
     });
+
+    // =================== User Orders ===================
+    $r->addRoute('GET', '/orders', function () {
+        require_once "Application/Config/connection.php";
+        require_once "Application/controllers/OrderController.php";
+        $controller = new OrderController($conn);
+        $controller->myOrders();
+    });
+    $r->addRoute('GET', '/orders/{id}', function ($id) {
+        require_once "Application/Config/connection.php";
+        require_once "Application/controllers/OrderController.php";
+        $controller = new OrderController($conn);
+        $controller->orderDetails((int)$id);
+    });
 });
 
 // Fetch method and URI from server

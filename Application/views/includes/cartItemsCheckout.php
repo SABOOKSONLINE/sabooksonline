@@ -232,16 +232,22 @@ $deliveryPrice = getCourierGuyDeliveryCost($address, $cartItems);
                         foreach ($cartItems as $item):
                             $title = htmlspecialchars($item['title']);
                             $qty = (int)$item['cart_item_count'];
+                            // For academic books, hc_price is now physical_book_price; for regular books, it's hc_price
                             $price = isset($item['hc_price']) ? (float)$item['hc_price'] : 0;
                             $lineTotal = $qty * $price;
                             $subtotal += $lineTotal;
                             $totalItems += $qty;
+                            
+                            // Determine book type for display
+                            $bookType = $item['item_type'] ?? $item['book_type'] ?? 'regular';
                         ?>
                             <div class="d-flex justify-content-between align-items-start mb-2 pb-2">
                                 <div class="me-2">
                                     <strong><?= $title ?></strong><br>
-                                    <small class="text-muted">Qty: <?= $qty ?></small><br>
-                                    <small class="text-muted">Delivery: R<?= number_format($deliveryPrice, 2) ?></small>
+                                    <small class="text-muted">Qty: <?= $qty ?></small>
+                                    <?php if ($bookType === 'academic'): ?>
+                                        <br><small class="text-info"><i class="fas fa-book"></i> Academic Book</small>
+                                    <?php endif; ?>
                                 </div>
                                 <div>
                                     <span>R<?= number_format($lineTotal, 2) ?></span>

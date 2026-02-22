@@ -16,28 +16,32 @@
 
                 <?php
                 $bookId     = $item['book_id'];
+                $bookType   = $item['item_type'] ?? $item['book_type'] ?? 'regular';
                 $title      = htmlspecialchars($item['title']);
-                $authors    = htmlspecialchars($item['authors']);
-                $isbn       = htmlspecialchars($item['isbn']);
+                $authors    = htmlspecialchars($item['authors'] ?? '');
+                $isbn       = htmlspecialchars($item['isbn'] ?? '');
                 $qty        = (int)$item['cart_item_count'];
-                $cover      = $item['cover_image'] ?: "assets/images/no-cover.png";
-                $hc_price   = $item['hc_price'];
-                $maxQty     = $item['hc_stock_count'];
-                // echo "<pre>";
-                // print_r($item);
-                // echo "</pre>";
-
-                // decide price
-                $price      = isset($item['hc_price']) ? (float)$item['hc_price'] : 0;
+                $cover      = $item['cover_image'] ?? '';
+                $maxQty     = $item['hc_stock_count'] ?? 999;
+                
+                // Determine cover image path based on book type
+                if ($bookType === 'academic') {
+                    $coverPath = $cover ? "/cms-data/academic/covers/{$cover}" : "assets/images/no-cover.png";
+                } else {
+                    $coverPath = $cover ? "/cms-data/book-covers/{$cover}" : "assets/images/no-cover.png";
+                }
+                
+                // Decide price - academic books use ebook_price, regular books use hc_price
+                $price = isset($item['hc_price']) ? (float)$item['hc_price'] : 0;
                 $priceFormatted = "R" . number_format($price, 2);
                 ?>
 
-                <div class="card mb-3 shadow-sm border-0 rounded-4 p-3 cart-item">
+                <div class="card mb-3 shadow-sm border-0 rounded-4 p-3 cart-item" data-book-type="<?= $bookType ?>">
                     <div class="row g-0">
 
                         <!-- Cover -->
                         <div class="col-md-2 d-flex justify-content-center mb-3 mb-md-0" style="max-width: 200px;">
-                            <img src="/cms-data/book-covers/<?= $cover ?>" class="img-fluid rounded h-100 object-fit-cover mx-auto"
+                            <img src="<?= $coverPath ?>" class="img-fluid rounded h-100 object-fit-cover mx-auto"
                                 alt="<?= $title ?>">
                         </div>
 
@@ -65,11 +69,13 @@
                                             value="<?= $qty ?>"
                                             min="1"
                                             max="<?= $maxQty ?>"
-                                            data-book-id="<?= $bookId ?>">
+                                            data-book-id="<?= $bookId ?>"
+                                            data-book-type="<?= $bookType ?>">
                                     </div>
 
                                     <button class="badge text-bg-danger border-danger remove-cart-item"
-                                        data-book-id="<?= $bookId ?>">
+                                        data-book-id="<?= $bookId ?>"
+                                        data-book-type="<?= $bookType ?>">
                                         <i class="fas fa-trash"></i> Remove
                                     </button>
 
@@ -134,6 +140,7 @@
             qtyInputs.forEach(input => {
                 input.addEventListener("change", async function() {
                     const bookId = this.dataset.bookId;
+                    const bookType = this.dataset.bookType || 'regular';
                     let qty = parseInt(this.value);
 
                     if (isNaN(qty) || qty < 1) {
@@ -149,6 +156,7 @@
                             },
                             body: JSON.stringify({
                                 book_id: bookId,
+                                book_type: bookType,
                                 qty: qty
                             })
                         });
@@ -172,8 +180,9 @@
             removeButtons.forEach(btn => {
                 btn.addEventListener("click", async function() {
                     const bookId = this.dataset.bookId;
+                    const bookType = this.dataset.bookType || 'regular';
 
-                    console.log(bookId);
+                    console.log(bookId, bookType);
                     if (!confirm("Remove this item from your cart?")) return;
 
                     try {
@@ -183,7 +192,8 @@
                                 "Content-Type": "application/json"
                             },
                             body: JSON.stringify({
-                                book_id: bookId
+                                book_id: bookId,
+                                book_type: bookType
                             })
                         });
 

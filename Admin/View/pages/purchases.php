@@ -916,16 +916,30 @@ renderSectionHeader(
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-4">
-                                        <?php if (!empty($purchase['book_cover'])): ?>
-                                            <img src="/cms-data/book-covers/<?= htmlspecialchars($purchase['book_cover']) ?>" 
+                                        <?php 
+                                        $bookType = $purchase['book_type'] ?? 'regular';
+                                        $coverPath = '';
+                                        if (!empty($purchase['book_cover'])) {
+                                            if ($bookType === 'academic') {
+                                                $coverPath = '/cms-data/academic/covers/' . htmlspecialchars($purchase['book_cover']);
+                                            } else {
+                                                $coverPath = '/cms-data/book-covers/' . htmlspecialchars($purchase['book_cover']);
+                                            }
+                                        }
+                                        ?>
+                                        <?php if (!empty($coverPath)): ?>
+                                            <img src="<?= $coverPath ?>" 
                                                  alt="<?= htmlspecialchars($purchase['book_title'] ?? 'Book Cover') ?>" 
                                                  class="book-cover-mini"
-                                                 onclick="showCoverModal('/cms-data/book-covers/<?= htmlspecialchars($purchase['book_cover']) ?>', '<?= htmlspecialchars($purchase['book_title'] ?? 'Book Cover') ?>')"
+                                                 onclick="showCoverModal('<?= $coverPath ?>', '<?= htmlspecialchars($purchase['book_title'] ?? 'Book Cover') ?>')"
                                                  onerror="this.style.display='none';">
                                         <?php endif; ?>
                                         <div class="book-info-compact flex-grow-1">
                                             <div class="book-title-compact mb-2">
                                                 <?= htmlspecialchars($purchase['book_title'] ?? 'Unknown Book') ?>
+                                                <?php if ($bookType === 'academic'): ?>
+                                                    <span class="badge bg-info ms-2">Academic</span>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="book-meta-compact">
                                                 <div class="mb-1">

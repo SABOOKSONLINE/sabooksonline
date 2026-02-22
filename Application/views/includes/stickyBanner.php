@@ -1,8 +1,13 @@
 <?php
 $uri = $_SERVER["REQUEST_URI"];
-$stickyBanners = $homeController->banners()['banners']['sticky_banners'];
+$stickyBanners = [];
 
-if ($uri !== "/media" && $uri !== "/library/academic" && $stickyBanners): ?>
+if (isset($homeController)) {
+    $bannersData = $homeController->banners();
+    $stickyBanners = $bannersData['banners']['sticky_banners'] ?? [];
+}
+
+if ($uri !== "/media" && $uri !== "/library/academic" && !empty($stickyBanners)): ?>
     <nav class="navbar" id="sticky-banner">
         <div class="sticky-slider">
             <?php foreach ($stickyBanners as $banner): ?>

@@ -1,5 +1,10 @@
 <?php
-$pageBanners = $homeController->banners()['banners']['page_banners'];
+$pageBanners = [];
+
+if (isset($homeController)) {
+    $bannersData = $homeController->banners();
+    $pageBanners = $bannersData['banners']['page_banners'] ?? [];
+}
 
 if ($pageBanners):
 ?>
