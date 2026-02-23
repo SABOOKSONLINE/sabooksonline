@@ -283,6 +283,19 @@ public function generatePayment($price, $user, $orderId = null) {
                strpos($httpHost, 'localhost:') !== false ||
                strpos($httpHost, '127.0.0.1:') !== false;
     
+    // Check if using live key (starts with 'sk_live_')
+    $isLiveKey = str_starts_with($yocoSecretKey, 'sk_live_');
+    
+    // Yoco live keys require HTTPS URLs - cannot use HTTP on localhost
+    if ($isLocal && $isLiveKey) {
+        error_log("WARNING: Using live Yoco key on localhost. Live keys require HTTPS URLs.");
+        error_log("Options:");
+        error_log("  1. Use test key (sk_test_...) for localhost testing");
+        error_log("  2. Use ngrok or similar to create HTTPS tunnel to localhost");
+        error_log("  3. Test on production server with HTTPS");
+        die("Payment initialization failed: Live Yoco keys require HTTPS URLs. For localhost testing, please use a test key (sk_test_...) or set up HTTPS. Contact support for assistance.");
+    }
+    
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
     
