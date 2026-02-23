@@ -216,7 +216,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <!-- Digital Version purchase buttons -->
                     <div id="digital version" class="hide">
                         <?php if ((float)$ebookPrice > 0): ?>
-                            <!-- Paid Digital Version - Only Purchase Now (PayFast) -->
+                            <!-- Paid Digital Version - Purchase Now -->
                             <?php if (isset($_SESSION['ADMIN_ID'])): ?>
                                 <form method="POST" action="/checkout" class="w-100 mt-3">
                                     <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
@@ -260,14 +260,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                     <i class="fas fa-shopping-cart me-2"></i> Add to Cart
                                 </a>
                             <?php endif; ?>
-                            
-                            <form method="POST" action="/checkout" class="w-100 mt-2">
-                                <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
-                                <input type="hidden" name="format" value="hardcopy">
-                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
-                                    <i class="fas fa-credit-card me-2"></i> Purchase Now
-                                </button>
-                            </form>
                         </div>
                     <?php endif; ?>
                 </div>

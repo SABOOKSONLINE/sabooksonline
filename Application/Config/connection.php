@@ -5,10 +5,10 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../load_env.php';
 
-$serverName = getenv('DB_HOST') ?: 'sql58.jnb1.host-h.net';
-$username   = getenv('DB_USERNAME') ?: 'sabooksonline';
-$password   = getenv('DB_PASSWORD') ?: 'slTFvaj07dNY6Ke';
-$primaryDb  = getenv('DB_NAME') ?: 'sabookso_db';
+$serverName = getenv('DB_HOST') ?: '';
+$username   = getenv('DB_USERNAME') ?: '';
+$password   = getenv('DB_PASSWORD') ?: '';
+$primaryDb  = getenv('DB_NAME') ?: '';
 
 // Enable exceptions for mysqli
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
