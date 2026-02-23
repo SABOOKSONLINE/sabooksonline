@@ -189,17 +189,49 @@ public function generatePayment($price, $user, $orderId = null) {
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
     
     // If still empty, try to read from .env file directly as fallback
+    // Use realpath to resolve and check against open_basedir restrictions
     if (empty($yocoSecretKey)) {
-        // Try multiple possible .env file paths
-        $possiblePaths = [
-            __DIR__ . '/../../.env',  // From Application/controllers/
-            __DIR__ . '/../../../.env', // Alternative path
-            dirname(__DIR__, 3) . '/.env', // Go up 3 levels
-        ];
+        // Try multiple possible .env file paths (within allowed directories)
+        $possiblePaths = [];
         
+        // Get the document root or current working directory
+        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? getcwd() ?: __DIR__;
+        
+        // Try paths relative to document root (most common)
+        $possiblePaths[] = rtrim($docRoot, '/') . '/.env';
+        $possiblePaths[] = dirname($docRoot) . '/.env';
+        
+        // Try paths relative to current file (but stay within allowed paths)
+        $currentDir = __DIR__;
+        $possiblePaths[] = dirname($currentDir, 2) . '/.env'; // Application/.env
+        $possiblePaths[] = dirname($currentDir, 3) . '/.env'; // Root/.env
+        
+        // Try using realpath to resolve and check if within allowed paths
         foreach ($possiblePaths as $envFile) {
-            if (file_exists($envFile)) {
-                $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            // Use realpath to resolve the path and check if it exists
+            $resolvedPath = @realpath($envFile);
+            if ($resolvedPath && file_exists($resolvedPath)) {
+                // Check if resolved path is within allowed open_basedir
+                $openBasedir = ini_get('open_basedir');
+                if (!empty($openBasedir)) {
+                    $allowed = false;
+                    foreach (explode(':', $openBasedir) as $allowedPath) {
+                        if (strpos($resolvedPath, rtrim($allowedPath, '/')) === 0) {
+                            $allowed = true;
+                            break;
+                        }
+                    }
+                    if (!$allowed) {
+                        continue; // Skip this path, it's outside open_basedir
+                    }
+                }
+                
+                // Path is valid, try to read it
+                $lines = @file($resolvedPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                if ($lines === false) {
+                    continue; // Couldn't read file
+                }
+                
                 foreach ($lines as $line) {
                     $line = trim($line);
                     // Skip comments and empty lines
