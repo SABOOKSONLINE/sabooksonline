@@ -177,8 +177,9 @@ public function generatePayment($price, $user, $orderId = null) {
     // load_env.php should have loaded it into getenv(), $_ENV, and $_SERVER
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
     
+    // Validate that we have a key before proceeding
     if (empty($yocoSecretKey)) {
-        error_log("YOCO_SECRET_KEY is not set. Ensure load_env.php is called and .env file contains YOCO_SECRET_KEY");
+        error_log("YOCO_SECRET_KEY is not set. Check .env file and ensure load_env.php is called.");
         die("Payment initialization failed: Configuration error. Please contact support.");
     }
     
@@ -223,9 +224,27 @@ public function generatePayment($price, $user, $orderId = null) {
     $curlError = curl_error($ch);
     curl_close($ch);
     
+    if ($curlError) {
+        error_log("Yoco Payment cURL Error: $curlError");
+        die("Payment initialization failed: Network error. Please try again or contact support.");
+    }
+    
     if ($httpCode !== 200 && $httpCode !== 201) {
         error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response");
-        die("Payment initialization failed. Please try again or contact support.");
+        $errorMsg = "Payment initialization failed. ";
+        if ($response) {
+            $errorData = json_decode($response, true);
+            if (isset($errorData['message'])) {
+                $errorMsg .= "Error: " . $errorData['message'];
+            } else if (isset($errorData['description'])) {
+                $errorMsg .= "Error: " . $errorData['description'];
+            } else {
+                $errorMsg .= "HTTP $httpCode";
+            }
+        } else {
+            $errorMsg .= "Please try again or contact support.";
+        }
+        die($errorMsg);
     }
     
     $responseData = json_decode($response, true);
