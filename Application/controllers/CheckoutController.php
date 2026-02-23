@@ -286,18 +286,28 @@ public function generatePayment($price, $user, $orderId = null) {
     // Check if using live key (starts with 'sk_live_')
     $isLiveKey = str_starts_with($yocoSecretKey, 'sk_live_');
     
-    // Yoco live keys require HTTPS URLs - cannot use HTTP on localhost
+    // Yoco live keys require HTTPS URLs
+    // If on localhost with live key, use production URLs for redirects (or ngrok HTTPS URL if available)
     if ($isLocal && $isLiveKey) {
-        error_log("WARNING: Using live Yoco key on localhost. Live keys require HTTPS URLs.");
-        error_log("Options:");
-        error_log("  1. Use test key (sk_test_...) for localhost testing");
-        error_log("  2. Use ngrok or similar to create HTTPS tunnel to localhost");
-        error_log("  3. Test on production server with HTTPS");
-        die("Payment initialization failed: Live Yoco keys require HTTPS URLs. For localhost testing, please use a test key (sk_test_...) or set up HTTPS. Contact support for assistance.");
+        // Check if ngrok or similar HTTPS tunnel is being used
+        $ngrokUrl = getenv('NGROK_URL') ?: $_ENV['NGROK_URL'] ?? $_SERVER['NGROK_URL'] ?? '';
+        
+        if (!empty($ngrokUrl)) {
+            // Use ngrok HTTPS URL
+            $baseUrl = rtrim($ngrokUrl, '/');
+            error_log("Using ngrok HTTPS URL for localhost with live key: $baseUrl");
+        } else {
+            // Fallback: Use production URLs for redirects when testing live key on localhost
+            // Note: This means payment return will go to production, not localhost
+            $baseUrl = 'https://www.sabooksonline.co.za';
+            error_log("WARNING: Using live Yoco key on localhost. Redirect URLs set to production (https://www.sabooksonline.co.za)");
+            error_log("For localhost testing with live key, consider using ngrok: Set NGROK_URL in .env");
+        }
+    } else {
+        // Normal behavior: use appropriate URL based on environment
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
     }
-    
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
     
     $checkoutData = [
         'amount' => (int)round($price * 100), // Amount in cents (rounded to avoid precision issues)
