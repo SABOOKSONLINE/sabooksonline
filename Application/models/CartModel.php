@@ -351,7 +351,8 @@ class CartModel extends Model
         foreach ($cartItems as $item) $subtotal += ($item["hc_price"] ?? 0) * $item["cart_item_count"];
         $shippingFee = 60;
         $total = $subtotal + $shippingFee;
-        $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee) VALUES (?, ?, ?, ?, ?)";
+        // Set payment_status to 'pending' initially - will be updated on successful payment
+        $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee, payment_status) VALUES (?, ?, ?, ?, ?, 'pending')";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("iisdd", $userId, $address["id"], $orderNumber, $total, $shippingFee);
         $stmt->execute();
@@ -372,92 +373,6 @@ class CartModel extends Model
         $this->clearCart($userId);
         return $orderId;
     }
-
-    public function getOrderDetails(int $orderId): ?array
-    {
-        $this->createOrdersTable();
-        $this->createOrderItemsTable();
-        $this->createDeliveryAddressTable();
-        $sql = "SELECT o.*, d.* FROM orders AS o JOIN delivery_addresses AS d ON o.delivery_address_id=d.id WHERE o.id=?";
-        $order = $this->fetchPrepared($sql, "i", [$orderId]);
-        if (empty($order)) return null;
-        
-        // Fetch items with book details in one query using JOINs
-        $sqlItems = "SELECT 
-            oi.*,
-            COALESCE(b.TITLE, ab.title) AS title,
-            COALESCE(b.AUTHORS, ab.author) AS author,
-            COALESCE(b.COVER, ab.cover_image_path) AS cover,
-            CASE 
-                WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
-                ELSE '/cms-data/book-covers/'
-            END AS cover_path
-        FROM order_items oi
-        LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
-        LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
-        WHERE oi.order_id = ?";
-        $items = $this->fetchPrepared($sqlItems, "i", [$orderId]);
-        return ["order" => $order[0], "items" => $items];
-    }
-
-    public function getOrders(int $userId): ?array
-{
-    $this->createOrdersTable();
-    $this->createOrderItemsTable();
-    $this->createDeliveryAddressTable();
-
-    // 1. Fetch all orders with their delivery addresses
-    $sqlOrders = "SELECT o.*, d.* 
-                  FROM orders AS o
-                  JOIN delivery_addresses AS d 
-                    ON o.delivery_address_id = d.id
-                  WHERE o.user_id = ?
-                  ORDER BY o.id DESC";
-
-    $orders = $this->fetchPrepared($sqlOrders, "i", [$userId]);
-    if (empty($orders)) return null;
-
-    // Extract order IDs
-    $orderIds = array_column($orders, 'id');
-    if (empty($orderIds)) return null;
-    
-    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
-
-    // 2. Fetch all order items with book details in one query using JOINs
-    $sqlItems = "SELECT 
-        oi.*,
-        COALESCE(b.TITLE, ab.title) AS title,
-        COALESCE(b.AUTHORS, ab.author) AS author,
-        COALESCE(b.COVER, ab.cover_image_path) AS cover,
-        CASE 
-            WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
-            ELSE '/cms-data/book-covers/'
-        END AS cover_path
-    FROM order_items oi
-    LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
-    LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
-    WHERE oi.order_id IN ($placeholders)";
-    
-    $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
-
-    // 3. Group items by order_id
-    $itemsByOrder = [];
-    foreach ($itemsData as $item) {
-        $itemsByOrder[$item['order_id']][] = $item;
-    }
-
-    // 4. Combine orders with their items
-    $result = [];
-    foreach ($orders as $order) {
-        $result[] = [
-            "order" => $order,
-            "items" => $itemsByOrder[$order['id']] ?? []
-        ];
-    }
-
-    return $result;
-}
-
 
     public function updateOrderTotals(int $orderId, ?float $totalAmount, ?float $shippingFee, ?string $paymentMethod): bool
     {
@@ -480,4 +395,70 @@ class CartModel extends Model
         $stmt->close();
         return $result;
     }
+
+    public function getOrders(int $userId): array
+    {
+        $this->createOrdersTable();
+        $this->createOrderItemsTable();
+        
+        // Simple query - just get orders
+        $sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC";
+        $orders = $this->fetchPrepared($sql, "i", [$userId]);
+        
+        if (empty($orders)) {
+            return [];
+        }
+        
+        // For each order, get items
+        foreach ($orders as &$order) {
+            $orderId = $order['id'];
+            $order['items'] = $this->getOrderItems($orderId);
+        }
+        
+        return $orders;
+    }
+    
+    private function getOrderItems(int $orderId): array
+    {
+        $sql = "SELECT 
+            oi.*,
+            COALESCE(b.TITLE, ab.title) AS title,
+            COALESCE(b.AUTHORS, ab.author) AS author,
+            COALESCE(b.COVER, ab.cover_image_path) AS cover,
+            CASE 
+                WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
+                ELSE '/cms-data/book-covers/'
+            END AS cover_path
+        FROM order_items oi
+        LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
+        LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
+        WHERE oi.order_id = ?";
+        
+        $items = $this->fetchPrepared($sql, "i", [$orderId]);
+        return $items ?: [];
+    }
+
+    public function getOrderDetails(int $orderId, int $userId): ?array
+    {
+        $this->createOrdersTable();
+        $this->createDeliveryAddressTable();
+        
+        // Get order and verify it belongs to user
+        $sql = "SELECT o.*, d.* 
+                FROM orders o
+                LEFT JOIN delivery_addresses d ON o.delivery_address_id = d.id
+                WHERE o.id = ? AND o.user_id = ?";
+        
+        $result = $this->fetchPrepared($sql, "ii", [$orderId, $userId]);
+        
+        if (empty($result)) {
+            return null;
+        }
+        
+        $order = $result[0];
+        $order['items'] = $this->getOrderItems($orderId);
+        
+        return $order;
+    }
+
 }

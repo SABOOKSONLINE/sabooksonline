@@ -1,26 +1,16 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../models/CartModel.php';
-require_once __DIR__ . '/../models/BookModel.php';
-require_once __DIR__ . '/../models/AcademicBookModel.php';
 require_once __DIR__ . '/../Config/connection.php';
 
 class OrderController
 {
     private $cartModel;
-    private $bookModel;
-    private $academicBookModel;
     private $conn;
 
     public function __construct($conn)
     {
         $this->conn = $conn;
         $this->cartModel = new CartModel($conn);
-        $this->bookModel = new BookModel($conn);
-        $this->academicBookModel = new AcademicBookModel($conn);
     }
 
     public function myOrders()
@@ -36,12 +26,11 @@ class OrderController
 
         $userId = $_SESSION['ADMIN_ID'];
         $orders = $this->cartModel->getOrders($userId);
-        // Book details are already included via JOIN queries in CartModel
 
         include __DIR__ . '/../views/orders/myOrders.php';
     }
 
-    public function orderDetails($orderId)
+    public function orderDetails(int $orderId)
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -53,20 +42,63 @@ class OrderController
         }
 
         $userId = $_SESSION['ADMIN_ID'];
-        $orderData = $this->cartModel->getOrderDetails($orderId);
+        $order = $this->cartModel->getOrderDetails($orderId, $userId);
 
-        if (!$orderData) {
+        if (!$order) {
             header('Location: /orders?error=not_found');
             exit;
         }
 
-        // Verify order belongs to user
-        if ($orderData['order']['user_id'] != $userId) {
-            header('Location: /orders?error=unauthorized');
+        include __DIR__ . '/../views/orders/orderDetails.php';
+    }
+
+    public function retryPayment(int $orderId)
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['ADMIN_ID'])) {
+            header('Location: /login');
             exit;
         }
-        // Book details are already included via JOIN queries in CartModel
 
-        include __DIR__ . '/../views/orders/orderDetails.php';
+        $userId = $_SESSION['ADMIN_ID'];
+        $order = $this->cartModel->getOrderDetails($orderId, $userId);
+
+        if (!$order) {
+            header('Location: /orders?error=not_found');
+            exit;
+        }
+
+        // Check if order is already paid
+        if (($order['payment_status'] ?? 'pending') === 'paid') {
+            header('Location: /orders/' . $orderId . '?error=already_paid');
+            exit;
+        }
+
+        // Get user details - query directly since UserModel doesn't have getUserById
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE ADMIN_ID = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+
+        if (!$user) {
+            header('Location: /orders?error=user_not_found');
+            exit;
+        }
+
+        // Store order ID in session for payment return
+        $_SESSION['pending_order_id'] = $orderId;
+
+        // Total amount already includes shipping fee
+        $totalAmount = $order['total_amount'] ?? 0;
+
+        // Generate payment using CheckoutController
+        require_once __DIR__ . '/CheckoutController.php';
+        $checkoutController = new CheckoutController($this->conn);
+        $checkoutController->generatePayment($totalAmount, $user, $orderId);
     }
 }

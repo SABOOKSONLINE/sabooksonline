@@ -64,6 +64,25 @@ require_once __DIR__ . "/../includes/nav.php";
 .status-cancelled { background: #f8d7da; color: #721c24; }
 .status-returned { background: #f8d7da; color: #721c24; }
 
+.payment-status-badge {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.payment-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.payment-paid { background: #d4edda; color: #155724; }
+.payment-pending { background: #fff3cd; color: #856404; }
+.payment-failed { background: #f8d7da; color: #721c24; }
+.payment-refunded { background: #f8d7da; color: #721c24; }
+
 .order-items {
     display: flex;
     gap: 1rem;
@@ -112,6 +131,11 @@ require_once __DIR__ . "/../includes/nav.php";
     align-items: center;
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
+    gap: 1rem;
+}
+
+.order-summary > div:first-child {
+    flex: 1;
 }
 
 .order-total {
@@ -165,7 +189,11 @@ require_once __DIR__ . "/../includes/nav.php";
 
 <div class="container orders-page">
     <div class="page-heading">
-        <h1>My Orders</h1>
+        <h1><?php 
+            $userName = $_SESSION['ADMIN_NAME'] ?? '';
+            $firstName = !empty($userName) ? explode(' ', trim($userName))[0] : '';
+            echo !empty($firstName) ? htmlspecialchars($firstName) . "'s Orders" : "Your Orders";
+        ?></h1>
         <p>Track and manage your book orders</p>
     </div>
 
@@ -179,9 +207,8 @@ require_once __DIR__ . "/../includes/nav.php";
             <a href="/library" class="btn btn-primary mt-3">Browse Books</a>
         </div>
     <?php else: ?>
-        <?php foreach ($orders as $orderData): 
-            $order = $orderData['order'];
-            $items = $orderData['items'] ?? [];
+        <?php foreach ($orders as $order): 
+            $items = $order['items'] ?? [];
             $status = $order['order_status'] ?? 'pending';
         ?>
             <div class="order-card">
@@ -198,33 +225,55 @@ require_once __DIR__ . "/../includes/nav.php";
                 </div>
 
                 <div class="order-items">
-                    <?php foreach ($items as $item): 
-                        $coverPath = ($item['cover_path'] ?? '/cms-data/book-covers/') . ($item['cover'] ?? '');
-                        $title = $item['title'] ?? 'Unknown Book';
-                        $author = $item['author'] ?? 'Unknown Author';
-                    ?>
-                        <div class="order-item">
-                            <img src="<?= $coverPath ?>" 
-                                 alt="<?= htmlspecialchars($title) ?>" 
-                                 class="order-item-img"
-                                 onerror="this.src='/assets/img/default-book.png'">
-                            <div class="order-item-info">
-                                <div class="order-item-title"><?= htmlspecialchars($title) ?></div>
-                                <div class="order-item-meta">
-                                    <?= htmlspecialchars($author) ?> • Qty: <?= $item['quantity'] ?? 1 ?>
+                    <?php if (!empty($items)): ?>
+                        <?php foreach ($items as $item): 
+                            $coverPath = ($item['cover_path'] ?? '/cms-data/book-covers/') . ($item['cover'] ?? '');
+                            $title = $item['title'] ?? 'Unknown Book';
+                            $author = $item['author'] ?? 'Unknown Author';
+                        ?>
+                            <div class="order-item">
+                                <img src="<?= $coverPath ?>" 
+                                     alt="<?= htmlspecialchars($title) ?>" 
+                                     class="order-item-img"
+                                     onerror="this.src='/assets/img/default-book.png'">
+                                <div class="order-item-info">
+                                    <div class="order-item-title"><?= htmlspecialchars($title) ?></div>
+                                    <div class="order-item-meta">
+                                        <?= htmlspecialchars($author) ?> • Qty: <?= $item['quantity'] ?? 1 ?>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted">No items found for this order.</p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="order-summary">
-                    <div class="order-total">
-                        Total: R<?= number_format($order['total_amount'] ?? 0, 2) ?>
+                    <div>
+                        <div class="order-total">
+                            Total: R<?= number_format($order['total_amount'] ?? 0, 2) ?>
+                        </div>
+                        <?php 
+                        $paymentStatus = $order['payment_status'] ?? 'pending';
+                        $paymentClass = 'payment-' . strtolower($paymentStatus);
+                        ?>
+                        <div class="payment-status-badge mt-2">
+                            <span class="payment-badge <?= $paymentClass ?>">
+                                Payment: <?= ucfirst($paymentStatus) ?>
+                            </span>
+                        </div>
                     </div>
-                    <a href="/orders/<?= $order['id'] ?>" class="view-order-btn">
-                        View Details
-                    </a>
+                    <div class="d-flex gap-2">
+                        <?php if ($paymentStatus !== 'paid'): ?>
+                            <a href="/orders/<?= $order['id'] ?>/retry-payment" class="btn btn-primary">
+                                <i class="fas fa-credit-card me-2"></i>Pay Now
+                            </a>
+                        <?php endif; ?>
+                        <a href="/orders/<?= $order['id'] ?>" class="view-order-btn">
+                            View Details
+                        </a>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
