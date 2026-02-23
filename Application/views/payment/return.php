@@ -112,7 +112,21 @@ if ($orderId) {
     // If we have checkoutId, verify with Yoco API
     if ($checkoutId) {
     // This is a Yoco payment return - verify payment
-    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: 'sk_live_0e215527YB2LEB798e04dd09d32e';
+    // Get Yoco secret key from environment variable (try multiple sources)
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
+    
+    if (empty($yocoSecretKey)) {
+        error_log("YOCO_SECRET_KEY is not set - cannot verify payment");
+        // Still try to update order status if we have orderId
+        if ($orderId) {
+            $stmt = $conn->prepare("UPDATE orders SET payment_status = 'failed' WHERE id = ?");
+            $stmt->bind_param("i", $orderId);
+            $stmt->execute();
+            $stmt->close();
+        }
+        header('Location: /payment/cancel?error=config');
+        exit;
+    }
     
     // Verify payment with Yoco API
     $ch = curl_init("https://payments.yoco.com/api/checkouts/$checkoutId");

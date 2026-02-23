@@ -185,7 +185,21 @@ public function generatePayment($price, $user, $orderId = null) {
         die("Invalid user data. Please log in again.");
     }
     
-    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
+    // Get Yoco secret key from environment variable (try multiple sources)
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
+    
+    // Validate that we have a key
+    if (empty($yocoSecretKey)) {
+        error_log("YOCO_SECRET_KEY is not set in environment variables. Check .env file or server environment variables.");
+        error_log("Available env vars: " . implode(', ', array_keys($_ENV)));
+        die("Payment initialization failed: Configuration error. Please contact support.");
+    }
+    
+    // Validate key format (should start with 'sk_' for secret keys)
+    if (!str_starts_with($yocoSecretKey, 'sk_')) {
+        error_log("YOCO_SECRET_KEY format appears invalid (should start with 'sk_')");
+        die("Payment initialization failed: Invalid configuration. Please contact support.");
+    }
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
