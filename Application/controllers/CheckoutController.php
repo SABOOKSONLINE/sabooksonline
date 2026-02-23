@@ -190,25 +190,64 @@ public function generatePayment($price, $user, $orderId = null) {
     
     // If still empty, try to read from .env file directly as fallback
     if (empty($yocoSecretKey)) {
-        $envFile = __DIR__ . '/../../.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (strpos($line, 'YOCO_SECRET_KEY=') === 0) {
-                    $yocoSecretKey = trim(substr($line, strlen('YOCO_SECRET_KEY=')), " \t\n\r\0\x0B\"'");
-                    break;
+        // Try multiple possible .env file paths
+        $possiblePaths = [
+            __DIR__ . '/../../.env',  // From Application/controllers/
+            __DIR__ . '/../../../.env', // Alternative path
+            dirname(__DIR__, 3) . '/.env', // Go up 3 levels
+        ];
+        
+        foreach ($possiblePaths as $envFile) {
+            if (file_exists($envFile)) {
+                $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    // Skip comments and empty lines
+                    if (empty($line) || $line[0] === '#') {
+                        continue;
+                    }
+                    // Check if line contains YOCO_SECRET_KEY
+                    if (strpos($line, 'YOCO_SECRET_KEY') !== false) {
+                        // Handle both YOCO_SECRET_KEY=value and # YOCO_SECRET_KEY=value (commented)
+                        if ($line[0] !== '#') {
+                            $parts = explode('=', $line, 2);
+                            if (count($parts) === 2 && trim($parts[0]) === 'YOCO_SECRET_KEY') {
+                                $yocoSecretKey = trim($parts[1], " \t\n\r\0\x0B\"'");
+                                // Set it in environment for future use
+                                putenv("YOCO_SECRET_KEY=$yocoSecretKey");
+                                $_ENV['YOCO_SECRET_KEY'] = $yocoSecretKey;
+                                $_SERVER['YOCO_SECRET_KEY'] = $yocoSecretKey;
+                                break 2; // Break out of both loops
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+    
+    // Debug logging for localhost (remove in production or make conditional)
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+               strpos($httpHost, 'localhost') !== false ||
+               strpos($httpHost, '127.0.0.1') !== false;
+    
+    if ($isLocal) {
+        error_log("YOCO_SECRET_KEY Debug:");
+        error_log("  getenv(): " . (getenv('YOCO_SECRET_KEY') ? 'SET (' . substr(getenv('YOCO_SECRET_KEY'), 0, 10) . '...)' : 'NOT SET'));
+        error_log("  _ENV: " . (isset($_ENV['YOCO_SECRET_KEY']) ? 'SET (' . substr($_ENV['YOCO_SECRET_KEY'], 0, 10) . '...)' : 'NOT SET'));
+        error_log("  _SERVER: " . (isset($_SERVER['YOCO_SECRET_KEY']) ? 'SET (' . substr($_SERVER['YOCO_SECRET_KEY'], 0, 10) . '...)' : 'NOT SET'));
+        error_log("  Final key: " . (empty($yocoSecretKey) ? 'EMPTY' : substr($yocoSecretKey, 0, 10) . '...'));
     }
     
     // Validate that we have a key
     if (empty($yocoSecretKey)) {
         error_log("YOCO_SECRET_KEY is not set in environment variables. Check .env file or server environment variables.");
         error_log("Checked getenv(), _ENV, _SERVER, and direct .env file read.");
-        error_log(".env file path checked: " . (__DIR__ . '/../../.env'));
-        error_log(".env file exists: " . (file_exists(__DIR__ . '/../../.env') ? 'YES' : 'NO'));
+        foreach ($possiblePaths ?? [__DIR__ . '/../../.env'] as $path) {
+            error_log(".env file path checked: $path");
+            error_log(".env file exists: " . (file_exists($path) ? 'YES' : 'NO'));
+        }
         die("Payment initialization failed: Configuration error. Please contact support.");
     }
     
