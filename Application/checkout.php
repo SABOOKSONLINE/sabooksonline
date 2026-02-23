@@ -1,5 +1,7 @@
 <?php 
 session_start();
+// Load environment variables first (connection.php also loads it, but ensure it's loaded)
+require_once __DIR__ . '/../../load_env.php';
 require_once __DIR__ . '/Config/connection.php';
 require_once __DIR__ . '/controllers/CheckoutController.php';
 

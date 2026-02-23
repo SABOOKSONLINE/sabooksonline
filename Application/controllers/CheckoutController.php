@@ -188,10 +188,27 @@ public function generatePayment($price, $user, $orderId = null) {
     // Get Yoco secret key from environment variable (try multiple sources)
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
     
+    // If still empty, try to read from .env file directly as fallback
+    if (empty($yocoSecretKey)) {
+        $envFile = __DIR__ . '/../../.env';
+        if (file_exists($envFile)) {
+            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (strpos($line, 'YOCO_SECRET_KEY=') === 0) {
+                    $yocoSecretKey = trim(substr($line, strlen('YOCO_SECRET_KEY=')), " \t\n\r\0\x0B\"'");
+                    break;
+                }
+            }
+        }
+    }
+    
     // Validate that we have a key
     if (empty($yocoSecretKey)) {
         error_log("YOCO_SECRET_KEY is not set in environment variables. Check .env file or server environment variables.");
-        error_log("Available env vars: " . implode(', ', array_keys($_ENV)));
+        error_log("Checked getenv(), _ENV, _SERVER, and direct .env file read.");
+        error_log(".env file path checked: " . (__DIR__ . '/../../.env'));
+        error_log(".env file exists: " . (file_exists(__DIR__ . '/../../.env') ? 'YES' : 'NO'));
         die("Payment initialization failed: Configuration error. Please contact support.");
     }
     
