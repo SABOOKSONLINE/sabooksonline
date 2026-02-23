@@ -64,6 +64,11 @@ if (isset($userKey)) {
     exit;
 }
 
+// Generate personalized orders label
+$userName = $_SESSION['ADMIN_NAME'] ?? '';
+$firstName = !empty($userName) ? explode(' ', trim($userName))[0] : '';
+$ordersLabel = !empty($firstName) ? htmlspecialchars($firstName) . "'s Orders" : "Your Orders";
+
 require_once __DIR__ . "/../util/urlRedirect.php";
 ?>
 
@@ -145,7 +150,7 @@ $navItems = [
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdownHeader" style="z-index: 1001; position: absolute;">
                         <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                         <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
-                        <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> My Orders</a></li>
+                        <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> <?= $ordersLabel ?></a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
@@ -253,7 +258,7 @@ $navItems = [
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="/dashboards"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                                 <li><a class="dropdown-item" href="/dashboards/bookshelf"><i class="fas fa-book me-2"></i> My Library</a></li>
-                                <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-bag me-2"></i> <?= $ordersLabel ?></a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>

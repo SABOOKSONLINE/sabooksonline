@@ -35,7 +35,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($price <= 0) {
             die("Invalid price amount. Please contact support.");
         }
-        $checkout->purchase($price, $userId);
+        
+        // Check if this is a cart checkout (has shipping_price)
+        $shippingPrice = $_POST['shipping_price'] ?? null;
+        $orderId = null;
+        
+        if ($shippingPrice !== null) {
+            // This is a cart checkout - create order first
+            require_once __DIR__ . '/models/CartModel.php';
+            require_once __DIR__ . '/controllers/CartController.php';
+            
+            $cartController = new CartController($conn);
+            require_once __DIR__ . '/models/UserModel.php';
+            $userModel = new userModel($conn);
+            $user = $userModel->getUserByNameOrKey($userId);
+            $userIdInt = $user['ADMIN_ID'] ?? null;
+            
+            if ($userIdInt) {
+                // Ensure user ID is in session for CartController
+                if (!isset($_SESSION['ADMIN_ID'])) {
+                    $_SESSION['ADMIN_ID'] = $userIdInt;
+                }
+                
+                // Create order before payment
+                $orderId = $cartController->createOrder($userIdInt);
+                if ($orderId) {
+                    // Update order totals with actual shipping and payment method
+                    $shippingFee = (float)$shippingPrice;
+                    $cartController->updateOrderTotals($orderId, $price, $shippingFee, 'yoco');
+                    
+                    // Store order ID in session for verification on return
+                    $_SESSION['pending_order_id'] = $orderId;
+                } else {
+                    die("Failed to create order. Please try again.");
+                }
+            } else {
+                die("User not found. Please log in again.");
+            }
+        }
+        
+        $checkout->purchase($price, $userId, false, $orderId ?? null);
     }
      elseif ($audiobookId) {
         $checkout->purchaseBook($audiobookId, $userId, 'Audiobook');
@@ -48,10 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkout->purchaseMedia($newspaperId, $userId, 'Newspaper');
     }
     elseif ($academicBookId) {
-        $format = $_POST['format'] ?? 'digital';
-        // Map format: 'digital' -> 'AcademicBook', 'hardcopy' -> 'hardcopy'
-        $formatForController = ($format === 'hardcopy') ? 'hardcopy' : 'AcademicBook';
-        $checkout->purchaseAcademicBook($academicBookId, $userId, $formatForController);
+        // Direct PayFast purchase for academic books is disabled
+        // Academic books should be purchased via cart checkout (hardcopy) or are free (digital)
+        header('Location: /books/academic/' . urlencode($academicBookId) . '?error=direct_purchase_disabled');
+        exit;
     }
 }
 

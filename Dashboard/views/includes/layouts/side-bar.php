@@ -81,7 +81,11 @@ if (!in_array(strtolower($subscriptionPlan), $allowedPlans) && $current_path ===
 
             <div class="nav flex-column gap-1">
                 <a href="/orders" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/orders') === 0) ? 'active' : ''; ?>">
-                    <i class="fas fa-shopping-bag me-2"></i> My Orders
+                    <i class="fas fa-shopping-bag me-2"></i> <?php 
+                        $userName = $_SESSION['ADMIN_NAME'] ?? '';
+                        $firstName = !empty($userName) ? explode(' ', trim($userName))[0] : '';
+                        echo !empty($firstName) ? htmlspecialchars($firstName) . "'s Orders" : "Your Orders";
+                    ?>
                 </a>
                 <a href="/dashboards/billing" class="nav-link py-2 px-3 rounded-3 text-dark <?php echo (strpos($current_path, '/dashboards/billing') === 0) ? 'active' : ''; ?>">
                     <i class="fas fa-file-invoice-dollar me-2"></i> Billing & Payments

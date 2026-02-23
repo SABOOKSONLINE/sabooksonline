@@ -37,13 +37,11 @@ function createOrderAndNotify(int $userId, float $shippingFee = 0): string
 
     $cartController->updateOrderTotals($orderId, $grandTotal, $shippingFee, $paymentMethod);
 
-    $orderDetails = $cartController->getOrderDetails($orderId);
-
+    // Build message from cart items and address (order details viewing removed)
     $message = "<h2>Order Details</h2>";
-    $message .= "<strong>Order Number:</strong> " . $orderDetails['order']['order_number'] . "<br>";
-    $message .= "<strong>Total Amount:</strong> R" . number_format($orderDetails['order']['total_amount'], 2) . "<br>";
-    $message .= "<strong>Shipping Fee:</strong> R" . number_format($orderDetails['order']['shipping_fee'], 2) . "<br>";
-    $message .= "<strong>Payment Method:</strong> " . $orderDetails['order']['payment_method'] . "<br>";
+    $message .= "<strong>Total Amount:</strong> R" . number_format($grandTotal, 2) . "<br>";
+    $message .= "<strong>Shipping Fee:</strong> R" . number_format($shippingFee, 2) . "<br>";
+    $message .= "<strong>Payment Method:</strong> " . $paymentMethod . "<br>";
     $message .= "<strong>Delivery Address:</strong><br>";
     $message .= $address['full_name'] . "<br>";
     $message .= $address['street_address'] . " " . $address['street_address2'] . "<br>";

@@ -5,20 +5,6 @@ if (!isset($conn)) {
 }
 require_once __DIR__ . "/../includes/header.php";
 require_once __DIR__ . "/../includes/nav.php";
-
-$order = $orderData['order'];
-$items = $orderData['items'] ?? [];
-$address = $order;
-$status = $order['order_status'] ?? 'pending';
-$statusSteps = [
-    'pending' => 1,
-    'processing' => 2,
-    'packed' => 3,
-    'shipped' => 4,
-    'out_for_delivery' => 5,
-    'delivered' => 6
-];
-$currentStep = $statusSteps[$status] ?? 1;
 ?>
 
 <style>
@@ -27,205 +13,176 @@ $currentStep = $statusSteps[$status] ?? 1;
     min-height: 60vh;
 }
 
-.order-details-header {
+.order-details-card {
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.order-info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.order-header-section {
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.order-number-large {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.order-date-large {
+    color: #666;
+    font-size: 1rem;
     margin-bottom: 1rem;
 }
 
-.order-info-row:last-child {
-    margin-bottom: 0;
-}
-
-.order-label {
+.order-status-large {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #333;
+    text-transform: capitalize;
 }
 
-.order-value {
-    color: #666;
+.status-pending { background: #fff3cd; color: #856404; }
+.status-processing { background: #cfe2ff; color: #084298; }
+.status-packed { background: #d1ecf1; color: #055160; }
+.status-shipped { background: #d4edda; color: #155724; }
+.status-out_for_delivery { background: #d1ecf1; color: #0c5460; }
+.status-delivered { background: #d4edda; color: #155724; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+.status-returned { background: #f8d7da; color: #721c24; }
+
+.payment-status-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
 }
 
-.tracking-section {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 2rem;
+.payment-paid { background: #d4edda; color: #155724; }
+.payment-pending { background: #fff3cd; color: #856404; }
+.payment-failed { background: #f8d7da; color: #721c24; }
+.payment-refunded { background: #f8d7da; color: #721c24; }
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.tracking-timeline {
-    position: relative;
-    padding-left: 2rem;
-    margin-top: 1.5rem;
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.tracking-timeline::before {
-    content: '';
-    position: absolute;
-    left: 0.5rem;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #e0e0e0;
-}
-
-.tracking-step {
-    position: relative;
-    padding-bottom: 2rem;
-}
-
-.tracking-step:last-child {
-    padding-bottom: 0;
-}
-
-.tracking-step::before {
-    content: '';
-    position: absolute;
-    left: -1.75rem;
-    top: 0.25rem;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    border: 2px solid #fff;
-    z-index: 1;
-}
-
-.tracking-step.active::before {
-    background: #007bff;
-    border-color: #007bff;
-}
-
-.tracking-step.completed::before {
-    background: #28a745;
-    border-color: #28a745;
-}
-
-.tracking-step-title {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.25rem;
-}
-
-.tracking-step.completed .tracking-step-title {
-    color: #28a745;
-}
-
-.tracking-step.active .tracking-step-title {
-    color: #007bff;
-}
-
-.tracking-step-date {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.items-section {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+.details-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
     border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.items-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.items-table th {
-    text-align: left;
-    padding: 1rem;
-    border-bottom: 2px solid #e0e0e0;
+.section-title {
+    font-size: 1.1rem;
     font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.detail-item {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #666;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.detail-value {
     color: #333;
 }
 
-.items-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f0f0f0;
+.order-items-section {
+    margin-top: 2rem;
 }
 
-.item-image {
-    width: 60px;
-    height: 85px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-.item-info {
+.order-item-detail {
     display: flex;
     gap: 1rem;
     align-items: center;
-}
-
-.item-details h5 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1rem;
-    color: #333;
-}
-
-.item-details p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.address-section {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    padding: 1rem;
     border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.address-section h3 {
     margin-bottom: 1rem;
+}
+
+.order-item-img-large {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.order-item-details {
+    flex: 1;
+}
+
+.order-item-title-large {
+    font-size: 1rem;
+    font-weight: 600;
     color: #333;
+    margin-bottom: 0.5rem;
 }
 
-.address-details {
-    line-height: 1.8;
+.order-item-meta-large {
+    font-size: 0.9rem;
     color: #666;
+    margin-bottom: 0.5rem;
 }
 
-.summary-section {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+.order-item-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+.order-summary-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
     border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 2rem;
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
 }
 
-.summary-row:last-child {
-    border-bottom: none;
+.summary-row.total {
+    font-size: 1.25rem;
     font-weight: 600;
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
     padding-top: 1rem;
-    border-top: 2px solid #e0e0e0;
+    border-top: 2px solid #dee2e6;
+    margin-top: 1rem;
+    color: #333;
 }
 
 .back-link {
@@ -233,185 +190,156 @@ $currentStep = $statusSteps[$status] ?? 1;
     margin-bottom: 1.5rem;
     color: #007bff;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .back-link:hover {
     text-decoration: underline;
 }
-
-.tracking-number {
-    background: #f8f9fa;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-family: monospace;
-    display: inline-block;
-    margin-top: 0.5rem;
-}
 </style>
 
 <div class="container order-details-page">
     <a href="/orders" class="back-link">
-        <i class="fas fa-arrow-left me-2"></i> Back to Orders
+        <i class="fas fa-arrow-left me-2"></i>Back to Orders
     </a>
 
-    <div class="order-details-header">
-        <div class="order-info-row">
-            <div>
-                <div class="order-label">Order Number</div>
-                <div class="order-value">#<?= htmlspecialchars($order['order_number'] ?? $order['id']) ?></div>
+    <div class="order-details-card">
+        <div class="order-header-section">
+            <div class="order-number-large">Order #<?= htmlspecialchars($order['order_number'] ?? $order['id']) ?></div>
+            <div class="order-date-large">
+                Placed on <?= date('F j, Y g:i A', strtotime($order['created_at'])) ?>
             </div>
-            <div>
-                <div class="order-label">Order Status</div>
-                <span class="order-status status-<?= $status ?>">
-                    <?= ucfirst(str_replace('_', ' ', $status)) ?>
-                </span>
-            </div>
+            <span class="order-status-large status-<?= $order['order_status'] ?? 'pending' ?>">
+                <?= ucfirst(str_replace('_', ' ', $order['order_status'] ?? 'pending')) ?>
+            </span>
         </div>
-        <div class="order-info-row">
-            <div>
-                <div class="order-label">Order Date</div>
-                <div class="order-value"><?= date('F j, Y g:i A', strtotime($order['created_at'])) ?></div>
-            </div>
-            <?php if (!empty($order['tracking_number'])): ?>
-                <div>
-                    <div class="order-label">Tracking Number</div>
-                    <div class="tracking-number"><?= htmlspecialchars($order['tracking_number']) ?></div>
+
+        <div class="details-grid">
+            <div class="details-section">
+                <h3 class="section-title">Order Information</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Order Number:</span>
+                    <span class="detail-value"><?= htmlspecialchars($order['order_number'] ?? $order['id']) ?></span>
                 </div>
+                <div class="detail-item">
+                    <span class="detail-label">Payment Status:</span>
+                    <span class="detail-value">
+                        <?php 
+                        $paymentStatus = $order['payment_status'] ?? 'pending';
+                        $paymentClass = 'payment-' . strtolower($paymentStatus);
+                        ?>
+                        <span class="payment-status-badge <?= $paymentClass ?>">
+                            <?= ucfirst($paymentStatus) ?>
+                        </span>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Payment Method:</span>
+                    <span class="detail-value"><?= ucfirst($order['payment_method'] ?? 'N/A') ?></span>
+                </div>
+                <?php if (!empty($order['tracking_number'])): ?>
+                <div class="detail-item">
+                    <span class="detail-label">Tracking Number:</span>
+                    <span class="detail-value"><?= htmlspecialchars($order['tracking_number']) ?></span>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if (!empty($order['full_name'])): ?>
+            <div class="details-section">
+                <h3 class="section-title">Delivery Address</h3>
+                <div class="detail-item">
+                    <span class="detail-value">
+                        <?= htmlspecialchars($order['full_name']) ?><br>
+                        <?= htmlspecialchars($order['street_address'] ?? '') ?>
+                        <?php if (!empty($order['street_address2'])): ?>
+                            <?= htmlspecialchars($order['street_address2']) ?><br>
+                        <?php endif; ?>
+                        <?= htmlspecialchars($order['local_area'] ?? '') ?><br>
+                        <?= htmlspecialchars($order['zone'] ?? '') ?><br>
+                        <?= htmlspecialchars($order['postal_code'] ?? '') ?><br>
+                        <?php if (!empty($order['email'])): ?>
+                            <strong>Email:</strong> <?= htmlspecialchars($order['email']) ?><br>
+                        <?php endif; ?>
+                        <?php if (!empty($order['phone'])): ?>
+                            <strong>Phone:</strong> <?= htmlspecialchars($order['phone']) ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
-    </div>
 
-    <div class="tracking-section">
-        <h3>Order Tracking</h3>
-        <div class="tracking-timeline">
-            <div class="tracking-step <?= $currentStep >= 1 ? ($currentStep == 1 ? 'active' : 'completed') : '' ?>">
-                <div class="tracking-step-title">Order Placed</div>
-                <div class="tracking-step-date"><?= date('M j, Y', strtotime($order['created_at'])) ?></div>
-            </div>
-            <div class="tracking-step <?= $currentStep >= 2 ? ($currentStep == 2 ? 'active' : 'completed') : '' ?>">
-                <div class="tracking-step-title">Processing</div>
-                <?php if ($currentStep >= 2): ?>
-                    <div class="tracking-step-date">In progress</div>
-                <?php endif; ?>
-            </div>
-            <div class="tracking-step <?= $currentStep >= 3 ? ($currentStep == 3 ? 'active' : 'completed') : '' ?>">
-                <div class="tracking-step-title">Packed</div>
-                <?php if ($currentStep >= 3): ?>
-                    <div class="tracking-step-date">Ready for shipping</div>
-                <?php endif; ?>
-            </div>
-            <div class="tracking-step <?= $currentStep >= 4 ? ($currentStep == 4 ? 'active' : 'completed') : '' ?>">
-                <div class="tracking-step-title">Shipped</div>
-                <?php if ($currentStep >= 4): ?>
-                    <div class="tracking-step-date">On the way</div>
-                <?php endif; ?>
-            </div>
-            <div class="tracking-step <?= $currentStep >= 5 ? ($currentStep == 5 ? 'active' : 'completed') : '' ?>">
-                <div class="tracking-step-title">Out for Delivery</div>
-                <?php if ($currentStep >= 5): ?>
-                    <div class="tracking-step-date">Arriving soon</div>
-                <?php endif; ?>
-            </div>
-            <div class="tracking-step <?= $currentStep >= 6 ? 'completed' : '' ?>">
-                <div class="tracking-step-title">Delivered</div>
-                <?php if ($currentStep >= 6): ?>
-                    <div class="tracking-step-date"><?= date('M j, Y', strtotime($order['updated_at'])) ?></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="items-section">
-        <h3>Order Items</h3>
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($items as $item): 
+        <div class="order-items-section">
+            <h3 class="section-title">Order Items</h3>
+            <?php if (!empty($order['items'])): ?>
+                <?php foreach ($order['items'] as $item): 
                     $coverPath = ($item['cover_path'] ?? '/cms-data/book-covers/') . ($item['cover'] ?? '');
                     $title = $item['title'] ?? 'Unknown Book';
                     $author = $item['author'] ?? 'Unknown Author';
                     $quantity = $item['quantity'] ?? 1;
                     $unitPrice = $item['unit_price'] ?? 0;
-                    $totalPrice = $item['total_price'] ?? ($unitPrice * $quantity);
+                    $totalPrice = $unitPrice * $quantity;
                 ?>
-                    <tr>
-                        <td>
-                            <div class="item-info">
-                                <img src="<?= $coverPath ?>" 
-                                     alt="<?= htmlspecialchars($title) ?>" 
-                                     class="item-image"
-                                     onerror="this.src='/assets/img/default-book.png'">
-                                <div class="item-details">
-                                    <h5><?= htmlspecialchars($title) ?></h5>
-                                    <p><?= htmlspecialchars($author) ?></p>
-                                    <?php if (($item['book_type'] ?? 'regular') === 'academic'): ?>
-                                        <span class="badge bg-info" style="font-size: 0.75rem;">Academic</span>
-                                    <?php endif; ?>
-                                </div>
+                    <div class="order-item-detail">
+                        <img src="<?= $coverPath ?>" 
+                             alt="<?= htmlspecialchars($title) ?>" 
+                             class="order-item-img-large"
+                             onerror="this.src='/assets/img/default-book.png'">
+                        <div class="order-item-details">
+                            <div class="order-item-title-large"><?= htmlspecialchars($title) ?></div>
+                            <div class="order-item-meta-large">
+                                <?= htmlspecialchars($author) ?>
                             </div>
-                        </td>
-                        <td><?= $quantity ?></td>
-                        <td>R<?= number_format($unitPrice, 2) ?></td>
-                        <td>R<?= number_format($totalPrice, 2) ?></td>
-                    </tr>
+                            <div class="order-item-meta-large">
+                                Quantity: <?= $quantity ?> × R<?= number_format($unitPrice, 2) ?>
+                            </div>
+                        </div>
+                        <div class="order-item-price">
+                            R<?= number_format($totalPrice, 2) ?>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="address-section">
-                <h3>Delivery Address</h3>
-                <div class="address-details">
-                    <strong><?= htmlspecialchars($address['full_name'] ?? '') ?></strong><br>
-                    <?php if (!empty($address['company'])): ?>
-                        <?= htmlspecialchars($address['company']) ?><br>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($address['street_address'] ?? '') ?><br>
-                    <?php if (!empty($address['street_address2'])): ?>
-                        <?= htmlspecialchars($address['street_address2']) ?><br>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($address['local_area'] ?? '') ?><br>
-                    <?= htmlspecialchars($address['zone'] ?? '') ?><br>
-                    <?= htmlspecialchars($address['postal_code'] ?? '') ?><br>
-                    <?= htmlspecialchars($address['country'] ?? 'South Africa') ?><br><br>
-                    <strong>Phone:</strong> <?= htmlspecialchars($address['phone'] ?? '') ?><br>
-                    <strong>Email:</strong> <?= htmlspecialchars($address['email'] ?? '') ?><br>
-                    <strong>Delivery Type:</strong> <?= htmlspecialchars($address['delivery_type'] ?? 'Standard') ?>
-                </div>
-            </div>
+            <?php else: ?>
+                <p class="text-muted">No items found for this order.</p>
+            <?php endif; ?>
         </div>
-        <div class="col-md-6">
-            <div class="summary-section">
-                <h3>Order Summary</h3>
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>R<?= number_format(($order['total_amount'] ?? 0) - ($order['shipping_fee'] ?? 0), 2) ?></span>
+
+        <div class="order-summary-section">
+            <h3 class="section-title">Order Summary</h3>
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>R<?= number_format(($order['total_amount'] ?? 0) - ($order['shipping_fee'] ?? 0), 2) ?></span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping:</span>
+                <span>R<?= number_format($order['shipping_fee'] ?? 0, 2) ?></span>
+            </div>
+            <div class="summary-row total">
+                <span>Total:</span>
+                <span>R<?= number_format($order['total_amount'] ?? 0, 2) ?></span>
+            </div>
+            
+            <?php 
+            $paymentStatus = $order['payment_status'] ?? 'pending';
+            $paymentClass = 'payment-' . strtolower($paymentStatus);
+            ?>
+            <div class="mt-4 pt-3 border-top">
+                <div class="mb-3">
+                    <span class="payment-status-badge <?= $paymentClass ?>">
+                        Payment Status: <?= ucfirst($paymentStatus) ?>
+                    </span>
                 </div>
-                <div class="summary-row">
-                    <span>Shipping</span>
-                    <span>R<?= number_format($order['shipping_fee'] ?? 0, 2) ?></span>
-                </div>
-                <div class="summary-row">
-                    <span>Payment Method</span>
-                    <span><?= ucfirst($order['payment_method'] ?? 'Not specified') ?></span>
-                </div>
-                <div class="summary-row">
-                    <span>Payment Status</span>
-                    <span><?= ucfirst($order['payment_status'] ?? 'pending') ?></span>
-                </div>
-                <div class="summary-row">
-                    <span>Total</span>
-                    <span>R<?= number_format($order['total_amount'] ?? 0, 2) ?></span>
-                </div>
+                <?php if ($paymentStatus !== 'paid'): ?>
+                    <a href="/orders/<?= $order['id'] ?>/retry-payment" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-credit-card me-2"></i>Pay Now / Retry Payment
+                    </a>
+                    <p class="text-muted small mt-2 mb-0">Complete your payment to process this order</p>
+                <?php else: ?>
+                    <p class="text-success small mt-2 mb-0">
+                        <i class="fas fa-check-circle me-2"></i>Payment completed successfully
+                    </p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

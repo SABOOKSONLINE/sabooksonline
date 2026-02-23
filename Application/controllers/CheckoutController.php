@@ -82,7 +82,7 @@ class CheckoutController {
     $this->generatePaymentForm($academicBook, $user, $format);
 }
 
-public function purchase($price, $userId,$api = false) {
+public function purchase($price, $userId, $api = false, $orderId = null) {
 
     $user = $this->userModel->getUserByNameOrKey($userId);
     if (empty($user)) {
@@ -93,7 +93,7 @@ public function purchase($price, $userId,$api = false) {
           $this->payment($price, $user);
 
     } else {
-        $this->generatePayment($price, $user);
+        $this->generatePayment($price, $user, $orderId);
     }
 }
 
@@ -164,7 +164,7 @@ public function payment($price, $user) {
     exit;
 }
 
-public function generatePayment($price, $user) {
+public function generatePayment($price, $user, $orderId = null) {
     if (!$user) {
         die("Invalid book or user data.");
     }
@@ -185,26 +185,44 @@ public function generatePayment($price, $user) {
         die("Invalid user data. Please log in again.");
     }
     
-    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: 'sk_live_0e215527YB2LEB798e04dd09d32e';
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
     }
     
+    $metadata = [
+        'user_id' => $userId,
+        'user_name' => $userName,
+        'user_email' => $userEmail,
+        'item_name' => 'Checkout Books Purchase',
+        'payment_id' => uniqid(),
+        'product_type' => 'hardcopy'
+    ];
+    
+    // Add order ID to metadata if this is a cart checkout
+    if ($orderId !== null) {
+        $metadata['order_id'] = $orderId;
+    }
+    
+    // Determine base URL for localhost vs production
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+               strpos($httpHost, 'localhost') !== false ||
+               strpos($httpHost, '127.0.0.1') !== false ||
+               strpos($httpHost, 'localhost:') !== false ||
+               strpos($httpHost, '127.0.0.1:') !== false;
+    
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
+    
     $checkoutData = [
         'amount' => (int)round($price * 100), // Amount in cents (rounded to avoid precision issues)
         'currency' => 'ZAR',
-        'cancelUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
-        'successUrl' => 'https://www.sabooksonline.co.za/payment/return',
-        'failureUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
-        'metadata' => [
-            'user_id' => $userId,
-            'user_name' => $userName,
-            'user_email' => $userEmail,
-            'item_name' => 'Checkout Books Purchase',
-            'payment_id' => uniqid(),
-            'product_type' => 'hardcopy'
-        ]
+        'cancelUrl' => "$baseUrl/payment/cancel",
+        'successUrl' => "$baseUrl/payment/return",
+        'failureUrl' => "$baseUrl/payment/cancel",
+        'metadata' => $metadata
     ];
     
     $ch = curl_init('https://payments.yoco.com/api/checkouts');
@@ -273,6 +291,24 @@ public function generatePayment($price, $user) {
     }
     
     $responseData = json_decode($response, true);
+    
+    // Store checkoutId in session for verification on return
+    // Yoco returns 'id' as the checkoutId in the response
+    if (isset($responseData['id'])) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['yoco_checkout_id'] = $responseData['id'];
+        
+        // Debug logging for localhost
+        $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+                   strpos($httpHost, 'localhost') !== false ||
+                   strpos($httpHost, '127.0.0.1') !== false;
+        if ($isLocal) {
+            error_log("Yoco Checkout Created - Checkout ID: " . $responseData['id']);
+        }
+    }
     
     if (isset($responseData['redirectUrl'])) {
         header('Location: ' . $responseData['redirectUrl']);

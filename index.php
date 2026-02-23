@@ -163,11 +163,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-    $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
-        $_GET['action'] = 'getOrderDetails';
-        $_GET['userID'] = $userID;
-        require "Application/api.php";
-    });
+    // Orders functionality removed
+    // $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
+    //     $_GET['action'] = 'getOrderDetails';
+    //     $_GET['userID'] = $userID;
+    //     require "Application/api.php";
+    // });
 
     $r->addRoute('POST', '/api/analytics', function () {
         $_GET['action'] = 'analytics';
@@ -829,6 +830,49 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require_once "Application/controllers/OrderController.php";
         $controller = new OrderController($conn);
         $controller->orderDetails((int)$id);
+    });
+    $r->addRoute('GET', '/orders/{id}/retry-payment', function ($id) {
+        require_once "Application/Config/connection.php";
+        require_once "Application/controllers/OrderController.php";
+        $controller = new OrderController($conn);
+        $controller->retryPayment((int)$id);
+    });
+    
+    // Manual payment status update for localhost testing
+    $r->addRoute('POST', '/payment/manual-update-status', function () {
+        require_once "Application/Config/connection.php";
+        header('Content-Type: application/json');
+        
+        // Only allow on localhost
+        $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+                   strpos($httpHost, 'localhost') !== false ||
+                   strpos($httpHost, '127.0.0.1') !== false;
+        
+        if (!$isLocal) {
+            echo json_encode(['success' => false, 'message' => 'Only available on localhost']);
+            exit;
+        }
+        
+        $data = json_decode(file_get_contents('php://input'), true);
+        $orderId = (int)($data['order_id'] ?? 0);
+        $status = $data['status'] ?? 'paid';
+        
+        if ($orderId > 0) {
+            $stmt = $conn->prepare("UPDATE orders SET payment_status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("si", $status, $orderId);
+            $result = $stmt->execute();
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            
+            echo json_encode([
+                'success' => $result && $affected > 0,
+                'message' => $result && $affected > 0 ? 'Status updated' : 'Update failed',
+                'affected_rows' => $affected
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid order ID']);
+        }
     });
 });
 

@@ -82,11 +82,6 @@ class CartController
         return $this->cartModel->createOrder($userId);
     }
 
-    public function getOrderDetails($orderId)
-    {
-        return $this->cartModel->getOrderDetails($orderId);
-    }
-
     public function updateOrderTotals(int $orderId, ?float $totalAmount = null, ?float $shippingFee = null, ?string $paymentMethod = null): bool
     {
         return $this->cartModel->updateOrderTotals($orderId, $totalAmount, $shippingFee, $paymentMethod);

@@ -19,17 +19,20 @@ try {
     $orderId = (int)$data['order_id'];
     $newStatus = trim($data['order_status']);
 
-    $validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    // Match the enum values from CartModel createOrdersTable
+    $validStatuses = ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
     if (!in_array($newStatus, $validStatuses)) {
-        throw new Exception("Invalid order status");
+        throw new Exception("Invalid order status: " . $newStatus);
     }
 
     $ordersModel = new OrdersModel($conn);
 
-    $order = $ordersModel->getOrder($orderId);
-    if (empty($order)) {
+    $orderResult = $ordersModel->getOrder($orderId);
+    if (empty($orderResult) || !isset($orderResult[0])) {
         throw new Exception("Order not found");
     }
+    
+    $order = $orderResult[0];
 
     $updatedRows = $ordersModel->updateOrderStatus($orderId, $newStatus);
 

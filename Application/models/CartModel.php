@@ -351,7 +351,8 @@ class CartModel extends Model
         foreach ($cartItems as $item) $subtotal += ($item["hc_price"] ?? 0) * $item["cart_item_count"];
         $shippingFee = 60;
         $total = $subtotal + $shippingFee;
-        $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee) VALUES (?, ?, ?, ?, ?)";
+        // Set payment_status to 'pending' initially - will be updated on successful payment
+        $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee, payment_status) VALUES (?, ?, ?, ?, ?, 'pending')";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("iisdd", $userId, $address["id"], $orderNumber, $total, $shippingFee);
         $stmt->execute();
@@ -371,91 +372,6 @@ class CartModel extends Model
         }
         $this->clearCart($userId);
         return $orderId;
-    }
-
-    public function getOrderDetails(int $orderId): ?array
-    {
-        $this->createOrdersTable();
-        $this->createOrderItemsTable();
-        $this->createDeliveryAddressTable();
-        $sql = "SELECT o.*, d.* FROM orders AS o JOIN delivery_addresses AS d ON o.delivery_address_id=d.id WHERE o.id=?";
-        $order = $this->fetchPrepared($sql, "i", [$orderId]);
-        if (empty($order)) return null;
-
-        // Fetch items with book details in one query using JOINs
-        $sqlItems = "SELECT 
-            oi.*,
-            COALESCE(b.TITLE, ab.title) AS title,
-            COALESCE(b.AUTHORS, ab.author) AS author,
-            COALESCE(b.COVER, ab.cover_image_path) AS cover,
-            CASE 
-                WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
-                ELSE '/cms-data/book-covers/'
-            END AS cover_path
-        FROM order_items oi
-        LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
-        LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
-        WHERE oi.order_id = ?";
-        $items = $this->fetchPrepared($sqlItems, "i", [$orderId]);
-        return ["order" => $order[0], "items" => $items];
-    }
-
-    public function getOrders(int $userId): ?array
-    {
-        $this->createOrdersTable();
-        $this->createOrderItemsTable();
-        $this->createDeliveryAddressTable();
-
-        // 1. Fetch all orders with their delivery addresses
-        $sqlOrders = "SELECT o.*, d.* 
-                  FROM orders AS o
-                  JOIN delivery_addresses AS d 
-                    ON o.delivery_address_id = d.id
-                  WHERE o.user_id = ?
-                  ORDER BY o.id DESC";
-
-        $orders = $this->fetchPrepared($sqlOrders, "i", [$userId]);
-        if (empty($orders)) return null;
-
-        // Extract order IDs
-        $orderIds = array_column($orders, 'id');
-        if (empty($orderIds)) return null;
-
-        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
-
-        // 2. Fetch all order items with book details in one query using JOINs
-        $sqlItems = "SELECT 
-        oi.*,
-        COALESCE(b.TITLE, ab.title) AS title,
-        COALESCE(b.AUTHORS, ab.author) AS author,
-        COALESCE(b.COVER, ab.cover_image_path) AS cover,
-        CASE 
-            WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
-            ELSE '/cms-data/book-covers/'
-        END AS cover_path
-    FROM order_items oi
-    LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
-    LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
-    WHERE oi.order_id IN ($placeholders)";
-
-        $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
-
-        // 3. Group items by order_id
-        $itemsByOrder = [];
-        foreach ($itemsData as $item) {
-            $itemsByOrder[$item['order_id']][] = $item;
-        }
-
-        // 4. Combine orders with their items
-        $result = [];
-        foreach ($orders as $order) {
-            $result[] = [
-                "order" => $order,
-                "items" => $itemsByOrder[$order['id']] ?? []
-            ];
-        }
-
-        return $result;
     }
 
 
@@ -483,177 +399,265 @@ class CartModel extends Model
 
     // ─── Collection Address Table ───────────────────────────────────────────────
 
-private function createCollectionAddressTable(): bool
-{
-    $columns = [
-        "id"                   => "INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
-        "user_id"              => "INT NOT NULL",
-        "nickname"             => "VARCHAR(100) NOT NULL COMMENT 'e.g. Home, Office'",
-        "contact_name"         => "VARCHAR(150) NOT NULL",
-        "contact_phone"        => "VARCHAR(20) NOT NULL",
-        "contact_email"        => "VARCHAR(255) NOT NULL",
-        "unit_number"          => "VARCHAR(20) DEFAULT NULL",
-        "complex_name"         => "VARCHAR(150) DEFAULT NULL",
-        "street_number"        => "VARCHAR(20) NOT NULL",
-        "street_name"          => "VARCHAR(255) NOT NULL",
-        "suburb"               => "VARCHAR(150) NOT NULL",
-        "city"                 => "VARCHAR(150) NOT NULL",
-        "province"             => "VARCHAR(100) NOT NULL",
-        "postal_code"          => "VARCHAR(10) NOT NULL",
-        "country_code"         => "CHAR(2) NOT NULL DEFAULT 'ZA'",
-        "special_instructions" => "TEXT DEFAULT NULL",
-        "is_default"           => "TINYINT(1) NOT NULL DEFAULT 0",
-        "created_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-        "updated_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-    ];
-    return $this->createTable("book_collection_addresses", $columns);
-}
-
-public function addCollectionAddress(int $userId, array $data): ?int
-{
-    $this->createCollectionAddressTable();
-
-    $nickname             = $data['nickname'] ?? '';
-    $contact_name         = $data['contact_name'] ?? '';
-    $contact_phone        = $data['contact_phone'] ?? '';
-    $contact_email        = $data['contact_email'] ?? '';
-    $unit_number          = $data['unit_number'] ?? null;
-    $complex_name         = $data['complex_name'] ?? null;
-    $street_number        = $data['street_number'] ?? '';
-    $street_name          = $data['street_name'] ?? '';
-    $suburb               = $data['suburb'] ?? '';
-    $city                 = $data['city'] ?? '';
-    $province             = $data['province'] ?? '';
-    $postal_code          = $data['postal_code'] ?? '';
-    $country_code         = $data['country_code'] ?? 'ZA';
-    $special_instructions = $data['special_instructions'] ?? null;
-    $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
-
-    // If this address is being set as default, clear any existing default first
-    if ($is_default) {
-        $this->clearDefaultCollectionAddress($userId);
+    private function createCollectionAddressTable(): bool
+    {
+        $columns = [
+            "id"                   => "INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+            "user_id"              => "INT NOT NULL",
+            "nickname"             => "VARCHAR(100) NOT NULL COMMENT 'e.g. Home, Office'",
+            "contact_name"         => "VARCHAR(150) NOT NULL",
+            "contact_phone"        => "VARCHAR(20) NOT NULL",
+            "contact_email"        => "VARCHAR(255) NOT NULL",
+            "unit_number"          => "VARCHAR(20) DEFAULT NULL",
+            "complex_name"         => "VARCHAR(150) DEFAULT NULL",
+            "street_number"        => "VARCHAR(20) NOT NULL",
+            "street_name"          => "VARCHAR(255) NOT NULL",
+            "suburb"               => "VARCHAR(150) NOT NULL",
+            "city"                 => "VARCHAR(150) NOT NULL",
+            "province"             => "VARCHAR(100) NOT NULL",
+            "postal_code"          => "VARCHAR(10) NOT NULL",
+            "country_code"         => "CHAR(2) NOT NULL DEFAULT 'ZA'",
+            "special_instructions" => "TEXT DEFAULT NULL",
+            "is_default"           => "TINYINT(1) NOT NULL DEFAULT 0",
+            "created_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            "updated_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+        ];
+        return $this->createTable("book_collection_addresses", $columns);
     }
 
-    $sql = "INSERT INTO book_collection_addresses 
+    public function addCollectionAddress(int $userId, array $data): ?int
+    {
+        $this->createCollectionAddressTable();
+
+        $nickname             = $data['nickname'] ?? '';
+        $contact_name         = $data['contact_name'] ?? '';
+        $contact_phone        = $data['contact_phone'] ?? '';
+        $contact_email        = $data['contact_email'] ?? '';
+        $unit_number          = $data['unit_number'] ?? null;
+        $complex_name         = $data['complex_name'] ?? null;
+        $street_number        = $data['street_number'] ?? '';
+        $street_name          = $data['street_name'] ?? '';
+        $suburb               = $data['suburb'] ?? '';
+        $city                 = $data['city'] ?? '';
+        $province             = $data['province'] ?? '';
+        $postal_code          = $data['postal_code'] ?? '';
+        $country_code         = $data['country_code'] ?? 'ZA';
+        $special_instructions = $data['special_instructions'] ?? null;
+        $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
+
+        // If this address is being set as default, clear any existing default first
+        if ($is_default) {
+            $this->clearDefaultCollectionAddress($userId);
+        }
+
+        $sql = "INSERT INTO book_collection_addresses 
                 (user_id, nickname, contact_name, contact_phone, contact_email,
                  unit_number, complex_name, street_number, street_name,
                  suburb, city, province, postal_code, country_code,
                  special_instructions, is_default)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param(
-        "issssssssssssssi",
-        $userId, $nickname, $contact_name, $contact_phone, $contact_email,
-        $unit_number, $complex_name, $street_number, $street_name,
-        $suburb, $city, $province, $postal_code, $country_code,
-        $special_instructions, $is_default
-    );
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param(
+            "issssssssssssssi",
+            $userId,
+            $nickname,
+            $contact_name,
+            $contact_phone,
+            $contact_email,
+            $unit_number,
+            $complex_name,
+            $street_number,
+            $street_name,
+            $suburb,
+            $city,
+            $province,
+            $postal_code,
+            $country_code,
+            $special_instructions,
+            $is_default
+        );
 
-    if (!$stmt->execute()) return null;
-    $newId = $stmt->insert_id;
-    $stmt->close();
-    return $newId;
-}
-
-public function updateCollectionAddress(int $addressId, int $userId, array $data): bool
-{
-    $this->createCollectionAddressTable();
-
-    $nickname             = $data['nickname'] ?? '';
-    $contact_name         = $data['contact_name'] ?? '';
-    $contact_phone        = $data['contact_phone'] ?? '';
-    $contact_email        = $data['contact_email'] ?? '';
-    $unit_number          = $data['unit_number'] ?? null;
-    $complex_name         = $data['complex_name'] ?? null;
-    $street_number        = $data['street_number'] ?? '';
-    $street_name          = $data['street_name'] ?? '';
-    $suburb               = $data['suburb'] ?? '';
-    $city                 = $data['city'] ?? '';
-    $province             = $data['province'] ?? '';
-    $postal_code          = $data['postal_code'] ?? '';
-    $country_code         = $data['country_code'] ?? 'ZA';
-    $special_instructions = $data['special_instructions'] ?? null;
-    $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
-
-    if ($is_default) {
-        $this->clearDefaultCollectionAddress($userId);
+        if (!$stmt->execute()) return null;
+        $newId = $stmt->insert_id;
+        $stmt->close();
+        return $newId;
     }
 
-    $sql = "UPDATE book_collection_addresses
+    public function updateCollectionAddress(int $addressId, int $userId, array $data): bool
+    {
+        $this->createCollectionAddressTable();
+
+        $nickname             = $data['nickname'] ?? '';
+        $contact_name         = $data['contact_name'] ?? '';
+        $contact_phone        = $data['contact_phone'] ?? '';
+        $contact_email        = $data['contact_email'] ?? '';
+        $unit_number          = $data['unit_number'] ?? null;
+        $complex_name         = $data['complex_name'] ?? null;
+        $street_number        = $data['street_number'] ?? '';
+        $street_name          = $data['street_name'] ?? '';
+        $suburb               = $data['suburb'] ?? '';
+        $city                 = $data['city'] ?? '';
+        $province             = $data['province'] ?? '';
+        $postal_code          = $data['postal_code'] ?? '';
+        $country_code         = $data['country_code'] ?? 'ZA';
+        $special_instructions = $data['special_instructions'] ?? null;
+        $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
+
+        if ($is_default) {
+            $this->clearDefaultCollectionAddress($userId);
+        }
+
+        $sql = "UPDATE book_collection_addresses
             SET nickname=?, contact_name=?, contact_phone=?, contact_email=?,
                 unit_number=?, complex_name=?, street_number=?, street_name=?,
                 suburb=?, city=?, province=?, postal_code=?, country_code=?,
                 special_instructions=?, is_default=?
             WHERE id=? AND user_id=?";
 
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param(
-        "sssssssssssssssii",
-        $nickname, $contact_name, $contact_phone, $contact_email,
-        $unit_number, $complex_name, $street_number, $street_name,
-        $suburb, $city, $province, $postal_code, $country_code,
-        $special_instructions, $is_default,
-        $addressId, $userId
-    );
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param(
+            "sssssssssssssssii",
+            $nickname,
+            $contact_name,
+            $contact_phone,
+            $contact_email,
+            $unit_number,
+            $complex_name,
+            $street_number,
+            $street_name,
+            $suburb,
+            $city,
+            $province,
+            $postal_code,
+            $country_code,
+            $special_instructions,
+            $is_default,
+            $addressId,
+            $userId
+        );
 
-    $result = $stmt->execute();
-    $stmt->close();
-    return $result;
-}
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 
-public function getCollectionAddresses(int $userId): array
-{
-    $this->createCollectionAddressTable();
-    $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC";
-    return $this->fetchPrepared($sql, "i", [$userId]);
-}
+    public function getCollectionAddresses(int $userId): array
+    {
+        $this->createCollectionAddressTable();
+        $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC";
+        return $this->fetchPrepared($sql, "i", [$userId]);
+    }
 
-public function getCollectionAddressById(int $addressId, int $userId): ?array
-{
-    $this->createCollectionAddressTable();
-    $sql = "SELECT * FROM book_collection_addresses WHERE id = ? AND user_id = ?";
-    $res = $this->fetchPrepared($sql, "ii", [$addressId, $userId]);
-    return $res[0] ?? null;
-}
+    public function getCollectionAddressById(int $addressId, int $userId): ?array
+    {
+        $this->createCollectionAddressTable();
+        $sql = "SELECT * FROM book_collection_addresses WHERE id = ? AND user_id = ?";
+        $res = $this->fetchPrepared($sql, "ii", [$addressId, $userId]);
+        return $res[0] ?? null;
+    }
 
-public function getDefaultCollectionAddress(int $userId): ?array
-{
-    $this->createCollectionAddressTable();
-    $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
-    $res = $this->fetchPrepared($sql, "i", [$userId]);
-    return $res[0] ?? null;
-}
+    public function getDefaultCollectionAddress(int $userId): ?array
+    {
+        $this->createCollectionAddressTable();
+        $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
+        $res = $this->fetchPrepared($sql, "i", [$userId]);
+        return $res[0] ?? null;
+    }
 
-public function setDefaultCollectionAddress(int $addressId, int $userId): bool
-{
-    $this->createCollectionAddressTable();
-    $this->clearDefaultCollectionAddress($userId);
-    $sql = "UPDATE book_collection_addresses SET is_default = 1 WHERE id = ? AND user_id = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("ii", $addressId, $userId);
-    $result = $stmt->execute();
-    $stmt->close();
-    return $result;
-}
+    public function setDefaultCollectionAddress(int $addressId, int $userId): bool
+    {
+        $this->createCollectionAddressTable();
+        $this->clearDefaultCollectionAddress($userId);
+        $sql = "UPDATE book_collection_addresses SET is_default = 1 WHERE id = ? AND user_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $addressId, $userId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 
-public function removeCollectionAddress(int $addressId, int $userId): bool
-{
-    $this->createCollectionAddressTable();
-    $sql = "DELETE FROM book_collection_addresses WHERE id = ? AND user_id = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("ii", $addressId, $userId);
-    $result = $stmt->execute();
-    $stmt->close();
-    return $result;
-}
+    public function removeCollectionAddress(int $addressId, int $userId): bool
+    {
+        $this->createCollectionAddressTable();
+        $sql = "DELETE FROM book_collection_addresses WHERE id = ? AND user_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $addressId, $userId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 
-private function clearDefaultCollectionAddress(int $userId): void
-{
-    $sql = "UPDATE book_collection_addresses SET is_default = 0 WHERE user_id = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $stmt->close();
-}
+    private function clearDefaultCollectionAddress(int $userId): void
+    {
+        $sql = "UPDATE book_collection_addresses SET is_default = 0 WHERE user_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $stmt->close();
+    }
+    public function getOrders(int $userId): array
+    {
+        $this->createOrdersTable();
+        $this->createOrderItemsTable();
+
+        // Simple query - just get orders
+        $sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC";
+        $orders = $this->fetchPrepared($sql, "i", [$userId]);
+
+        if (empty($orders)) {
+            return [];
+        }
+
+        // For each order, get items
+        foreach ($orders as &$order) {
+            $orderId = $order['id'];
+            $order['items'] = $this->getOrderItems($orderId);
+        }
+
+        return $orders;
+    }
+
+    private function getOrderItems(int $orderId): array
+    {
+        $sql = "SELECT 
+            oi.*,
+            COALESCE(b.TITLE, ab.title) AS title,
+            COALESCE(b.AUTHORS, ab.author) AS author,
+            COALESCE(b.COVER, ab.cover_image_path) AS cover,
+            CASE 
+                WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
+                ELSE '/cms-data/book-covers/'
+            END AS cover_path
+        FROM order_items oi
+        LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
+        LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
+        WHERE oi.order_id = ?";
+
+        $items = $this->fetchPrepared($sql, "i", [$orderId]);
+        return $items ?: [];
+    }
+
+    public function getOrderDetails(int $orderId, int $userId): ?array
+    {
+        $this->createOrdersTable();
+        $this->createDeliveryAddressTable();
+
+        // Get order and verify it belongs to user
+        $sql = "SELECT o.*, d.* 
+                FROM orders o
+                LEFT JOIN delivery_addresses d ON o.delivery_address_id = d.id
+                WHERE o.id = ? AND o.user_id = ?";
+
+        $result = $this->fetchPrepared($sql, "ii", [$orderId, $userId]);
+
+        if (empty($result)) {
+            return null;
+        }
+
+        $order = $result[0];
+        $order['items'] = $this->getOrderItems($orderId);
+
+        return $order;
+    }
 }

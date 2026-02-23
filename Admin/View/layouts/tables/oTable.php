@@ -18,9 +18,12 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                 style="width: 200px;">
                 <option value="">All Statuses</option>
                 <?php
-                $statuses = array_unique(array_map(fn($o) => $o['order_status'], $orders));
-                foreach ($statuses as $status): ?>
-                    <option value="<?= htmlspecialchars($status) ?>"><?= htmlspecialchars(ucfirst($status)) ?></option>
+                // Use all possible statuses for filter dropdown
+                $allStatuses = ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
+                foreach ($allStatuses as $status): 
+                    $displayName = ucfirst(str_replace('_', ' ', $status));
+                ?>
+                    <option value="<?= htmlspecialchars($status) ?>"><?= htmlspecialchars($displayName) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -100,11 +103,13 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                         <td>
                             <select class="form-select order-status" data-order-id="<?= $order['id'] ?>">
                                 <?php
-                                $allStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+                                // Match the enum values from CartModel createOrdersTable
+                                $allStatuses = ['pending', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
                                 foreach ($allStatuses as $s):
+                                    $displayName = ucfirst(str_replace('_', ' ', $s));
                                 ?>
                                     <option value="<?= $s ?>" <?= $s === $order['order_status'] ? 'selected' : '' ?>>
-                                        <?= ucfirst($s) ?>
+                                        <?= $displayName ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -214,9 +219,14 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
         });
 
         document.querySelectorAll('.order-status').forEach(select => {
-            select.addEventListener('change', e => {
-                const orderId = e.target.dataset.orderId;
-                const newStatus = e.target.value;
+            select.addEventListener('change', function(e) {
+                const orderId = this.dataset.orderId;
+                const newStatus = this.value;
+                const originalValue = this.getAttribute('data-original-value') || this.value;
+                
+                // Disable select while updating
+                this.disabled = true;
+                const selectElement = this;
 
                 fetch('/admin/orders/update-status', {
                     method: 'POST',
@@ -228,9 +238,32 @@ function renderOrdersTable($orders, $itemsByOrder = []): void
                         order_status: newStatus
                     })
                 }).then(res => res.json()).then(data => {
-                    if (!data.success) alert('Failed to update status');
-                }).catch(() => alert('Failed to update status'));
+                    selectElement.disabled = false;
+                    if (data.success) {
+                        // Update the original value attribute
+                        selectElement.setAttribute('data-original-value', newStatus);
+                        // Show success - update the select background briefly
+                        const statusName = newStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        selectElement.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            selectElement.style.backgroundColor = '';
+                        }, 1000);
+                        console.log('Order status updated to:', statusName);
+                    } else {
+                        // Revert to original value on failure
+                        selectElement.value = originalValue;
+                        alert('Failed to update status: ' + (data.message || 'Unknown error'));
+                    }
+                }).catch(error => {
+                    selectElement.disabled = false;
+                    selectElement.value = originalValue;
+                    alert('Failed to update status: Network error');
+                    console.error('Status update error:', error);
+                });
             });
+            
+            // Store original value on page load
+            select.setAttribute('data-original-value', select.value);
         });
 
         document.querySelectorAll('.view-order-details').forEach(btn => {
