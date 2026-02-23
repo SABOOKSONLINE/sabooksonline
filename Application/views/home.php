@@ -70,6 +70,7 @@ $academicBookController = new AcademicBookController($conn);
         </div>
     </section>
 
+    <?php /* Textbooks section commented out
     <section class="section">
         <div class="container">
             <?php renderSectionHeading("Textbooks", "Educational Resources for Learning and Growth.", "Show more", "/academic") ?>
@@ -128,6 +129,7 @@ $academicBookController = new AcademicBookController($conn);
             </div>
         </div>
     </section>
+    */ ?>
 
     <section class="section">
         <div class="container-fluid">
