@@ -276,10 +276,9 @@ public function generatePayment($price, $user, $orderId = null) {
     if (empty($yocoSecretKey)) {
         error_log("YOCO_SECRET_KEY is not set in environment variables. Check .env file or server environment variables.");
         error_log("Checked getenv(), _ENV, _SERVER, and direct .env file read.");
-        foreach ($possiblePaths ?? [__DIR__ . '/../../.env'] as $path) {
-            error_log(".env file path checked: $path");
-            error_log(".env file exists: " . (file_exists($path) ? 'YES' : 'NO'));
-        }
+        error_log("Document root: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'not set'));
+        error_log("Current directory: " . getcwd());
+        error_log("open_basedir: " . (ini_get('open_basedir') ?: 'not set'));
         die("Payment initialization failed: Configuration error. Please contact support.");
     }
     
