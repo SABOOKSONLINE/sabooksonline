@@ -187,6 +187,33 @@ public function generatePayment($price, $user, $orderId = null) {
         die("Minimum payment amount is R2.00");
     }
     
+    // Detect if we're on localhost
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
+               strpos($httpHost, 'localhost') !== false ||
+               strpos($httpHost, '127.0.0.1') !== false;
+    
+    // Check if using live key (starts with 'sk_live_')
+    $isLiveKey = str_starts_with($yocoSecretKey, 'sk_live_');
+    
+    // Determine base URL for redirects
+    // Live keys require HTTPS URLs - use production URLs if on localhost with live key
+    if ($isLocal && $isLiveKey) {
+        // Check if ngrok HTTPS tunnel is configured
+        $ngrokUrl = getenv('NGROK_URL') ?: $_ENV['NGROK_URL'] ?? $_SERVER['NGROK_URL'] ?? '';
+        if (!empty($ngrokUrl)) {
+            $baseUrl = rtrim($ngrokUrl, '/');
+            error_log("Using ngrok HTTPS URL for localhost with live key: $baseUrl");
+        } else {
+            // Use production URLs when testing live key on localhost
+            $baseUrl = 'https://www.sabooksonline.co.za';
+            error_log("Using live Yoco key on localhost - redirect URLs set to production");
+        }
+    } else {
+        // Normal behavior: use production URLs for production, or localhost URLs for test keys
+        $baseUrl = $isLocal ? 'http://' . $httpHost : 'https://www.sabooksonline.co.za';
+    }
+    
     $metadata = [
         'user_id' => $userId,
         'user_name' => $userName,
@@ -204,9 +231,9 @@ public function generatePayment($price, $user, $orderId = null) {
     $checkoutData = [
         'amount' => (int)($price * 100), // Amount in cents
         'currency' => 'ZAR',
-        'cancelUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
-        'successUrl' => 'https://www.sabooksonline.co.za/payment/return',
-        'failureUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
+        'cancelUrl' => "$baseUrl/payment/cancel",
+        'successUrl' => "$baseUrl/payment/return",
+        'failureUrl' => "$baseUrl/payment/cancel",
         'metadata' => $metadata
     ];
     
