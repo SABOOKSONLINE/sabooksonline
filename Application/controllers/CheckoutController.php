@@ -169,124 +169,11 @@ public function generatePayment($price, $user, $orderId = null) {
         die("Invalid book or user data.");
     }
     
-    // Ensure price is a valid float
-    $price = (float)$price;
-    if ($price <= 0 || !is_numeric($price)) {
-        error_log("Invalid price for Yoco payment: $price");
-        die("Invalid payment amount. Please contact support.");
-    }
-    
     $userId = $user['ADMIN_ID'] ?? '';
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
     
-    if (empty($userId) || empty($userEmail)) {
-        error_log("Missing user data for Yoco payment - User ID: $userId, Email: $userEmail");
-        die("Invalid user data. Please log in again.");
-    }
-    
-    // Get Yoco secret key from environment variable (try multiple sources)
-    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
-    
-    // If still empty, try to read from .env file directly as fallback
-    // Use realpath to resolve and check against open_basedir restrictions
-    if (empty($yocoSecretKey)) {
-        // Try multiple possible .env file paths (within allowed directories)
-        $possiblePaths = [];
-        
-        // Get the document root or current working directory
-        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? getcwd() ?: __DIR__;
-        
-        // Try paths relative to document root (most common)
-        $possiblePaths[] = rtrim($docRoot, '/') . '/.env';
-        $possiblePaths[] = dirname($docRoot) . '/.env';
-        
-        // Try paths relative to current file (but stay within allowed paths)
-        $currentDir = __DIR__;
-        $possiblePaths[] = dirname($currentDir, 2) . '/.env'; // Application/.env
-        $possiblePaths[] = dirname($currentDir, 3) . '/.env'; // Root/.env
-        
-        // Try using realpath to resolve and check if within allowed paths
-        foreach ($possiblePaths as $envFile) {
-            // Use realpath to resolve the path and check if it exists
-            $resolvedPath = @realpath($envFile);
-            if ($resolvedPath && file_exists($resolvedPath)) {
-                // Check if resolved path is within allowed open_basedir
-                $openBasedir = ini_get('open_basedir');
-                if (!empty($openBasedir)) {
-                    $allowed = false;
-                    foreach (explode(':', $openBasedir) as $allowedPath) {
-                        if (strpos($resolvedPath, rtrim($allowedPath, '/')) === 0) {
-                            $allowed = true;
-                            break;
-                        }
-                    }
-                    if (!$allowed) {
-                        continue; // Skip this path, it's outside open_basedir
-                    }
-                }
-                
-                // Path is valid, try to read it
-                $lines = @file($resolvedPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                if ($lines === false) {
-                    continue; // Couldn't read file
-                }
-                
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    // Skip comments and empty lines
-                    if (empty($line) || $line[0] === '#') {
-                        continue;
-                    }
-                    // Check if line contains YOCO_SECRET_KEY
-                    if (strpos($line, 'YOCO_SECRET_KEY') !== false) {
-                        // Handle both YOCO_SECRET_KEY=value and # YOCO_SECRET_KEY=value (commented)
-                        if ($line[0] !== '#') {
-                            $parts = explode('=', $line, 2);
-                            if (count($parts) === 2 && trim($parts[0]) === 'YOCO_SECRET_KEY') {
-                                $yocoSecretKey = trim($parts[1], " \t\n\r\0\x0B\"'");
-                                // Set it in environment for future use
-                                putenv("YOCO_SECRET_KEY=$yocoSecretKey");
-                                $_ENV['YOCO_SECRET_KEY'] = $yocoSecretKey;
-                                $_SERVER['YOCO_SECRET_KEY'] = $yocoSecretKey;
-                                break 2; // Break out of both loops
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // Debug logging for localhost (remove in production or make conditional)
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($httpHost, 'localhost') !== false ||
-               strpos($httpHost, '127.0.0.1') !== false;
-    
-    if ($isLocal) {
-        error_log("YOCO_SECRET_KEY Debug:");
-        error_log("  getenv(): " . (getenv('YOCO_SECRET_KEY') ? 'SET (' . substr(getenv('YOCO_SECRET_KEY'), 0, 10) . '...)' : 'NOT SET'));
-        error_log("  _ENV: " . (isset($_ENV['YOCO_SECRET_KEY']) ? 'SET (' . substr($_ENV['YOCO_SECRET_KEY'], 0, 10) . '...)' : 'NOT SET'));
-        error_log("  _SERVER: " . (isset($_SERVER['YOCO_SECRET_KEY']) ? 'SET (' . substr($_SERVER['YOCO_SECRET_KEY'], 0, 10) . '...)' : 'NOT SET'));
-        error_log("  Final key: " . (empty($yocoSecretKey) ? 'EMPTY' : substr($yocoSecretKey, 0, 10) . '...'));
-    }
-    
-    // Validate that we have a key
-    if (empty($yocoSecretKey)) {
-        error_log("YOCO_SECRET_KEY is not set in environment variables. Check .env file or server environment variables.");
-        error_log("Checked getenv(), _ENV, _SERVER, and direct .env file read.");
-        error_log("Document root: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'not set'));
-        error_log("Current directory: " . getcwd());
-        error_log("open_basedir: " . (ini_get('open_basedir') ?: 'not set'));
-        die("Payment initialization failed: Configuration error. Please contact support.");
-    }
-    
-    // Validate key format (should start with 'sk_' for secret keys)
-    if (!str_starts_with($yocoSecretKey, 'sk_')) {
-        error_log("YOCO_SECRET_KEY format appears invalid (should start with 'sk_')");
-        die("Payment initialization failed: Invalid configuration. Please contact support.");
-    }
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
     
     if ($price < 2) {
         die("Minimum payment amount is R2.00");
@@ -306,46 +193,12 @@ public function generatePayment($price, $user, $orderId = null) {
         $metadata['order_id'] = $orderId;
     }
     
-    // Determine base URL for localhost vs production
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($httpHost, 'localhost') !== false ||
-               strpos($httpHost, '127.0.0.1') !== false ||
-               strpos($httpHost, 'localhost:') !== false ||
-               strpos($httpHost, '127.0.0.1:') !== false;
-    
-    // Check if using live key (starts with 'sk_live_')
-    $isLiveKey = str_starts_with($yocoSecretKey, 'sk_live_');
-    
-    // Yoco live keys require HTTPS URLs
-    // If on localhost with live key, use production URLs for redirects (or ngrok HTTPS URL if available)
-    if ($isLocal && $isLiveKey) {
-        // Check if ngrok or similar HTTPS tunnel is being used
-        $ngrokUrl = getenv('NGROK_URL') ?: $_ENV['NGROK_URL'] ?? $_SERVER['NGROK_URL'] ?? '';
-        
-        if (!empty($ngrokUrl)) {
-            // Use ngrok HTTPS URL
-            $baseUrl = rtrim($ngrokUrl, '/');
-            error_log("Using ngrok HTTPS URL for localhost with live key: $baseUrl");
-        } else {
-            // Fallback: Use production URLs for redirects when testing live key on localhost
-            // Note: This means payment return will go to production, not localhost
-            $baseUrl = 'https://www.sabooksonline.co.za';
-            error_log("WARNING: Using live Yoco key on localhost. Redirect URLs set to production (https://www.sabooksonline.co.za)");
-            error_log("For localhost testing with live key, consider using ngrok: Set NGROK_URL in .env");
-        }
-    } else {
-        // Normal behavior: use appropriate URL based on environment
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
-    }
-    
     $checkoutData = [
-        'amount' => (int)round($price * 100), // Amount in cents (rounded to avoid precision issues)
+        'amount' => (int)($price * 100), // Amount in cents
         'currency' => 'ZAR',
-        'cancelUrl' => "$baseUrl/payment/cancel",
-        'successUrl' => "$baseUrl/payment/return",
-        'failureUrl' => "$baseUrl/payment/cancel",
+        'cancelUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
+        'successUrl' => 'https://www.sabooksonline.co.za/payment/return',
+        'failureUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
         'metadata' => $metadata
     ];
     
@@ -358,80 +211,24 @@ public function generatePayment($price, $user, $orderId = null) {
         'Content-Type: application/json'
     ]);
     
-    // SSL configuration - disable verification for local development
-    // In production, you should have proper SSL certificates configured
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($httpHost, 'localhost') !== false ||
-               strpos($httpHost, '127.0.0.1') !== false ||
-               strpos($httpHost, 'localhost:') !== false ||
-               strpos($httpHost, '127.0.0.1:') !== false;
-    
-    if ($isLocal) {
-        // Disable SSL verification for local development
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        // Additional options for localhost testing
-        curl_setopt($ch, CURLOPT_CAINFO, '');
-        curl_setopt($ch, CURLOPT_CAPATH, '');
-    } else {
-        // Enable SSL verification for production
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    }
-    
-    // Set timeout to prevent hanging requests
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    
-    // Follow redirects
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-    
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
-    // curl_close() is deprecated in PHP 8.5+ - handles are automatically closed when out of scope
-    
-    if ($curlError) {
-        error_log("Yoco Payment cURL Error: $curlError");
-        die("Payment initialization failed: Network error. Please try again or contact support.");
-    }
+    curl_close($ch);
     
     if ($httpCode !== 200 && $httpCode !== 201) {
-        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response, Price: $price, User ID: $userId");
-        $errorMsg = "Payment initialization failed. ";
-        if ($response) {
-            $errorData = json_decode($response, true);
-            if (isset($errorData['message'])) {
-                $errorMsg .= "Error: " . $errorData['message'];
-            } else {
-                $errorMsg .= "HTTP $httpCode";
-            }
-        } else {
-            $errorMsg .= "Please try again or contact support.";
-        }
-        die($errorMsg);
+        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response");
+        die("Payment initialization failed. Please try again or contact support.");
     }
     
     $responseData = json_decode($response, true);
     
     // Store checkoutId in session for verification on return
-    // Yoco returns 'id' as the checkoutId in the response
     if (isset($responseData['id'])) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         $_SESSION['yoco_checkout_id'] = $responseData['id'];
-        
-        // Debug logging for localhost
-        $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-                   strpos($httpHost, 'localhost') !== false ||
-                   strpos($httpHost, '127.0.0.1') !== false;
-        if ($isLocal) {
-            error_log("Yoco Checkout Created - Checkout ID: " . $responseData['id']);
-        }
     }
     
     if (isset($responseData['redirectUrl'])) {
