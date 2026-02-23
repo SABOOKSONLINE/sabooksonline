@@ -44,6 +44,9 @@ if ($uri === "/admin") {
     $analyticsController->analytics();
 } else if ($uri === "/admin/orders") {
     $ordersController->orders();
+} else if ($uri === "/admin/orders/update-status" && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . "/Helpers/process_order.php";
+    exit;
 } else if ($uri === "/admin/purchases") {
     $purchasesController->purchases();
 } else if ($uri === "/admin/publishers/books" || $uri === "/admin/publishers/books/") {
