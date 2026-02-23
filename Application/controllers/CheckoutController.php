@@ -169,21 +169,9 @@ public function generatePayment($price, $user, $orderId = null) {
         die("Invalid book or user data.");
     }
     
-    // Ensure price is a valid float
-    $price = (float)$price;
-    if ($price <= 0 || !is_numeric($price)) {
-        error_log("Invalid price for Yoco payment: $price");
-        die("Invalid payment amount. Please contact support.");
-    }
-    
     $userId = $user['ADMIN_ID'] ?? '';
     $userName = $user['ADMIN_NAME'] ?? 'Customer';
     $userEmail = $user['ADMIN_EMAIL'] ?? '';
-    
-    if (empty($userId) || empty($userEmail)) {
-        error_log("Missing user data for Yoco payment - User ID: $userId, Email: $userEmail");
-        die("Invalid user data. Please log in again.");
-    }
     
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: '';
     
@@ -205,23 +193,12 @@ public function generatePayment($price, $user, $orderId = null) {
         $metadata['order_id'] = $orderId;
     }
     
-    // Determine base URL for localhost vs production
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($httpHost, 'localhost') !== false ||
-               strpos($httpHost, '127.0.0.1') !== false ||
-               strpos($httpHost, 'localhost:') !== false ||
-               strpos($httpHost, '127.0.0.1:') !== false;
-    
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $baseUrl = $isLocal ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
-    
     $checkoutData = [
-        'amount' => (int)round($price * 100), // Amount in cents (rounded to avoid precision issues)
+        'amount' => (int)($price * 100), // Amount in cents
         'currency' => 'ZAR',
-        'cancelUrl' => "$baseUrl/payment/cancel",
-        'successUrl' => "$baseUrl/payment/return",
-        'failureUrl' => "$baseUrl/payment/cancel",
+        'cancelUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
+        'successUrl' => 'https://www.sabooksonline.co.za/payment/return',
+        'failureUrl' => 'https://www.sabooksonline.co.za/payment/cancel',
         'metadata' => $metadata
     ];
     
@@ -234,80 +211,24 @@ public function generatePayment($price, $user, $orderId = null) {
         'Content-Type: application/json'
     ]);
     
-    // SSL configuration - disable verification for local development
-    // In production, you should have proper SSL certificates configured
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($httpHost, 'localhost') !== false ||
-               strpos($httpHost, '127.0.0.1') !== false ||
-               strpos($httpHost, 'localhost:') !== false ||
-               strpos($httpHost, '127.0.0.1:') !== false;
-    
-    if ($isLocal) {
-        // Disable SSL verification for local development
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        // Additional options for localhost testing
-        curl_setopt($ch, CURLOPT_CAINFO, '');
-        curl_setopt($ch, CURLOPT_CAPATH, '');
-    } else {
-        // Enable SSL verification for production
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    }
-    
-    // Set timeout to prevent hanging requests
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    
-    // Follow redirects
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-    
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
-    // curl_close() is deprecated in PHP 8.5+ - handles are automatically closed when out of scope
-    
-    if ($curlError) {
-        error_log("Yoco Payment cURL Error: $curlError");
-        die("Payment initialization failed: Network error. Please try again or contact support.");
-    }
+    curl_close($ch);
     
     if ($httpCode !== 200 && $httpCode !== 201) {
-        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response, Price: $price, User ID: $userId");
-        $errorMsg = "Payment initialization failed. ";
-        if ($response) {
-            $errorData = json_decode($response, true);
-            if (isset($errorData['message'])) {
-                $errorMsg .= "Error: " . $errorData['message'];
-            } else {
-                $errorMsg .= "HTTP $httpCode";
-            }
-        } else {
-            $errorMsg .= "Please try again or contact support.";
-        }
-        die($errorMsg);
+        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response");
+        die("Payment initialization failed. Please try again or contact support.");
     }
     
     $responseData = json_decode($response, true);
     
     // Store checkoutId in session for verification on return
-    // Yoco returns 'id' as the checkoutId in the response
     if (isset($responseData['id'])) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         $_SESSION['yoco_checkout_id'] = $responseData['id'];
-        
-        // Debug logging for localhost
-        $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-                   strpos($httpHost, 'localhost') !== false ||
-                   strpos($httpHost, '127.0.0.1') !== false;
-        if ($isLocal) {
-            error_log("Yoco Checkout Created - Checkout ID: " . $responseData['id']);
-        }
     }
     
     if (isset($responseData['redirectUrl'])) {
