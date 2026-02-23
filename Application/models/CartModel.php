@@ -16,13 +16,13 @@ class CartModel extends Model
             "updated_at"      => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
         ];
         $created = $this->createTable("book_cart", $columns);
-        
+
         // Migrate existing data: add book_type column if table exists but column doesn't
         $this->migrateCartTable();
-        
+
         return $created;
     }
-    
+
     private function migrateCartTable(): void
     {
         // Check if book_type column exists by trying to describe the table
@@ -34,12 +34,12 @@ class CartModel extends Model
                     $columns[] = $row['Field'];
                 }
             }
-            
+
             if (!in_array('book_type', $columns)) {
                 // Add book_type column and migrate existing data
                 $this->conn->query("ALTER TABLE book_cart ADD COLUMN book_type ENUM('regular', 'academic') DEFAULT 'regular' AFTER book_id");
             }
-            
+
             // Check if book_id is INT and convert to VARCHAR
             $result = $this->conn->query("DESCRIBE book_cart");
             if ($result) {
@@ -110,13 +110,13 @@ class CartModel extends Model
             "created_at"  => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ];
         $created = $this->createTable("order_items", $columns);
-        
+
         // Migrate existing data
         $this->migrateOrderItemsTable();
-        
+
         return $created;
     }
-    
+
     private function migrateOrderItemsTable(): void
     {
         // Check if book_type column exists by trying to describe the table
@@ -128,12 +128,12 @@ class CartModel extends Model
                     $columns[] = $row['Field'];
                 }
             }
-            
+
             if (!in_array('book_type', $columns)) {
                 // Add book_type column and migrate existing data
                 $this->conn->query("ALTER TABLE order_items ADD COLUMN book_type ENUM('regular', 'academic') DEFAULT 'regular' AFTER book_id");
             }
-            
+
             // Check if book_id is INT and convert to VARCHAR
             $result = $this->conn->query("DESCRIBE order_items");
             if ($result) {
@@ -153,7 +153,7 @@ class CartModel extends Model
     public function getCartItemsByUserId(int $userId): array
     {
         $this->createCartTable();
-        
+
         // Get regular books
         $sqlRegular = "SELECT bc.*, hc.*, b.COVER AS cover_image, b.TITLE AS title, b.DESCRIPTION AS description,
                        b.ISBN AS isbn, b.CATEGORY AS category, b.LANGUAGES AS language,
@@ -164,7 +164,7 @@ class CartModel extends Model
                 JOIN posts AS b ON bc.book_id = CAST(b.ID AS CHAR) AND bc.book_type = 'regular'
                 LEFT JOIN book_hardcopy AS hc ON hc.book_id = b.ID
                 WHERE bc.user_id = ?";
-        
+
         // Get academic books (only hardcopy should be in cart, so use physical_book_price)
         $sqlAcademic = "SELECT bc.*, NULL AS hc_id, ab.physical_book_price AS hc_price, NULL AS hc_stock_count,
                        ab.cover_image_path AS cover_image, ab.title, ab.description,
@@ -175,16 +175,16 @@ class CartModel extends Model
                 FROM book_cart AS bc
                 JOIN academic_books AS ab ON bc.book_id = ab.public_key AND bc.book_type = 'academic'
                 WHERE bc.user_id = ?";
-        
+
         $regularBooks = $this->fetchPrepared($sqlRegular, "i", [$userId]);
         $academicBooks = $this->fetchPrepared($sqlAcademic, "i", [$userId]);
-        
+
         // Combine and sort by created_at
         $allItems = array_merge($regularBooks, $academicBooks);
-        usort($allItems, function($a, $b) {
+        usort($allItems, function ($a, $b) {
             return strtotime($b['created_at']) - strtotime($a['created_at']);
         });
-        
+
         return $allItems;
     }
 
@@ -199,7 +199,7 @@ class CartModel extends Model
         $result = $stmt->get_result();
         $existing = $result->fetch_assoc();
         $stmt->close();
-        
+
         if (!empty($existing)) {
             $sql = "UPDATE book_cart SET cart_item_count = ? WHERE user_id = ? AND book_id = ? AND book_type = ?";
             $stmt = $this->conn->prepare($sql);
@@ -365,7 +365,7 @@ class CartModel extends Model
             $bookType = $item["item_type"] ?? $item["book_type"] ?? 'regular';
             $sqlItem = "INSERT INTO order_items (order_id, book_id, book_type, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?)";
             $stmtItem = $this->conn->prepare($sqlItem);
-            $stmtItem->bind_param("issidd", $orderId, $bookId, $bookType, $qty, $price, $totalPrice);  
+            $stmtItem->bind_param("issidd", $orderId, $bookId, $bookType, $qty, $price, $totalPrice);
             $stmtItem->execute();
             $stmtItem->close();
         }
@@ -381,7 +381,7 @@ class CartModel extends Model
         $sql = "SELECT o.*, d.* FROM orders AS o JOIN delivery_addresses AS d ON o.delivery_address_id=d.id WHERE o.id=?";
         $order = $this->fetchPrepared($sql, "i", [$orderId]);
         if (empty($order)) return null;
-        
+
         // Fetch items with book details in one query using JOINs
         $sqlItems = "SELECT 
             oi.*,
@@ -401,30 +401,30 @@ class CartModel extends Model
     }
 
     public function getOrders(int $userId): ?array
-{
-    $this->createOrdersTable();
-    $this->createOrderItemsTable();
-    $this->createDeliveryAddressTable();
+    {
+        $this->createOrdersTable();
+        $this->createOrderItemsTable();
+        $this->createDeliveryAddressTable();
 
-    // 1. Fetch all orders with their delivery addresses
-    $sqlOrders = "SELECT o.*, d.* 
+        // 1. Fetch all orders with their delivery addresses
+        $sqlOrders = "SELECT o.*, d.* 
                   FROM orders AS o
                   JOIN delivery_addresses AS d 
                     ON o.delivery_address_id = d.id
                   WHERE o.user_id = ?
                   ORDER BY o.id DESC";
 
-    $orders = $this->fetchPrepared($sqlOrders, "i", [$userId]);
-    if (empty($orders)) return null;
+        $orders = $this->fetchPrepared($sqlOrders, "i", [$userId]);
+        if (empty($orders)) return null;
 
-    // Extract order IDs
-    $orderIds = array_column($orders, 'id');
-    if (empty($orderIds)) return null;
-    
-    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+        // Extract order IDs
+        $orderIds = array_column($orders, 'id');
+        if (empty($orderIds)) return null;
 
-    // 2. Fetch all order items with book details in one query using JOINs
-    $sqlItems = "SELECT 
+        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+
+        // 2. Fetch all order items with book details in one query using JOINs
+        $sqlItems = "SELECT 
         oi.*,
         COALESCE(b.TITLE, ab.title) AS title,
         COALESCE(b.AUTHORS, ab.author) AS author,
@@ -437,26 +437,26 @@ class CartModel extends Model
     LEFT JOIN posts b ON oi.book_id = CAST(b.ID AS CHAR) AND oi.book_type = 'regular'
     LEFT JOIN academic_books ab ON oi.book_id = ab.public_key AND oi.book_type = 'academic'
     WHERE oi.order_id IN ($placeholders)";
-    
-    $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
 
-    // 3. Group items by order_id
-    $itemsByOrder = [];
-    foreach ($itemsData as $item) {
-        $itemsByOrder[$item['order_id']][] = $item;
+        $itemsData = $this->fetchPrepared($sqlItems, str_repeat('i', count($orderIds)), $orderIds);
+
+        // 3. Group items by order_id
+        $itemsByOrder = [];
+        foreach ($itemsData as $item) {
+            $itemsByOrder[$item['order_id']][] = $item;
+        }
+
+        // 4. Combine orders with their items
+        $result = [];
+        foreach ($orders as $order) {
+            $result[] = [
+                "order" => $order,
+                "items" => $itemsByOrder[$order['id']] ?? []
+            ];
+        }
+
+        return $result;
     }
-
-    // 4. Combine orders with their items
-    $result = [];
-    foreach ($orders as $order) {
-        $result[] = [
-            "order" => $order,
-            "items" => $itemsByOrder[$order['id']] ?? []
-        ];
-    }
-
-    return $result;
-}
 
 
     public function updateOrderTotals(int $orderId, ?float $totalAmount, ?float $shippingFee, ?string $paymentMethod): bool
@@ -480,4 +480,180 @@ class CartModel extends Model
         $stmt->close();
         return $result;
     }
+
+    // ─── Collection Address Table ───────────────────────────────────────────────
+
+private function createCollectionAddressTable(): bool
+{
+    $columns = [
+        "id"                   => "INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+        "user_id"              => "INT NOT NULL",
+        "nickname"             => "VARCHAR(100) NOT NULL COMMENT 'e.g. Home, Office'",
+        "contact_name"         => "VARCHAR(150) NOT NULL",
+        "contact_phone"        => "VARCHAR(20) NOT NULL",
+        "contact_email"        => "VARCHAR(255) NOT NULL",
+        "unit_number"          => "VARCHAR(20) DEFAULT NULL",
+        "complex_name"         => "VARCHAR(150) DEFAULT NULL",
+        "street_number"        => "VARCHAR(20) NOT NULL",
+        "street_name"          => "VARCHAR(255) NOT NULL",
+        "suburb"               => "VARCHAR(150) NOT NULL",
+        "city"                 => "VARCHAR(150) NOT NULL",
+        "province"             => "VARCHAR(100) NOT NULL",
+        "postal_code"          => "VARCHAR(10) NOT NULL",
+        "country_code"         => "CHAR(2) NOT NULL DEFAULT 'ZA'",
+        "special_instructions" => "TEXT DEFAULT NULL",
+        "is_default"           => "TINYINT(1) NOT NULL DEFAULT 0",
+        "created_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+        "updated_at"           => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+    ];
+    return $this->createTable("book_collection_addresses", $columns);
+}
+
+public function addCollectionAddress(int $userId, array $data): ?int
+{
+    $this->createCollectionAddressTable();
+
+    $nickname             = $data['nickname'] ?? '';
+    $contact_name         = $data['contact_name'] ?? '';
+    $contact_phone        = $data['contact_phone'] ?? '';
+    $contact_email        = $data['contact_email'] ?? '';
+    $unit_number          = $data['unit_number'] ?? null;
+    $complex_name         = $data['complex_name'] ?? null;
+    $street_number        = $data['street_number'] ?? '';
+    $street_name          = $data['street_name'] ?? '';
+    $suburb               = $data['suburb'] ?? '';
+    $city                 = $data['city'] ?? '';
+    $province             = $data['province'] ?? '';
+    $postal_code          = $data['postal_code'] ?? '';
+    $country_code         = $data['country_code'] ?? 'ZA';
+    $special_instructions = $data['special_instructions'] ?? null;
+    $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
+
+    // If this address is being set as default, clear any existing default first
+    if ($is_default) {
+        $this->clearDefaultCollectionAddress($userId);
+    }
+
+    $sql = "INSERT INTO book_collection_addresses 
+                (user_id, nickname, contact_name, contact_phone, contact_email,
+                 unit_number, complex_name, street_number, street_name,
+                 suburb, city, province, postal_code, country_code,
+                 special_instructions, is_default)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param(
+        "issssssssssssssi",
+        $userId, $nickname, $contact_name, $contact_phone, $contact_email,
+        $unit_number, $complex_name, $street_number, $street_name,
+        $suburb, $city, $province, $postal_code, $country_code,
+        $special_instructions, $is_default
+    );
+
+    if (!$stmt->execute()) return null;
+    $newId = $stmt->insert_id;
+    $stmt->close();
+    return $newId;
+}
+
+public function updateCollectionAddress(int $addressId, int $userId, array $data): bool
+{
+    $this->createCollectionAddressTable();
+
+    $nickname             = $data['nickname'] ?? '';
+    $contact_name         = $data['contact_name'] ?? '';
+    $contact_phone        = $data['contact_phone'] ?? '';
+    $contact_email        = $data['contact_email'] ?? '';
+    $unit_number          = $data['unit_number'] ?? null;
+    $complex_name         = $data['complex_name'] ?? null;
+    $street_number        = $data['street_number'] ?? '';
+    $street_name          = $data['street_name'] ?? '';
+    $suburb               = $data['suburb'] ?? '';
+    $city                 = $data['city'] ?? '';
+    $province             = $data['province'] ?? '';
+    $postal_code          = $data['postal_code'] ?? '';
+    $country_code         = $data['country_code'] ?? 'ZA';
+    $special_instructions = $data['special_instructions'] ?? null;
+    $is_default           = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 0;
+
+    if ($is_default) {
+        $this->clearDefaultCollectionAddress($userId);
+    }
+
+    $sql = "UPDATE book_collection_addresses
+            SET nickname=?, contact_name=?, contact_phone=?, contact_email=?,
+                unit_number=?, complex_name=?, street_number=?, street_name=?,
+                suburb=?, city=?, province=?, postal_code=?, country_code=?,
+                special_instructions=?, is_default=?
+            WHERE id=? AND user_id=?";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param(
+        "sssssssssssssssii",
+        $nickname, $contact_name, $contact_phone, $contact_email,
+        $unit_number, $complex_name, $street_number, $street_name,
+        $suburb, $city, $province, $postal_code, $country_code,
+        $special_instructions, $is_default,
+        $addressId, $userId
+    );
+
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+public function getCollectionAddresses(int $userId): array
+{
+    $this->createCollectionAddressTable();
+    $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC";
+    return $this->fetchPrepared($sql, "i", [$userId]);
+}
+
+public function getCollectionAddressById(int $addressId, int $userId): ?array
+{
+    $this->createCollectionAddressTable();
+    $sql = "SELECT * FROM book_collection_addresses WHERE id = ? AND user_id = ?";
+    $res = $this->fetchPrepared($sql, "ii", [$addressId, $userId]);
+    return $res[0] ?? null;
+}
+
+public function getDefaultCollectionAddress(int $userId): ?array
+{
+    $this->createCollectionAddressTable();
+    $sql = "SELECT * FROM book_collection_addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
+    $res = $this->fetchPrepared($sql, "i", [$userId]);
+    return $res[0] ?? null;
+}
+
+public function setDefaultCollectionAddress(int $addressId, int $userId): bool
+{
+    $this->createCollectionAddressTable();
+    $this->clearDefaultCollectionAddress($userId);
+    $sql = "UPDATE book_collection_addresses SET is_default = 1 WHERE id = ? AND user_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ii", $addressId, $userId);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+public function removeCollectionAddress(int $addressId, int $userId): bool
+{
+    $this->createCollectionAddressTable();
+    $sql = "DELETE FROM book_collection_addresses WHERE id = ? AND user_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ii", $addressId, $userId);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+private function clearDefaultCollectionAddress(int $userId): void
+{
+    $sql = "UPDATE book_collection_addresses SET is_default = 0 WHERE user_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->close();
+}
 }

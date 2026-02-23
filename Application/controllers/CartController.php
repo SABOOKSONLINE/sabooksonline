@@ -26,7 +26,7 @@ class CartController
         return $this->cartModel->getCartItemsByUserId($userId);
     }
 
-     public function getOrders($userId)
+    public function getOrders($userId)
     {
         return $this->cartModel->getOrders($userId);
     }
@@ -108,5 +108,38 @@ class CartController
     public function updateDeliveryAddressById(int $addressId, array $data): bool
     {
         return $this->cartModel->updateDeliveryAddressById($addressId, $data);
+    }
+
+    // ─── Collection Address Methods 
+
+    public function getCollectionAddresses(int $userId): array
+    {
+        return $this->cartModel->getCollectionAddresses($userId);
+    }
+
+    public function getCollectionAddressById(int $addressId, int $userId): ?array
+    {
+        return $this->cartModel->getCollectionAddressById($addressId, $userId);
+    }
+
+    public function getDefaultCollectionAddress(int $userId): ?array
+    {
+        return $this->cartModel->getDefaultCollectionAddress($userId);
+    }
+
+    public function setDefaultCollectionAddress(int $addressId, int $userId): bool
+    {
+        return $this->cartModel->setDefaultCollectionAddress($addressId, $userId);
+    }
+
+    public function updateCollectionAddress(int $addressId, int $userId, array $data): bool
+    {
+        if (empty($userId) || empty($data)) return false;
+        return $this->cartModel->updateCollectionAddress($addressId, $userId, $data);
+    }
+
+    public function removeCollectionAddress(int $addressId, int $userId): bool
+    {
+        return $this->cartModel->removeCollectionAddress($addressId, $userId);
     }
 }
