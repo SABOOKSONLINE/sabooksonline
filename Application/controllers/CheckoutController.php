@@ -246,10 +246,34 @@ public function generatePayment($price, $user, $orderId = null) {
         'Content-Type: application/json'
     ]);
     
+    // SSL configuration - disable verification for localhost, enable for production
+    if ($isLocal) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    } else {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    }
+    
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
     curl_close($ch);
+    
+    // Debug logging for localhost
+    if ($isLocal) {
+        error_log("Yoco Payment Request - Localhost Debug:");
+        error_log("  Base URL: $baseUrl");
+        error_log("  Is Live Key: " . ($isLiveKey ? 'YES' : 'NO'));
+        error_log("  HTTP Code: $httpCode");
+        error_log("  cURL Error: " . ($curlError ?: 'None'));
+        if ($response) {
+            error_log("  Response: " . substr($response, 0, 500));
+        }
+    }
     
     if ($curlError) {
         error_log("Yoco Payment cURL Error: $curlError");
