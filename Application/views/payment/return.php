@@ -26,91 +26,25 @@ if ($isLocal) {
     error_log("Payment Return - OrderId from Session: " . ($orderId ?? 'not set'));
 }
 
-// For localhost testing: if we have orderId but no checkoutId, we can still update status
-// This handles cases where Yoco doesn't send checkoutId in redirect
-if ($orderId) {
-    // If no checkoutId, try to update directly for localhost testing
-    if (!$checkoutId && $isLocal) {
-        error_log("  LOCALHOST: No checkoutId found, but orderId exists. Will update payment status directly.");
-        // Update payment status to 'paid' directly for localhost testing
-        $stmt = $conn->prepare("UPDATE orders SET payment_status = 'paid', updated_at = NOW() WHERE id = ?");
+// SECURITY: checkoutId is REQUIRED for payment verification
+// Both localhost and production must verify with Yoco API
+if (!$checkoutId) {
+    error_log("Payment Return Error: checkoutId is required but not found. Cannot verify payment.");
+    if ($orderId) {
+        // Mark order as failed if we can't verify payment
+        $stmt = $conn->prepare("UPDATE orders SET payment_status = 'failed', updated_at = NOW() WHERE id = ?");
         if ($stmt) {
             $stmt->bind_param("i", $orderId);
-            $updateResult = $stmt->execute();
-            $affectedRows = $stmt->affected_rows;
+            $stmt->execute();
             $stmt->close();
-            
-            error_log("  Direct Update Result: " . ($updateResult ? 'Success' : 'Failed'));
-            error_log("  Affected Rows: $affectedRows");
-            
-            if ($updateResult && $affectedRows > 0) {
-                // Get order details for email
-                $cartModel = new CartModel($conn);
-                $orderDetails = $cartModel->getOrderDetails($orderId, $_SESSION['ADMIN_ID']);
-                if ($orderDetails) {
-                    require_once __DIR__ . '/../../../Admin/Helpers/mail_alert.php';
-                    
-                    $address = $cartModel->getDeliveryAddress($_SESSION['ADMIN_ID']);
-                    $email = $address['email'] ?? $_SESSION['ADMIN_EMAIL'] ?? '';
-                    
-                    // Determine base URL for images
-                    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-                    $isLocalEmail = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-                                   strpos($httpHost, 'localhost') !== false ||
-                                   strpos($httpHost, '127.0.0.1') !== false;
-                    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-                    $baseUrl = $isLocalEmail ? "$protocol://$httpHost" : 'https://www.sabooksonline.co.za';
-                    
-                    $message = "<h2>Order Confirmed</h2>";
-                    $message .= "<strong>Order Number:</strong> " . ($orderDetails['order_number'] ?? $orderDetails['id']) . "<br>";
-                    $message .= "<strong>Total Amount:</strong> R" . number_format($orderDetails['total_amount'] ?? 0, 2) . "<br>";
-                    $message .= "<strong>Payment Status:</strong> Paid<br>";
-                    $message .= "<strong>Payment Method:</strong> Yoco<br>";
-                    
-                    // Add order items with images
-                    if (!empty($orderDetails['items'])) {
-                        $message .= "<h3>Order Items:</h3>";
-                        $message .= "<table style='width: 100%; border-collapse: collapse; margin: 20px 0;'>";
-                        foreach ($orderDetails['items'] as $item) {
-                            $qty = $item['quantity'] ?? 1;
-                            $price = $item['unit_price'] ?? 0;
-                            $total = $price * $qty;
-                            $title = htmlspecialchars($item['title'] ?? 'Unknown Book');
-                            $author = htmlspecialchars($item['author'] ?? 'Unknown Author');
-                            
-                            $cover = $item['cover'] ?? '';
-                            $coverPath = $item['cover_path'] ?? '/cms-data/book-covers/';
-                            $imageUrl = !empty($cover) ? $baseUrl . $coverPath . $cover : $baseUrl . '/cms-data/book-covers/default-book.png';
-                            
-                            $message .= "<tr style='border-bottom: 1px solid #eee; padding: 10px 0;'>";
-                            $message .= "<td style='padding: 10px; width: 80px;'>";
-                            $message .= "<img src='" . htmlspecialchars($imageUrl) . "' alt='" . htmlspecialchars($title) . "' style='width: 60px; height: auto; border-radius: 4px;' />";
-                            $message .= "</td>";
-                            $message .= "<td style='padding: 10px;'>";
-                            $message .= "<strong>" . $title . "</strong><br>";
-                            $message .= "<small style='color: #666;'>by " . $author . "</small><br>";
-                            $message .= "<small>Quantity: {$qty} x R" . number_format($price, 2) . " = R" . number_format($total, 2) . "</small>";
-                            $message .= "</td>";
-                            $message .= "</tr>";
-                        }
-                        $message .= "</table>";
-                    }
-                    
-                    if (!empty($email)) {
-                        sendEmail($email, "Order Confirmed", $message);
-                    }
-                    sendEmail("pearl@sabooksonline.co.za", "New Order Payment Confirmed - Yoco", $message);
-                }
-                
-                unset($_SESSION['pending_order_id']);
-                unset($_SESSION['yoco_checkout_id']);
-                // Continue to success page
-            }
         }
     }
-    
-    // If we have checkoutId, verify with Yoco API
-    if ($checkoutId) {
+    header('Location: /payment/cancel?error=verification_failed');
+    exit;
+}
+
+// Verify payment with Yoco API using checkoutId
+if ($checkoutId) {
     // This is a Yoco payment return - verify payment
     // Get Yoco secret key from environment variable (try multiple sources)
     $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
@@ -188,24 +122,8 @@ if ($orderId) {
             }
         }
         
-        // Also check if we're on success URL (means payment likely succeeded)
-        // This is a fallback for sandbox testing
-        $isSuccessUrl = strpos($_SERVER['REQUEST_URI'] ?? '', '/payment/return') !== false && 
-                       isset($_GET['checkoutId']) && 
-                       !isset($_GET['error']);
-        
-        if ($isLocal && !$paymentSuccessful && $isSuccessUrl) {
-            error_log("  WARNING: Payment status not 'successful' but on success URL. Checkout data:");
-            error_log("  " . json_encode($checkoutData));
-            error_log("  For testing: Will attempt to update if checkoutId exists");
-        }
-        
-        // For localhost testing: if we have checkoutId and are on success URL, treat as success
-        if ($isLocal && !$paymentSuccessful && $isSuccessUrl && $checkoutId) {
-            error_log("  LOCALHOST TEST MODE: Treating as successful payment for testing");
-            $paymentSuccessful = true;
-        }
-        
+        // SECURITY: Only mark as successful if Yoco API confirms payment status
+        // No fallbacks or bypasses - both localhost and production must verify with Yoco
         if ($paymentSuccessful) {
             // Payment successful - update order status
             $cartController = new CartController($conn);
@@ -490,11 +408,7 @@ if ($orderId) {
         header('Location: /payment/cancel');
         exit;
     }
-    } // End of if ($checkoutId) block
-} else {
-    // No orderId in session - this might be a direct visit or PayFast return
-    // This is a PayFast return - existing behavior
-}
+} // End of if ($checkoutId) block
 ?>
 
 <!DOCTYPE html>
