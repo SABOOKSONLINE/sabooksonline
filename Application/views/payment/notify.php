@@ -129,23 +129,29 @@ if ($isSignatureValid && $isIPValid && $isAmountValid && $isServerConfirmed) {
     elseif ($bookId) {
     // Determine if it's an academic book (string public_key) or regular book (integer ID)
     $isAcademic = !is_numeric($bookId);
-    $bookIdValue = $isAcademic ? $bookId : (int)$bookId;
     
-    $sql = "INSERT INTO book_purchases (user_email, book_id, user_key, format, payment_id, amount, payment_status, payment_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    // Use 's' for string if academic (public_key), 'i' for integer if regular
-    $paramType = $isAcademic ? "sssssdss" : "sisssdss";
-    $stmt->bind_param($paramType, $email, $bookIdValue, $plan, $format, $invoiceId, $amount, $status, $paymentDate);
-
-    if ($stmt->execute()) {
-        echo "✅ Book purchase saved.\n";
+    // Skip saving academic books to book_purchases - they should go through cart/orders
+    if ($isAcademic) {
+        echo "⚠️ Academic book purchase detected. Direct PayFast purchases for academic books are disabled.\n";
+        echo "Academic books should be purchased via cart checkout (hardcopy) or are free (digital).\n";
     } else {
-        echo "❌ Book purchase failed: " . $stmt->error . "\n";
-    }
+        // Regular book - save to book_purchases
+        $bookIdValue = (int)$bookId;
+        
+        $sql = "INSERT INTO book_purchases (user_email, book_id, user_key, format, payment_id, amount, payment_status, payment_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sisssdss", $email, $bookIdValue, $plan, $format, $invoiceId, $amount, $status, $paymentDate);
 
-    $stmt->close();
+        if ($stmt->execute()) {
+            echo "✅ Book purchase saved.\n";
+        } else {
+            echo "❌ Book purchase failed: " . $stmt->error . "\n";
+        }
+
+        $stmt->close();
+    }
 
     } else {
         // Check for existing payment with token first

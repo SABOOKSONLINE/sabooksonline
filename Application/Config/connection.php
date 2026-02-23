@@ -5,9 +5,9 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../load_env.php';
 
-$serverName = getenv('DB_HOST') ?: 'localhost';
-$username   = getenv('DB_USERNAME') ?: 'root';
-$password   = getenv('DB_PASSWORD') ?: '';
+$serverName = getenv('DB_HOST') ?: 'sql58.jnb1.host-h.net';
+$username   = getenv('DB_USERNAME') ?: 'sabooksonline';
+$password   = getenv('DB_PASSWORD') ?: 'slTFvaj07dNY6Ke';
 $primaryDb  = getenv('DB_NAME') ?: 'sabookso_db';
 
 // Enable exceptions for mysqli

@@ -206,10 +206,10 @@ switch ($action) {
         break;
 
     case 'getOrderDetails':
-        $order = $cart->getOrders($userID);
+        // Orders functionality removed
         echo json_encode([
-        "success" => true,
-        "order" => $order
+        "success" => false,
+        "message" => "Orders functionality has been removed"
     ]);
         
         break;
