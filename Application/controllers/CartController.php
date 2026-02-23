@@ -26,11 +26,6 @@ class CartController
         return $this->cartModel->getCartItemsByUserId($userId);
     }
 
-     public function getOrders($userId)
-    {
-        return $this->cartModel->getOrders($userId);
-    }
-
     public function getItemsCount()
     {
         $userId = $_SESSION['ADMIN_ID'] ?? null;
@@ -80,11 +75,6 @@ class CartController
     {
         $userId = $_SESSION['ADMIN_ID'];
         return $this->cartModel->createOrder($userId);
-    }
-
-    public function getOrderDetails($orderId)
-    {
-        return $this->cartModel->getOrderDetails($orderId);
     }
 
     public function updateOrderTotals(int $orderId, ?float $totalAmount = null, ?float $shippingFee = null, ?string $paymentMethod = null): bool
