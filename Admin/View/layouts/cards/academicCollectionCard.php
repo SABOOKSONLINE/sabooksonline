@@ -12,7 +12,7 @@ function renderAcademicCollectionCards($academicListings, $academicAllBooks)
                                 Remove
                             </a>
 
-                            <a href="/library/book/<?= $listing["CONTENTID"] ?>" target="_blank" class="ratio-container">
+                            <a href="/library/academic/<?= $listing["CONTENTID"] ?>" target="_blank" class="ratio-container">
                                 <img src="/cms-data/academic/covers/<?= $listing["COVER"] ?>"
                                     class="card-img-top rounded-top-4"
                                     alt="<?= htmlspecialchars($listing["TITLE"]) ?>">
