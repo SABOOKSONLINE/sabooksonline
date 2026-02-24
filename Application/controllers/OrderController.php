@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/CartModel.php';
 require_once __DIR__ . '/../Config/connection.php';
+require_once __DIR__ . '/../helpers/OrderHelper.php';
 
 class OrderController
 {
@@ -100,5 +101,54 @@ class OrderController
         require_once __DIR__ . '/CheckoutController.php';
         $checkoutController = new CheckoutController($this->conn);
         $checkoutController->generatePayment($totalAmount, $user, $orderId);
+    }
+
+    /**
+     * Deletes an order (only unpaid orders can be deleted)
+     * 
+     * @param int $orderId The order ID
+     * @return void
+     */
+    public function deleteOrder(int $orderId): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['ADMIN_ID'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $userId = $_SESSION['ADMIN_ID'];
+
+        // Validate if user can delete this order
+        $validation = canUserDeleteOrder($this->conn, $orderId, $userId);
+
+        if (!$validation['can_delete']) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'message' => $validation['error'] ?? 'Cannot delete this order'
+            ]);
+            exit;
+        }
+
+        // Delete the order
+        $deleted = deleteOrder($this->conn, $orderId);
+
+        if ($deleted) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Order deleted successfully'
+            ]);
+        } else {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to delete order'
+            ]);
+        }
     }
 }

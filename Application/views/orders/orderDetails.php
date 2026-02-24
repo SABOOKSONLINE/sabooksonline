@@ -334,6 +334,14 @@ require_once __DIR__ . "/../includes/nav.php";
                     <a href="/orders/<?= $order['id'] ?>/retry-payment" class="btn btn-primary btn-lg w-100">
                         <i class="fas fa-credit-card me-2"></i>Pay Now / Retry Payment
                     </a>
+                    <?php
+                    require_once __DIR__ . '/../../helpers/OrderHelper.php';
+                    if (isOrderDeletable($paymentStatus)) {
+                        echo '<div class="mt-2">';
+                        echo getOrderDeleteButton($order['id'], 'w-100');
+                        echo '</div>';
+                    }
+                    ?>
                     <p class="text-muted small mt-2 mb-0">Complete your payment to process this order</p>
                 <?php else: ?>
                     <p class="text-success small mt-2 mb-0">
@@ -347,3 +355,80 @@ require_once __DIR__ . "/../includes/nav.php";
 
 <?php require_once __DIR__ . "/../includes/footer.php"; ?>
 <?php require_once __DIR__ . "/../includes/scripts.php"; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle order deletion
+    const deleteButton = document.querySelector('.delete-order-btn');
+    
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            
+            if (!confirm('Are you sure you want to remove this order? This action cannot be undone.')) {
+                return;
+            }
+            
+            // Disable button during request
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Removing...';
+            
+            // Send DELETE request (with POST fallback)
+            const deleteOrder = async () => {
+                try {
+                    let response = await fetch(`/orders/${orderId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    // If DELETE fails, try POST fallback
+                    if (!response.ok && response.status === 404) {
+                        response = await fetch(`/orders/${orderId}/delete`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                    }
+                    
+                    return response;
+                } catch (error) {
+                    // Try POST fallback on error
+                    return fetch(`/orders/${orderId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+            };
+            
+            deleteOrder()
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Redirect to orders page
+                    window.location.href = '/orders?deleted=1';
+                } else {
+                    alert('Failed to remove order: ' + (data.message || 'Unknown error'));
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-trash me-2"></i>Remove Order';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the order. Please try again.');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-trash me-2"></i>Remove Order';
+            });
+        });
+    }
+});
+</script>

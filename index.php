@@ -163,12 +163,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require "Application/api.php";
     });
 
-    // Orders functionality removed
-    // $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
-    //     $_GET['action'] = 'getOrderDetails';
-    //     $_GET['userID'] = $userID;
-    //     require "Application/api.php";
-    // });
+    // Orders API endpoint for mobile app
+    $r->addRoute('GET', '/api/order/{userID}', function ($userID) {
+        $_GET['action'] = 'getOrderDetails';
+        $_GET['userID'] = $userID;
+        require "Application/api.php";
+    });
 
     $r->addRoute('POST', '/api/analytics', function () {
         $_GET['action'] = 'analytics';
@@ -243,6 +243,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('POST', '/api/purchase/{userID}', function ($userID) {
         $_GET['action'] = 'purchase';
+        $_GET['userID'] = $userID;
+
+        require "Application/api.php";
+    });
+
+    // Mobile Yoco payment endpoint
+    $r->addRoute('POST', '/api/purchase/yoco/{userID}', function ($userID) {
+        $_GET['action'] = 'purchaseYoco';
         $_GET['userID'] = $userID;
 
         require "Application/api.php";
@@ -839,6 +847,21 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $controller = new OrderController($conn);
         $controller->orderDetails((int)$id);
     });
+    $r->addRoute('DELETE', '/orders/{id}', function ($id) {
+        require_once "Application/Config/connection.php";
+        require_once "Application/controllers/OrderController.php";
+        $orderController = new OrderController($conn);
+        $orderController->deleteOrder((int)$id);
+    });
+
+    // POST fallback for DELETE (in case browser doesn't support DELETE)
+    $r->addRoute('POST', '/orders/{id}/delete', function ($id) {
+        require_once "Application/Config/connection.php";
+        require_once "Application/controllers/OrderController.php";
+        $orderController = new OrderController($conn);
+        $orderController->deleteOrder((int)$id);
+    });
+
     $r->addRoute('GET', '/orders/{id}/retry-payment', function ($id) {
         require_once "Application/Config/connection.php";
         require_once "Application/controllers/OrderController.php";
