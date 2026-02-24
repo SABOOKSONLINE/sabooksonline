@@ -343,9 +343,15 @@ class CartModel extends Model
         $this->createOrdersTable();
         $this->createOrderItemsTable();
         $cartItems = $this->getCartItemsByUserId($userId);
-        if (empty($cartItems)) return null;
+        if (empty($cartItems)) {
+            error_log("createOrder: Cart is empty for user $userId");
+            return null;
+        }
         $address = $this->getDeliveryAddress($userId);
-        if (!$address) return null;
+        if (!$address) {
+            error_log("createOrder: Address not found for user $userId");
+            return null;
+        }
         $orderNumber = "ORD-" . time() . "-" . rand(1000, 9999);
         $subtotal = 0;
         foreach ($cartItems as $item) $subtotal += ($item["hc_price"] ?? 0) * $item["cart_item_count"];
@@ -354,10 +360,24 @@ class CartModel extends Model
         // Set payment_status to 'pending' initially - will be updated on successful payment
         $sql = "INSERT INTO orders (user_id, delivery_address_id, order_number, total_amount, shipping_fee, payment_status) VALUES (?, ?, ?, ?, ?, 'pending')";
         $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            error_log("createOrder: Failed to prepare statement: " . $this->conn->error);
+            return null;
+        }
         $stmt->bind_param("iisdd", $userId, $address["id"], $orderNumber, $total, $shippingFee);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            error_log("createOrder: Failed to execute order insert: " . $stmt->error);
+            $stmt->close();
+            return null;
+        }
         $orderId = $stmt->insert_id;
         $stmt->close();
+        
+        if (!$orderId || $orderId <= 0) {
+            error_log("createOrder: Failed to get order ID after insert");
+            return null;
+        }
+        
         foreach ($cartItems as $item) {
             $price = $item["hc_price"] ?? 0;
             $qty = $item["cart_item_count"];
@@ -366,10 +386,22 @@ class CartModel extends Model
             $bookType = $item["item_type"] ?? $item["book_type"] ?? 'regular';
             $sqlItem = "INSERT INTO order_items (order_id, book_id, book_type, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?)";
             $stmtItem = $this->conn->prepare($sqlItem);
-            $stmtItem->bind_param("issidd", $orderId, $bookId, $bookType, $qty, $price, $totalPrice);
-            $stmtItem->execute();
+            if (!$stmtItem) {
+                error_log("createOrder: Failed to prepare order item statement: " . $this->conn->error);
+                // Don't return null here - try to continue with other items
+                continue;
+            }
+            $stmtItem->bind_param("issidd", $orderId, $bookId, $bookType, $qty, $price, $totalPrice);  
+            if (!$stmtItem->execute()) {
+                error_log("createOrder: Failed to execute order item insert: " . $stmtItem->error);
+                $stmtItem->close();
+                // Don't return null here - try to continue with other items
+                continue;
+            }
             $stmtItem->close();
         }
+        
+        // Only clear cart if order was successfully created
         $this->clearCart($userId);
         return $orderId;
     }
@@ -600,9 +632,16 @@ class CartModel extends Model
     {
         $this->createOrdersTable();
         $this->createOrderItemsTable();
-
-        // Simple query - just get orders
-        $sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC";
+        $this->createDeliveryAddressTable();
+        
+        // Join with delivery_addresses to get address fields
+        $sql = "SELECT o.*, d.company, d.full_name, d.phone, d.email, 
+                       d.street_address, d.street_address2, d.local_area, 
+                       d.zone, d.postal_code, d.country, d.delivery_type
+                FROM orders o
+                LEFT JOIN delivery_addresses d ON o.delivery_address_id = d.id
+                WHERE o.user_id = ? 
+                ORDER BY o.id DESC";
         $orders = $this->fetchPrepared($sql, "i", [$userId]);
 
         if (empty($orders)) {
