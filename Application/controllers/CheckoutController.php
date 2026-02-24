@@ -317,6 +317,188 @@ public function generatePayment($price, $user, $orderId = null) {
     }
 }
 
+/**
+ * Generate Yoco payment for mobile app (returns JSON instead of redirecting)
+ * @param float $price - Price in rands
+ * @param array $user - User data array
+ * @param int|null $orderId - Optional order ID for cart checkout
+ * @return void - Outputs JSON response
+ */
+public function generateYocoPaymentForMobile($price, $user, $orderId = null) {
+    // Suppress deprecation warnings for API responses (they break JSON parsing)
+    $oldErrorReporting = error_reporting(E_ALL & ~E_DEPRECATED);
+    
+    // Ensure JSON content type is set before any output
+    header('Content-Type: application/json');
+    
+    if (!$user) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid user data']);
+        error_reporting($oldErrorReporting);
+        return;
+    }
+    
+    $userId = $user['ADMIN_ID'] ?? '';
+    $userName = $user['ADMIN_NAME'] ?? 'Customer';
+    $userEmail = $user['ADMIN_EMAIL'] ?? '';
+    
+    // Get Yoco secret key from environment variable
+    $yocoSecretKey = getenv('YOCO_SECRET_KEY') ?: $_ENV['YOCO_SECRET_KEY'] ?? $_SERVER['YOCO_SECRET_KEY'] ?? '';
+    
+    if (empty($yocoSecretKey)) {
+        error_log("YOCO_SECRET_KEY is not set. Check .env file and ensure load_env.php is called.");
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Payment configuration error']);
+        error_reporting($oldErrorReporting);
+        return;
+    }
+    
+    if ($price < 2) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Minimum payment amount is R2.00']);
+        error_reporting($oldErrorReporting);
+        return;
+    }
+    
+    // Use web URL that redirects to mobile app (Yoco requires HTTP/HTTPS URLs)
+    // The mobile app WebView will intercept these URLs and handle navigation
+    $baseUrl = 'https://www.sabooksonline.co.za';
+    
+    $metadata = [
+        'user_id' => $userId,
+        'user_name' => $userName,
+        'user_email' => $userEmail,
+        'item_name' => 'Mobile App Cart Purchase',
+        'payment_id' => uniqid(),
+        'product_type' => 'hardcopy',
+        'source' => 'mobile_app'
+    ];
+    
+    // Add order ID to metadata (order is created before payment)
+    if ($orderId !== null) {
+        $metadata['order_id'] = $orderId;
+    }
+    
+    $checkoutData = [
+        'amount' => (int)($price * 100), // Amount in cents
+        'currency' => 'ZAR',
+        'cancelUrl' => "$baseUrl/payment/mobile/cancel?order_id=$orderId",
+        'successUrl' => "$baseUrl/payment/mobile/return?order_id=$orderId",
+        'failureUrl' => "$baseUrl/payment/mobile/cancel?order_id=$orderId",
+        'metadata' => $metadata
+    ];
+    
+    $ch = curl_init('https://payments.yoco.com/api/checkouts');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($checkoutData));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $yocoSecretKey,
+        'Content-Type: application/json'
+    ]);
+    // SSL verification - Always disable for localhost/testing to avoid certificate issues
+    // Check multiple server variables to detect localhost/development environment
+    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
+    $serverName = $_SERVER['SERVER_NAME'] ?? '';
+    $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
+    $serverAddr = $_SERVER['SERVER_ADDR'] ?? '';
+    
+    $isLocalhost = in_array($httpHost, ['localhost', '127.0.0.1', '10.0.2.2']) 
+                   || strpos($httpHost, 'localhost') !== false
+                   || strpos($httpHost, '127.0.0.1') !== false
+                   || strpos($httpHost, '10.0.2.2') !== false
+                   || in_array($serverName, ['localhost', '127.0.0.1', '10.0.2.2'])
+                   || in_array($remoteAddr, ['127.0.0.1', '::1'])
+                   || in_array($serverAddr, ['127.0.0.1', '::1'])
+                   || strpos($httpHost, ':8000') !== false; // Development server port
+    
+    // Always disable SSL verification for now (development/testing)
+    // This is safe because we're only connecting to Yoco's API (not accepting connections)
+    // In production, you can enable SSL verification if needed
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    
+    if ($isLocalhost) {
+        error_log("Yoco Payment: SSL verification disabled for localhost/testing (HTTP_HOST: $httpHost, REMOTE_ADDR: $remoteAddr)");
+    } else {
+        error_log("Yoco Payment: SSL verification disabled (HTTP_HOST: $httpHost, REMOTE_ADDR: $remoteAddr)");
+    }
+    
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    $curlErrno = curl_errno($ch);
+    
+    if ($curlError) {
+        error_log("Yoco Payment cURL Error #$curlErrno: $curlError");
+        error_log("Yoco Payment Request Data: " . json_encode($checkoutData));
+        
+        // Provide more specific error messages
+        $errorMessage = 'Payment initialization failed: Network error';
+        if ($curlErrno === CURLE_SSL_CONNECT_ERROR || $curlErrno === CURLE_SSL_CERTPROBLEM) {
+            $errorMessage = 'Payment initialization failed: SSL connection error. Please check server SSL configuration.';
+        } elseif ($curlErrno === CURLE_COULDNT_CONNECT) {
+            $errorMessage = 'Payment initialization failed: Could not connect to payment gateway. Please check server network connectivity.';
+        } elseif ($curlErrno === CURLE_OPERATION_TIMEOUTED) {
+            $errorMessage = 'Payment initialization failed: Connection timeout. Please try again.';
+        }
+        
+        // curl_close() is deprecated in PHP 8.5+ - cURL handles close automatically
+        // No need to call curl_close() - PHP automatically closes cURL handles
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => $errorMessage]);
+        error_reporting($oldErrorReporting);
+        return;
+    }
+    
+    // curl_close() is deprecated in PHP 8.5+ - cURL handles close automatically
+    // No need to call curl_close() - PHP automatically closes cURL handles
+    
+    if ($httpCode !== 200 && $httpCode !== 201) {
+        error_log("Yoco Payment Error - HTTP Code: $httpCode, Response: $response");
+        $errorMsg = "Payment initialization failed";
+        if ($response) {
+            $errorData = json_decode($response, true);
+            if (isset($errorData['message'])) {
+                $errorMsg = $errorData['message'];
+            } else if (isset($errorData['description'])) {
+                $errorMsg = $errorData['description'];
+            }
+        }
+        http_response_code($httpCode);
+        echo json_encode(['success' => false, 'message' => $errorMsg]);
+        error_reporting($oldErrorReporting);
+        return;
+    }
+    
+    $responseData = json_decode($response, true);
+    
+    if (isset($responseData['redirectUrl'])) {
+        // Store checkoutId in session for verification on return
+        if (isset($responseData['id'])) {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $_SESSION['yoco_checkout_id'] = $responseData['id'];
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'payment_url' => $responseData['redirectUrl'],
+            'checkout_id' => $responseData['id'] ?? null
+        ]);
+        error_reporting($oldErrorReporting);
+    } else {
+        error_log("Yoco Response missing redirectUrl: " . print_r($responseData, true));
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to get payment URL']);
+        error_reporting($oldErrorReporting);
+    }
+}
+
 // public function generatePayment($price, $user) {
 //     if (!$user) {
 //         die("Invalid book or user data.");
