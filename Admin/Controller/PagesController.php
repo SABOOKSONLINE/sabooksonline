@@ -23,6 +23,15 @@ class PagesController extends Controller
     {
         $allBooks = $this->bookModel->getAllBooks();
         $listings = $this->bookModel->getBooksListings();
+
+        // Academic-specific data — ensure listings table exists, create if missing
+        if (!$this->bookModel->academicListingsTableExists()) {
+            $this->bookModel->createAcademicListingsTable();
+        }
+
+        $academicListings = $this->bookModel->getAcademicListingsWithBooks();
+        $academicAllBooks = $this->bookModel->getAllAcademicBooks();
+
         $stickyBanners = $this->bannerModel->getStickyBanners();
         $pageBanners = $this->bannerModel->getPageBanner();
         $popupBanners = $this->bannerModel->getPopupBanners();
@@ -30,6 +39,8 @@ class PagesController extends Controller
         $this->render("homePage", [
             "listings" => $listings,
             "books" => $allBooks,
+            "academic_listings" => $academicListings,
+            "academic_books" => $academicAllBooks,
             "banners" => [
                 "sticky_banners" => $stickyBanners,
                 "page_banners" => $pageBanners,
@@ -76,7 +87,7 @@ class PagesController extends Controller
     public function books(): void
     {
         $books = $this->bookModel->getBooksTable();
-        
+
         $this->render("books", [
             "books" => $books
         ]);
@@ -85,5 +96,30 @@ class PagesController extends Controller
     public function deletePopupBanner($id): int
     {
         return $this->bannerModel->removePopupBanner($id);
+    }
+
+    public function addAcademicListing(int $bookId, string $publicKey): int
+    {
+        return $this->bookModel->addAcademicListing($bookId, $publicKey);
+    }
+
+    public function getAcademicListings(): array
+    {
+        return $this->bookModel->getAcademicListings();
+    }
+
+    public function getAcademicListingById(int $id): array
+    {
+        return $this->bookModel->getAcademicListingById($id);
+    }
+
+    public function updateAcademicListing(int $id, int $bookId, string $publicKey): int
+    {
+        return $this->bookModel->updateAcademicListing($id, $bookId, $publicKey);
+    }
+
+    public function deleteAcademicListing(int $id): int
+    {
+        return $this->bookModel->deleteAcademicListing($id);
     }
 }

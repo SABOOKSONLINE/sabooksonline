@@ -772,6 +772,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         require  "Admin/Helpers/process_banners.php";
     });
 
+    $r->addRoute('POST', '/admin/process_academic', function () {
+        require  "Admin/Helpers/process_academic.php";
+    });
+
+    $r->addRoute('GET', '/admin/process_academic', function () {
+        require  "Admin/Helpers/process_academic.php";
+    });
+
     $r->addRoute('POST', '/admin/orders/update-status', function () {
         require "Admin/Helpers/process_order.php";
     });

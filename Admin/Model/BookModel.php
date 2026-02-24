@@ -160,4 +160,94 @@ class BookModel extends Model
     {
         return $this->fetchAll("SELECT * FROM books ORDER BY pub_date DESC, title ASC");
     }
+
+    public function createAcademicListingsTable(): bool
+    {
+        return $this->createTable('academic_listings', [
+            'id' => 'INT AUTO_INCREMENT PRIMARY KEY',
+            'book_id' => 'INT NOT NULL',
+            'public_key' => 'VARCHAR(64) NOT NULL',
+            'created_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            'updated_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            'UNIQUE KEY public_key_unique (public_key)',
+            'KEY idx_book_id (book_id)'
+        ]);
+    }
+
+    public function addAcademicListing(int $bookId, string $publicKey): int
+    {
+        return $this->insert(
+            "INSERT INTO academic_listings (book_id, public_key) VALUES (?, ?) ON DUPLICATE KEY UPDATE public_key = VALUES(public_key)",
+            "is",
+            [$bookId, $publicKey]
+        );
+    }
+
+    public function getAcademicListings(): array
+    {
+        return $this->fetchAll("SELECT * FROM academic_listings ORDER BY created_at DESC");
+    }
+
+    public function getAcademicListingsWithBooks(): array
+    {
+        return $this->fetchAll(
+            "SELECT 
+                al.id,
+                al.book_id,
+                al.public_key,
+                a.id AS ID,
+                a.cover_image_path AS COVER,
+                a.title AS TITLE,
+                a.public_key AS CONTENTID,
+                COALESCE(u.ADMIN_NAME, '') AS PUBLISHER
+            FROM academic_listings AS al
+            JOIN academic_books AS a ON al.book_id = a.id
+            LEFT JOIN users AS u ON a.publisher_id = u.ADMIN_ID
+            ORDER BY al.created_at DESC"
+        );
+    }
+
+    public function academicListingsTableExists(): bool
+    {
+        $rows = $this->fetchPrepared(
+            "SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?",
+            "s",
+            ["academic_listings"]
+        );
+        return !empty($rows) && isset($rows[0]['cnt']) && intval($rows[0]['cnt']) > 0;
+    }
+
+    public function getAllAcademicBooks(): array
+    {
+        return $this->fetchAll(
+            "SELECT 
+                a.id AS ID,
+                a.cover_image_path AS COVER,
+                a.title AS TITLE,
+                a.public_key AS CONTENTID,
+                COALESCE(u.ADMIN_NAME, '') AS PUBLISHER
+            FROM academic_books AS a
+            LEFT JOIN users AS u ON a.publisher_id = u.ADMIN_ID"
+        );
+    }
+
+    public function getAcademicListingById(int $id): array
+    {
+        $result = $this->fetchPrepared("SELECT * FROM academic_listings WHERE id = ?", "i", [$id]);
+        return $result[0] ?? [];
+    }
+
+    public function updateAcademicListing(int $id, int $bookId, string $publicKey): int
+    {
+        return $this->update(
+            "UPDATE academic_listings SET book_id = ?, public_key = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+            "isi",
+            [$bookId, $publicKey, $id]
+        );
+    }
+
+    public function deleteAcademicListing(int $id): int
+    {
+        return $this->delete("DELETE FROM academic_listings WHERE id = ?", "i", [$id]);
+    }
 }

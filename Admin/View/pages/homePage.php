@@ -2,6 +2,7 @@
 include __DIR__ . "/../layouts/pageHeader.php";
 include __DIR__ . "/../layouts/sectionHeader.php";
 include __DIR__ . "/../layouts/cards/bkCard.php";
+include __DIR__ . "/../layouts/cards/academicCollectionCard.php";
 include __DIR__ . "/../layouts/tables/bTable.php";
 include __DIR__ . "/../layouts/banners/stickyBanner.php";
 include __DIR__ . "/../layouts/banners/pageBanner.php";
@@ -23,6 +24,9 @@ renderAlerts();
 $listings = $data["listings"];
 $allBooks = $data["books"];
 $banners = $data["banners"];
+
+$academicListings = $data["academic_listings"] ?? [];
+$academicAllBooks = $data["academic_books"] ?? [];
 
 renderSectionHeader(
     "Pop-up Banner",
@@ -65,6 +69,18 @@ foreach ($booksBySection as $sectionName => $books) {
     renderBookCards($books, false, $sectionName);
     echo renderBookTable($headers, $allBooks, $sectionName);
 }
+
+renderSectionHeader(
+    "Academic Collection",
+    "Manage academic books in the featured collection.",
+);
+
+// echo "<pre>";
+// print_r($academicListings);
+// echo "</pre>";
+
+echo renderAcademicCollectionCards($academicListings, $academicAllBooks);
+echo renderAcademicCollectionModal($academicAllBooks);
 
 ?>
 
