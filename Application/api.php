@@ -160,6 +160,122 @@ switch ($action) {
         $checkout->purchase($price,$userID,true);
         break;
 
+    case 'purchaseYoco':
+        // Mobile Yoco payment endpoint
+        $input = json_decode(file_get_contents('php://input'), true);
+        $price = $input['price'] ?? 0;
+        $shippingFee = $input['shipping_fee'] ?? 60;
+        $deliveryType = $input['delivery_type'] ?? 'standard';
+        
+        if ($price <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid price']);
+            break;
+        }
+        
+        // Get user directly using UserModel (userModel is private in CheckoutController)
+        require_once __DIR__ . '/models/UserModel.php';
+        $userModel = new userModel($conn);
+        $user = $userModel->getUserByNameOrKey($userID);
+        
+        if (empty($user)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'User not found']);
+            break;
+        }
+        
+        // Use ADMIN_ID from user object (not the userID from route which is ADMIN_USERKEY)
+        $userIdInt = (int)($user['ADMIN_ID'] ?? 0);
+        
+        if ($userIdInt <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID']);
+            break;
+        }
+        
+        // Get delivery address
+        require_once __DIR__ . '/models/CartModel.php';
+        $cartModel = new CartModel($conn);
+        $address = $cartModel->getDeliveryAddress($userIdInt);
+        
+        // If address doesn't exist, try to save it from request data (if provided)
+        if (empty($address)) {
+            // Check if address data is provided in the request
+            $addressData = $input['address'] ?? null;
+            
+            if ($addressData) {
+                // Save address from request data
+                $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+                if ($addressSaved) {
+                    // Re-fetch the address
+                    $address = $cartModel->getDeliveryAddress($userIdInt);
+                }
+            }
+            
+            // If still no address, return error
+            if (empty($address)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
+                break;
+            }
+        }
+        
+        // Check if this is a retry payment (order_id provided) or new order
+        $existingOrderId = $input['order_id'] ?? null;
+        
+        if ($existingOrderId) {
+            // Retry payment for existing order
+            // Verify order exists and belongs to user
+            $existingOrder = $cartModel->getOrderDetails((int)$existingOrderId, $userIdInt);
+            
+            if (empty($existingOrder)) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Order not found']);
+                break;
+            }
+            
+            // Check if order is already paid
+            if (($existingOrder['payment_status'] ?? 'pending') === 'paid') {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'This order has already been paid']);
+                break;
+            }
+            
+            // Update order totals if needed (in case price changed)
+            $cartModel->updateOrderTotals((int)$existingOrderId, $price, $shippingFee, 'yoco');
+            
+            // Generate Yoco payment with existing order ID
+            $checkout->generateYocoPaymentForMobile($price, $user, (int)$existingOrderId);
+        } else {
+            // New order - check if cart has items before creating order
+            $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
+            if (empty($cartItems)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to cart before checkout.']);
+                break;
+            }
+            
+            // Create order BEFORE payment (like website does)
+            $orderId = $cartModel->createOrder($userIdInt);
+            
+            if (empty($orderId)) {
+                // Log the error for debugging
+                error_log("Failed to create order for user $userIdInt. Cart items: " . count($cartItems) . ", Address: " . ($address ? 'exists' : 'missing'));
+                
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Failed to create order. Please try again.']);
+                break;
+            }
+            
+            // Update order totals and payment method
+            $totalAmount = $price; // Price already includes shipping
+            $cartModel->updateOrderTotals($orderId, $totalAmount, $shippingFee, 'yoco');
+            
+            // Generate Yoco payment with order ID
+            $checkout->generateYocoPaymentForMobile($price, $user, $orderId);
+        }
+        break;
+
     case 'deleteBook':
         $input = json_decode(file_get_contents('php://input'), true);
         $bookID = $input['bookID'];
@@ -206,12 +322,97 @@ switch ($action) {
         break;
 
     case 'getOrderDetails':
-        // Orders functionality removed
-        echo json_encode([
-        "success" => false,
-        "message" => "Orders functionality has been removed"
-    ]);
+        // Get orders for a user (mobile API)
+        if (!$userID) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "User ID is required"
+            ]);
+            break;
+        }
         
+        // Use CartModel directly (getOrders is a method of CartModel, not CartController)
+        require_once __DIR__ . '/models/CartModel.php';
+        $cartModel = new CartModel($conn);
+        
+        // Get all orders for the user
+        $orders = $cartModel->getOrders((int)$userID);
+        
+        if (empty($orders)) {
+            echo json_encode([
+                "success" => true,
+                "order" => []
+            ]);
+            break;
+        }
+        
+        // Format orders for mobile app
+        // CartModel->getOrders() already includes items in each order
+        $formattedOrders = [];
+        foreach ($orders as $order) {
+            // Format items - ensure they have the right structure
+            $items = [];
+            if (!empty($order['items'])) {
+                foreach ($order['items'] as $item) {
+                    $items[] = [
+                        'id' => $item['id'] ?? null,
+                        'book_id' => $item['book_id'] ?? '',
+                        'book_type' => $item['book_type'] ?? 'regular',
+                        'item_type' => $item['book_type'] ?? 'regular', // Alias for mobile app
+                        'title' => $item['title'] ?? '',
+                        'author' => $item['author'] ?? '',
+                        'cover' => $item['cover'] ?? '',
+                        'cover_image' => $item['cover'] ?? '', // Alias
+                        'quantity' => intval($item['quantity'] ?? 1),
+                        'unit_price' => floatval($item['unit_price'] ?? 0),
+                        'total_price' => floatval($item['total_price'] ?? 0),
+                    ];
+                }
+            }
+            
+            // Calculate subtotal from items (for display)
+            $subtotal = 0;
+            foreach ($items as $item) {
+                $subtotal += floatval($item['total_price'] ?? 0);
+            }
+            
+            $formattedOrders[] = [
+                'order' => [
+                    'id' => intval($order['id']),
+                    'order_number' => $order['order_number'] ?? 'ORD-' . $order['id'],
+                    'order_status' => $order['order_status'] ?? 'pending',
+                    'payment_status' => $order['payment_status'] ?? 'pending',
+                    'total_amount' => floatval($order['total_amount'] ?? 0),
+                    'total' => floatval($order['total_amount'] ?? 0), // Alias for compatibility
+                    'subtotal' => $subtotal,
+                    'shipping_fee' => floatval($order['shipping_fee'] ?? 0),
+                    'shipping_cost' => floatval($order['shipping_fee'] ?? 0), // Alias for compatibility
+                    'created_at' => $order['created_at'] ?? $order['date'] ?? '',
+                    // Address fields from delivery_addresses join
+                    'full_name' => $order['full_name'] ?? '',
+                    'company' => $order['company'] ?? '',
+                    'street_address' => $order['street_address'] ?? '',
+                    'street_address2' => $order['street_address2'] ?? '',
+                    'local_area' => $order['local_area'] ?? '',
+                    'zone' => $order['zone'] ?? '',
+                    'postal_code' => $order['postal_code'] ?? '',
+                    'country' => $order['country'] ?? '',
+                    'phone' => $order['phone'] ?? '',
+                    'email' => $order['email'] ?? '',
+                    'delivery_type' => $order['delivery_type'] ?? 'residential',
+                    'tracking_number' => $order['tracking_number'] ?? null,
+                    'shipping_method' => $order['shipping_method'] ?? null,
+                    'notes' => $order['notes'] ?? null,
+                ],
+                'items' => $items
+            ];
+        }
+        
+        echo json_encode([
+            "success" => true,
+            "order" => $formattedOrders
+        ]);
         break;
 
     case 'getAllBooks':
