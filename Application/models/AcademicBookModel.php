@@ -18,8 +18,9 @@ class AcademicBookModel
         $params = [];
         $types = '';
 
-        // Only show academic books that have a PDF available
-        $where[] = "(academic_books.pdf_path IS NOT NULL AND academic_books.pdf_path <> '')";
+        // Only show academic books that have a cover image available
+        // (we still allow books without PDFs; we just hide ones with no cover)
+        $where[] = "(academic_books.cover_image_path IS NOT NULL AND academic_books.cover_image_path <> '')";
         
         // Always exclude teacher guides/resources (case-insensitive check on title)
         $where[] = "(LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ? AND LOWER(academic_books.title) NOT LIKE ?)";
@@ -138,8 +139,9 @@ class AcademicBookModel
         $priceRange = ['min_price' => 0, 'max_price' => 1000];
 
         // Keep filter options aligned with the Academic listing rules
+        // Only show academic books that have a cover image available (same as selectBooks)
         // NOTE: use SQL string literal escaping (''), not backslashes, for portability
-        $baseWhere = "WHERE pdf_path IS NOT NULL AND pdf_path <> '' AND (LOWER(title) NOT LIKE '%teacher%' AND LOWER(title) NOT LIKE '%teacher''s guide%' AND LOWER(title) NOT LIKE '%guide%')";
+        $baseWhere = "WHERE (cover_image_path IS NOT NULL AND cover_image_path <> '') AND (LOWER(title) NOT LIKE '%teacher%' AND LOWER(title) NOT LIKE '%teacher''s guide%' AND LOWER(title) NOT LIKE '%guide%')";
         
         // Get distinct subjects
         $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books {$baseWhere} AND subject IS NOT NULL AND subject != '' ORDER BY subject");
@@ -185,13 +187,14 @@ class AcademicBookModel
 
     public function selectBookByPublicKey(string $public_key): ?array
     {
+        // For the detail view, we load the book by public_key only.
+        // We no longer require a PDF to exist; the view can handle missing
+        // content (e.g. showing \"No Cover\" or \"Not available\" states).
         $sql = "SELECT academic_books.*, users.ADMIN_NAME, users.ADMIN_USERKEY
                 FROM academic_books
                 LEFT JOIN users
                     ON academic_books.publisher_id = users.ADMIN_ID
-                WHERE public_key = ?
-                  AND academic_books.pdf_path IS NOT NULL
-                  AND academic_books.pdf_path <> ''";
+                WHERE public_key = ?";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {

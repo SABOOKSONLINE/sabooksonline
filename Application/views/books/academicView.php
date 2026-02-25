@@ -191,15 +191,19 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
-                <!-- Digital Version -->
-                <span class="bv-purchase-select" price="<?= $ebookPrice ?>" available="1">
-                    <span class="bv-purchase-select-h">Digital Version</span>
-                    <?php if ((float)$ebookPrice !== 0.00): ?>
-                        <span class="bv-purchase-select-hL">R<?= $ebookPrice ?></span>
-                    <?php else: ?>
-                        <span class="bv-purchase-select-hL">FREE</span>
-                    <?php endif; ?>
-                </span>
+                <!-- Digital Version - Only show if PDF is available -->
+                <?php if (!empty($pdfPath)): ?>
+                    <span class="bv-purchase-select" 
+                          price="<?= $ebookPrice ?>" 
+                          available="1">
+                        <span class="bv-purchase-select-h">Digital Version</span>
+                        <?php if ((float)$ebookPrice !== 0.00): ?>
+                            <span class="bv-purchase-select-hL">R<?= $ebookPrice ?></span>
+                        <?php else: ?>
+                            <span class="bv-purchase-select-hL">FREE</span>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
 
                 <!-- Hardcopy Version (if physical price exists) -->
                 <?php if ((float)$physicalBookPrice > 0): ?>
@@ -215,32 +219,40 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                     <!-- Digital Version purchase buttons -->
                     <div id="digital version" class="hide">
-                        <?php if ((float)$ebookPrice > 0): ?>
-                            <!-- Paid Digital Version - Purchase Now -->
-                            <?php if (isset($_SESSION['ADMIN_ID'])): ?>
-                                <form method="POST" action="/checkout" class="w-100 mt-3">
-                                    <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
-                                    <input type="hidden" name="format" value="digital">
-                                    <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                        <?php if (!empty($pdfPath)): ?>
+                            <?php if ((float)$ebookPrice > 0): ?>
+                                <!-- Paid Digital Version - Purchase Now -->
+                                <?php if (isset($_SESSION['ADMIN_ID'])): ?>
+                                    <form method="POST" action="/checkout" class="w-100 mt-3">
+                                        <input type="hidden" name="academicBookId" value="<?= $academicBookId ?>">
+                                        <input type="hidden" name="format" value="digital">
+                                        <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                            <i class="fas fa-credit-card me-2"></i> Purchase Now
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
                                         <i class="fas fa-credit-card me-2"></i> Purchase Now
-                                    </button>
-                                </form>
+                                    </a>
+                                <?php endif; ?>
                             <?php else: ?>
-                                <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
-                                    <i class="fas fa-credit-card me-2"></i> Purchase Now
-                                </a>
+                                <!-- FREE Digital Version - Show Read Now -->
+                                <?php if (isset($_SESSION['ADMIN_ID'])): ?>
+                                    <a href="/read/<?=$academicBookId ?>?category=academic" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                        <i class="fas fa-book me-2"></i> Read Now  
+                                    </a>
+                                <?php else: ?>
+                                    <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
+                                        <i class="fas fa-book me-2"></i> Read Now  
+                                    </a>
+                                <?php endif; ?>
                             <?php endif; ?>
                         <?php else: ?>
-                            <!-- FREE Digital Version - Show Read Now -->
-                            <?php if (isset($_SESSION['ADMIN_ID'])): ?>
-                                <a href="/read/<?=$academicBookId ?>?category=academic" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
-                                    <i class="fas fa-book me-2"></i> Read Now  
-                                </a>
-                            <?php else: ?>
-                                <a href="/login" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">
-                                    <i class="fas fa-book me-2"></i> Read Now  
-                                </a>
-                            <?php endif; ?>
+                            <!-- PDF not available - show greyed out message -->
+                            <div class="alert alert-secondary w-100 mt-3 opacity-50" role="alert" style="pointer-events: none;">
+                                <i class="fas fa-ban me-2"></i>
+                                Digital version not available
+                            </div>
                         <?php endif; ?>
                     </div>
 
@@ -340,6 +352,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         const selectFirstBvBtn = () => {
             for (let i = 0; i < bvSelectBtn.length; i++) {
+                // Skip disabled options when auto-selecting
+                if (bvSelectBtn[i].classList.contains("bv-purchase-select-disabled")) {
+                    continue;
+                }
                 bvSelectBtn[i].classList.add("bv-active");
                 const price = bvSelectBtn[i].getAttribute("price");
                 updatePrice(price);
@@ -362,6 +378,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         bvSelectBtn.forEach((btn) => {
             btn.addEventListener("click", () => {
+                // Don't allow selection of disabled options
+                if (btn.classList.contains("bv-purchase-select-disabled")) {
+                    return;
+                }
                 removeBvActive();
                 btn.classList.add("bv-active");
                 removePriceDetail(btn);

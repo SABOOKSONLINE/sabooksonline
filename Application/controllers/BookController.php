@@ -117,7 +117,10 @@ class BookController
                 'newspaper' => 'newspaper/pdfs'
             ];
             $folder = $folderMap[strtolower($category)] ?? 'book-pdfs';
-            $pdfUrl = "https://www.sabooksonline.co.za/cms-data/{$folder}/" . htmlspecialchars($pdf, ENT_QUOTES, 'UTF-8');
+            // Properly URL encode the filename to handle spaces and special characters
+            $encodedPdf = rawurlencode($pdf);
+            // Use server-side proxy endpoint to handle CORS and serve with proper headers
+            $pdfUrl = "https://www.sabooksonline.co.za/api/pdf/{$folder}/{$encodedPdf}";
 
             // Decide which reader to use
             $extension = strtolower(pathinfo($pdf, PATHINFO_EXTENSION));

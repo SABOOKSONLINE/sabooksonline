@@ -230,18 +230,33 @@ require_once __DIR__ . "/../includes/nav.php";
                             $coverPath = ($item['cover_path'] ?? '/cms-data/book-covers/') . ($item['cover'] ?? '');
                             $title = $item['title'] ?? 'Unknown Book';
                             $author = $item['author'] ?? 'Unknown Author';
+
+                            // Determine book type and correct URL
+                            $bookType = $item['book_type'] ?? 'regular';
+
+                            if ($bookType === 'academic') {
+                                // Academic books: book_id / academic_public_key points to /library/academic/{publicKey}
+                                $bookId = $item['academic_public_key'] ?? $item['book_id'] ?? '';
+                                $bookUrl = !empty($bookId) ? '/library/academic/' . urlencode($bookId) : '#';
+                            } else {
+                                // Regular books: use CONTENTID for /library/book/{CONTENTID}
+                                $contentId = $item['regular_content_id'] ?? $item['book_id'] ?? '';
+                                $bookUrl = !empty($contentId) ? '/library/book/' . urlencode($contentId) : '#';
+                            }
                         ?>
                             <div class="order-item">
-                                <img src="<?= $coverPath ?>" 
-                                     alt="<?= htmlspecialchars($title) ?>" 
-                                     class="order-item-img"
-                                     onerror="this.src='/assets/img/default-book.png'">
-                                <div class="order-item-info">
-                                    <div class="order-item-title"><?= htmlspecialchars($title) ?></div>
-                                    <div class="order-item-meta">
-                                        <?= htmlspecialchars($author) ?> • Qty: <?= $item['quantity'] ?? 1 ?>
+                                <a href="<?= $bookUrl ?>" class="text-decoration-none d-flex align-items-center gap-2">
+                                    <img src="<?= $coverPath ?>" 
+                                         alt="<?= htmlspecialchars($title) ?>" 
+                                         class="order-item-img"
+                                         onerror="this.src='/assets/img/default-book.png'">
+                                    <div class="order-item-info">
+                                        <div class="order-item-title"><?= htmlspecialchars($title) ?></div>
+                                        <div class="order-item-meta">
+                                            <?= htmlspecialchars($author) ?> • Qty: <?= $item['quantity'] ?? 1 ?>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>

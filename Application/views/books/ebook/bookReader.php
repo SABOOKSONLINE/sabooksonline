@@ -8,6 +8,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reading - <?= htmlspecialchars($content['title'] ?? $content['TITLE'] ?? 'Book') ?></title>
+  
+  <!-- Favicons-->
+  <link rel="shortcut icon" href="/public/images/sabo_favicon (144x144).svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="72x72" href="/public/images/sabo_favicon (72x72).png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/public/images/sabo_favicon (114x114).png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/public/images/sabo_favicon (144x144).png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="/public/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="/public/css/icons.css" rel="stylesheet" />
+  <link href="/public/css/all.min.css" rel="stylesheet" />
+
+  <!-- Custom Css -->
+  <link href="/public/css/custom/style.css" rel="stylesheet" />
+  <link href="/public/css/custom/typoComponent.css" rel="stylesheet" />
+  <link href="/public/css/custom/section.css" rel="stylesheet" />
+  <link href="/public/css/custom/bkComponent.css" rel="stylesheet" />
+  <link href="/public/css/custom/banners.css" rel="stylesheet" />
+  <link href="/public/css/custom/responsive.css" rel="stylesheet" />
+  <link href="/public/css/custom/audioBook.css" rel="stylesheet" />
+  <link href="/public/css/custom/mobile-home.css" rel="stylesheet" />
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
   body {
@@ -274,11 +303,16 @@
   // Show loading state
   pdfPagesContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading PDF...</div>';
 
-  // Load the PDF with error handling
+  // Load the PDF with error handling and CORS support
   pdfjsLib.getDocument({
     url: url,
     withCredentials: false,
-    httpHeaders: {}
+    httpHeaders: {},
+    // Enable CORS for cross-origin requests
+    cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+    cMapPacked: true,
+    // Use worker from CDN to avoid CORS issues
+    workerSrc: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
   }).promise.then(pdf => {
     pdfDoc = pdf;
     console.log('PDF loaded successfully. Total pages:', pdfDoc.numPages);
@@ -290,10 +324,29 @@
     if (error.message) {
       errorMsg += error.message;
     }
-    pdfPagesContainer.innerHTML = '<div class="error">' + errorMsg + '<div class="error-details">URL: ' + url + '</div><div class="error-details">If the PDF exists, this might be a CORS issue. Please contact support.</div></div>';
+    
+    // More detailed error information
+    let errorDetails = '<div class="error-details">URL: ' + url + '</div>';
+    
+    // Check if it's a network/CORS error
+    if (error.name === 'InvalidPDFException' || error.message.includes('Failed to fetch')) {
+      errorDetails += '<div class="error-details">Possible causes:<br>';
+      errorDetails += '1. The PDF file may not exist at this location<br>';
+      errorDetails += '2. CORS headers may not be configured on the server<br>';
+      errorDetails += '3. The file path may be incorrect</div>';
+    }
+    
+    errorDetails += '<div class="error-details">If the PDF exists, this might be a CORS issue. Please contact support.</div>';
+    
+    pdfPagesContainer.innerHTML = '<div class="error">' + errorMsg + errorDetails + '</div>';
   });
   <?php endif; ?>
 </script>
+
+<!-- Navigation Scripts -->
+<script src="/public/js/bootstrap.bundle.min.js"></script>
+<script src="/public/js/main-script.js"></script>
+<script src="/public/js/jquery-3.6.0.min.js"></script>
 
 </body>
 </html>

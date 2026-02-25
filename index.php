@@ -634,6 +634,69 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         exit;
     });
 
+    // =================== PDF Proxy with CORS Support ===================
+    $r->addRoute('GET', '/api/pdf/{folder}/{filename}', function ($folder, $filename) {
+        // Decode the URL-encoded filename
+        $decodedFilename = rawurldecode($filename);
+        $safeFilename = basename($decodedFilename); // prevent directory traversal
+        
+        // Map allowed folders
+        $allowedFolders = [
+            'book-pdfs' => 'book-pdfs',
+            'academic/pdfs' => 'academic/pdfs',
+            'magazine/pdfs' => 'magazine/pdfs',
+            'newspaper/pdfs' => 'newspaper/pdfs'
+        ];
+        
+        if (!isset($allowedFolders[$folder])) {
+            http_response_code(400);
+            echo "Invalid folder.";
+            exit;
+        }
+        
+        $safeFolder = $allowedFolders[$folder];
+        $path = __DIR__ . '/cms-data/' . $safeFolder . '/' . $safeFilename;
+
+        if (!file_exists($path)) {
+            http_response_code(404);
+            echo "PDF not found.";
+            exit;
+        }
+
+        // Set CORS headers to allow PDF.js to load the file
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, OPTIONS');
+        header('Access-Control-Allow-Headers: Range, Content-Type');
+        header('Access-Control-Expose-Headers: Content-Length, Content-Range');
+        
+        // Set PDF headers
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $safeFilename . '"');
+        header('Content-Length: ' . filesize($path));
+        header('Accept-Ranges: bytes');
+        
+        // Handle range requests for PDF.js
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            $size = filesize($path);
+            $range = $_SERVER['HTTP_RANGE'];
+            $range = str_replace('bytes=', '', $range);
+            list($start, $end) = explode('-', $range);
+            if ($end == '') $end = $size - 1;
+            
+            header('HTTP/1.1 206 Partial Content');
+            header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
+            header('Content-Length: ' . ($end - $start + 1));
+            
+            $fp = fopen($path, 'rb');
+            fseek($fp, $start);
+            echo fread($fp, $end - $start + 1);
+            fclose($fp);
+        } else {
+            readfile($path);
+        }
+        exit;
+    });
+
     // =================== Tanci API ===================
     $r->addRoute('GET', '/api/read_remote_data/{apiKey}/{userKey}', function ($apiKey, $userKey) {
         $_GET['api_key'] = $apiKey;
