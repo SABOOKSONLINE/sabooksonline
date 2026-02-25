@@ -368,7 +368,6 @@ $hasValidInternalHardcopy = !empty($book['hc_id']) && (
                             <?php else: ?>
                                 <a id="hardcopy" href="/login" class="btn btn-green w-100">Add to cart</a>
                             <?php endif; ?>
-                            <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
                         </div>
                     <?php endif; ?>
                 </div>
