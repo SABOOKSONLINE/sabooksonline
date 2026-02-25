@@ -191,21 +191,19 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
-                <!-- Digital Version - Always show, but grey out if PDF not available -->
-                <span class="bv-purchase-select <?= empty($pdfPath) ? 'bv-purchase-select-disabled' : '' ?>" 
-                      price="<?= $ebookPrice ?>" 
-                      available="<?= !empty($pdfPath) ? '1' : '0' ?>">
-                    <span class="bv-purchase-select-h">Digital Version</span>
-                    <?php if (empty($pdfPath)): ?>
-                        <span class="bv-purchase-select-hL text-muted small">Not Available</span>
-                    <?php else: ?>
+                <!-- Digital Version - Only show if PDF is available -->
+                <?php if (!empty($pdfPath)): ?>
+                    <span class="bv-purchase-select" 
+                          price="<?= $ebookPrice ?>" 
+                          available="1">
+                        <span class="bv-purchase-select-h">Digital Version</span>
                         <?php if ((float)$ebookPrice !== 0.00): ?>
                             <span class="bv-purchase-select-hL">R<?= $ebookPrice ?></span>
                         <?php else: ?>
                             <span class="bv-purchase-select-hL">FREE</span>
                         <?php endif; ?>
-                    <?php endif; ?>
-                </span>
+                    </span>
+                <?php endif; ?>
 
                 <!-- Hardcopy Version (if physical price exists) -->
                 <?php if ((float)$physicalBookPrice > 0): ?>
