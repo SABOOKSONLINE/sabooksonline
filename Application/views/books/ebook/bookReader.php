@@ -274,11 +274,16 @@
   // Show loading state
   pdfPagesContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading PDF...</div>';
 
-  // Load the PDF with error handling
+  // Load the PDF with error handling and CORS support
   pdfjsLib.getDocument({
     url: url,
     withCredentials: false,
-    httpHeaders: {}
+    httpHeaders: {},
+    // Enable CORS for cross-origin requests
+    cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+    cMapPacked: true,
+    // Use worker from CDN to avoid CORS issues
+    workerSrc: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
   }).promise.then(pdf => {
     pdfDoc = pdf;
     console.log('PDF loaded successfully. Total pages:', pdfDoc.numPages);
@@ -290,7 +295,21 @@
     if (error.message) {
       errorMsg += error.message;
     }
-    pdfPagesContainer.innerHTML = '<div class="error">' + errorMsg + '<div class="error-details">URL: ' + url + '</div><div class="error-details">If the PDF exists, this might be a CORS issue. Please contact support.</div></div>';
+    
+    // More detailed error information
+    let errorDetails = '<div class="error-details">URL: ' + url + '</div>';
+    
+    // Check if it's a network/CORS error
+    if (error.name === 'InvalidPDFException' || error.message.includes('Failed to fetch')) {
+      errorDetails += '<div class="error-details">Possible causes:<br>';
+      errorDetails += '1. The PDF file may not exist at this location<br>';
+      errorDetails += '2. CORS headers may not be configured on the server<br>';
+      errorDetails += '3. The file path may be incorrect</div>';
+    }
+    
+    errorDetails += '<div class="error-details">If the PDF exists, this might be a CORS issue. Please contact support.</div>';
+    
+    pdfPagesContainer.innerHTML = '<div class="error">' + errorMsg + errorDetails + '</div>';
   });
   <?php endif; ?>
 </script>
