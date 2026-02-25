@@ -399,6 +399,25 @@
     color: var(--bg-primary);
 }
 
+.bv-purchase-select-disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    background: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+    border-color: var(--border) !important;
+}
+
+.bv-purchase-select-disabled:hover {
+    transform: none !important;
+    background: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+}
+
+.bv-purchase-select-disabled .bv-purchase-select-hL {
+    color: var(--text-secondary) !important;
+}
+
 .bv-purchase-select .bv-purchase-select-h {
     font-size: var(--bk-text-sm);
     font-weight: var(--bk-font-regular);

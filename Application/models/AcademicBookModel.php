@@ -139,8 +139,9 @@ class AcademicBookModel
         $priceRange = ['min_price' => 0, 'max_price' => 1000];
 
         // Keep filter options aligned with the Academic listing rules
+        // Only show academic books that have a cover image available (same as selectBooks)
         // NOTE: use SQL string literal escaping (''), not backslashes, for portability
-        $baseWhere = "WHERE pdf_path IS NOT NULL AND pdf_path <> '' AND (LOWER(title) NOT LIKE '%teacher%' AND LOWER(title) NOT LIKE '%teacher''s guide%' AND LOWER(title) NOT LIKE '%guide%')";
+        $baseWhere = "WHERE (cover_image_path IS NOT NULL AND cover_image_path <> '') AND (LOWER(title) NOT LIKE '%teacher%' AND LOWER(title) NOT LIKE '%teacher''s guide%' AND LOWER(title) NOT LIKE '%guide%')";
         
         // Get distinct subjects
         $result = mysqli_query($this->conn, "SELECT DISTINCT subject FROM academic_books {$baseWhere} AND subject IS NOT NULL AND subject != '' ORDER BY subject");

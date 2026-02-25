@@ -23,6 +23,14 @@
                 $qty        = (int)$item['cart_item_count'];
                 $cover      = $item['cover_image'] ?? '';
                 $maxQty     = $item['hc_stock_count'] ?? 999;
+                $bookPublicKey = $item['book_public_key'] ?? $bookId;
+                
+                // Build URL based on book type
+                if ($bookType === 'academic') {
+                    $bookUrl = "/library/academic/{$bookPublicKey}";
+                } else {
+                    $bookUrl = "/library/book/{$bookPublicKey}";
+                }
                 
                 // Determine cover image path based on book type
                 if ($bookType === 'academic') {
@@ -41,15 +49,19 @@
 
                         <!-- Cover -->
                         <div class="col-md-2 d-flex justify-content-center mb-3 mb-md-0" style="max-width: 200px;">
-                            <img src="<?= $coverPath ?>" class="img-fluid rounded h-100 object-fit-cover mx-auto"
-                                alt="<?= $title ?>">
+                            <a href="<?= $bookUrl ?>" class="text-decoration-none">
+                                <img src="<?= $coverPath ?>" class="img-fluid rounded h-100 object-fit-cover mx-auto"
+                                    alt="<?= $title ?>">
+                            </a>
                         </div>
 
                         <!-- Details -->
                         <div class="col-md-10">
                             <div class="card-body d-flex flex-column h-100">
 
-                                <h5 class="card-title mb-1"><?= $title ?></h5>
+                                <h5 class="card-title mb-1">
+                                    <a href="<?= $bookUrl ?>" class="text-decoration-none text-dark"><?= $title ?></a>
+                                </h5>
 
                                 <p class="text-muted mb-2 small">
                                     <?= $authors ?> • <?= $isbn ?>

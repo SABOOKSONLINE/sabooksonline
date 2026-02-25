@@ -191,17 +191,21 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
-                <!-- Digital Version -->
-                <?php if (!empty($pdfPath)): ?>
-                    <span class="bv-purchase-select" price="<?= $ebookPrice ?>" available="1">
-                        <span class="bv-purchase-select-h">Digital Version</span>
+                <!-- Digital Version - Always show, but grey out if PDF not available -->
+                <span class="bv-purchase-select <?= empty($pdfPath) ? 'bv-purchase-select-disabled' : '' ?>" 
+                      price="<?= $ebookPrice ?>" 
+                      available="<?= !empty($pdfPath) ? '1' : '0' ?>">
+                    <span class="bv-purchase-select-h">Digital Version</span>
+                    <?php if (empty($pdfPath)): ?>
+                        <span class="bv-purchase-select-hL text-muted small">Not Available</span>
+                    <?php else: ?>
                         <?php if ((float)$ebookPrice !== 0.00): ?>
                             <span class="bv-purchase-select-hL">R<?= $ebookPrice ?></span>
                         <?php else: ?>
                             <span class="bv-purchase-select-hL">FREE</span>
                         <?php endif; ?>
-                    </span>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </span>
 
                 <!-- Hardcopy Version (if physical price exists) -->
                 <?php if ((float)$physicalBookPrice > 0): ?>
@@ -246,9 +250,9 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php else: ?>
-                            <!-- PDF not available - show message -->
-                            <div class="alert alert-warning w-100 mt-3" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
+                            <!-- PDF not available - show greyed out message -->
+                            <div class="alert alert-secondary w-100 mt-3 opacity-50" role="alert" style="pointer-events: none;">
+                                <i class="fas fa-ban me-2"></i>
                                 Digital version not available
                             </div>
                         <?php endif; ?>
@@ -350,6 +354,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         const selectFirstBvBtn = () => {
             for (let i = 0; i < bvSelectBtn.length; i++) {
+                // Skip disabled options when auto-selecting
+                if (bvSelectBtn[i].classList.contains("bv-purchase-select-disabled")) {
+                    continue;
+                }
                 bvSelectBtn[i].classList.add("bv-active");
                 const price = bvSelectBtn[i].getAttribute("price");
                 updatePrice(price);
@@ -372,6 +380,10 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         bvSelectBtn.forEach((btn) => {
             btn.addEventListener("click", () => {
+                // Don't allow selection of disabled options
+                if (btn.classList.contains("bv-purchase-select-disabled")) {
+                    return;
+                }
                 removeBvActive();
                 btn.classList.add("bv-active");
                 removePriceDetail(btn);
