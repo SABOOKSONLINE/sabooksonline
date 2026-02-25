@@ -664,6 +664,10 @@ class CartModel extends Model
             COALESCE(b.TITLE, ab.title) AS title,
             COALESCE(b.AUTHORS, ab.author) AS author,
             COALESCE(b.COVER, ab.cover_image_path) AS cover,
+            -- For regular books, we also need CONTENTID so we can build the correct URL
+            b.CONTENTID AS regular_content_id,
+            -- For academic books, book_id already stores the public_key; we expose it explicitly for clarity
+            ab.public_key AS academic_public_key,
             CASE 
                 WHEN oi.book_type = 'academic' THEN '/cms-data/academic/covers/'
                 ELSE '/cms-data/book-covers/'

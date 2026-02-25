@@ -280,24 +280,37 @@ require_once __DIR__ . "/../includes/nav.php";
                     $quantity = $item['quantity'] ?? 1;
                     $unitPrice = $item['unit_price'] ?? 0;
                     $totalPrice = $unitPrice * $quantity;
+
+                    // Determine book type and correct URL
+                    $bookType = $item['book_type'] ?? 'regular';
+
+                    if ($bookType === 'academic') {
+                        $bookId = $item['academic_public_key'] ?? $item['book_id'] ?? '';
+                        $bookUrl = !empty($bookId) ? '/library/academic/' . urlencode($bookId) : '#';
+                    } else {
+                        $contentId = $item['regular_content_id'] ?? $item['book_id'] ?? '';
+                        $bookUrl = !empty($contentId) ? '/library/book/' . urlencode($contentId) : '#';
+                    }
                 ?>
                     <div class="order-item-detail">
-                        <img src="<?= $coverPath ?>" 
-                             alt="<?= htmlspecialchars($title) ?>" 
-                             class="order-item-img-large"
-                             onerror="this.src='/assets/img/default-book.png'">
-                        <div class="order-item-details">
-                            <div class="order-item-title-large"><?= htmlspecialchars($title) ?></div>
-                            <div class="order-item-meta-large">
-                                <?= htmlspecialchars($author) ?>
+                        <a href="<?= $bookUrl ?>" class="d-flex align-items-center text-decoration-none text-reset">
+                            <img src="<?= $coverPath ?>" 
+                                 alt="<?= htmlspecialchars($title) ?>" 
+                                 class="order-item-img-large"
+                                 onerror="this.src='/assets/img/default-book.png'">
+                            <div class="order-item-details ms-3">
+                                <div class="order-item-title-large"><?= htmlspecialchars($title) ?></div>
+                                <div class="order-item-meta-large">
+                                    <?= htmlspecialchars($author) ?>
+                                </div>
+                                <div class="order-item-meta-large">
+                                    Quantity: <?= $quantity ?> × R<?= number_format($unitPrice, 2) ?>
+                                </div>
                             </div>
-                            <div class="order-item-meta-large">
-                                Quantity: <?= $quantity ?> × R<?= number_format($unitPrice, 2) ?>
+                            <div class="order-item-price ms-auto">
+                                R<?= number_format($totalPrice, 2) ?>
                             </div>
-                        </div>
-                        <div class="order-item-price">
-                            R<?= number_format($totalPrice, 2) ?>
-                        </div>
+                        </a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
