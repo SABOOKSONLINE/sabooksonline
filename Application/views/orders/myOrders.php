@@ -269,6 +269,12 @@ require_once __DIR__ . "/../includes/nav.php";
                             <a href="/orders/<?= $order['id'] ?>/retry-payment" class="btn btn-primary">
                                 <i class="fas fa-credit-card me-2"></i>Pay Now
                             </a>
+                            <?php
+                            require_once __DIR__ . '/../../helpers/OrderHelper.php';
+                            if (isOrderDeletable($paymentStatus)) {
+                                echo getOrderDeleteButton($order['id'], 'btn-sm');
+                            }
+                            ?>
                         <?php endif; ?>
                         <a href="/orders/<?= $order['id'] ?>" class="view-order-btn">
                             View Details
@@ -282,3 +288,93 @@ require_once __DIR__ . "/../includes/nav.php";
 
 <?php require_once __DIR__ . "/../includes/footer.php"; ?>
 <?php require_once __DIR__ . "/../includes/scripts.php"; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle order deletion
+    const deleteButtons = document.querySelectorAll('.delete-order-btn');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            
+            if (!confirm('Are you sure you want to remove this order? This action cannot be undone.')) {
+                return;
+            }
+            
+            // Disable button during request
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Removing...';
+            
+            // Send DELETE request (with POST fallback)
+            const deleteOrder = async () => {
+                try {
+                    let response = await fetch(`/orders/${orderId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    // If DELETE fails, try POST fallback
+                    if (!response.ok && response.status === 404) {
+                        response = await fetch(`/orders/${orderId}/delete`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                    }
+                    
+                    return response;
+                } catch (error) {
+                    // Try POST fallback on error
+                    return fetch(`/orders/${orderId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+            };
+            
+            deleteOrder()
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Remove the order card from DOM
+                    const orderCard = this.closest('.order-card');
+                    if (orderCard) {
+                        orderCard.style.transition = 'opacity 0.3s';
+                        orderCard.style.opacity = '0';
+                        setTimeout(() => {
+                            orderCard.remove();
+                            
+                            // Check if no orders left
+                            const remainingOrders = document.querySelectorAll('.order-card');
+                            if (remainingOrders.length === 0) {
+                                location.reload();
+                            }
+                        }, 300);
+                    }
+                } else {
+                    alert('Failed to remove order: ' + (data.message || 'Unknown error'));
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-trash me-2"></i>Remove Order';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the order. Please try again.');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-trash me-2"></i>Remove Order';
+            });
+        });
+    });
+});
+</script>
