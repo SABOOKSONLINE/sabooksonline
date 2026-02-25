@@ -87,14 +87,9 @@ if ($userId) {
 
 $bookModel = new UserModel($conn);
 
-// Use logged-in user's email (assumes session is set)
 $_SESSION['action'] = $_SERVER['REQUEST_URI'];
 
 $email = $_SESSION['ADMIN_EMAIL'] ?? '';
-
-// echo "<pre>";
-// print_r($book);
-// echo "</pre>";
 
 $userBooks = $bookModel->getPurchasedBooksByUserEmail($email);
 
@@ -110,6 +105,14 @@ foreach ($userBooks as $purchasedBook) {
 
 //this is for the share button
 $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+// Check if internal hardcopy has meaningful data
+$hasValidInternalHardcopy = !empty($book['hc_id']) && (
+    (float)$hc_price > 0 ||
+    (int)$hc_stock_count > 0 ||
+    !empty($hc_country) ||
+    (int)$hc_pages > 0
+);
 ?>
 
 <div class="modal fade" id="shareCard" tabindex="-1">
@@ -162,7 +165,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             <img src="/cms-data/book-covers/<?= $cover ?>" alt="Book Cover">
         </div>
 
-
         <!-- Book Details -->
         <div class="bv-details">
             <div class="">
@@ -176,8 +178,8 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     }
                     if ($isOwner && isset($book['CONTENTID'])):
                     ?>
-                        <a href="/dashboards/listings/<?= $book['CONTENTID'] ?>" 
-                           class="btn btn-outline-primary btn-sm">
+                        <a href="/dashboards/listings/<?= $book['CONTENTID'] ?>"
+                            class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-edit me-1"></i> Edit
                         </a>
                     <?php endif; ?>
@@ -229,7 +231,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     });
                 </script>
 
-
                 <div class="bk-tags mt-4 justify-content-between">
                     <div class="bk-tags">
                         <?php if ($language): ?>
@@ -254,16 +255,12 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         <div class="">
             <div class="bv-purchase">
-                <!-- Internal hardcopy -->
-
 
                 <!-- E-Book -->
                 <span class="bv-purchase-select" price="<?= (int)$eBookPrice ?>" available="<?= !empty($ebook) ?>">
-
                     <span class="bv-purchase-select-h">E-Book</span>
                     <?php if ((int)$eBookPrice !== 0 && $ebook): ?>
                         <span class="bv-purchase-select-hL">R<?= $eBookPrice ?><small>.00</small></span>
-
                     <?php elseif ((int)$eBookPrice === 0 && $ebook): ?>
                         <span class="bv-purchase-select-hL">FREE</span>
                     <?php else: ?>
@@ -279,7 +276,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 <source src="/cms-data/audiobooks/samples/<?= $audiobook_sample ?>" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>
-
                             <div class="position-relative">
                                 <div class="bk-tags">
                                     <button class="bk-tag play-sample" onclick="playMusic()">
@@ -298,46 +294,35 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     <?php else: ?>
                         <span>Not available</span>
                     <?php endif; ?>
-
-
-
                 </span>
 
-                <!-- Hardcopy -->
-                <?php
-                // Check if internal hardcopy has meaningful data
-                $hasValidInternalHardcopy = !empty($book['hc_id']) && (
-                    (float)$hc_price > 0 ||
-                    (int)$hc_stock_count > 0 ||
-                    !empty($hc_country) ||
-                    (int)$hc_pages > 0
-                );
-                ?>
-
-                <?php if (!$hasValidInternalHardcopy): ?>
-                    <!-- External Hardcopy (website link) -->
-                    <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
-                        <span class="bv-purchase-select-h">Hardcopy</span>
-                        <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
-                            <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
-                        <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
-                            <span class="bv-purchase-select-hL">FREE</span>
-                        <?php else: ?>
-                            <span>Not available</span>
-                        <?php endif; ?>
-                    </span>
-                <?php else: ?>
-                    <!-- Internal Hardcopy (SABO stock) -->
-                    <span class="bv-purchase-select" price="<?= $hc_price ?>" available="true">
-                        <span class="bv-purchase-select-h">Hardcopy</span>
-                        <?php if ((float)$hc_price > 0): ?>
-                            <span class="bv-purchase-select-hL">R<?= number_format($hc_price, 2) ?></span>
-                        <?php elseif ((int)$hc_stock_count > 0): ?>
-                            <span class="bv-purchase-select-hL">FREE</span>
-                        <?php else: ?>
-                            <span>Not available</span>
-                        <?php endif; ?>
-                    </span>
+                <!-- Hardcopy tab — only shown if hc_id exists -->
+                <?php if (!empty($book['hc_id'])): ?>
+                    <?php if ($hasValidInternalHardcopy): ?>
+                        <!-- Internal Hardcopy (SABO stock) -->
+                        <span class="bv-purchase-select" price="<?= $hc_price ?>" available="true">
+                            <span class="bv-purchase-select-h">Hardcopy</span>
+                            <?php if ((float)$hc_price > 0): ?>
+                                <span class="bv-purchase-select-hL">R<?= number_format($hc_price, 2) ?></span>
+                            <?php elseif ((int)$hc_stock_count > 0): ?>
+                                <span class="bv-purchase-select-hL">FREE</span>
+                            <?php else: ?>
+                                <span>Not available</span>
+                            <?php endif; ?>
+                        </span>
+                    <?php else: ?>
+                        <!-- External Hardcopy (website link) -->
+                        <span class="bv-purchase-select" price="<?= $retailPrice ?>" available="<?= !empty($website) ?>">
+                            <span class="bv-purchase-select-h">Hardcopy</span>
+                            <?php if ((int)$retailPrice !== 0 && !empty($website)): ?>
+                                <span class="bv-purchase-select-hL">R<?= $retailPrice ?><small>.00</small></span>
+                            <?php elseif ((int)$retailPrice === 0 && !empty($website)): ?>
+                                <span class="bv-purchase-select-hL">FREE</span>
+                            <?php else: ?>
+                                <span>Not available</span>
+                            <?php endif; ?>
+                        </span>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <div class="bv-purchase-details">
@@ -346,67 +331,62 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                     <!-- ebook button -->
                     <div class="hide">
-                        <?php if (((int)$eBookPrice > 0) &&  $format !== 'Ebook'): ?>
-                            <!-- BUY FORM -->
+                        <?php if (((int)$eBookPrice > 0) && $format !== 'Ebook'): ?>
                             <form method="POST" action="/checkout" id="e-book" class="w-100 mt-3">
                                 <input type="hidden" name="bookId" value="<?= $bookId ?>">
-                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                <button type="submit" class="btn btn-green w-100 d-flex justify-content-center align-items-center">
                                     <i class="fas fa-shopping-cart me-2"></i> Buy
                                 </button>
                             </form>
                         <?php else: ?>
-                            <!-- READ BUTTON -->
-                            <a href="/read/<?= $bookId ?>" id="e-book" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">Read
-                            </a>
+                            <a href="/read/<?= $bookId ?>" id="e-book" class="btn btn-green w-100 mt-3 d-flex justify-content-center align-items-center">Read</a>
                         <?php endif; ?>
                     </div>
 
                     <!-- audiobook button -->
                     <div class="hide">
-
-                        <?php if (((int)$aBookPrice > 0) &&  $format !== 'Audiobook') : ?>
-                            <!-- BUY FORM -->
+                        <?php if (((int)$aBookPrice > 0) && $format !== 'Audiobook'): ?>
                             <form method="POST" action="https://www.sabooksonline.co.za/checkout" id="audiobook" class="w-100 mt-3">
                                 <input type="hidden" name="audiobookId" value="<?= $bookId ?>">
-                                <button type="submit" class="btn btn-green w-100  d-flex justify-content-center align-items-center">
+                                <button type="submit" class="btn btn-green w-100 d-flex justify-content-center align-items-center">
                                     <i class="fas fa-shopping-cart me-2"></i> Buy
                                 </button>
                             </form>
                         <?php else: ?>
-                            <!-- READ BUTTON -->
-                            <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green w-100 mt-3  d-flex justify-content-center align-items-center">play</a>
+                            <a href="/library/audiobook/<?= $bookId ?>" id="audiobook" class="btn btn-green w-100 mt-3 d-flex justify-content-center align-items-center">Play</a>
                         <?php endif; ?>
                     </div>
 
-                    <!-- hardcopy button -->
-                    <div class="hide">
-                        <a href="<?= $website ?>" id="hardcopy" class="btn btn-green bv-buy-btn">purchase Link<span></span></a>
-                        <?php if ($userId && $book['hc_id']): ?>
-                            <button id="hardcopy" class="btn btn-green bv-buy-btn add-to-cart"
-                                data-book-id="<?= $book['ID']; ?>">
-                                Add to cart
-                            </button>
-                        <?php elseif (!$userId && $book['hc_id']): ?>
-                            <a href="/login" class="btn btn-green w-100">Add to cart</a>
-                        <?php endif; ?>
-                        <span class="bv-note-muted" id="hardcopy"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
-                    </div>
+                    <!-- hardcopy button — only rendered if hc_id exists -->
+                    <?php if (!empty($book['hc_id'])): ?>
+                        <div class="hide">
+                            <?php if ($userId): ?>
+                                <button id="hardcopy" class="btn btn-green bv-buy-btn add-to-cart"
+                                    data-book-id="<?= $book['ID']; ?>">
+                                    Add to cart
+                                </button>
+                            <?php else: ?>
+                                <a id="hardcopy" href="/login" class="btn btn-green w-100">Add to cart</a>
+                            <?php endif; ?>
+                            <span class="bv-note-muted"><b>Disclaimer:</b> Physical book purchases are fulfilled by third-party sellers. SA Books Online is not responsible for payments, delivery, or product condition. Please contact the seller directly for support.</span>
+                        </div>
+                    <?php endif; ?>
                 </div>
+
+                <?php if (empty($book['hc_id'])): ?>
+                    <span class="bv-note-muted p-2 py-0"><b>Note:</b> External purchase links are no longer supported. Only hardcopies sold directly through SA Books Online are available.</span>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
 
-<?php
-// echo "<pre>";
-// print_r($book);
-// echo "</pre>";
-?>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const btn = document.querySelector(".add-to-cart");
 
+        // Guard: button only exists when hc_id is present
+        if (!btn) return;
 
         btn.addEventListener("click", async function() {
             const bookId = this.getAttribute("data-book-id");
@@ -434,7 +414,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     });
 </script>
 
-
 <script>
     const bvSelectBtn = document.querySelectorAll(".bv-purchase-select");
     const bvDetails = document.querySelector(".bv-purchase-details");
@@ -444,6 +423,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     };
 
     let selectedPrice = document.querySelector(".bv-price");
+    // Guard: bvBuyBtn only exists when hc_id is present
     let bvBuyBtn = document.querySelector(".bv-buy-btn");
 
     const updatePrice = (value) => {
@@ -458,19 +438,17 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         }
     };
 
-
     const selectFirstBvBtn = () => {
         for (let i = 0; i < bvSelectBtn.length; i++) {
             bvSelectBtn[i].classList.add("bv-active");
 
             const price = bvSelectBtn[i].getAttribute("price");
             updatePrice(price);
-            updateBvBuyBtn(bvSelectBtn[i]);
+            if (bvBuyBtn) updateBvBuyBtn(bvSelectBtn[i]);
             removePriceDetail(bvSelectBtn[i]);
             showPurchaseOption(
                 bvSelectBtn[i].firstElementChild.innerText.toLowerCase() + ""
             );
-            // showClickedBtn(bvSelectBtn[i]);
             break;
         }
     };
@@ -485,32 +463,12 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     };
 
     const updateBvBuyBtn = (btn) => {
+        if (!bvBuyBtn || !bvBuyBtn.childNodes[1]) return;
         bvBuyBtn.childNodes[1].innerText = btn.firstElementChild.innerText;
     };
 
-
-
-    // const bvMainBtns = document.querySelectorAll(".bv-main-btn");
-    // const resetBvMainBtn = () => {
-    //     bvMainBtns.forEach((btn) => {
-    //         if (!btn.classList.contains("bv-main-btn")) {
-    //             btn.classList.add("bv-main-btn");
-    //         }
-    //     });
-    // };
-
-    // const showClickedBtn = (btn) => {
-    //     resetBvMainBtn();
-    //     const bvMainBtn = document.querySelector(
-    //         "#" + btn.firstElementChild.innerText.toLowerCase()
-    //     );
-    //     // bvMainBtn.classList.remove("bv-main-btn");
-    //     print(bvMainBtn);
-    // };
-
     const resetBvBuyBtn = () => {
         const bvBuyBtns = document.querySelectorAll(".bv-purchase-details > div");
-
         bvBuyBtns.forEach((btn) => {
             btn.classList.add("hide");
         });
@@ -518,9 +476,7 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
     const showPurchaseOption = (optionId) => {
         const btn = document.getElementById(optionId);
-
         resetBvBuyBtn();
-
         if (btn && btn.parentElement.classList.contains("hide")) {
             btn.parentElement.classList.remove("hide");
         }
@@ -541,15 +497,11 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
             removePriceDetail(btn);
             updatePrice(btn.getAttribute("price"));
-            updateBvBuyBtn(btn);
+            if (bvBuyBtn) updateBvBuyBtn(btn);
             showPurchaseOption(btn.firstElementChild.innerText.toLowerCase() + "");
-            // showBtn(btn);
         });
     });
 </script>
-
-</script>
-
 
 <script>
     function performAction(button, actionType) {
@@ -565,11 +517,9 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // Remove active class and filled btn styles from all buttons of the same type
                     const allButtons = document.querySelectorAll(`.action-${actionType}`);
                     allButtons.forEach(btn => {
                         btn.classList.remove('active', 'btn-danger', 'btn-warning', 'btn-primary');
-                        // Add back outline styles
                         if (actionType === 'like') btn.classList.add('btn-outline-danger');
                         if (actionType === 'wishlist') btn.classList.add('btn-outline-warning');
                         if (actionType === 'library') btn.classList.add('btn-outline-primary');
@@ -577,7 +527,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
                     if (data.action === 'added') {
                         button.classList.add('active');
-                        // Remove outline, add filled style
                         if (actionType === 'like') {
                             button.classList.remove('btn-outline-danger');
                             button.classList.add('btn-danger');
@@ -591,7 +540,6 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             button.classList.add('btn-primary');
                         }
                     }
-                    // If removed, button remains outlined and inactive (already handled above)
                 } else {
                     alert(data.message || 'Something went wrong');
                 }
@@ -623,9 +571,9 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         }
     }
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Function to get query parameters from the URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -637,33 +585,22 @@ $link = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             let targetFormId = null;
 
             if (buyFormat === 'ebook') {
-                targetFormId = 'e-book'; // Matches the ID of your Ebook form
+                targetFormId = 'e-book';
             } else if (buyFormat === 'audiobook') {
-                targetFormId = 'audiobook'; // Matches the ID of your Audiobook form
+                targetFormId = 'audiobook';
             }
 
             if (targetFormId) {
                 const targetForm = document.getElementById(targetFormId);
 
-                // Ensure the element is a form and it exists
                 if (targetForm && targetForm.tagName === 'FORM') {
-                    // Temporarily remove the 'hide' class if it's there
-                    // (assuming 'hide' makes it display: none; or similar)
                     targetForm.closest('.hide')?.classList.remove('hide');
-
-                    // Submit the form
                     targetForm.submit();
-
-                    // Optional: Provide immediate user feedback, though the page will redirect quickly
                     console.log('Initiating purchase for ' + buyFormat + '. Redirecting to payment gateway...');
                 } else {
                     console.warn('Could not find a purchasable form for buy_format: ' + buyFormat + '. The item might be already owned or unavailable.');
-                    // You might want to display a user-friendly message here if the form isn't found
-                    // e.g., alert("This item is already in your library or not available for purchase.");
                 }
             }
-            // Optional: Remove the query parameter from the URL to clean it up for the user
-            // history.replaceState(null, '', window.location.pathname);
         }
     });
 </script>
