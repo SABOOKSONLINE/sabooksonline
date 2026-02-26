@@ -20,7 +20,7 @@
         left: 0;
         right: 0;
         z-index: 1000 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         background-color: #fff !important;
     }
 
@@ -107,7 +107,6 @@
         max-width: 180px !important;
         justify-content: center !important;
     }
-
 
     /* Smooth scroll behavior */
     html {
@@ -198,7 +197,7 @@
     }
 
     .typo-link:active {
-        background-color: rgba(0,0,0,0.05);
+        background-color: rgba(0, 0, 0, 0.05);
         transform: scale(0.98);
     }
 
@@ -255,7 +254,7 @@
         max-height: 203px; /* Maximum height (150px * 1.35) */
         border-radius: 0 !important; /* No rounded corners */
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -301,7 +300,8 @@
     /* Ensure these sections use the same mobile-friendly layout */
     #latest_collections,
     #fiction_collections,
-    #childrens_collections {
+    #childrens_collections,
+    #academic_listings {
         padding: 0 1rem !important;
         margin: 0 !important;
     }
@@ -309,7 +309,8 @@
     /* Ensure book-cards containers in these sections have proper scrolling */
     #latest_collections .book-cards,
     #fiction_collections .book-cards,
-    #childrens_collections .book-cards {
+    #childrens_collections .book-cards,
+    #academic_listings .book-cards {
         overflow-x: auto !important;
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
@@ -320,7 +321,8 @@
 
     #latest_collections .book-card-slide,
     #fiction_collections .book-card-slide,
-    #childrens_collections .book-card-slide {
+    #childrens_collections .book-card-slide,
+    #academic_listings .book-card-slide {
         display: flex !important;
         gap: 0.75rem !important;
         padding: 0.5rem 0 !important;
@@ -331,7 +333,8 @@
     /* Style .bk-card to match .book-card on mobile */
     #latest_collections .bk-card,
     #fiction_collections .bk-card,
-    #childrens_collections .bk-card {
+    #childrens_collections .bk-card,
+    #academic_listings .bk-card {
         flex-shrink: 0;
         width: calc((100vw - 2rem - 0.75rem) / 2.5) !important;
         min-width: 120px !important; /* Wider */
@@ -347,21 +350,23 @@
 
     #latest_collections .bk-card:active,
     #fiction_collections .bk-card:active,
-    #childrens_collections .bk-card:active {
+    #childrens_collections .bk-card:active,
+    #academic_listings .bk-card:active {
         transform: scale(0.95);
     }
 
     /* Style book cover images - match card width exactly, wider aspect ratio */
     #latest_collections .bk-img,
     #fiction_collections .bk-img,
-    #childrens_collections .bk-img {
+    #childrens_collections .bk-img,
+    #academic_listings .bk-img {
         width: 100% !important;
         height: calc((100vw - 2rem - 0.75rem) / 2.5 * 1.35) !important;
         min-height: 162px !important; /* Wider */
         max-height: 203px !important; /* Wider */
         border-radius: 0 !important; /* No rounded corners */
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         margin: 0 !important;
         padding: 0 !important;
         border: none !important;
@@ -501,7 +506,7 @@
         max-height: 203px !important; /* Wider */
         border-radius: 0 !important; /* No rounded corners */
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         margin: 0 !important;
         padding: 0 !important;
         border: none !important;
@@ -618,13 +623,17 @@
 
     /* Smooth scroll indicator */
     .book-cards::after {
-        content: '';
+        content: "";
         position: absolute;
         right: 0;
         top: 0;
         bottom: 0;
         width: 30px;
-        background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+        background: linear-gradient(
+            to left,
+            rgba(255, 255, 255, 0.9),
+            transparent
+        );
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.3s;
@@ -697,8 +706,9 @@
     }
 
     /* Touch-friendly interactions */
-    a, button {
-        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+    a,
+    button {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
         touch-action: manipulation;
     }
 
@@ -720,22 +730,32 @@
     }
 
     /* Stagger animation for cards */
-    .book-card:nth-child(1) { animation-delay: 0.05s; }
-    .book-card:nth-child(2) { animation-delay: 0.1s; }
-    .book-card:nth-child(3) { animation-delay: 0.15s; }
-    .book-card:nth-child(4) { animation-delay: 0.2s; }
-    .book-card:nth-child(5) { animation-delay: 0.25s; }
+    .book-card:nth-child(1) {
+        animation-delay: 0.05s;
+    }
+    .book-card:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+    .book-card:nth-child(3) {
+        animation-delay: 0.15s;
+    }
+    .book-card:nth-child(4) {
+        animation-delay: 0.2s;
+    }
+    .book-card:nth-child(5) {
+        animation-delay: 0.25s;
+    }
 
     /* Pull-to-refresh indicator (visual only) */
     body::before {
-        content: '';
+        content: "";
         position: fixed;
         top: -50px;
         left: 50%;
         transform: translateX(-50%);
         width: 40px;
         height: 40px;
-        border: 3px solid rgba(255,255,255,0.3);
+        border: 3px solid rgba(255, 255, 255, 0.3);
         border-top-color: var(--red);
         border-radius: 50%;
         opacity: 0;

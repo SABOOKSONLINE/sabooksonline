@@ -21,7 +21,7 @@ class AcademicBookController
             return [];
         }
     }
-    
+
     public function getFilterOptions(): array
     {
         try {
@@ -47,12 +47,29 @@ class AcademicBookController
         try {
             $books = $this->academicBookModel->selectBooks(['sort' => 'newest']);
             $books = array_slice($books, 0, $limit);
-            
+
             if ($books) {
                 include __DIR__ . '/../views/books/academicCard.php';
             }
         } catch (Exception $e) {
             error_log("Render academic books for home error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Render the current academic listings (admin-selected titles) for the
+     * homepage. This reuses the existing academic model to fetch the book
+     * details and then delegates display to the same card view used above.
+     */
+    public function renderAcademicListingsForHome($limit = 10)
+    {
+        try {
+            $books = $this->academicBookModel->getAcademicListedBooks($limit);
+            if ($books) {
+                include __DIR__ . '/../views/books/academicCard.php';
+            }
+        } catch (Exception $e) {
+            error_log("Render academic listings for home error: " . $e->getMessage());
         }
     }
 }

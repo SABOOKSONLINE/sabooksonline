@@ -158,6 +158,26 @@ $academicBookController = new AcademicBookController($conn);
 
     <section class="section">
         <div class="container">
+            <?php renderSectionHeading("Academic Listings", "Featured academic titles chosen by our editors.", "Show more", "/academic") ?>
+
+            <div class="book-cards mt-4" id="academic_listings">
+                <div class="book-card-slide">
+                    <?php
+                    $academicBookController->renderAcademicListingsForHome(10);
+                    ?>
+                </div>
+
+                <div class="book-card-btn btn-right">
+                    <div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
             <?php renderSectionHeading("Latest Collections", "Fresh Off the Press — Discover the Newest Reads.", "Show more", "/library") ?>
 
             <div class="book-cards mt-4" id="latest_collections">
@@ -186,7 +206,6 @@ $academicBookController = new AcademicBookController($conn);
                     <?php
                     $bookController->renderListingsByCategory("fiction collections", 10);
                     ?>
-
                 </div>
 
                 <div class="book-card-btn btn-right">

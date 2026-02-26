@@ -4,12 +4,12 @@
     $title = html_entity_decode($book['title'] ?? '');
     $author = html_entity_decode($book['author'] ?? '');
     $ebookPrice = $book['ebook_price'] ?? 0;
-    
+
     $shortTitle = strlen($title) > 30 ? substr($title, 0, 30) . '...' : $title;
 ?>
     <div class="bk-card">
         <div class="bk-img">
-            <a href="/academic/<?= $publicKey ?>">
+            <a href="/library/academic/<?= $publicKey ?>">
                 <?php if (!empty($cover)): ?>
                     <img src="/cms-data/academic/covers/<?= $cover ?>" alt="<?= $title ?>">
                 <?php else: ?>
