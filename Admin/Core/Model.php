@@ -17,7 +17,13 @@ class Model
         $cols = [];
 
         foreach ($columns as $name => $definition) {
-            $cols[] = "`$name` $definition";
+            // support numeric keys for raw SQL segments (indexes, constraints, etc.)
+            if (is_int($name)) {
+                // caller provided a full definition string like "UNIQUE KEY ..." or "KEY ..."
+                $cols[] = $definition;
+            } else {
+                $cols[] = "`$name` $definition";
+            }
         }
 
         $columnsSQL = implode(", ", $cols);
