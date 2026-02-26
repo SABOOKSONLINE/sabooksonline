@@ -251,7 +251,7 @@ class UserModel extends Model
         return $this->fetchAll(
             "SELECT ADMIN_ID as user_id, ADMIN_NAME as name, ADMIN_EMAIL as email, ADMIN_USERKEY as userkey
              FROM users 
-             WHERE LOWER(subscription_status) IN ('royalties', 'premium', 'pro')
+             WHERE LOWER(subscription_status) IN ('royalties', 'premium', 'pro', 'free')
              ORDER BY ADMIN_NAME ASC"
         );
     }

@@ -15,16 +15,30 @@ function renderAddPublisherForm(array $users = []): void
 
             <form action="/admin/books/upload-management/process?type=add-publisher&return=<?= urlencode($_SERVER['REQUEST_URI']) ?>" method="POST">
 
-                <!-- User Selection -->
+                <!-- User Search/Selection -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
                         Select User <span class="text-danger">*</span>
                     </label>
 
+                    <div class="position-relative">
+                        <input type="text"
+                            id="userSearchInput"
+                            class="form-control"
+                            placeholder="Search by name, email, or user ID..."
+                            autocomplete="off"
+                            required>
+
+                        <!-- Dropdown options -->
+                        <div id="userDropdown" class="position-absolute w-100 bg-white border rounded mt-1 shadow-sm" style="display: none; max-height: 300px; overflow-y: auto; z-index: 1000; top: 100%;">
+                            <div id="userOptions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden select for form submission -->
                     <select name="user_select"
                         id="userSelect"
-                        class="form-select"
-                        required>
+                        style="display: none;">
                         <option value="">-- Select a user --</option>
                         <?php foreach ($users as $user): ?>
                             <option value="<?= htmlspecialchars($user['user_id']) ?>"
@@ -36,7 +50,7 @@ function renderAddPublisherForm(array $users = []): void
                         <?php endforeach; ?>
                     </select>
 
-                    <small class="text-muted">
+                    <small class="text-muted d-block mt-2">
                         Only Premium, Pro, or Royalties users are eligible.
                     </small>
                 </div>
@@ -82,6 +96,9 @@ function renderAddPublisherForm(array $users = []): void
 
     <script>
         const userSelect = document.getElementById('userSelect');
+        const userSearchInput = document.getElementById('userSearchInput');
+        const userDropdown = document.getElementById('userDropdown');
+        const userOptions = document.getElementById('userOptions');
         const userId = document.getElementById('userId');
         const userEmail = document.getElementById('userEmail');
         const userName = document.getElementById('userName');
@@ -90,30 +107,100 @@ function renderAddPublisherForm(array $users = []): void
         const displayName = document.getElementById('displayName');
         const displayEmail = document.getElementById('displayEmail');
 
-        userSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
+        // Store all users data
+        const allUsers = Array.from(userSelect.options).slice(1).map(opt => ({
+            id: opt.value,
+            name: opt.dataset.name,
+            email: opt.dataset.email,
+            text: opt.textContent
+        }));
 
-            if (this.value) {
-                userId.value = this.value;
-                userEmail.value = selectedOption.dataset.email;
-                userName.value = selectedOption.dataset.name;
+        function displayDropdown(searchValue = '') {
+            let filtered = allUsers;
 
-                displayName.textContent = selectedOption.dataset.name;
-                displayEmail.textContent = selectedOption.dataset.email;
+            if (searchValue) {
+                const search = searchValue.toLowerCase();
+                filtered = allUsers.filter(user =>
+                    user.name.toLowerCase().includes(search) ||
+                    user.email.toLowerCase().includes(search) ||
+                    user.id.toLowerCase().includes(search)
+                );
+            }
 
-                selectedUserInfo.classList.remove('d-none');
-                submitBtn.disabled = false;
+            userOptions.innerHTML = '';
+
+            if (filtered.length === 0) {
+                userOptions.innerHTML = '<div class="p-3 text-muted text-center">No users found</div>';
             } else {
-                resetForm();
+                filtered.forEach(user => {
+                    const div = document.createElement('div');
+                    div.className = 'p-2 cursor-pointer hover-bg';
+                    div.style.cursor = 'pointer';
+                    div.style.transition = 'background-color 0.2s';
+                    div.innerHTML = `<strong>${user.name}</strong><br><small class="text-muted">${user.email}</small>`;
+
+                    div.addEventListener('mouseenter', () => {
+                        div.style.backgroundColor = '#f0f0f0';
+                    });
+                    div.addEventListener('mouseleave', () => {
+                        div.style.backgroundColor = 'transparent';
+                    });
+
+                    div.addEventListener('click', () => {
+                        selectUser(user);
+                    });
+
+                    userOptions.appendChild(div);
+                });
+            }
+
+            userDropdown.style.display = filtered.length > 0 ? 'block' : 'none';
+        }
+
+        function selectUser(user) {
+            userSearchInput.value = user.name;
+            userId.value = user.id;
+            userEmail.value = user.email;
+            userName.value = user.name;
+
+            displayName.textContent = user.name;
+            displayEmail.textContent = user.email;
+
+            selectedUserInfo.classList.remove('d-none');
+            submitBtn.disabled = false;
+            userDropdown.style.display = 'none';
+
+            // Update hidden select
+            userSelect.value = user.id;
+        }
+
+        // Search input listener
+        userSearchInput.addEventListener('input', function() {
+            displayDropdown(this.value);
+        });
+
+        // Focus listener to show dropdown
+        userSearchInput.addEventListener('focus', function() {
+            if (this.value || allUsers.length > 0) {
+                displayDropdown(this.value);
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.position-relative')) {
+                userDropdown.style.display = 'none';
             }
         });
 
         function resetForm() {
+            userSearchInput.value = '';
             userId.value = '';
             userEmail.value = '';
             userName.value = '';
             selectedUserInfo.classList.add('d-none');
             submitBtn.disabled = true;
+            userDropdown.style.display = 'none';
         }
     </script>
 
