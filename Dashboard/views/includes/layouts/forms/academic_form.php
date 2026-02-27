@@ -266,14 +266,12 @@ $languages = [
 
         <h4 class="fw-bold mb-2">Physical Copy Details</h4>
 
-        <!-- Physical Copy Link -->
-        <div class="col-md-6">
-            <label class="form-label">Physical Copy <small class="text-muted">(Link)</small></label>
-            <input type="text" name="link" class="form-control" placeholder="e.g. http://www.amazon.co.za/books/purchase/23r342rte12312" value="<?= $link ?>">
-        </div>
+        <!-- <div class="col-md-6"> -->
+        <!-- <label class="form-label">Physical Copy <small class="text-muted">(Link)</small></label> -->
+        <input type="text" name="link" class="form-control" placeholder="e.g. http://www.amazon.co.za/books/purchase/23r342rte12312" value="" hidden>
+        <!-- </div> -->
 
-        <!-- Physical Copy Price -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label class="form-label">Physical Copy Price <small class="text-muted">(ZAR)</small></label>
             <input type="number" name="physical_book_price" class="form-control" id="physical_book_price" placeholder="e.g. 89" value="<?= $physical_book_price ?>">
         </div>
