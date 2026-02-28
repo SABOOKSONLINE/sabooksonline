@@ -274,62 +274,13 @@ switch ($action) {
         // Get delivery address
         require_once __DIR__ . '/models/CartModel.php';
         $cartModel = new CartModel($conn);
-        $address = $cartModel->getDeliveryAddress($userIdInt);
         
-        // If address doesn't exist, try to save it from request data
-        if (empty($address)) {
-            $addressData = $input['address'] ?? null;
-            
-            if ($addressData) {
-                $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
-                if ($addressSaved) {
-                    $address = $cartModel->getDeliveryAddress($userIdInt);
-                }
-            }
-            
-            if (empty($address)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
-                break;
-            }
-        }
-        
-        // Get cart items and calculate shipping fee automatically
-        $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
-        if (empty($cartItems)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to cart before checkout.']);
-            break;
-        }
-        
-        // Calculate actual shipping fee using Courier Guy API
-        $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
-        $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
-        $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
-        
-        // Fallback to R60 if calculation fails
-        if ($shippingFee <= 0) {
-            $shippingFee = 60.0;
-        }
-        
-        // Calculate subtotal
-        $subtotal = 0;
-        foreach ($cartItems as $item) {
-            $subtotal += ($item['hc_price'] ?? 0) * ($item['cart_item_count'] ?? 1);
-        }
-        
-        // Verify that price matches subtotal + shipping (or use calculated total)
-        $expectedTotal = $subtotal + $shippingFee;
-        if (abs($price - $expectedTotal) > 0.01) {
-            // Price doesn't match, use calculated total
-            $price = $expectedTotal;
-        }
-        
-        // Check if this is a retry payment (order_id provided) or new order
+        // Check if this is a retry payment (order_id provided) FIRST - before checking cart
         $existingOrderId = $input['order_id'] ?? null;
         
         if ($existingOrderId) {
-            // Retry payment for existing order
+            // RETRY PAYMENT: Use order's items, NOT cart items
+            // Retry payment for existing order - use order's items, not cart
             $existingOrder = $cartModel->getOrderDetails((int)$existingOrderId, $userIdInt);
             
             if (empty($existingOrder)) {
@@ -344,11 +295,117 @@ switch ($action) {
                 break;
             }
             
+            // Get order items from order details (not cart items) - order already exists with items
+            $orderItems = $existingOrder['items'] ?? [];
+            
+            if (empty($orderItems)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Order has no items']);
+                break;
+            }
+            
+            // Get address from order (order already has address saved)
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+            
+            // If address doesn't exist, try to get from request
+            if (empty($address)) {
+                $addressData = $input['address'] ?? null;
+                
+                if ($addressData) {
+                    $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+                    if ($addressSaved) {
+                        $address = $cartModel->getDeliveryAddress($userIdInt);
+                    }
+                }
+                
+                if (empty($address)) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
+                    break;
+                }
+            }
+            
+            // Use shipping fee from order (already calculated when order was created)
+            $shippingFee = floatval($existingOrder['shipping_fee'] ?? $input['shipping_fee'] ?? 0);
+            
+            // If shipping not set in order, use from request or fallback
+            if ($shippingFee <= 0) {
+                $shippingFee = floatval($input['shipping_fee'] ?? 60.0);
+            }
+            
+            // Use order's subtotal (already calculated when order was created)
+            $subtotal = floatval($existingOrder['subtotal'] ?? 0);
+            
+            // If subtotal not set, calculate from order items
+            if ($subtotal <= 0) {
+                foreach ($orderItems as $item) {
+                    $subtotal += floatval($item['unit_price'] ?? $item['total_price'] ?? 0);
+                }
+            }
+            
+            // Use provided price or calculate from subtotal + shipping
+            // For retry payment, use the price from request (which should match order total)
+            if ($price <= 0) {
+                $price = $subtotal + $shippingFee;
+            }
+            
             // Update order totals with calculated shipping
             $cartModel->updateOrderTotals((int)$existingOrderId, $price, $shippingFee, 'yoco');
             
             $checkout->generateYocoPaymentForMobile($price, $user, (int)$existingOrderId);
         } else {
+            // NEW ORDER: Use cart items (not retry payment)
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+            
+            // If address doesn't exist, try to save it from request data
+            if (empty($address)) {
+                $addressData = $input['address'] ?? null;
+                
+                if ($addressData) {
+                    $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+                    if ($addressSaved) {
+                        $address = $cartModel->getDeliveryAddress($userIdInt);
+                    }
+                }
+                
+                if (empty($address)) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
+                    break;
+                }
+            }
+            
+            // Get cart items and calculate shipping fee automatically
+            $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
+            if (empty($cartItems)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to cart before checkout.']);
+                break;
+            }
+            
+            // Calculate actual shipping fee using Courier Guy API
+            $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
+            $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
+            $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
+            
+            // Fallback to R60 if calculation fails
+            if ($shippingFee <= 0) {
+                $shippingFee = 60.0;
+            }
+            
+            // Calculate subtotal
+            $subtotal = 0;
+            foreach ($cartItems as $item) {
+                $subtotal += ($item['hc_price'] ?? 0) * ($item['cart_item_count'] ?? 1);
+            }
+            
+            // Verify that price matches subtotal + shipping (or use calculated total)
+            $expectedTotal = $subtotal + $shippingFee;
+            if (abs($price - $expectedTotal) > 0.01) {
+                // Price doesn't match, use calculated total
+                $price = $expectedTotal;
+            }
+            
             // Create order BEFORE payment
             $orderId = $cartModel->createOrder($userIdInt);
             
