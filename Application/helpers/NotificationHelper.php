@@ -21,6 +21,7 @@ class NotificationHelper
 {
     private static $notificationModel = null;
     private static $mobileController = null;
+    private static $conn = null;
     
     /**
      * Initialize models (lazy loading)
@@ -32,17 +33,26 @@ class NotificationHelper
                 require_once __DIR__ . "/../../Config/connection.php";
                 global $conn;
             }
+            self::$conn = $conn;
             self::$notificationModel = new NotificationModel($conn);
+        } else if ($conn !== null && self::$conn !== $conn) {
+            // Update connection if a new one is provided
+            self::$conn = $conn;
         }
     }
     
     /**
-     * Get connection from model
+     * Get connection
      */
     private static function getConn()
     {
         self::init();
-        return self::$notificationModel->conn;
+        if (self::$conn === null) {
+            require_once __DIR__ . "/../../Config/connection.php";
+            global $conn;
+            self::$conn = $conn;
+        }
+        return self::$conn;
     }
     
     /**
