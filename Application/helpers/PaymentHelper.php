@@ -238,6 +238,28 @@ function updateOrderPaymentStatus(mysqli $conn, int $orderId, string $status): b
             error_log("⚠️ WARNING: Update executed but 0 rows affected (order may already have this status)");
         } else {
             error_log("✅ SUCCESS: $affectedRows row(s) updated");
+            
+            // Send notification when payment status changes
+            try {
+                require_once __DIR__ . "/NotificationHelper.php";
+                $userId = $orderExists['user_id'] ?? null;
+                
+                // Get order number
+                $orderStmt = $conn->prepare("SELECT order_number FROM orders WHERE id = ?");
+                $orderStmt->bind_param("i", $orderId);
+                $orderStmt->execute();
+                $orderResult = $orderStmt->get_result();
+                $orderData = $orderResult->fetch_assoc();
+                $orderStmt->close();
+                
+                $orderNumber = $orderData['order_number'] ?? "N/A";
+                
+                if ($status === 'paid' && $userId) {
+                    NotificationHelper::notifyOrderPaid($orderId, $userId, $orderNumber, $conn);
+                }
+            } catch (Exception $e) {
+                error_log("Failed to send payment notification: " . $e->getMessage());
+            }
         }
         
         logDebug("Order payment status updated", [

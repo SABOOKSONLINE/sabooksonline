@@ -104,8 +104,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     mysqli_stmt_close($stmt);
+    
+    // Send welcome notification if user has device token registered
+    try {
+        require_once __DIR__ . "/../../helpers/NotificationHelper.php";
+        NotificationHelper::sendWelcomeNotification($email, $name, $conn);
+    } catch (Exception $e) {
+        error_log("Failed to send welcome notification: " . $e->getMessage());
+    }
+    
     mysqli_close($conn);
-
 
     $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
     sendVerificationEmail($email,$name, $verifyLink);

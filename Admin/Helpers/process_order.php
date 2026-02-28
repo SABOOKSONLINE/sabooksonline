@@ -35,6 +35,25 @@ try {
     $order = $orderResult[0];
 
     $updatedRows = $ordersModel->updateOrderStatus($orderId, $newStatus);
+    
+    // Send notification when order status changes
+    if ($updatedRows > 0) {
+        try {
+            require_once __DIR__ . "/../../Application/helpers/NotificationHelper.php";
+            $userId = $order['user_id'] ?? null;
+            $orderNumber = $order['order_number'] ?? "N/A";
+            
+            if ($userId) {
+                // Notify user about order status change
+                NotificationHelper::notifyOrderStatusChanged($orderId, $userId, $newStatus, $orderNumber, $conn);
+                
+                // Also notify admins
+                NotificationHelper::notifyAdminOrderStatusChanged($orderId, $orderNumber, $newStatus, $conn);
+            }
+        } catch (Exception $e) {
+            error_log("Failed to send order status notification: " . $e->getMessage());
+        }
+    }
 
     echo json_encode([
         'success' => $updatedRows > 0,

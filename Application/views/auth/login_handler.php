@@ -89,6 +89,30 @@ try {
     if (!setUserSession($conn, $email)) {
         throw new Exception('Failed to set user session');
     }
+    
+    // Send welcome notification on login if user has device token and just signed up
+    // Check if user registered in last 24 hours and has device token
+    try {
+        require_once __DIR__ . "/../../helpers/NotificationHelper.php";
+        $checkStmt = $conn->prepare("SELECT created_at FROM users WHERE ADMIN_EMAIL = ?");
+        $checkStmt->bind_param("s", $email);
+        $checkStmt->execute();
+        $userResult = $checkStmt->get_result();
+        $userData = $userResult->fetch_assoc();
+        $checkStmt->close();
+        
+        if ($userData && isset($userData['created_at'])) {
+            $createdAt = strtotime($userData['created_at']);
+            $hoursSinceSignup = (time() - $createdAt) / 3600;
+            
+            // If user signed up in last 24 hours and has device token, send welcome notification
+            if ($hoursSinceSignup < 24) {
+                NotificationHelper::sendWelcomeNotification($email, $name, $conn);
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Failed to send welcome notification on login: " . $e->getMessage());
+    }
 
     // $_SESSION['alert'] = [
     //     'type' => 'success',

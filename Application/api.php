@@ -165,8 +165,24 @@ switch ($action) {
         require_once __DIR__ . '/helpers/ShippingHelper.php';
         require_once __DIR__ . '/models/CartModel.php';
         
-        $input = json_decode(file_get_contents('php://input'), true);
-        $userIdInt = (int)($input['user_id'] ?? 0);
+        // Support both POST (JSON body) and GET (query params or JSON in body)
+        $input = [];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $rawInput = file_get_contents('php://input');
+            $input = json_decode($rawInput, true) ?: [];
+        } else {
+            // GET request - try to get from query params or JSON in body
+            $rawInput = file_get_contents('php://input');
+            if (!empty($rawInput)) {
+                $input = json_decode($rawInput, true) ?: [];
+            }
+            // Also check query params
+            if (empty($input) && !empty($_GET['data'])) {
+                $input = json_decode($_GET['data'], true) ?: [];
+            }
+        }
+        
+        $userIdInt = (int)($input['user_id'] ?? $input['userID'] ?? 0);
         
         // Try to get user ID from userID parameter if not provided
         if ($userIdInt <= 0 && $userID) {
@@ -560,6 +576,33 @@ switch ($action) {
             );
             $success = $stmt->execute();
             $stmt->close();
+            
+            // Send welcome notification if user just signed up (within last 24 hours)
+            if ($success) {
+                try {
+                    require_once __DIR__ . '/helpers/NotificationHelper.php';
+                    // Check if user registered in last 24 hours
+                    $checkStmt = $conn->prepare("SELECT ADMIN_NAME, created_at FROM users WHERE ADMIN_EMAIL = ?");
+                    $checkStmt->bind_param("s", $user_email);
+                    $checkStmt->execute();
+                    $userResult = $checkStmt->get_result();
+                    $userData = $userResult->fetch_assoc();
+                    $checkStmt->close();
+                    
+                    if ($userData && isset($userData['created_at'])) {
+                        $createdAt = strtotime($userData['created_at']);
+                        $hoursSinceSignup = (time() - $createdAt) / 3600;
+                        
+                        // If user signed up in last 24 hours, send welcome notification
+                        if ($hoursSinceSignup < 24) {
+                            $userName = $userData['ADMIN_NAME'] ?? 'there';
+                            NotificationHelper::sendWelcomeNotification($user_email, $userName, $conn);
+                        }
+                    }
+                } catch (Exception $e) {
+                    error_log("Failed to send welcome notification on device registration: " . $e->getMessage());
+                }
+            }
         } else {
             $success = false;
         }

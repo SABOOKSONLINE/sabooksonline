@@ -232,7 +232,17 @@ function insertBookHandler($bookController)
         }
 
         /* ===========================================================
-            3. SET SUCCESS MESSAGE AND REDIRECT
+            3. SEND NOTIFICATION ABOUT NEW BOOK
+        ============================================================ */
+        try {
+            require_once __DIR__ . "/../../Application/helpers/NotificationHelper.php";
+            NotificationHelper::notifyNewBook($bookData['title'], $contentId, $conn);
+        } catch (Exception $e) {
+            error_log("Failed to send new book notification: " . $e->getMessage());
+        }
+        
+        /* ===========================================================
+            4. SET SUCCESS MESSAGE AND REDIRECT
         ============================================================ */
         $_SESSION['alert_type'] = 'success';
         $_SESSION['alert_message'] = 'Book created successfully! You can now add additional details.';

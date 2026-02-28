@@ -73,6 +73,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     });
 
     // =================== API Routes ===================
+    // Catch-all route for /api with action query parameter (supports both GET and POST)
+    $r->addRoute('GET', '/api', function () {
+        require "Application/api.php";
+    });
+    $r->addRoute('POST', '/api', function () {
+        require "Application/api.php";
+    });
+    
     $r->addRoute('GET', '/api/onix', function () {
         require "Application/onix.php";
     });
