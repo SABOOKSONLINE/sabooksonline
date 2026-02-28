@@ -160,11 +160,74 @@ switch ($action) {
         $checkout->purchase($price,$userID,true);
         break;
 
+    case 'calculateShipping':
+        // Calculate shipping fee for mobile and web
+        require_once __DIR__ . '/helpers/ShippingHelper.php';
+        require_once __DIR__ . '/models/CartModel.php';
+        
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userIdInt = (int)($input['user_id'] ?? 0);
+        
+        // Try to get user ID from userID parameter if not provided
+        if ($userIdInt <= 0 && $userID) {
+            require_once __DIR__ . '/models/UserModel.php';
+            $userModel = new userModel($conn);
+            $user = $userModel->getUserByNameOrKey($userID);
+            $userIdInt = (int)($user['ADMIN_ID'] ?? 0);
+        }
+        
+        if ($userIdInt <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $cartModel = new CartModel($conn);
+        $address = $cartModel->getDeliveryAddress($userIdInt);
+        
+        // Allow address to be passed in request (for mobile)
+        if (empty($address) && !empty($input['address'])) {
+            $addressData = $input['address'];
+            $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+        }
+        
+        if (empty($address)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Delivery address required', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
+        if (empty($cartItems)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Cart is empty', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
+        $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
+        
+        $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
+        
+        // Fallback to R60 if calculation fails
+        if ($shippingFee <= 0) {
+            $shippingFee = 60.0;
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'shipping_fee' => $shippingFee,
+            'formatted' => 'R' . number_format($shippingFee, 2)
+        ]);
+        break;
+
     case 'purchaseYoco':
-        // Mobile Yoco payment endpoint
+        // Mobile Yoco payment endpoint - now calculates shipping automatically
+        require_once __DIR__ . '/helpers/ShippingHelper.php';
+        
         $input = json_decode(file_get_contents('php://input'), true);
         $price = $input['price'] ?? 0;
-        $shippingFee = $input['shipping_fee'] ?? 60;
         $deliveryType = $input['delivery_type'] ?? 'standard';
         
         if ($price <= 0) {
@@ -173,7 +236,7 @@ switch ($action) {
             break;
         }
         
-        // Get user directly using UserModel (userModel is private in CheckoutController)
+        // Get user directly using UserModel
         require_once __DIR__ . '/models/UserModel.php';
         $userModel = new userModel($conn);
         $user = $userModel->getUserByNameOrKey($userID);
@@ -184,7 +247,6 @@ switch ($action) {
             break;
         }
         
-        // Use ADMIN_ID from user object (not the userID from route which is ADMIN_USERKEY)
         $userIdInt = (int)($user['ADMIN_ID'] ?? 0);
         
         if ($userIdInt <= 0) {
@@ -198,21 +260,17 @@ switch ($action) {
         $cartModel = new CartModel($conn);
         $address = $cartModel->getDeliveryAddress($userIdInt);
         
-        // If address doesn't exist, try to save it from request data (if provided)
+        // If address doesn't exist, try to save it from request data
         if (empty($address)) {
-            // Check if address data is provided in the request
             $addressData = $input['address'] ?? null;
             
             if ($addressData) {
-                // Save address from request data
                 $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
                 if ($addressSaved) {
-                    // Re-fetch the address
                     $address = $cartModel->getDeliveryAddress($userIdInt);
                 }
             }
             
-            // If still no address, return error
             if (empty($address)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
@@ -220,12 +278,42 @@ switch ($action) {
             }
         }
         
+        // Get cart items and calculate shipping fee automatically
+        $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
+        if (empty($cartItems)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to cart before checkout.']);
+            break;
+        }
+        
+        // Calculate actual shipping fee using Courier Guy API
+        $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
+        $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
+        $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
+        
+        // Fallback to R60 if calculation fails
+        if ($shippingFee <= 0) {
+            $shippingFee = 60.0;
+        }
+        
+        // Calculate subtotal
+        $subtotal = 0;
+        foreach ($cartItems as $item) {
+            $subtotal += ($item['hc_price'] ?? 0) * ($item['cart_item_count'] ?? 1);
+        }
+        
+        // Verify that price matches subtotal + shipping (or use calculated total)
+        $expectedTotal = $subtotal + $shippingFee;
+        if (abs($price - $expectedTotal) > 0.01) {
+            // Price doesn't match, use calculated total
+            $price = $expectedTotal;
+        }
+        
         // Check if this is a retry payment (order_id provided) or new order
         $existingOrderId = $input['order_id'] ?? null;
         
         if ($existingOrderId) {
             // Retry payment for existing order
-            // Verify order exists and belongs to user
             $existingOrder = $cartModel->getOrderDetails((int)$existingOrderId, $userIdInt);
             
             if (empty($existingOrder)) {
@@ -234,44 +322,30 @@ switch ($action) {
                 break;
             }
             
-            // Check if order is already paid
             if (($existingOrder['payment_status'] ?? 'pending') === 'paid') {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'This order has already been paid']);
                 break;
             }
             
-            // Update order totals if needed (in case price changed)
+            // Update order totals with calculated shipping
             $cartModel->updateOrderTotals((int)$existingOrderId, $price, $shippingFee, 'yoco');
             
-            // Generate Yoco payment with existing order ID
             $checkout->generateYocoPaymentForMobile($price, $user, (int)$existingOrderId);
         } else {
-            // New order - check if cart has items before creating order
-            $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
-            if (empty($cartItems)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to cart before checkout.']);
-                break;
-            }
-            
-            // Create order BEFORE payment (like website does)
+            // Create order BEFORE payment
             $orderId = $cartModel->createOrder($userIdInt);
             
             if (empty($orderId)) {
-                // Log the error for debugging
                 error_log("Failed to create order for user $userIdInt. Cart items: " . count($cartItems) . ", Address: " . ($address ? 'exists' : 'missing'));
-                
                 http_response_code(500);
                 echo json_encode(['success' => false, 'message' => 'Failed to create order. Please try again.']);
                 break;
             }
             
-            // Update order totals and payment method
-            $totalAmount = $price; // Price already includes shipping
-            $cartModel->updateOrderTotals($orderId, $totalAmount, $shippingFee, 'yoco');
+            // Update order totals with calculated shipping
+            $cartModel->updateOrderTotals($orderId, $price, $shippingFee, 'yoco');
             
-            // Generate Yoco payment with order ID
             $checkout->generateYocoPaymentForMobile($price, $user, $orderId);
         }
         break;

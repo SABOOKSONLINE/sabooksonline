@@ -20,7 +20,42 @@ if (!isset($_SESSION["ADMIN_USERKEY"])) {
 
 header('Content-Type: application/json');
 
-require_once __DIR__ . "/../database/connection.php";
+// Load environment variables and create database connection
+// We do this directly to avoid die() calls from connection.php
+try {
+    // Load .env file
+    require_once __DIR__ . "/../../load_env.php";
+    
+    // Get database credentials from environment
+    $serverName = getenv('DB_HOST') ?: 'localhost';
+    $username   = getenv('DB_USERNAME') ?: 'root';
+    $password   = getenv('DB_PASSWORD') ?: '';
+    $primaryDb  = getenv('DB_NAME') ?: 'sabookso_db';
+    
+    // Enable exceptions for mysqli
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    
+    // Create connection
+    $conn = new mysqli($serverName, $username, $password, $primaryDb);
+    $conn->set_charset("utf8mb4");
+    
+} catch (mysqli_sql_exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database connection failed: ' . $e->getMessage(),
+        'hint' => 'Please check your .env file has correct DB_HOST, DB_USERNAME, DB_PASSWORD, and DB_NAME values.'
+    ]);
+    exit;
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Error: ' . $e->getMessage()
+    ]);
+    exit;
+}
+
 require_once __DIR__ . "/../controllers/AnalysisController.php";
 
 $analysisController = new AnalysisController($conn);
