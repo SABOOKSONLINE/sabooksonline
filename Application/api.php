@@ -736,7 +736,9 @@ switch ($action) {
     break;
 
     case 'userNotifications':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
         
         // For mobile app: try to get user email from request body or query params
@@ -761,21 +763,19 @@ switch ($action) {
             break;
         }
 
+        // Table has target_type ('all','subscription','specific_users','publishers','customers'), not target_audience
         $sql = "SELECT n.id, n.title, n.message, n.image_url, n.action_url, n.created_at,
                        CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as `read`
                 FROM push_notifications n
                 LEFT JOIN notification_reads nr ON n.id = nr.notification_id AND nr.user_email = ?
-                WHERE (n.target_audience = 'all' OR 
-                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
-                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
-                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
+                WHERE (n.target_type = 'all' OR n.target_type = 'customers')
                 AND n.status = 'sent'
                 ORDER BY n.created_at DESC
                 LIMIT 20";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $userEmail, $userEmail);
+            $stmt->bind_param("s", $userEmail);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -792,7 +792,9 @@ switch ($action) {
         break;
 
     case 'markNotificationRead':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $notificationId = $input['notification_id'] ?? 0;
@@ -842,7 +844,9 @@ switch ($action) {
         break;
 
     case 'markAllNotificationsRead':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
         
         // For mobile app: try to get user email from request body or query params
@@ -879,15 +883,12 @@ switch ($action) {
 
         $sql = "INSERT IGNORE INTO notification_reads (notification_id, user_email)
                 SELECT n.id, ? FROM push_notifications n
-                WHERE (n.target_audience = 'all' OR 
-                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
-                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
-                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
+                WHERE (n.target_type = 'all' OR n.target_type = 'customers')
                 AND n.status = 'sent'";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $userEmail, $userEmail);
+            $stmt->bind_param("s", $userEmail);
             $success = $stmt->execute();
             $stmt->close();
             

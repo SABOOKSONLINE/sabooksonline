@@ -219,7 +219,7 @@ class AcademicBookModel
      * Results are ordered by the time they were listed (newest first).
      * An optional limit may be provided for home‑page preview.
      */
-    public function getAcademicListedBooks(int $limit = null): array
+    public function getAcademicListedBooks(?int $limit = null): array
     {
         $sql = "SELECT ab.*, u.ADMIN_NAME, u.ADMIN_USERKEY
                 FROM academic_listings al
