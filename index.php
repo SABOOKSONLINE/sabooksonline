@@ -200,6 +200,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $_GET['action'] = 'userNotifications';
         require "Application/api.php";
     });
+    $r->addRoute('POST', '/api/user/notifications', function () {
+        $_GET['action'] = 'userNotifications';
+        require "Application/api.php";
+    });
 
     $r->addRoute('POST', '/api/user/notifications/read', function () {
         $_GET['action'] = 'markNotificationRead';

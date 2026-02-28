@@ -739,6 +739,22 @@ switch ($action) {
         session_start();
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
         
+        // For mobile app: try to get user email from request body or query params
+        if (!$userEmail) {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
+        
         if (!$userEmail) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
@@ -781,6 +797,21 @@ switch ($action) {
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $notificationId = $input['notification_id'] ?? 0;
         
+        // For mobile app: try to get user email from request
+        if (!$userEmail) {
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
+        
         if (!$userEmail || !$notificationId) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Missing parameters']);
@@ -813,6 +844,22 @@ switch ($action) {
     case 'markAllNotificationsRead':
         session_start();
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        
+        // For mobile app: try to get user email from request body or query params
+        if (!$userEmail) {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
         
         if (!$userEmail) {
             http_response_code(401);
