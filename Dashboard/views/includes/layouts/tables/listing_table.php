@@ -1,4 +1,14 @@
 <?php
+// Ensure $filters is defined (set by controller)
+if (!isset($filters)) {
+    $filters = [
+        'search' => '',
+        'status' => '',
+        'category' => '',
+        'categories' => []
+    ];
+}
+
 $booksPerPage = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $totalBooks = count($books);
@@ -10,9 +20,88 @@ $startCount = $startIndex + 1;
 $endCount = min($startIndex + $booksPerPage, $totalBooks);
 ?>
 
+<!-- Search and Filters Section -->
+<div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+    <form method="get" action="" id="searchFilterForm">
+        <div class="row g-3">
+            <!-- Search Input -->
+            <div class="col-md-4">
+                <label for="search" class="form-label">
+                    <i class="fas fa-search me-2"></i>Search Books
+                </label>
+                <input type="text" 
+                       name="search" 
+                       id="search" 
+                       class="form-control" 
+                       placeholder="Search by title, author, ISBN, publisher..."
+                       value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+            </div>
+            
+            <!-- Status Filter -->
+            <div class="col-md-3">
+                <label for="status" class="form-label">
+                    <i class="fas fa-filter me-2"></i>Status
+                </label>
+                <select name="status" id="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="active" <?= (isset($filters['status']) && $filters['status'] === 'active') ? 'selected' : '' ?>>Active</option>
+                    <option value="inactive" <?= (isset($filters['status']) && $filters['status'] === 'inactive') ? 'selected' : '' ?>>Inactive</option>
+                    <option value="draft" <?= (isset($filters['status']) && $filters['status'] === 'draft') ? 'selected' : '' ?>>Draft</option>
+                </select>
+            </div>
+            
+            <!-- Category Filter -->
+            <div class="col-md-3">
+                <label for="category" class="form-label">
+                    <i class="fas fa-tags me-2"></i>Category
+                </label>
+                <select name="category" id="category" class="form-select">
+                    <option value="">All Categories</option>
+                    <?php if (!empty($filters['categories'])): ?>
+                        <?php foreach ($filters['categories'] as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat) ?>" <?= (isset($filters['category']) && $filters['category'] === $cat) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-dark w-100 me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a href="?" class="btn btn-outline-secondary" title="Clear filters">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Preserve pagination and limit -->
+        <input type="hidden" name="limit" value="<?= $booksPerPage ?>">
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>
+
 <div class="row mb-3">
     <div class="col-md-6">
         <h5>Displaying <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books from your catalogue</h5>
+        <?php if (!empty($filters['search']) || !empty($filters['status']) || !empty($filters['category'])): ?>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> 
+                Filtered results
+                <?php if (!empty($filters['search'])): ?>
+                    | Search: "<?= htmlspecialchars($filters['search']) ?>"
+                <?php endif; ?>
+                <?php if (!empty($filters['status'])): ?>
+                    | Status: <?= htmlspecialchars($filters['status']) ?>
+                <?php endif; ?>
+                <?php if (!empty($filters['category'])): ?>
+                    | Category: <?= htmlspecialchars($filters['category']) ?>
+                <?php endif; ?>
+            </small>
+        <?php endif; ?>
     </div>
     <div class="col-md-6 text-end">
         <form method="get" class="d-inline">
@@ -22,6 +111,16 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 <option value="10" <?= $booksPerPage == 10 ? 'selected' : '' ?>>10</option>
                 <option value="25" <?= $booksPerPage == 25 ? 'selected' : '' ?>>25</option>
             </select>
+            <!-- Preserve filters when changing limit -->
+            <?php if (!empty($filters['search'])): ?>
+                <input type="hidden" name="search" value="<?= htmlspecialchars($filters['search']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['status'])): ?>
+                <input type="hidden" name="status" value="<?= htmlspecialchars($filters['status']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['category'])): ?>
+                <input type="hidden" name="category" value="<?= htmlspecialchars($filters['category']) ?>">
+            <?php endif; ?>
             <input type="hidden" name="page" value="1">
         </form>
     </div>
@@ -175,16 +274,26 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
+                <?php
+                // Build query string for pagination links (preserve filters)
+                $buildQuery = function($page) use ($booksPerPage, $filters) {
+                    $params = ['page' => $page, 'limit' => $booksPerPage];
+                    if (!empty($filters['search'])) $params['search'] = $filters['search'];
+                    if (!empty($filters['status'])) $params['status'] = $filters['status'];
+                    if (!empty($filters['category'])) $params['category'] = $filters['category'];
+                    return '?' . http_build_query($params);
+                };
+                ?>
                 <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $currentPage - 1 ?>&limit=<?= $booksPerPage ?>">Previous</a>
+                    <a class="page-link" href="<?= $currentPage <= 1 ? '#' : $buildQuery($currentPage - 1) ?>">Previous</a>
                 </li>
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                     <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>&limit=<?= $booksPerPage ?>"><?= $i ?></a>
+                        <a class="page-link" href="<?= $buildQuery($i) ?>"><?= $i ?></a>
                     </li>
                 <?php endfor; ?>
                 <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $currentPage + 1 ?>&limit=<?= $booksPerPage ?>">Next</a>
+                    <a class="page-link" href="<?= $currentPage >= $totalPages ? '#' : $buildQuery($currentPage + 1) ?>">Next</a>
                 </li>
             </ul>
         </nav>

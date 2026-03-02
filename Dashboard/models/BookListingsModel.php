@@ -13,21 +13,55 @@ class BookListingsModel
     }
 
     /**
-     * Select books by userId
+     * Select books by userId with search and filters
      * @param string $userId User ID
+     * @param array $filters Optional filters: search, status, category
      * @return array Books data or an empty array if not found
      * @throws Exception If the query fails
      */
-    public function selectBooksByUserId($userId)
+    public function selectBooksByUserId($userId, $filters = [])
     {
-        $sql = "SELECT * FROM posts WHERE USERID = ? ORDER BY ID DESC";
+        $sql = "SELECT * FROM posts WHERE USERID = ?";
+        $params = [$userId];
+        $types = "s";
+        
+        // Add search filter
+        if (!empty($filters['search'])) {
+            $sql .= " AND (TITLE LIKE ? OR DESCRIPTION LIKE ? OR ISBN LIKE ? OR PUBLISHER LIKE ? OR AUTHORS LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= "sssss";
+        }
+        
+        // Add status filter
+        if (!empty($filters['status'])) {
+            $sql .= " AND STATUS = ?";
+            $params[] = $filters['status'];
+            $types .= "s";
+        }
+        
+        // Add category filter
+        if (!empty($filters['category'])) {
+            $sql .= " AND CATEGORY LIKE ?";
+            $params[] = '%' . $filters['category'] . '%';
+            $types .= "s";
+        }
+        
+        $sql .= " ORDER BY ID DESC";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
         }
 
-        mysqli_stmt_bind_param($stmt, "s", $userId);
+        if (!empty($params)) {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+        }
+        
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
         }
@@ -44,6 +78,41 @@ class BookListingsModel
 
         mysqli_stmt_close($stmt);
         return $books;
+    }
+    
+    /**
+     * Get distinct categories for a user's books
+     * @param string $userId User ID
+     * @return array Categories (handles comma-separated values)
+     */
+    public function getCategoriesByUserId($userId)
+    {
+        $sql = "SELECT DISTINCT CATEGORY FROM posts WHERE USERID = ? AND CATEGORY IS NOT NULL AND CATEGORY != '' ORDER BY CATEGORY";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return [];
+        }
+        
+        mysqli_stmt_bind_param($stmt, "s", $userId);
+        if (!mysqli_stmt_execute($stmt)) {
+            return [];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $allCategories = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Handle comma-separated categories
+            $cats = array_map('trim', explode(',', $row['CATEGORY']));
+            $allCategories = array_merge($allCategories, $cats);
+        }
+        
+        // Remove duplicates and empty values, then sort
+        $categories = array_unique(array_filter($allCategories));
+        sort($categories);
+        
+        mysqli_stmt_close($stmt);
+        return $categories;
     }
 
     /**

@@ -18,7 +18,22 @@ class BookListingController
 
     public function renderBookListing($userId)
     {
-        $books = $this->booksModel->selectBooksByUserId($userId);
+        // Get filter parameters from GET request
+        $filters = [
+            'search' => isset($_GET['search']) ? trim($_GET['search']) : '',
+            'status' => isset($_GET['status']) ? trim($_GET['status']) : '',
+            'category' => isset($_GET['category']) ? trim($_GET['category']) : ''
+        ];
+        
+        // Get books with filters
+        $books = $this->booksModel->selectBooksByUserId($userId, $filters);
+        
+        // Get categories for filter dropdown
+        $categories = $this->booksModel->getCategoriesByUserId($userId);
+        
+        // Pass filters and categories to view
+        $filters['categories'] = $categories;
+        
         include __DIR__ . "/../views/includes/layouts/tables/listing_table.php";
     }
 
