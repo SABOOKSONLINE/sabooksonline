@@ -214,16 +214,105 @@ class AcademicBookModel
         return true;
     }
 
-    public function selectBooks(int $publisher_id): array
+    public function selectBooks(int $publisher_id, array $filters = []): array
     {
-        $sql = "SELECT * FROM academic_books WHERE publisher_id = ? ORDER BY academic_books.created_at DESC";
+        $sql = "SELECT * FROM academic_books WHERE publisher_id = ?";
+        $params = [$publisher_id];
+        $types = "i";
+        
+        // Add search filter
+        if (!empty($filters['search'])) {
+            $sql .= " AND (title LIKE ? OR author LIKE ? OR editor LIKE ? OR subject LIKE ? OR isbn LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= "sssss";
+        }
+        
+        // Add status filter (based on PDF availability)
+        if (!empty($filters['status'])) {
+            if ($filters['status'] === 'available') {
+                $sql .= " AND pdf_path IS NOT NULL AND pdf_path != ''";
+            } elseif ($filters['status'] === 'draft') {
+                $sql .= " AND (pdf_path IS NULL OR pdf_path = '')";
+            }
+        }
+        
+        // Add subject filter
+        if (!empty($filters['subject'])) {
+            $sql .= " AND subject = ?";
+            $params[] = $filters['subject'];
+            $types .= "s";
+        }
+        
+        // Add price range filter
+        if (!empty($filters['min_price'])) {
+            $sql .= " AND (ebook_price >= ? OR physical_book_price >= ?)";
+            $minPrice = (float)$filters['min_price'];
+            $params[] = $minPrice;
+            $params[] = $minPrice;
+            $types .= "dd";
+        }
+        
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND (ebook_price <= ? OR physical_book_price <= ?)";
+            $maxPrice = (float)$filters['max_price'];
+            $params[] = $maxPrice;
+            $params[] = $maxPrice;
+            $types .= "dd";
+        }
+        
+        // Add date range filter
+        if (!empty($filters['date_from'])) {
+            $sql .= " AND publish_date >= ?";
+            $params[] = $filters['date_from'];
+            $types .= "s";
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $sql .= " AND publish_date <= ?";
+            $params[] = $filters['date_to'];
+            $types .= "s";
+        }
+        
+        // Add sort order
+        $orderBy = "academic_books.created_at DESC";
+        if (!empty($filters['sort'])) {
+            switch ($filters['sort']) {
+                case 'title_asc':
+                    $orderBy = "title ASC";
+                    break;
+                case 'title_desc':
+                    $orderBy = "title DESC";
+                    break;
+                case 'date_newest':
+                    $orderBy = "publish_date DESC, created_at DESC";
+                    break;
+                case 'date_oldest':
+                    $orderBy = "publish_date ASC, created_at ASC";
+                    break;
+                case 'price_low':
+                    $orderBy = "COALESCE(ebook_price, physical_book_price, 0) ASC";
+                    break;
+                case 'price_high':
+                    $orderBy = "COALESCE(ebook_price, physical_book_price, 0) DESC";
+                    break;
+            }
+        }
+        
+        $sql .= " ORDER BY " . $orderBy;
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . mysqli_error($this->conn));
         }
 
-        mysqli_stmt_bind_param($stmt, "i", $publisher_id);
+        if (!empty($params)) {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+        }
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
@@ -237,6 +326,76 @@ class AcademicBookModel
 
         mysqli_stmt_close($stmt);
         return $books;
+    }
+    
+    /**
+     * Get distinct subjects for filter dropdown
+     * @param int $publisher_id Publisher ID
+     * @return array Subjects
+     */
+    public function getSubjectsByPublisherId(int $publisher_id): array
+    {
+        $sql = "SELECT DISTINCT subject FROM academic_books WHERE publisher_id = ? AND subject IS NOT NULL AND subject != '' ORDER BY subject";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return [];
+        }
+        
+        mysqli_stmt_bind_param($stmt, "i", $publisher_id);
+        if (!mysqli_stmt_execute($stmt)) {
+            return [];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $subjects = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $subjects[] = $row['subject'];
+        }
+        
+        mysqli_stmt_close($stmt);
+        return $subjects;
+    }
+    
+    /**
+     * Get price range for publisher's academic books
+     * @param int $publisher_id Publisher ID
+     * @return array Min and max prices
+     */
+    public function getPriceRangeByPublisherId(int $publisher_id): array
+    {
+        $sql = "SELECT 
+                    MIN(LEAST(
+                        COALESCE(ebook_price, 999999),
+                        COALESCE(physical_book_price, 999999)
+                    )) as min_price,
+                    MAX(GREATEST(
+                        COALESCE(ebook_price, 0),
+                        COALESCE(physical_book_price, 0)
+                    )) as max_price
+                FROM academic_books
+                WHERE publisher_id = ? 
+                AND (ebook_price > 0 OR physical_book_price > 0)";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return ['min_price' => 0, 'max_price' => 1000];
+        }
+        
+        mysqli_stmt_bind_param($stmt, "i", $publisher_id);
+        if (!mysqli_stmt_execute($stmt)) {
+            return ['min_price' => 0, 'max_price' => 1000];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+        
+        mysqli_stmt_close($stmt);
+        
+        return [
+            'min_price' => $row['min_price'] ?? 0,
+            'max_price' => $row['max_price'] ?? 1000
+        ];
     }
 
     public function selectBookById(int $id, int $publisher_id): ?array
