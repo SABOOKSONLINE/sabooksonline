@@ -296,10 +296,10 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                     <input type="text" name="book_keywords" class="form-control" placeholder="e.g. thriller, South Africa" value="<?= $keywords ?? $category ?>">
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <label class="form-label">Purchase Link (Hard Copy)</label>
                     <input type="url" name="book_website" class="form-control" placeholder="https://..." value="<?= $website ?>">
-                </div>
+                </div> -->
 
                 <div class="col-md-6">
                     <label class="form-label">Upload Book Cover Image <span class="text-danger">*</span></label>
@@ -321,10 +321,10 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <label class="form-label">Retail Price <span class="text-danger">(External Physical Copy)</span></label>
                     <input type="number" name="book_price" class="form-control" placeholder="e.g. 199.99" value="<?= $retailPrice ?>">
-                </div>
+                </div> -->
             </div>
 
             <div class="mt-4 text-end">
