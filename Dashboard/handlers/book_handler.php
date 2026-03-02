@@ -211,8 +211,11 @@ function insertBookHandler($bookController)
         ];
 
         foreach ($hardcopyKeys as $key) {
-            if (isset($bookData[$key]) && $bookData[$key] !== "" && $bookData[$key] !== null) {
+            $value = $bookData[$key] ?? null;
+            // Allow 0, "0", and other non-empty values, but exclude null and empty string
+            if ($value !== null && $value !== '') {
                 $hasHardcopyData = true;
+                error_log("INSERT: Hardcopy detected - field: $key, value: " . var_export($value, true));
                 break;
             }
         }
@@ -276,8 +279,14 @@ function insertBookHandler($bookController)
 
 function updateBookHandler($bookController)
 {
+    // Ensure connection is available (same as insert handler)
+    global $conn;
+    
     try {
         $bookData = formDataArray();
+        
+        error_log("=== UPDATE BOOK HANDLER START ===");
+        error_log("POST data received: " . json_encode(array_intersect_key($_POST, array_flip(['hc_price', 'hc_discount_percent', 'hc_country', 'hc_pages', 'hc_weight_kg', 'hc_height_cm', 'hc_width_cm', 'hc_release_date', 'hc_contributors', 'hc_stock_count', 'current_tab']))));
 
         if (empty($bookData['bookId'])) {
             throw new Exception("Missing bookId in update request.");
@@ -285,6 +294,7 @@ function updateBookHandler($bookController)
         }
 
         $bookId = $bookData['bookId'];
+        error_log("Book ID: $bookId");
 
         if (!isset($_GET["id"]) || empty(trim($_GET["id"]))) {
             throw new Exception("Invalid or missing content ID.");
@@ -292,10 +302,12 @@ function updateBookHandler($bookController)
 
         // Get current tab from POST data (preserve the tab user was on)
         $currentTab = isset($_POST['current_tab']) ? htmlspecialchars($_POST['current_tab']) : 'book-details';
+        error_log("Current tab: $currentTab");
 
         // Update Main Book
         $bookController->updateBookData($bookId, $bookData);
         $contentId = $bookData['bookPk'];
+        error_log("Content ID: $contentId");
 
         /*
         |--------------------------------------------------------------------------
@@ -319,11 +331,17 @@ function updateBookHandler($bookController)
 
         // Check if any hardcopy field has a value (including 0, but not null or empty string)
         foreach ($hardcopyFields as $field) {
-            if (isset($bookData[$field]) && $bookData[$field] !== null && $bookData[$field] !== '') {
+            $value = $bookData[$field] ?? null;
+            // Allow 0, "0", and other non-empty values, but exclude null and empty string
+            if ($value !== null && $value !== '') {
                 $hasHardcopy = true;
+                error_log("Hardcopy detected - field: $field, value: " . var_export($value, true));
                 break;
             }
         }
+
+        error_log("Has hardcopy data: " . ($hasHardcopy ? 'YES' : 'NO'));
+        error_log("Hardcopy fields received: " . json_encode(array_intersect_key($bookData, array_flip($hardcopyFields))));
 
         if ($hasHardcopy) {
             $hardcopyData = ['book_id' => $bookId];
@@ -332,13 +350,21 @@ function updateBookHandler($bookController)
                 $hardcopyData[$field] = $bookData[$field] ?? null;
             }
 
+            error_log("Attempting to save hardcopy data for book_id: $bookId");
+
             $existing = $bookController->getHardcopyByBookId($bookId);
 
             if ($existing) {
+                error_log("Updating existing hardcopy record");
                 $bookController->updateHardcopy($hardcopyData);
             } else {
+                error_log("Inserting new hardcopy record");
                 $bookController->insertHardcopy($hardcopyData);
             }
+            
+            error_log("Hardcopy save completed successfully");
+        } else {
+            error_log("No hardcopy data to save - all fields are null or empty");
         }
 
         $_SESSION['alert_type'] = 'success';
