@@ -30,8 +30,23 @@ class NotificationHelper
     {
         if (self::$notificationModel === null) {
             if ($conn === null) {
-                require_once __DIR__ . "/../../Config/connection.php";
-                global $conn;
+                // Try Application/Config/connection.php first (from Application/helpers/)
+                $configPath = __DIR__ . "/../Config/connection.php";
+                if (!file_exists($configPath)) {
+                    // Fallback to root Config/connection.php
+                    $configPath = __DIR__ . "/../../Config/connection.php";
+                }
+                if (file_exists($configPath)) {
+                    require_once $configPath;
+                    global $conn;
+                } else {
+                    error_log("NotificationHelper: Could not find connection.php at " . $configPath);
+                    return; // Can't initialize without connection
+                }
+            }
+            if ($conn === null) {
+                error_log("NotificationHelper: Connection is null after initialization attempt");
+                return; // Can't initialize without connection
             }
             self::$conn = $conn;
             self::$notificationModel = new NotificationModel($conn);
@@ -48,7 +63,13 @@ class NotificationHelper
     {
         self::init();
         if (self::$conn === null) {
-            require_once __DIR__ . "/../../Config/connection.php";
+            // Try Application/Config/connection.php first (from Application/helpers/)
+            $configPath = __DIR__ . "/../Config/connection.php";
+            if (!file_exists($configPath)) {
+                // Fallback to root Config/connection.php
+                $configPath = __DIR__ . "/../../Config/connection.php";
+            }
+            require_once $configPath;
             global $conn;
             self::$conn = $conn;
         }
@@ -230,6 +251,11 @@ class NotificationHelper
     {
         self::init($conn);
         $dbConn = self::getConn();
+        
+        if ($dbConn === null) {
+            error_log("NotificationHelper::notifyNewBook: Database connection not available");
+            return false;
+        }
         
         // Get all users with active device tokens
         $sql = "SELECT DISTINCT dt.device_token, dt.user_email, dt.platform, dt.app_version

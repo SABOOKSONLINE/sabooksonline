@@ -240,9 +240,16 @@ function insertBookHandler($bookController)
         ============================================================ */
         try {
             require_once __DIR__ . "/../../Application/helpers/NotificationHelper.php";
-            NotificationHelper::notifyNewBook($bookData['title'], $contentId, $conn);
+            // Ensure $conn is available (from Dashboard/database/connection.php)
+            // $conn should be in global scope from the require at top of file
+            if (!isset($conn) || $conn === null) {
+                error_log("Warning: \$conn not available in insertBookHandler, skipping notification");
+            } else {
+                NotificationHelper::notifyNewBook($bookData['title'], $contentId, $conn);
+            }
         } catch (Exception $e) {
             error_log("Failed to send new book notification: " . $e->getMessage());
+            // Don't let notification failure break the book insertion
         }
         
         /* ===========================================================
