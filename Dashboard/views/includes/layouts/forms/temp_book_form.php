@@ -537,11 +537,11 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                         <input type="number" step="0.01" name="hc_price" class="form-control" placeholder="e.g. 199.99" value="<?= $hcPrice ?>">
                     </div>
 
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <label class="form-label">Discount Percent (%) </label>
                         <input type="number" name="hc_discount_percent" class="form-control" placeholder="e.g. 10" min="0" max="100" value="<?= $hcDiscountPercent ?>">
                         <i class="text-muted small">Note: percentage will be deducted from the price.</i>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-6">
                         <label class="form-label">Contributors</label>
