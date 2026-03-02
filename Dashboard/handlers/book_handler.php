@@ -150,6 +150,9 @@ function formDataArray()
 
 function insertBookHandler($bookController)
 {
+    // Use shared DB connection from dashboard connection.php
+    global $conn;
+
     $bookData = formDataArray();
 
     // Get the current tab from POST data (default to book-details)
@@ -233,6 +236,7 @@ function insertBookHandler($bookController)
 
         /* ===========================================================
             3. SEND NOTIFICATION ABOUT NEW BOOK
+               (pass existing $conn so helper doesn't re-require connection.php)
         ============================================================ */
         try {
             require_once __DIR__ . "/../../Application/helpers/NotificationHelper.php";
