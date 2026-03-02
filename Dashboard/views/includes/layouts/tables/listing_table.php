@@ -1,4 +1,14 @@
 <?php
+// Ensure $filters is defined (set by controller)
+if (!isset($filters)) {
+    $filters = [
+        'search' => '',
+        'status' => '',
+        'category' => '',
+        'categories' => []
+    ];
+}
+
 $booksPerPage = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $totalBooks = count($books);
@@ -10,9 +20,190 @@ $startCount = $startIndex + 1;
 $endCount = min($startIndex + $booksPerPage, $totalBooks);
 ?>
 
+<!-- Search and Filters Section -->
+<div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+    <form method="get" action="" id="searchFilterForm">
+        <!-- First Row: Search and Basic Filters -->
+        <div class="row g-3 mb-3">
+            <!-- Search Input -->
+            <div class="col-md-3">
+                <label for="search" class="form-label">
+                    <i class="fas fa-search me-2"></i>Search Books
+                </label>
+                <input type="text" 
+                       name="search" 
+                       id="search" 
+                       class="form-control" 
+                       placeholder="Search by title, author, ISBN..."
+                       value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+            </div>
+            
+            <!-- Status Filter -->
+            <div class="col-md-2">
+                <label for="status" class="form-label">
+                    <i class="fas fa-filter me-2"></i>Status
+                </label>
+                <select name="status" id="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="active" <?= (isset($filters['status']) && $filters['status'] === 'active') ? 'selected' : '' ?>>Active</option>
+                    <option value="inactive" <?= (isset($filters['status']) && $filters['status'] === 'inactive') ? 'selected' : '' ?>>Inactive</option>
+                    <option value="draft" <?= (isset($filters['status']) && $filters['status'] === 'draft') ? 'selected' : '' ?>>Draft</option>
+                </select>
+            </div>
+            
+            <!-- Format Filter -->
+            <div class="col-md-2">
+                <label for="format" class="form-label">
+                    <i class="fas fa-book-open me-2"></i>Format
+                </label>
+                <select name="format" id="format" class="form-select">
+                    <option value="">All Formats</option>
+                    <option value="ebook" <?= (isset($filters['format']) && $filters['format'] === 'ebook') ? 'selected' : '' ?>>E-Book</option>
+                    <option value="audiobook" <?= (isset($filters['format']) && $filters['format'] === 'audiobook') ? 'selected' : '' ?>>Audiobook</option>
+                    <option value="hardcopy" <?= (isset($filters['format']) && $filters['format'] === 'hardcopy') ? 'selected' : '' ?>>Hardcopy</option>
+                </select>
+            </div>
+            
+            <!-- Category Filter -->
+            <div class="col-md-2">
+                <label for="category" class="form-label">
+                    <i class="fas fa-tags me-2"></i>Category
+                </label>
+                <select name="category" id="category" class="form-select">
+                    <option value="">All Categories</option>
+                    <?php if (!empty($filters['categories'])): ?>
+                        <?php foreach ($filters['categories'] as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat) ?>" <?= (isset($filters['category']) && $filters['category'] === $cat) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+            
+            <!-- Sort Filter -->
+            <div class="col-md-2">
+                <label for="sort" class="form-label">
+                    <i class="fas fa-sort me-2"></i>Sort By
+                </label>
+                <select name="sort" id="sort" class="form-select">
+                    <option value="">Newest First</option>
+                    <option value="title_asc" <?= (isset($filters['sort']) && $filters['sort'] === 'title_asc') ? 'selected' : '' ?>>Title A-Z</option>
+                    <option value="title_desc" <?= (isset($filters['sort']) && $filters['sort'] === 'title_desc') ? 'selected' : '' ?>>Title Z-A</option>
+                    <option value="date_newest" <?= (isset($filters['sort']) && $filters['sort'] === 'date_newest') ? 'selected' : '' ?>>Date: Newest</option>
+                    <option value="date_oldest" <?= (isset($filters['sort']) && $filters['sort'] === 'date_oldest') ? 'selected' : '' ?>>Date: Oldest</option>
+                    <option value="price_low" <?= (isset($filters['sort']) && $filters['sort'] === 'price_low') ? 'selected' : '' ?>>Price: Low to High</option>
+                    <option value="price_high" <?= (isset($filters['sort']) && $filters['sort'] === 'price_high') ? 'selected' : '' ?>>Price: High to Low</option>
+                </select>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="col-md-1 d-flex align-items-end gap-1">
+                <button type="submit" class="btn btn-dark" title="Apply filters">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="?" class="btn btn-outline-secondary" title="Clear filters">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Second Row: Advanced Filters (Collapsible) -->
+        <div class="row g-3">
+            <div class="col-12">
+                <button type="button" class="btn btn-link p-0 text-decoration-none" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                    <i class="fas fa-chevron-down me-1"></i> <small>Advanced Filters (Price & Date Range)</small>
+                </button>
+            </div>
+        </div>
+        
+        <div class="collapse" id="advancedFilters">
+            <div class="row g-3 mt-2">
+                <!-- Price Range -->
+                <div class="col-md-3">
+                    <label for="min_price" class="form-label">
+                        <i class="fas fa-dollar-sign me-2"></i>Min Price (R)
+                    </label>
+                    <input type="number" 
+                           name="min_price" 
+                           id="min_price" 
+                           class="form-control" 
+                           step="0.01"
+                           min="0"
+                           placeholder="0.00"
+                           value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="max_price" class="form-label">
+                        <i class="fas fa-dollar-sign me-2"></i>Max Price (R)
+                    </label>
+                    <input type="number" 
+                           name="max_price" 
+                           id="max_price" 
+                           class="form-control" 
+                           step="0.01"
+                           min="0"
+                           placeholder="<?= number_format($filters['price_range']['max_price'] ?? 1000, 2) ?>"
+                           value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
+                    <small class="text-muted">Max: R<?= number_format($filters['price_range']['max_price'] ?? 1000, 2) ?></small>
+                </div>
+                
+                <!-- Date Range -->
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">
+                        <i class="fas fa-calendar me-2"></i>From Date
+                    </label>
+                    <input type="date" 
+                           name="date_from" 
+                           id="date_from" 
+                           class="form-control"
+                           value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">
+                        <i class="fas fa-calendar me-2"></i>To Date
+                    </label>
+                    <input type="date" 
+                           name="date_to" 
+                           id="date_to" 
+                           class="form-control"
+                           value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preserve pagination and limit -->
+        <input type="hidden" name="limit" value="<?= $booksPerPage ?>">
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>
+
 <div class="row mb-3">
     <div class="col-md-6">
         <h5>Displaying <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books from your catalogue</h5>
+        <?php if (!empty($filters['search']) || !empty($filters['status']) || !empty($filters['category']) || !empty($filters['format']) || !empty($filters['min_price']) || !empty($filters['max_price']) || !empty($filters['date_from']) || !empty($filters['date_to'])): ?>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> 
+                Filtered results
+                <?php if (!empty($filters['search'])): ?>
+                    | Search: "<?= htmlspecialchars($filters['search']) ?>"
+                <?php endif; ?>
+                <?php if (!empty($filters['status'])): ?>
+                    | Status: <?= htmlspecialchars($filters['status']) ?>
+                <?php endif; ?>
+                <?php if (!empty($filters['format'])): ?>
+                    | Format: <?= htmlspecialchars($filters['format']) ?>
+                <?php endif; ?>
+                <?php if (!empty($filters['category'])): ?>
+                    | Category: <?= htmlspecialchars($filters['category']) ?>
+                <?php endif; ?>
+                <?php if (!empty($filters['min_price']) || !empty($filters['max_price'])): ?>
+                    | Price: R<?= htmlspecialchars($filters['min_price'] ?? '0') ?> - R<?= htmlspecialchars($filters['max_price'] ?? '∞') ?>
+                <?php endif; ?>
+            </small>
+        <?php endif; ?>
     </div>
     <div class="col-md-6 text-end">
         <form method="get" class="d-inline">
@@ -22,6 +213,34 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 <option value="10" <?= $booksPerPage == 10 ? 'selected' : '' ?>>10</option>
                 <option value="25" <?= $booksPerPage == 25 ? 'selected' : '' ?>>25</option>
             </select>
+            <!-- Preserve all filters when changing limit -->
+            <?php if (!empty($filters['search'])): ?>
+                <input type="hidden" name="search" value="<?= htmlspecialchars($filters['search']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['status'])): ?>
+                <input type="hidden" name="status" value="<?= htmlspecialchars($filters['status']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['format'])): ?>
+                <input type="hidden" name="format" value="<?= htmlspecialchars($filters['format']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['category'])): ?>
+                <input type="hidden" name="category" value="<?= htmlspecialchars($filters['category']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['sort'])): ?>
+                <input type="hidden" name="sort" value="<?= htmlspecialchars($filters['sort']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['min_price'])): ?>
+                <input type="hidden" name="min_price" value="<?= htmlspecialchars($filters['min_price']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['max_price'])): ?>
+                <input type="hidden" name="max_price" value="<?= htmlspecialchars($filters['max_price']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['date_from'])): ?>
+                <input type="hidden" name="date_from" value="<?= htmlspecialchars($filters['date_from']) ?>">
+            <?php endif; ?>
+            <?php if (!empty($filters['date_to'])): ?>
+                <input type="hidden" name="date_to" value="<?= htmlspecialchars($filters['date_to']) ?>">
+            <?php endif; ?>
             <input type="hidden" name="page" value="1">
         </form>
     </div>
@@ -84,9 +303,12 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             $aPrice    = number_format((float)($book['ABOOKPRICE'] ?? 0), 2);
             $pdfUrl    = trim($book['PDFURL'] ?? '');
 
+            // Properly detect book formats
             $types = [];
-            if ($pdfUrl) $types[] = 'ebook';
-            if ($book['ABOOKPRICE']) $types[] = 'audiobook';
+            if ($pdfUrl && !empty(trim($pdfUrl))) $types[] = 'ebook';
+            if (!empty($book['audiobook_id']) || !empty($book['ABOOKPRICE'])) $types[] = 'audiobook';
+            if (!empty($book['hc_id']) || !empty($book['hc_price']) || !empty($book['hc_stock_count'])) $types[] = 'hardcopy';
+            if (empty($types)) $types[] = 'book'; // Default if no format detected
             $dataTypeAttr = implode(' ', $types);
         ?>
             <div class="col-xl-6 col-lg-6 col-md-12" data-type="<?= $dataTypeAttr ?>">
@@ -175,16 +397,32 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
+                <?php
+                // Build query string for pagination links (preserve all filters)
+                $buildQuery = function($page) use ($booksPerPage, $filters) {
+                    $params = ['page' => $page, 'limit' => $booksPerPage];
+                    if (!empty($filters['search'])) $params['search'] = $filters['search'];
+                    if (!empty($filters['status'])) $params['status'] = $filters['status'];
+                    if (!empty($filters['format'])) $params['format'] = $filters['format'];
+                    if (!empty($filters['category'])) $params['category'] = $filters['category'];
+                    if (!empty($filters['sort'])) $params['sort'] = $filters['sort'];
+                    if (!empty($filters['min_price'])) $params['min_price'] = $filters['min_price'];
+                    if (!empty($filters['max_price'])) $params['max_price'] = $filters['max_price'];
+                    if (!empty($filters['date_from'])) $params['date_from'] = $filters['date_from'];
+                    if (!empty($filters['date_to'])) $params['date_to'] = $filters['date_to'];
+                    return '?' . http_build_query($params);
+                };
+                ?>
                 <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $currentPage - 1 ?>&limit=<?= $booksPerPage ?>">Previous</a>
+                    <a class="page-link" href="<?= $currentPage <= 1 ? '#' : $buildQuery($currentPage - 1) ?>">Previous</a>
                 </li>
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                     <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>&limit=<?= $booksPerPage ?>"><?= $i ?></a>
+                        <a class="page-link" href="<?= $buildQuery($i) ?>"><?= $i ?></a>
                     </li>
                 <?php endfor; ?>
                 <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $currentPage + 1 ?>&limit=<?= $booksPerPage ?>">Next</a>
+                    <a class="page-link" href="<?= $currentPage >= $totalPages ? '#' : $buildQuery($currentPage + 1) ?>">Next</a>
                 </li>
             </ul>
         </nav>
@@ -217,6 +455,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 </style>
 
 <script>
+    // Format filter tabs (client-side filtering)
     document.querySelectorAll('.filter-btn').forEach(button => {
         button.addEventListener('click', () => {
             const filter = button.getAttribute('data-filter');
@@ -224,7 +463,10 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
 
             cards.forEach(card => {
                 const type = card.getAttribute('data-type');
-                if (filter === 'all' || type.includes(filter)) {
+                // Map 'physical' to 'hardcopy' for compatibility
+                const filterValue = filter === 'physical' ? 'hardcopy' : filter;
+                
+                if (filter === 'all' || type.includes(filterValue)) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
@@ -236,4 +478,18 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             button.classList.add('active');
         });
     });
+    
+    // Auto-submit form when format filter changes (server-side filtering)
+    const formatSelect = document.getElementById('format');
+    if (formatSelect) {
+        formatSelect.addEventListener('change', function() {
+            // Update URL with format filter and submit
+            const form = document.getElementById('searchFilterForm');
+            if (form) {
+                const pageInput = form.querySelector('input[name="page"]');
+                if (pageInput) pageInput.value = '1';
+                form.submit();
+            }
+        });
+    }
 </script>

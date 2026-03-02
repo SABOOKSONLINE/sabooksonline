@@ -18,7 +18,32 @@ class BookListingController
 
     public function renderBookListing($userId)
     {
-        $books = $this->booksModel->selectBooksByUserId($userId);
+        // Get filter parameters from GET request
+        $filters = [
+            'search' => isset($_GET['search']) ? trim($_GET['search']) : '',
+            'status' => isset($_GET['status']) ? trim($_GET['status']) : '',
+            'category' => isset($_GET['category']) ? trim($_GET['category']) : '',
+            'format' => isset($_GET['format']) ? trim($_GET['format']) : '',
+            'min_price' => isset($_GET['min_price']) ? trim($_GET['min_price']) : '',
+            'max_price' => isset($_GET['max_price']) ? trim($_GET['max_price']) : '',
+            'date_from' => isset($_GET['date_from']) ? trim($_GET['date_from']) : '',
+            'date_to' => isset($_GET['date_to']) ? trim($_GET['date_to']) : '',
+            'sort' => isset($_GET['sort']) ? trim($_GET['sort']) : ''
+        ];
+        
+        // Get books with filters
+        $books = $this->booksModel->selectBooksByUserId($userId, $filters);
+        
+        // Get categories for filter dropdown
+        $categories = $this->booksModel->getCategoriesByUserId($userId);
+        
+        // Get price range for filter
+        $priceRange = $this->booksModel->getPriceRangeByUserId($userId);
+        
+        // Pass filters, categories, and price range to view
+        $filters['categories'] = $categories;
+        $filters['price_range'] = $priceRange;
+        
         include __DIR__ . "/../views/includes/layouts/tables/listing_table.php";
     }
 

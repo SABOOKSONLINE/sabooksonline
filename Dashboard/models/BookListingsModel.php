@@ -13,21 +13,141 @@ class BookListingsModel
     }
 
     /**
-     * Select books by userId
+     * Select books by userId with search and filters
      * @param string $userId User ID
+     * @param array $filters Optional filters: search, status, category
      * @return array Books data or an empty array if not found
      * @throws Exception If the query fails
      */
-    public function selectBooksByUserId($userId)
+    public function selectBooksByUserId($userId, $filters = [])
     {
-        $sql = "SELECT * FROM posts WHERE USERID = ? ORDER BY ID DESC";
+        // Join with hardcopy and audiobook tables to detect formats
+        $sql = "SELECT 
+                    p.*,
+                    hc.hc_id,
+                    hc.hc_price,
+                    hc.hc_stock_count,
+                    a.id AS audiobook_id,
+                    a.book_id AS audiobook_book_id
+                FROM posts p
+                LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
+                LEFT JOIN audiobooks a ON a.book_id = p.ID
+                WHERE p.USERID = ?";
+        $params = [$userId];
+        $types = "s";
+        
+        // Add search filter
+        if (!empty($filters['search'])) {
+            $sql .= " AND (p.TITLE LIKE ? OR p.DESCRIPTION LIKE ? OR p.ISBN LIKE ? OR p.PUBLISHER LIKE ? OR p.AUTHORS LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= "sssss";
+        }
+        
+        // Add status filter
+        if (!empty($filters['status'])) {
+            $sql .= " AND p.STATUS = ?";
+            $params[] = $filters['status'];
+            $types .= "s";
+        }
+        
+        // Add category filter
+        if (!empty($filters['category'])) {
+            $sql .= " AND p.CATEGORY LIKE ?";
+            $params[] = '%' . $filters['category'] . '%';
+            $types .= "s";
+        }
+        
+        // Add format filter (ebook/audiobook/hardcopy)
+        if (!empty($filters['format'])) {
+            switch ($filters['format']) {
+                case 'ebook':
+                    $sql .= " AND (p.PDFURL IS NOT NULL AND p.PDFURL != '')";
+                    break;
+                case 'audiobook':
+                    $sql .= " AND a.id IS NOT NULL";
+                    break;
+                case 'hardcopy':
+                case 'physical':
+                    $sql .= " AND hc.hc_id IS NOT NULL";
+                    break;
+            }
+        }
+        
+        // Add price range filter
+        if (!empty($filters['min_price'])) {
+            $sql .= " AND (p.RETAILPRICE >= ? OR p.EBOOKPRICE >= ? OR p.ABOOKPRICE >= ? OR hc.hc_price >= ?)";
+            $minPrice = (float)$filters['min_price'];
+            $params[] = $minPrice;
+            $params[] = $minPrice;
+            $params[] = $minPrice;
+            $params[] = $minPrice;
+            $types .= "dddd";
+        }
+        
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND (p.RETAILPRICE <= ? OR p.EBOOKPRICE <= ? OR p.ABOOKPRICE <= ? OR hc.hc_price <= ?)";
+            $maxPrice = (float)$filters['max_price'];
+            $params[] = $maxPrice;
+            $params[] = $maxPrice;
+            $params[] = $maxPrice;
+            $params[] = $maxPrice;
+            $types .= "dddd";
+        }
+        
+        // Add date range filter
+        if (!empty($filters['date_from'])) {
+            $sql .= " AND p.DATEPOSTED >= ?";
+            $params[] = $filters['date_from'];
+            $types .= "s";
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $sql .= " AND p.DATEPOSTED <= ?";
+            $params[] = $filters['date_to'];
+            $types .= "s";
+        }
+        
+        // Add sort order
+        $orderBy = "p.ID DESC";
+        if (!empty($filters['sort'])) {
+            switch ($filters['sort']) {
+                case 'title_asc':
+                    $orderBy = "p.TITLE ASC";
+                    break;
+                case 'title_desc':
+                    $orderBy = "p.TITLE DESC";
+                    break;
+                case 'date_newest':
+                    $orderBy = "p.DATEPOSTED DESC, p.ID DESC";
+                    break;
+                case 'date_oldest':
+                    $orderBy = "p.DATEPOSTED ASC, p.ID ASC";
+                    break;
+                case 'price_low':
+                    $orderBy = "COALESCE(p.RETAILPRICE, p.EBOOKPRICE, p.ABOOKPRICE, hc.hc_price, 0) ASC";
+                    break;
+                case 'price_high':
+                    $orderBy = "COALESCE(p.RETAILPRICE, p.EBOOKPRICE, p.ABOOKPRICE, hc.hc_price, 0) DESC";
+                    break;
+            }
+        }
+        
+        $sql .= " GROUP BY p.ID ORDER BY " . $orderBy;
 
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             throw new Exception("Failed to prepare statement: " . mysqli_error($this->conn));
         }
 
-        mysqli_stmt_bind_param($stmt, "s", $userId);
+        if (!empty($params)) {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+        }
+        
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
         }
@@ -44,6 +164,87 @@ class BookListingsModel
 
         mysqli_stmt_close($stmt);
         return $books;
+    }
+    
+    /**
+     * Get price range for user's books
+     * @param string $userId User ID
+     * @return array Min and max prices
+     */
+    public function getPriceRangeByUserId($userId)
+    {
+        $sql = "SELECT 
+                    MIN(LEAST(
+                        COALESCE(p.RETAILPRICE, 999999),
+                        COALESCE(p.EBOOKPRICE, 999999),
+                        COALESCE(p.ABOOKPRICE, 999999),
+                        COALESCE(hc.hc_price, 999999)
+                    )) as min_price,
+                    MAX(GREATEST(
+                        COALESCE(p.RETAILPRICE, 0),
+                        COALESCE(p.EBOOKPRICE, 0),
+                        COALESCE(p.ABOOKPRICE, 0),
+                        COALESCE(hc.hc_price, 0)
+                    )) as max_price
+                FROM posts p
+                LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
+                WHERE p.USERID = ? 
+                AND (p.RETAILPRICE > 0 OR p.EBOOKPRICE > 0 OR p.ABOOKPRICE > 0 OR hc.hc_price > 0)";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return ['min_price' => 0, 'max_price' => 1000];
+        }
+        
+        mysqli_stmt_bind_param($stmt, "s", $userId);
+        if (!mysqli_stmt_execute($stmt)) {
+            return ['min_price' => 0, 'max_price' => 1000];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+        
+        mysqli_stmt_close($stmt);
+        
+        return [
+            'min_price' => $row['min_price'] ?? 0,
+            'max_price' => $row['max_price'] ?? 1000
+        ];
+    }
+    
+    /**
+     * Get distinct categories for a user's books
+     * @param string $userId User ID
+     * @return array Categories (handles comma-separated values)
+     */
+    public function getCategoriesByUserId($userId)
+    {
+        $sql = "SELECT DISTINCT CATEGORY FROM posts WHERE USERID = ? AND CATEGORY IS NOT NULL AND CATEGORY != '' ORDER BY CATEGORY";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return [];
+        }
+        
+        mysqli_stmt_bind_param($stmt, "s", $userId);
+        if (!mysqli_stmt_execute($stmt)) {
+            return [];
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $allCategories = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Handle comma-separated categories
+            $cats = array_map('trim', explode(',', $row['CATEGORY']));
+            $allCategories = array_merge($allCategories, $cats);
+        }
+        
+        // Remove duplicates and empty values, then sort
+        $categories = array_unique(array_filter($allCategories));
+        sort($categories);
+        
+        mysqli_stmt_close($stmt);
+        return $categories;
     }
 
     /**

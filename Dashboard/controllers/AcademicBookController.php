@@ -42,13 +42,26 @@ class AcademicBookController
         }
     }
 
-    public function getAllBooks(int $publisher_id): array
+    public function getAllBooks(int $publisher_id, array $filters = []): array
     {
         try {
-            return $this->academicBookModel->selectBooks($publisher_id);
+            return $this->academicBookModel->selectBooks($publisher_id, $filters);
         } catch (Exception $e) {
             error_log("Get all academic books error: " . $e->getMessage());
             return [];
+        }
+    }
+    
+    public function getFilterData(int $publisher_id): array
+    {
+        try {
+            return [
+                'subjects' => $this->academicBookModel->getSubjectsByPublisherId($publisher_id),
+                'price_range' => $this->academicBookModel->getPriceRangeByPublisherId($publisher_id)
+            ];
+        } catch (Exception $e) {
+            error_log("Get filter data error: " . $e->getMessage());
+            return ['subjects' => [], 'price_range' => ['min_price' => 0, 'max_price' => 1000]];
         }
     }
 
