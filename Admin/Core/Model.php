@@ -3,8 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-class Model
-{
+// Only declare Model class if it doesn't already exist (to avoid conflicts with Application/Core/Model.php)
+if (!class_exists('Model')) {
+    class Model
+    {
     protected mysqli $conn;
 
     public function __construct(mysqli $conn)
@@ -137,5 +139,6 @@ class Model
         $affectedRows = $stmt->affected_rows;
         $stmt->close();
         return $affectedRows;
+    }
     }
 }

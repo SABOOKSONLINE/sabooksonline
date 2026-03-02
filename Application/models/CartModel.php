@@ -378,6 +378,8 @@ class CartModel extends Model
             return null;
         }
         
+        $notifiedPublishers = []; // Track publishers we've already notified
+        
         foreach ($cartItems as $item) {
             $price = $item["hc_price"] ?? 0;
             $qty = $item["cart_item_count"];
@@ -399,6 +401,28 @@ class CartModel extends Model
                 continue;
             }
             $stmtItem->close();
+            
+            // Notify publisher when their book is added to order
+            try {
+                $publisherId = $item['publisher_id'] ?? $item['userid'] ?? null;
+                $bookTitle = $item['title'] ?? 'Your book';
+                
+                if ($publisherId && !in_array($publisherId, $notifiedPublishers)) {
+                    require_once __DIR__ . "/../helpers/NotificationHelper.php";
+                    NotificationHelper::notifyBookAddedToOrder($orderId, $bookId, $bookTitle, $publisherId, $orderNumber, $this->conn);
+                    $notifiedPublishers[] = $publisherId;
+                }
+            } catch (Exception $e) {
+                error_log("Failed to send publisher notification: " . $e->getMessage());
+            }
+        }
+        
+        // Notify user about order creation
+        try {
+            require_once __DIR__ . "/../helpers/NotificationHelper.php";
+            NotificationHelper::notifyOrderCreated($orderId, $userId, $orderNumber, $this->conn);
+        } catch (Exception $e) {
+            error_log("Failed to send order creation notification: " . $e->getMessage());
         }
         
         // Only clear cart if order was successfully created

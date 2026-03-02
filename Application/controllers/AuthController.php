@@ -82,6 +82,14 @@ public function signup($name, $email, $password) {
         // ✅ token link goes into email
         $verifyLink = "https://sabooksonline.co.za/verify/" . urlencode($token);
         sendVerificationEmail($email,$name, $verifyLink,"SABO Mobile App");
+        
+        // Send welcome notification if user has device token registered
+        try {
+            require_once __DIR__ . "/../helpers/NotificationHelper.php";
+            NotificationHelper::sendWelcomeNotification($email, $name, $this->conn);
+        } catch (Exception $e) {
+            error_log("Failed to send welcome notification: " . $e->getMessage());
+        }
 
         echo json_encode([
             "message" => "Signup successful. Please verify email.",

@@ -115,6 +115,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $success = $academicController->insertBook($data);
 
             if ($success) {
+                // Send notification about new academic book
+                try {
+                    require_once __DIR__ . "/../../Application/helpers/NotificationHelper.php";
+                    $publicKey = $data['public_key'] ?? '';
+                    NotificationHelper::notifyNewAcademicBook($data['title'], $publicKey, $conn);
+                } catch (Exception $e) {
+                    error_log("Failed to send academic book notification: " . $e->getMessage());
+                }
+                
                 setAlert('success', 'Academic book published successfully!');
             } else {
                 setAlert('error', 'Failed to publish book. Please check your data.');

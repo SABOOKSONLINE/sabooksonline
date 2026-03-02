@@ -43,6 +43,9 @@ class BookModel
         $sql = "SELECT p.* FROM posts AS p
                 JOIN listings AS l ON p.CONTENTID = l.CONTENTID
                 WHERE l.CATEGORY = ?
+                AND p.STATUS = 'active'
+                AND p.COVER IS NOT NULL 
+                AND p.COVER != ''
                 ORDER BY RAND() LIMIT ?";
 
         // prepared statements for executing the quesry
@@ -327,7 +330,12 @@ class BookModel
 
     public function getBooksByPublisher($userId)
     {
-        $sql = "SELECT * FROM posts WHERE USERID = ? ORDER BY TITLE";
+        $sql = "SELECT * FROM posts 
+                WHERE USERID = ? 
+                AND STATUS = 'active' 
+                AND COVER IS NOT NULL 
+                AND COVER != '' 
+                ORDER BY TITLE";
 
         // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -403,7 +411,11 @@ class BookModel
 
     public function getBooksByViews()
     {
-        $sql = "SELECT * FROM posts ORDER BY RAND() LIMIT 10";
+        $sql = "SELECT * FROM posts 
+                WHERE STATUS = 'active' 
+                AND COVER IS NOT NULL 
+                AND COVER != '' 
+                ORDER BY RAND() LIMIT 10";
 
         $stmt = mysqli_prepare($this->conn, $sql);
         mysqli_stmt_execute($stmt);

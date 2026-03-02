@@ -160,11 +160,90 @@ switch ($action) {
         $checkout->purchase($price,$userID,true);
         break;
 
+    case 'calculateShipping':
+        // Calculate shipping fee for mobile and web
+        require_once __DIR__ . '/helpers/ShippingHelper.php';
+        require_once __DIR__ . '/models/CartModel.php';
+        
+        // Support both POST (JSON body) and GET (query params or JSON in body)
+        $input = [];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $rawInput = file_get_contents('php://input');
+            $input = json_decode($rawInput, true) ?: [];
+        } else {
+            // GET request - try to get from query params or JSON in body
+            $rawInput = file_get_contents('php://input');
+            if (!empty($rawInput)) {
+                $input = json_decode($rawInput, true) ?: [];
+            }
+            // Also check query params
+            if (empty($input) && !empty($_GET['data'])) {
+                $input = json_decode($_GET['data'], true) ?: [];
+            }
+        }
+        
+        $userIdInt = (int)($input['user_id'] ?? $input['userID'] ?? 0);
+        
+        // Try to get user ID from userID parameter if not provided
+        if ($userIdInt <= 0 && $userID) {
+            require_once __DIR__ . '/models/UserModel.php';
+            $userModel = new userModel($conn);
+            $user = $userModel->getUserByNameOrKey($userID);
+            $userIdInt = (int)($user['ADMIN_ID'] ?? 0);
+        }
+        
+        if ($userIdInt <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $cartModel = new CartModel($conn);
+        $address = $cartModel->getDeliveryAddress($userIdInt);
+        
+        // Allow address to be passed in request (for mobile)
+        if (empty($address) && !empty($input['address'])) {
+            $addressData = $input['address'];
+            $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+        }
+        
+        if (empty($address)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Delivery address required', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
+        if (empty($cartItems)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Cart is empty', 'shipping_fee' => 60]);
+            break;
+        }
+        
+        $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
+        $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
+        
+        $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
+        
+        // Fallback to R60 if calculation fails
+        if ($shippingFee <= 0) {
+            $shippingFee = 60.0;
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'shipping_fee' => $shippingFee,
+            'formatted' => 'R' . number_format($shippingFee, 2)
+        ]);
+        break;
+
     case 'purchaseYoco':
-        // Mobile Yoco payment endpoint
+        // Mobile Yoco payment endpoint - now calculates shipping automatically
+        require_once __DIR__ . '/helpers/ShippingHelper.php';
+        
         $input = json_decode(file_get_contents('php://input'), true);
         $price = $input['price'] ?? 0;
-        $shippingFee = $input['shipping_fee'] ?? 60;
         $deliveryType = $input['delivery_type'] ?? 'standard';
         
         if ($price <= 0) {
@@ -173,7 +252,7 @@ switch ($action) {
             break;
         }
         
-        // Get user directly using UserModel (userModel is private in CheckoutController)
+        // Get user directly using UserModel
         require_once __DIR__ . '/models/UserModel.php';
         $userModel = new userModel($conn);
         $user = $userModel->getUserByNameOrKey($userID);
@@ -184,7 +263,6 @@ switch ($action) {
             break;
         }
         
-        // Use ADMIN_ID from user object (not the userID from route which is ADMIN_USERKEY)
         $userIdInt = (int)($user['ADMIN_ID'] ?? 0);
         
         if ($userIdInt <= 0) {
@@ -196,36 +274,13 @@ switch ($action) {
         // Get delivery address
         require_once __DIR__ . '/models/CartModel.php';
         $cartModel = new CartModel($conn);
-        $address = $cartModel->getDeliveryAddress($userIdInt);
         
-        // If address doesn't exist, try to save it from request data (if provided)
-        if (empty($address)) {
-            // Check if address data is provided in the request
-            $addressData = $input['address'] ?? null;
-            
-            if ($addressData) {
-                // Save address from request data
-                $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
-                if ($addressSaved) {
-                    // Re-fetch the address
-                    $address = $cartModel->getDeliveryAddress($userIdInt);
-                }
-            }
-            
-            // If still no address, return error
-            if (empty($address)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
-                break;
-            }
-        }
-        
-        // Check if this is a retry payment (order_id provided) or new order
+        // Check if this is a retry payment (order_id provided) FIRST - before checking cart
         $existingOrderId = $input['order_id'] ?? null;
         
         if ($existingOrderId) {
-            // Retry payment for existing order
-            // Verify order exists and belongs to user
+            // RETRY PAYMENT: Use order's items, NOT cart items
+            // Retry payment for existing order - use order's items, not cart
             $existingOrder = $cartModel->getOrderDetails((int)$existingOrderId, $userIdInt);
             
             if (empty($existingOrder)) {
@@ -234,20 +289,93 @@ switch ($action) {
                 break;
             }
             
-            // Check if order is already paid
             if (($existingOrder['payment_status'] ?? 'pending') === 'paid') {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'This order has already been paid']);
                 break;
             }
             
-            // Update order totals if needed (in case price changed)
+            // Get order items from order details (not cart items) - order already exists with items
+            $orderItems = $existingOrder['items'] ?? [];
+            
+            if (empty($orderItems)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Order has no items']);
+                break;
+            }
+            
+            // Get address from order (order already has address saved)
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+            
+            // If address doesn't exist, try to get from request
+            if (empty($address)) {
+                $addressData = $input['address'] ?? null;
+                
+                if ($addressData) {
+                    $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+                    if ($addressSaved) {
+                        $address = $cartModel->getDeliveryAddress($userIdInt);
+                    }
+                }
+                
+                if (empty($address)) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
+                    break;
+                }
+            }
+            
+            // Use shipping fee from order (already calculated when order was created)
+            $shippingFee = floatval($existingOrder['shipping_fee'] ?? $input['shipping_fee'] ?? 0);
+            
+            // If shipping not set in order, use from request or fallback
+            if ($shippingFee <= 0) {
+                $shippingFee = floatval($input['shipping_fee'] ?? 60.0);
+            }
+            
+            // Use order's subtotal (already calculated when order was created)
+            $subtotal = floatval($existingOrder['subtotal'] ?? 0);
+            
+            // If subtotal not set, calculate from order items
+            if ($subtotal <= 0) {
+                foreach ($orderItems as $item) {
+                    $subtotal += floatval($item['unit_price'] ?? $item['total_price'] ?? 0);
+                }
+            }
+            
+            // Use provided price or calculate from subtotal + shipping
+            // For retry payment, use the price from request (which should match order total)
+            if ($price <= 0) {
+                $price = $subtotal + $shippingFee;
+            }
+            
+            // Update order totals with calculated shipping
             $cartModel->updateOrderTotals((int)$existingOrderId, $price, $shippingFee, 'yoco');
             
-            // Generate Yoco payment with existing order ID
             $checkout->generateYocoPaymentForMobile($price, $user, (int)$existingOrderId);
         } else {
-            // New order - check if cart has items before creating order
+            // NEW ORDER: Use cart items (not retry payment)
+            $address = $cartModel->getDeliveryAddress($userIdInt);
+            
+            // If address doesn't exist, try to save it from request data
+            if (empty($address)) {
+                $addressData = $input['address'] ?? null;
+                
+                if ($addressData) {
+                    $addressSaved = $cartModel->saveDeliveryAddress($userIdInt, $addressData);
+                    if ($addressSaved) {
+                        $address = $cartModel->getDeliveryAddress($userIdInt);
+                    }
+                }
+                
+                if (empty($address)) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Delivery address is required. Please save your address first.']);
+                    break;
+                }
+            }
+            
+            // Get cart items and calculate shipping fee automatically
             $cartItems = $cartModel->getCartItemsByUserId($userIdInt);
             if (empty($cartItems)) {
                 http_response_code(400);
@@ -255,23 +383,42 @@ switch ($action) {
                 break;
             }
             
-            // Create order BEFORE payment (like website does)
+            // Calculate actual shipping fee using Courier Guy API
+            $collectionAddresses = $cartModel->getCollectionAddresses($userIdInt);
+            $defaultCollectionAddress = $cartModel->getDefaultCollectionAddress($userIdInt) ?: ($collectionAddresses[0] ?? null);
+            $shippingFee = calculateCourierGuyShipping($address, $cartItems, $cartModel, $defaultCollectionAddress);
+            
+            // Fallback to R60 if calculation fails
+            if ($shippingFee <= 0) {
+                $shippingFee = 60.0;
+            }
+            
+            // Calculate subtotal
+            $subtotal = 0;
+            foreach ($cartItems as $item) {
+                $subtotal += ($item['hc_price'] ?? 0) * ($item['cart_item_count'] ?? 1);
+            }
+            
+            // Verify that price matches subtotal + shipping (or use calculated total)
+            $expectedTotal = $subtotal + $shippingFee;
+            if (abs($price - $expectedTotal) > 0.01) {
+                // Price doesn't match, use calculated total
+                $price = $expectedTotal;
+            }
+            
+            // Create order BEFORE payment
             $orderId = $cartModel->createOrder($userIdInt);
             
             if (empty($orderId)) {
-                // Log the error for debugging
                 error_log("Failed to create order for user $userIdInt. Cart items: " . count($cartItems) . ", Address: " . ($address ? 'exists' : 'missing'));
-                
                 http_response_code(500);
                 echo json_encode(['success' => false, 'message' => 'Failed to create order. Please try again.']);
                 break;
             }
             
-            // Update order totals and payment method
-            $totalAmount = $price; // Price already includes shipping
-            $cartModel->updateOrderTotals($orderId, $totalAmount, $shippingFee, 'yoco');
+            // Update order totals with calculated shipping
+            $cartModel->updateOrderTotals($orderId, $price, $shippingFee, 'yoco');
             
-            // Generate Yoco payment with order ID
             $checkout->generateYocoPaymentForMobile($price, $user, $orderId);
         }
         break;
@@ -486,6 +633,33 @@ switch ($action) {
             );
             $success = $stmt->execute();
             $stmt->close();
+            
+            // Send welcome notification if user just signed up (within last 24 hours)
+            if ($success) {
+                try {
+                    require_once __DIR__ . '/helpers/NotificationHelper.php';
+                    // Check if user registered in last 24 hours
+                    $checkStmt = $conn->prepare("SELECT ADMIN_NAME, created_at FROM users WHERE ADMIN_EMAIL = ?");
+                    $checkStmt->bind_param("s", $user_email);
+                    $checkStmt->execute();
+                    $userResult = $checkStmt->get_result();
+                    $userData = $userResult->fetch_assoc();
+                    $checkStmt->close();
+                    
+                    if ($userData && isset($userData['created_at'])) {
+                        $createdAt = strtotime($userData['created_at']);
+                        $hoursSinceSignup = (time() - $createdAt) / 3600;
+                        
+                        // If user signed up in last 24 hours, send welcome notification
+                        if ($hoursSinceSignup < 24) {
+                            $userName = $userData['ADMIN_NAME'] ?? 'there';
+                            NotificationHelper::sendWelcomeNotification($user_email, $userName, $conn);
+                        }
+                    }
+                } catch (Exception $e) {
+                    error_log("Failed to send welcome notification on device registration: " . $e->getMessage());
+                }
+            }
         } else {
             $success = false;
         }
@@ -562,8 +736,26 @@ switch ($action) {
     break;
 
     case 'userNotifications':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        
+        // For mobile app: try to get user email from request body or query params
+        if (!$userEmail) {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
         
         if (!$userEmail) {
             http_response_code(401);
@@ -571,21 +763,19 @@ switch ($action) {
             break;
         }
 
+        // Table has target_type ('all','subscription','specific_users','publishers','customers'), not target_audience
         $sql = "SELECT n.id, n.title, n.message, n.image_url, n.action_url, n.created_at,
                        CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as `read`
                 FROM push_notifications n
                 LEFT JOIN notification_reads nr ON n.id = nr.notification_id AND nr.user_email = ?
-                WHERE (n.target_audience = 'all' OR 
-                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
-                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
-                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
+                WHERE (n.target_type = 'all' OR n.target_type = 'customers')
                 AND n.status = 'sent'
                 ORDER BY n.created_at DESC
                 LIMIT 20";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $userEmail, $userEmail);
+            $stmt->bind_param("s", $userEmail);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -602,10 +792,27 @@ switch ($action) {
         break;
 
     case 'markNotificationRead':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $notificationId = $input['notification_id'] ?? 0;
+        
+        // For mobile app: try to get user email from request
+        if (!$userEmail) {
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
         
         if (!$userEmail || !$notificationId) {
             http_response_code(400);
@@ -637,8 +844,26 @@ switch ($action) {
         break;
 
     case 'markAllNotificationsRead':
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $userEmail = $_SESSION['ADMIN_EMAIL'] ?? null;
+        
+        // For mobile app: try to get user email from request body or query params
+        if (!$userEmail) {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $userEmail = $input['user_email'] ?? $_GET['user_email'] ?? null;
+            
+            // If still no email, try to get from userID/userKey
+            if (!$userEmail && !empty($input['userID']) && !empty($input['userKey'])) {
+                require_once __DIR__ . '/models/UserModel.php';
+                $userModel = new userModel($conn);
+                $user = $userModel->getUserByNameOrKey($input['userID']);
+                if ($user && ($user['ADMIN_KEY'] ?? '') === $input['userKey']) {
+                    $userEmail = $user['ADMIN_EMAIL'] ?? null;
+                }
+            }
+        }
         
         if (!$userEmail) {
             http_response_code(401);
@@ -658,15 +883,12 @@ switch ($action) {
 
         $sql = "INSERT IGNORE INTO notification_reads (notification_id, user_email)
                 SELECT n.id, ? FROM push_notifications n
-                WHERE (n.target_audience = 'all' OR 
-                       (n.target_audience IN ('customers', 'free') AND 1=1) OR
-                       (n.target_audience = 'book_buyers' AND ? IN (SELECT DISTINCT user_email FROM book_purchases WHERE payment_status = 'COMPLETE')) OR
-                       (n.target_audience IN ('publishers', 'pro', 'premium', 'standard', 'deluxe') AND 1=0))
+                WHERE (n.target_type = 'all' OR n.target_type = 'customers')
                 AND n.status = 'sent'";
         
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $userEmail, $userEmail);
+            $stmt->bind_param("s", $userEmail);
             $success = $stmt->execute();
             $stmt->close();
             
