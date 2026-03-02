@@ -25,16 +25,17 @@ function formDataArray()
     $Aprice   = htmlspecialchars($_POST["Abook_price"] ?? '0');
 
     /* ========= HARDCOPY DATA ========= */
-    $hcPrice            = !empty($_POST["hc_price"]) ? htmlspecialchars($_POST["hc_price"]) : null;
-    $hcDiscountPercent  = !empty($_POST["hc_discount_percent"]) ? htmlspecialchars($_POST["hc_discount_percent"]) : null;
-    $hcCountry          = !empty($_POST["hc_country"]) ? htmlspecialchars($_POST["hc_country"]) : null;
-    $hcPages            = !empty($_POST["hc_pages"]) ? htmlspecialchars($_POST["hc_pages"]) : null;
-    $hcWeight           = !empty($_POST["hc_weight_kg"]) ? htmlspecialchars($_POST["hc_weight_kg"]) : null;
-    $hcHeight           = !empty($_POST["hc_height_cm"]) ? htmlspecialchars($_POST["hc_height_cm"]) : null;
-    $hcWidth            = !empty($_POST["hc_width_cm"]) ? htmlspecialchars($_POST["hc_width_cm"]) : null;
-    $hcDate             = !empty($_POST["hc_release_date"]) ? htmlspecialchars($_POST["hc_release_date"]) : null;
-    $hcContributors     = !empty($_POST["hc_contributors"]) ? htmlspecialchars($_POST["hc_contributors"]) : null;
-    $hcStockCount       = !empty($_POST["hc_stock_count"]) ? htmlspecialchars($_POST["hc_stock_count"]) : null;
+    // Use isset() instead of !empty() to allow 0 values
+    $hcPrice            = isset($_POST["hc_price"]) && $_POST["hc_price"] !== '' ? htmlspecialchars($_POST["hc_price"]) : null;
+    $hcDiscountPercent  = isset($_POST["hc_discount_percent"]) && $_POST["hc_discount_percent"] !== '' ? htmlspecialchars($_POST["hc_discount_percent"]) : null;
+    $hcCountry          = isset($_POST["hc_country"]) && $_POST["hc_country"] !== '' ? htmlspecialchars($_POST["hc_country"]) : null;
+    $hcPages            = isset($_POST["hc_pages"]) && $_POST["hc_pages"] !== '' ? htmlspecialchars($_POST["hc_pages"]) : null;
+    $hcWeight           = isset($_POST["hc_weight_kg"]) && $_POST["hc_weight_kg"] !== '' ? htmlspecialchars($_POST["hc_weight_kg"]) : null;
+    $hcHeight           = isset($_POST["hc_height_cm"]) && $_POST["hc_height_cm"] !== '' ? htmlspecialchars($_POST["hc_height_cm"]) : null;
+    $hcWidth            = isset($_POST["hc_width_cm"]) && $_POST["hc_width_cm"] !== '' ? htmlspecialchars($_POST["hc_width_cm"]) : null;
+    $hcDate             = isset($_POST["hc_release_date"]) && $_POST["hc_release_date"] !== '' ? htmlspecialchars($_POST["hc_release_date"]) : null;
+    $hcContributors     = isset($_POST["hc_contributors"]) && $_POST["hc_contributors"] !== '' ? htmlspecialchars($_POST["hc_contributors"]) : null;
+    $hcStockCount       = isset($_POST["hc_stock_count"]) && $_POST["hc_stock_count"] !== '' ? htmlspecialchars($_POST["hc_stock_count"]) : null;
 
     /* ========= DISCOUNTED HARDCOPY PRICE ========= */
     $hcFinalPrice = $hcPrice;
@@ -316,8 +317,9 @@ function updateBookHandler($bookController)
 
         $hasHardcopy = false;
 
+        // Check if any hardcopy field has a value (including 0, but not null or empty string)
         foreach ($hardcopyFields as $field) {
-            if (!empty($bookData[$field])) {
+            if (isset($bookData[$field]) && $bookData[$field] !== null && $bookData[$field] !== '') {
                 $hasHardcopy = true;
                 break;
             }
