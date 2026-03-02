@@ -16,16 +16,20 @@ class CreatorModel
 
     public function getCreatorByContentId($contentId)
     {
-
         $sql = "SELECT * FROM users WHERE ADMIN_USERKEY = ? OR ADMIN_NAME = ?";
 
-        // prepared statements for executing the query
         $stmt = mysqli_prepare($this->conn, $sql);
-        mysqli_stmt_bind_param($stmt, "si", $contentId, $contentId);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . mysqli_error($this->conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, "ss", $contentId, $contentId);
         mysqli_stmt_execute($stmt);
+
         $result = mysqli_stmt_get_result($stmt);
 
-        if (!mysqli_num_rows($result)) {
+        if (!$result || mysqli_num_rows($result) === 0) {
+            mysqli_stmt_close($stmt);
             return null;
         }
 
