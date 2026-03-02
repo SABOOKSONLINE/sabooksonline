@@ -9,34 +9,39 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const scrollSpeed = 1;
-        let isPaused = false;
+
+        // Store pause state ON the element
+        container.isPaused = false;
 
         if (direction === "left") {
             container.scrollLeft = container.scrollWidth / 2;
         }
 
         container.addEventListener("mouseenter", () => {
-            isPaused = true;
+            container.isPaused = true;
         });
 
         container.addEventListener("mouseleave", () => {
-            isPaused = false;
+            container.isPaused = false;
         });
 
         function scrollLoop() {
-            if (!isPaused) {
+            if (!container.isPaused) {
                 if (direction === "right") {
                     container.scrollLeft += scrollSpeed;
+
                     if (container.scrollLeft >= container.scrollWidth / 2) {
                         container.scrollLeft = 0;
                     }
                 } else {
                     container.scrollLeft -= scrollSpeed;
+
                     if (container.scrollLeft <= 0) {
                         container.scrollLeft = container.scrollWidth / 2;
                     }
                 }
             }
+
             requestAnimationFrame(scrollLoop);
         }
 
@@ -52,20 +57,49 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ===== Book Slide Button Behavior =====
-    document.querySelectorAll(".book-card-btn.btn-right").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const cardSlide = btn.previousElementSibling;
-            const firstCard = cardSlide.firstElementChild;
+    document.querySelectorAll(".book-cards").forEach((wrapper) => {
+        const container = wrapper.querySelector(".book-card-slide");
+        const btnLeft = wrapper.querySelector(".btn-left");
+        const btnRight = wrapper.querySelector(".btn-right");
 
-            firstCard.classList.add("book-slide");
-            cardSlide.appendChild(firstCard);
-            cardSlide.lastElementChild.classList.remove("book-slide");
-        });
+        if (!container) return;
+
+        const scrollAmount = 250; // width of one card area
+
+        if (btnRight) {
+            btnRight.addEventListener("click", () => {
+                container.isPaused = true;
+
+                container.scrollBy({
+                    left: scrollAmount,
+                    behavior: "smooth",
+                });
+
+                setTimeout(() => {
+                    container.isPaused = false;
+                }, 1200);
+            });
+        }
+
+        if (btnLeft) {
+            btnLeft.addEventListener("click", () => {
+                container.isPaused = true;
+
+                container.scrollBy({
+                    left: -scrollAmount,
+                    behavior: "smooth",
+                });
+
+                setTimeout(() => {
+                    container.isPaused = false;
+                }, 1200);
+            });
+        }
     });
 
     // ===== Stylish Book Number =====
     const stylishBookNumber = document.querySelectorAll(
-        "#stylish-section .book-card-num"
+        "#stylish-section .book-card-num",
     );
     let counter = 1;
     stylishBookNumber.forEach((card) => {
@@ -74,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ===== Category Collapse Button =====
     const categoryCollapseBtn = document.querySelector(
-        ".category-collapse-btn"
+        ".category-collapse-btn",
     );
     const categoryContainer = document.querySelector(".category-container");
 
@@ -82,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
         categoryCollapseBtn.addEventListener("click", () => {
             categoryContainer.classList.toggle("category-all");
             categoryCollapseBtn.firstElementChild.classList.toggle(
-                "fa-angle-up"
+                "fa-angle-up",
             );
         });
     }
@@ -115,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const resetBvBuyBtn = () => {
         const bvBuyBtns = document.querySelectorAll(
-            ".bv-purchase-details > div"
+            ".bv-purchase-details > div",
         );
         bvBuyBtns.forEach((btn) => btn.classList.add("hide"));
     };
@@ -141,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateBvBuyBtn(firstBtn);
             removePriceDetail(firstBtn);
             showPurchaseOption(
-                firstBtn.firstElementChild.innerText.toLowerCase()
+                firstBtn.firstElementChild.innerText.toLowerCase(),
             );
         }
     };
@@ -188,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!ratingValue || parseInt(ratingValue) < 1) {
                 e.preventDefault();
                 alert(
-                    "Please select a star rating before submitting your review."
+                    "Please select a star rating before submitting your review.",
                 );
             }
         });

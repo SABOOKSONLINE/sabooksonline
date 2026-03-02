@@ -874,6 +874,10 @@
     transform: translate(-50%, -50%);
 }
 
+.btn-left {
+    left: 25px;
+}
+
 .book-card-slide-out {
     transform: translateX(-100%);
     opacity: 0;

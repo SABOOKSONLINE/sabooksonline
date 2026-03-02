@@ -61,6 +61,12 @@ $academicBookController = new AcademicBookController($conn);
                     ?>
                 </div>
 
+                <div class="book-card-btn btn-left">
+                    <div>
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                </div>
+
                 <div class="book-card-btn btn-right">
                     <div>
                         <i class="fas fa-arrow-right"></i>
@@ -144,6 +150,12 @@ $academicBookController = new AcademicBookController($conn);
                     ?>
                 </div>
 
+                <div class="book-card-btn btn-left">
+                    <div>
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                </div>
+
                 <div class="book-card-btn btn-right">
                     <div>
                         <i class="fas fa-arrow-right"></i>
@@ -167,6 +179,12 @@ $academicBookController = new AcademicBookController($conn);
                     ?>
                 </div>
 
+                <div class="book-card-btn btn-left">
+                    <div>
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                </div>
+
                 <div class="book-card-btn btn-right">
                     <div>
                         <i class="fas fa-arrow-right"></i>
@@ -186,6 +204,12 @@ $academicBookController = new AcademicBookController($conn);
                     $bookController->renderListingsByCategory("Latest Collections", 10);
                     ?>
 
+                </div>
+
+                <div class="book-card-btn btn-left">
+                    <div>
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
                 </div>
 
                 <div class="book-card-btn btn-right">
@@ -208,6 +232,12 @@ $academicBookController = new AcademicBookController($conn);
                     ?>
                 </div>
 
+                <div class="book-card-btn btn-left">
+                    <div>
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                </div>
+
                 <div class="book-card-btn btn-right">
                     <div>
                         <i class="fas fa-arrow-right"></i>
@@ -228,6 +258,12 @@ $academicBookController = new AcademicBookController($conn);
                         $bookController->renderListingsByCategory("childrens collection", 10);
                         ?>
 
+                    </div>
+
+                    <div class="book-card-btn btn-left">
+                        <div>
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
                     </div>
 
                     <div class="book-card-btn btn-right">
