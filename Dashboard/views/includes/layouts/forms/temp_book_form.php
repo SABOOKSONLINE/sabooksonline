@@ -534,7 +534,7 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                         <label class="form-label">Hardcopy Price (R)
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" step="0.01" name="hc_price" class="form-control" placeholder="e.g. 199.99" value="<?= $hcPrice ?>">
+                        <input type="number" step="0.01" name="hc_price" class="form-control" placeholder="e.g. 199.99" value="<?= $hcPrice ?>" required>
                     </div>
 
                     <!-- <div class="col-md-6">
@@ -552,49 +552,49 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                         <label class="form-label">Country
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="text" name="hc_country" class="form-control" value="<?= $hcCountry ?>">
+                        <input type="text" name="hc_country" class="form-control" value="<?= $hcCountry ?>" required>
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Number of Pages
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" name="hc_pages" class="form-control" value="<?= $hcPages ?>">
+                        <input type="number" name="hc_pages" class="form-control" value="<?= $hcPages ?>" required>
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Weight (kg)
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" step="0.01" name="hc_weight_kg" class="form-control" value="<?= $hcWeightKg ?>">
+                        <input type="number" step="0.01" name="hc_weight_kg" class="form-control" value="<?= $hcWeightKg ?>" required>
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Height (cm)
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" step="0.01" name="hc_height_cm" class="form-control" value="<?= $hcHeightCm ?>">
+                        <input type="number" step="0.01" name="hc_height_cm" class="form-control" value="<?= $hcHeightCm ?>" required>
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Width (cm)
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" step="0.01" name="hc_width_cm" class="form-control" value="<?= $hcWidthCm ?>">
+                        <input type="number" step="0.01" name="hc_width_cm" class="form-control" value="<?= $hcWidthCm ?>" required>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Release Date
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="date" name="hc_release_date" class="form-control" value="<?= $hcReleaseDate ?>">
+                        <input type="date" name="hc_release_date" class="form-control" value="<?= $hcReleaseDate ?>" required>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Stock Count
                             <span class="text-danger small">*</span>
                         </label>
-                        <input type="number" name="hc_stock_count" class="form-control" value="<?= $hcStockCount ?>">
+                        <input type="number" name="hc_stock_count" class="form-control" value="<?= $hcStockCount ?>" required>
                     </div>
                 </div>
             <?php else: ?>
@@ -608,7 +608,7 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                     data-target-tab="audiobook-details-tab">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
-                <button type="submit" class="btn btn-success px-5">
+                <button type="submit" class="btn btn-success px-5" id="hardcopy-save-btn">
                     <?= $bookId ? 'Save Changes' : 'Add Book' ?>
                 </button>
             </div>
@@ -787,7 +787,51 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
             // Method 2: Bootstrap's shown.bs.tab event (fires after tab is shown)
             button.addEventListener('shown.bs.tab', function(e) {
                 updateCurrentTab(this);
+                
+                // FIX: Manage required attributes based on tab visibility
+                const allTabs = document.querySelectorAll('.tab-pane');
+                const targetTabId = this.getAttribute('data-bs-target');
+                const targetTabIdClean = targetTabId ? targetTabId.replace('#', '') : null;
+                
+                allTabs.forEach(tab => {
+                    const isActive = targetTabIdClean && tab.id === targetTabIdClean;
+                    const requiredFields = tab.querySelectorAll('[required]');
+                    
+                    requiredFields.forEach(field => {
+                        if (isActive) {
+                            // Restore required when tab becomes active
+                            if (field.dataset.wasRequired === 'true') {
+                                field.setAttribute('required', 'required');
+                            }
+                        } else {
+                            // Remove required when tab becomes hidden
+                            if (field.hasAttribute('required')) {
+                                field.removeAttribute('required');
+                                field.dataset.wasRequired = 'true';
+                            }
+                        }
+                    });
+                });
             });
+        });
+        
+        // ========================================================================
+        // INITIAL SETUP: Remove required from all hidden tabs on page load
+        // ========================================================================
+        const allTabs = document.querySelectorAll('.tab-pane');
+        const initialActiveTab = document.querySelector('.nav-link.active');
+        const initialActiveTabId = initialActiveTab ? initialActiveTab.getAttribute('data-bs-target') : null;
+        const initialActiveTabIdClean = initialActiveTabId ? initialActiveTabId.replace('#', '') : null;
+        
+        allTabs.forEach(tab => {
+            const isActive = initialActiveTabIdClean && tab.id === initialActiveTabIdClean;
+            if (!isActive) {
+                const requiredFields = tab.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    field.removeAttribute('required');
+                    field.dataset.wasRequired = 'true';
+                });
+            }
         });
 
         // ========================================================================
@@ -818,7 +862,7 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
         }
 
         // ========================================================================
-        // DOUBLE-CHECK before form submission
+        // DOUBLE-CHECK before form submission - FIX VALIDATION FOR HIDDEN TABS
         // ========================================================================
         if (bookForm) {
             bookForm.addEventListener('submit', function(e) {
@@ -827,6 +871,31 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                     updateCurrentTab(currentActive);
                 }
                 console.log('📝 Form submitting with tab:', currentTabInput.value);
+                
+                // CRITICAL FIX: Remove 'required' from fields in hidden tabs BEFORE browser validation
+                const allTabs = document.querySelectorAll('.tab-pane');
+                const activeTabId = currentActive ? currentActive.getAttribute('data-bs-target') : null;
+                const activeTabIdClean = activeTabId ? activeTabId.replace('#', '') : null;
+                
+                console.log('Active tab ID:', activeTabIdClean);
+                
+                allTabs.forEach(tab => {
+                    const isActive = activeTabIdClean && tab.id === activeTabIdClean;
+                    const requiredFields = tab.querySelectorAll('[required]');
+                    
+                    console.log(`Tab: ${tab.id}, Is Active: ${isActive}, Required fields: ${requiredFields.length}`);
+                    
+                    requiredFields.forEach(field => {
+                        if (!isActive) {
+                            // Remove required from hidden tabs to prevent validation errors
+                            field.removeAttribute('required');
+                            field.dataset.wasRequired = 'true';
+                            console.log(`Removed required from field: ${field.name || field.id} in hidden tab: ${tab.id}`);
+                        }
+                    });
+                });
+                
+                console.log('✅ Form validation fixed - required fields in hidden tabs removed');
             });
         }
 
@@ -874,6 +943,54 @@ if (isset($_SESSION['alert_type']) && isset($_SESSION['alert_message'])): ?>
                     this.value = '';
                 }
             });
+        }
+
+        // ========================================================================
+        // ENSURE HARDCOPY SAVE BUTTON IS ALWAYS ENABLED
+        // ========================================================================
+        const hardcopySaveBtn = document.getElementById('hardcopy-save-btn');
+        if (hardcopySaveBtn) {
+            // Remove any disabled state
+            hardcopySaveBtn.disabled = false;
+            hardcopySaveBtn.classList.remove('disabled');
+            
+            // Add click handler to fix validation BEFORE form submits
+            hardcopySaveBtn.addEventListener('click', function(e) {
+                console.log('Hardcopy Save button clicked');
+                
+                // Ensure current tab is set
+                const currentTabInput = document.getElementById('current_tab');
+                const activeTab = document.querySelector('.nav-link.active');
+                if (activeTab && currentTabInput) {
+                    const tabName = activeTab.getAttribute('data-tab');
+                    if (tabName) {
+                        currentTabInput.value = tabName;
+                        console.log('Current tab set to:', tabName);
+                    }
+                }
+                
+                // CRITICAL: Remove required from hidden tabs BEFORE browser validation
+                const allTabs = document.querySelectorAll('.tab-pane');
+                const activeTabId = activeTab ? activeTab.getAttribute('data-bs-target') : null;
+                const activeTabIdClean = activeTabId ? activeTabId.replace('#', '') : null;
+                
+                allTabs.forEach(tab => {
+                    const isActive = activeTabIdClean && tab.id === activeTabIdClean;
+                    if (!isActive) {
+                        const requiredFields = tab.querySelectorAll('[required]');
+                        requiredFields.forEach(field => {
+                            field.removeAttribute('required');
+                            field.dataset.wasRequired = 'true';
+                            console.log(`Removed required from: ${field.name || field.id} in tab: ${tab.id}`);
+                        });
+                    }
+                });
+                
+                console.log('✅ Validation fixed - form should submit now');
+                // Don't prevent default - allow form to submit naturally
+            });
+            
+            console.log('Hardcopy save button initialized and enabled');
         }
     });
 </script>
