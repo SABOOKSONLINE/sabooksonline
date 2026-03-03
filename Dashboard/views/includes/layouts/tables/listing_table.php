@@ -30,14 +30,14 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 <label for="search" class="form-label">
                     <i class="fas fa-search me-2"></i>Search Books
                 </label>
-                <input type="text" 
-                       name="search" 
-                       id="search" 
-                       class="form-control" 
-                       placeholder="Search by title, author, ISBN..."
-                       value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                <input type="text"
+                    name="search"
+                    id="search"
+                    class="form-control"
+                    placeholder="Search by title, author, ISBN..."
+                    value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
-            
+
             <!-- Status Filter -->
             <div class="col-md-2">
                 <label for="status" class="form-label">
@@ -50,7 +50,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     <option value="draft" <?= (isset($filters['status']) && $filters['status'] === 'draft') ? 'selected' : '' ?>>Draft</option>
                 </select>
             </div>
-            
+
             <!-- Format Filter -->
             <div class="col-md-2">
                 <label for="format" class="form-label">
@@ -63,7 +63,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     <option value="hardcopy" <?= (isset($filters['format']) && $filters['format'] === 'hardcopy') ? 'selected' : '' ?>>Hardcopy</option>
                 </select>
             </div>
-            
+
             <!-- Category Filter -->
             <div class="col-md-2">
                 <label for="category" class="form-label">
@@ -80,7 +80,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     <?php endif; ?>
                 </select>
             </div>
-            
+
             <!-- Sort Filter -->
             <div class="col-md-2">
                 <label for="sort" class="form-label">
@@ -96,7 +96,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     <option value="price_high" <?= (isset($filters['sort']) && $filters['sort'] === 'price_high') ? 'selected' : '' ?>>Price: High to Low</option>
                 </select>
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="col-md-1 d-flex align-items-end gap-1">
                 <button type="submit" class="btn btn-dark" title="Apply filters">
@@ -107,7 +107,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 </a>
             </div>
         </div>
-        
+
         <!-- Second Row: Advanced Filters (Collapsible) -->
         <div class="row g-3">
             <div class="col-12">
@@ -116,7 +116,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 </button>
             </div>
         </div>
-        
+
         <div class="collapse" id="advancedFilters">
             <div class="row g-3 mt-2">
                 <!-- Price Range -->
@@ -124,56 +124,56 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                     <label for="min_price" class="form-label">
                         <i class="fas fa-dollar-sign me-2"></i>Min Price (R)
                     </label>
-                    <input type="number" 
-                           name="min_price" 
-                           id="min_price" 
-                           class="form-control" 
-                           step="0.01"
-                           min="0"
-                           placeholder="0.00"
-                           value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
+                    <input type="number"
+                        name="min_price"
+                        id="min_price"
+                        class="form-control"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
                 </div>
-                
+
                 <div class="col-md-3">
                     <label for="max_price" class="form-label">
                         <i class="fas fa-dollar-sign me-2"></i>Max Price (R)
                     </label>
-                    <input type="number" 
-                           name="max_price" 
-                           id="max_price" 
-                           class="form-control" 
-                           step="0.01"
-                           min="0"
-                           placeholder="<?= number_format($filters['price_range']['max_price'] ?? 1000, 2) ?>"
-                           value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
+                    <input type="number"
+                        name="max_price"
+                        id="max_price"
+                        class="form-control"
+                        step="0.01"
+                        min="0"
+                        placeholder="<?= number_format($filters['price_range']['max_price'] ?? 1000, 2) ?>"
+                        value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
                     <small class="text-muted">Max: R<?= number_format($filters['price_range']['max_price'] ?? 1000, 2) ?></small>
                 </div>
-                
+
                 <!-- Date Range -->
                 <div class="col-md-3">
                     <label for="date_from" class="form-label">
                         <i class="fas fa-calendar me-2"></i>From Date
                     </label>
-                    <input type="date" 
-                           name="date_from" 
-                           id="date_from" 
-                           class="form-control"
-                           value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                    <input type="date"
+                        name="date_from"
+                        id="date_from"
+                        class="form-control"
+                        value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
                 </div>
-                
+
                 <div class="col-md-3">
                     <label for="date_to" class="form-label">
                         <i class="fas fa-calendar me-2"></i>To Date
                     </label>
-                    <input type="date" 
-                           name="date_to" 
-                           id="date_to" 
-                           class="form-control"
-                           value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
+                    <input type="date"
+                        name="date_to"
+                        id="date_to"
+                        class="form-control"
+                        value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
                 </div>
             </div>
         </div>
-        
+
         <!-- Preserve pagination and limit -->
         <input type="hidden" name="limit" value="<?= $booksPerPage ?>">
         <input type="hidden" name="page" value="1">
@@ -185,7 +185,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
         <h5>Displaying <?= $startCount ?>–<?= $endCount ?> of <?= $totalBooks ?> matching books from your catalogue</h5>
         <?php if (!empty($filters['search']) || !empty($filters['status']) || !empty($filters['category']) || !empty($filters['format']) || !empty($filters['min_price']) || !empty($filters['max_price']) || !empty($filters['date_from']) || !empty($filters['date_to'])): ?>
             <small class="text-muted">
-                <i class="fas fa-info-circle"></i> 
+                <i class="fas fa-info-circle"></i>
                 Filtered results
                 <?php if (!empty($filters['search'])): ?>
                     | Search: "<?= htmlspecialchars($filters['search']) ?>"
@@ -398,29 +398,51 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
                 <?php
-                // Build query string for pagination links (preserve all filters)
-                $buildQuery = function($page) use ($booksPerPage, $filters) {
+                // Build query string for pagination links
+                $buildQuery = function ($page) use ($booksPerPage, $filters) {
                     $params = ['page' => $page, 'limit' => $booksPerPage];
-                    if (!empty($filters['search'])) $params['search'] = $filters['search'];
-                    if (!empty($filters['status'])) $params['status'] = $filters['status'];
-                    if (!empty($filters['format'])) $params['format'] = $filters['format'];
-                    if (!empty($filters['category'])) $params['category'] = $filters['category'];
-                    if (!empty($filters['sort'])) $params['sort'] = $filters['sort'];
-                    if (!empty($filters['min_price'])) $params['min_price'] = $filters['min_price'];
-                    if (!empty($filters['max_price'])) $params['max_price'] = $filters['max_price'];
-                    if (!empty($filters['date_from'])) $params['date_from'] = $filters['date_from'];
-                    if (!empty($filters['date_to'])) $params['date_to'] = $filters['date_to'];
+                    foreach ($filters as $key => $value) {
+                        if (!empty($value)) {
+                            $params[$key] = $value;
+                        }
+                    }
                     return '?' . http_build_query($params);
                 };
+
+                // Previous
                 ?>
                 <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
                     <a class="page-link" href="<?= $currentPage <= 1 ? '#' : $buildQuery($currentPage - 1) ?>">Previous</a>
                 </li>
-                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                        <a class="page-link" href="<?= $buildQuery($i) ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
+
+                <?php
+                $pageWindow = 1; // number of pages to show on each side of current
+                for ($i = 1; $i <= $totalPages; $i++) {
+                    // Always show first, last, current, and neighbors
+                    if (
+                        $i == 1 ||
+                        $i == $totalPages ||
+                        ($i >= $currentPage - $pageWindow && $i <= $currentPage + $pageWindow)
+                    ) {
+                        if ($i == $currentPage) {
+                            echo '<li class="page-item active"><a class="page-link" href="#">' . $i . '</a></li>';
+                        } else {
+                            echo '<li class="page-item"><a class="page-link" href="' . $buildQuery($i) . '">' . $i . '</a></li>';
+                        }
+                    } else {
+                        // Show ellipsis if previous page was shown
+                        static $dotsShown = false;
+                        if (!$dotsShown) {
+                            echo '<li class="page-item disabled"><a class="page-link">...</a></li>';
+                            $dotsShown = true;
+                        }
+                        continue;
+                    }
+                    $dotsShown = false; // reset dots for next iteration
+                }
+                ?>
+
+                <!-- Next -->
                 <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
                     <a class="page-link" href="<?= $currentPage >= $totalPages ? '#' : $buildQuery($currentPage + 1) ?>">Next</a>
                 </li>
@@ -465,7 +487,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
                 const type = card.getAttribute('data-type');
                 // Map 'physical' to 'hardcopy' for compatibility
                 const filterValue = filter === 'physical' ? 'hardcopy' : filter;
-                
+
                 if (filter === 'all' || type.includes(filterValue)) {
                     card.style.display = 'block';
                 } else {
@@ -478,7 +500,7 @@ $endCount = min($startIndex + $booksPerPage, $totalBooks);
             button.classList.add('active');
         });
     });
-    
+
     // Auto-submit form when format filter changes (server-side filtering)
     const formatSelect = document.getElementById('format');
     if (formatSelect) {
