@@ -24,18 +24,18 @@ class BookListingsModel
         // Join with hardcopy and audiobook tables to detect formats
         $sql = "SELECT 
                     p.*,
-                    hc.hc_id,
-                    hc.hc_price,
-                    hc.hc_stock_count,
-                    a.id AS audiobook_id,
-                    a.book_id AS audiobook_book_id
+                    MAX(hc.hc_id) AS hc_id,
+                    MAX(hc.hc_price) AS hc_price,
+                    MAX(hc.hc_stock_count) AS hc_stock_count,
+                    MAX(a.id) AS audiobook_id,
+                    MAX(a.book_id) AS audiobook_book_id
                 FROM posts p
                 LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
                 LEFT JOIN audiobooks a ON a.book_id = p.ID
                 WHERE p.USERID = ?";
         $params = [$userId];
         $types = "s";
-        
+
         // Add search filter
         if (!empty($filters['search'])) {
             $sql .= " AND (p.TITLE LIKE ? OR p.DESCRIPTION LIKE ? OR p.ISBN LIKE ? OR p.PUBLISHER LIKE ? OR p.AUTHORS LIKE ?)";
@@ -47,21 +47,21 @@ class BookListingsModel
             $params[] = $searchTerm;
             $types .= "sssss";
         }
-        
+
         // Add status filter
         if (!empty($filters['status'])) {
             $sql .= " AND p.STATUS = ?";
             $params[] = $filters['status'];
             $types .= "s";
         }
-        
+
         // Add category filter
         if (!empty($filters['category'])) {
             $sql .= " AND p.CATEGORY LIKE ?";
             $params[] = '%' . $filters['category'] . '%';
             $types .= "s";
         }
-        
+
         // Add format filter (ebook/audiobook/hardcopy)
         if (!empty($filters['format'])) {
             switch ($filters['format']) {
@@ -77,7 +77,7 @@ class BookListingsModel
                     break;
             }
         }
-        
+
         // Add price range filter
         if (!empty($filters['min_price'])) {
             $sql .= " AND (p.RETAILPRICE >= ? OR p.EBOOKPRICE >= ? OR p.ABOOKPRICE >= ? OR hc.hc_price >= ?)";
@@ -88,7 +88,7 @@ class BookListingsModel
             $params[] = $minPrice;
             $types .= "dddd";
         }
-        
+
         if (!empty($filters['max_price'])) {
             $sql .= " AND (p.RETAILPRICE <= ? OR p.EBOOKPRICE <= ? OR p.ABOOKPRICE <= ? OR hc.hc_price <= ?)";
             $maxPrice = (float)$filters['max_price'];
@@ -98,20 +98,20 @@ class BookListingsModel
             $params[] = $maxPrice;
             $types .= "dddd";
         }
-        
+
         // Add date range filter
         if (!empty($filters['date_from'])) {
             $sql .= " AND p.DATEPOSTED >= ?";
             $params[] = $filters['date_from'];
             $types .= "s";
         }
-        
+
         if (!empty($filters['date_to'])) {
             $sql .= " AND p.DATEPOSTED <= ?";
             $params[] = $filters['date_to'];
             $types .= "s";
         }
-        
+
         // Add sort order
         $orderBy = "p.ID DESC";
         if (!empty($filters['sort'])) {
@@ -136,7 +136,7 @@ class BookListingsModel
                     break;
             }
         }
-        
+
         $sql .= " GROUP BY p.ID ORDER BY " . $orderBy;
 
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -147,7 +147,7 @@ class BookListingsModel
         if (!empty($params)) {
             mysqli_stmt_bind_param($stmt, $types, ...$params);
         }
-        
+
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Failed to execute statement: " . mysqli_stmt_error($stmt));
         }
@@ -165,7 +165,7 @@ class BookListingsModel
         mysqli_stmt_close($stmt);
         return $books;
     }
-    
+
     /**
      * Get price range for user's books
      * @param string $userId User ID
@@ -190,28 +190,28 @@ class BookListingsModel
                 LEFT JOIN book_hardcopy hc ON hc.book_id = p.ID
                 WHERE p.USERID = ? 
                 AND (p.RETAILPRICE > 0 OR p.EBOOKPRICE > 0 OR p.ABOOKPRICE > 0 OR hc.hc_price > 0)";
-        
+
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             return ['min_price' => 0, 'max_price' => 1000];
         }
-        
+
         mysqli_stmt_bind_param($stmt, "s", $userId);
         if (!mysqli_stmt_execute($stmt)) {
             return ['min_price' => 0, 'max_price' => 1000];
         }
-        
+
         $result = mysqli_stmt_get_result($stmt);
         $row = mysqli_fetch_assoc($result);
-        
+
         mysqli_stmt_close($stmt);
-        
+
         return [
             'min_price' => $row['min_price'] ?? 0,
             'max_price' => $row['max_price'] ?? 1000
         ];
     }
-    
+
     /**
      * Get distinct categories for a user's books
      * @param string $userId User ID
@@ -220,17 +220,17 @@ class BookListingsModel
     public function getCategoriesByUserId($userId)
     {
         $sql = "SELECT DISTINCT CATEGORY FROM posts WHERE USERID = ? AND CATEGORY IS NOT NULL AND CATEGORY != '' ORDER BY CATEGORY";
-        
+
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
             return [];
         }
-        
+
         mysqli_stmt_bind_param($stmt, "s", $userId);
         if (!mysqli_stmt_execute($stmt)) {
             return [];
         }
-        
+
         $result = mysqli_stmt_get_result($stmt);
         $allCategories = [];
         while ($row = mysqli_fetch_assoc($result)) {
@@ -238,11 +238,11 @@ class BookListingsModel
             $cats = array_map('trim', explode(',', $row['CATEGORY']));
             $allCategories = array_merge($allCategories, $cats);
         }
-        
+
         // Remove duplicates and empty values, then sort
         $categories = array_unique(array_filter($allCategories));
         sort($categories);
-        
+
         mysqli_stmt_close($stmt);
         return $categories;
     }
