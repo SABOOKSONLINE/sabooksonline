@@ -1,21 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     // ===== Auto Scrolling Book Cards =====
     function setupAutoScroll(container, direction = "right") {
-        const cards = Array.from(container.children);
-
-        cards.forEach((card) => {
-            const clone = card.cloneNode(true);
-            container.appendChild(clone);
-        });
-
         const scrollSpeed = 1;
-
-        // Store pause state ON the element
         container.isPaused = false;
-
-        if (direction === "left") {
-            container.scrollLeft = container.scrollWidth / 2;
-        }
 
         container.addEventListener("mouseenter", () => {
             container.isPaused = true;
@@ -30,14 +17,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (direction === "right") {
                     container.scrollLeft += scrollSpeed;
 
-                    if (container.scrollLeft >= container.scrollWidth / 2) {
-                        container.scrollLeft = 0;
+                    // STOP at end
+                    if (
+                        container.scrollLeft >=
+                        container.scrollWidth - container.clientWidth
+                    ) {
+                        return; // stop animation
                     }
                 } else {
                     container.scrollLeft -= scrollSpeed;
 
+                    // STOP at start
                     if (container.scrollLeft <= 0) {
-                        container.scrollLeft = container.scrollWidth / 2;
+                        return;
                     }
                 }
             }
@@ -45,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             requestAnimationFrame(scrollLoop);
         }
 
-        setTimeout(scrollLoop, 500);
+        requestAnimationFrame(scrollLoop);
     }
 
     document.querySelectorAll(".scroll-right").forEach((el) => {
