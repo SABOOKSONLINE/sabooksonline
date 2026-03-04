@@ -29,6 +29,17 @@ function renderBookCards($books, $viewOnly = false, $section = "")
                                     target="_blank">
                                     <?= htmlspecialchars($book["PUBLISHER"]) ?>
                                 </a>
+
+                                <span class="badge d-block mt-2 mb-1
+                                    <?php
+                                    if (strtolower($book["STATUS"]) === 'active') echo 'bg-success text-white';
+                                    elseif (strtolower($book["STATUS"]) === 'inactive') echo 'bg-secondary text-white';
+                                    elseif (strtolower($book["STATUS"]) === 'pending') echo 'bg-warning text-dark';
+                                    elseif (strtolower($book["STATUS"]) === 'deleted') echo 'bg-danger text-white';
+                                    else echo 'bg-light text-dark';
+                                    ?>">
+                                    <?= htmlspecialchars(ucfirst($book["STATUS"])) ?>
+                                </span>
                             </p>
                         </div>
                     </div>
