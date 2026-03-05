@@ -29,3 +29,5 @@ fix-composer.php
 # Temporary import scripts (keep import_chase_books.php as it's the main import)
 # But exclude test versions
 *_test_import.php
+
+.cursor/
