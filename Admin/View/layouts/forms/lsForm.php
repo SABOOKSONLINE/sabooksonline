@@ -50,7 +50,7 @@ function renderAddBookListingSectionForm(array $sections = []): void
                 </div>
             </form>
 
-            <?php if (!empty($section)): ?>
+            <?php if (!empty($sections)): ?>
                 <div id="sectionTags" class="d-flex flex-wrap gap-2 mt-3">
 
                     <?php foreach ($sections as $section): ?>
