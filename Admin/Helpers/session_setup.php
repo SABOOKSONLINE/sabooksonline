@@ -17,7 +17,7 @@ $userName = extractName($_SESSION['ADMIN_EMAIL']);
 $oldDefaultProfile = "https://www.vecteezy.com/free-vector/default-profile-picture";
 $adminProfileImage = $_SESSION['ADMIN_PROFILE_IMAGE'];
 
-$emails = ["tebogo@sabooksonline.co.za", "kganyamilton@gmail.com", "khumalopearl003@gmail.com"];
+$emails = ["tebogo@sabooksonline.co.za", "kganyamilton@gmail.com", "khumalopearl003@gmail.com", "sabooksonline@gmail.com"];
 checkEmailAllowed($_SESSION['ADMIN_EMAIL'], $emails);
 
 if (isset($userKey)) {

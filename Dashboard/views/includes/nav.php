@@ -87,7 +87,16 @@ require_once __DIR__ . "/../../../Application/views/util/urlRedirect.php";
                                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <?php if ($_SESSION['ADMIN_EMAIL'] == "khumalopearl003@gmail.com" || $_SESSION['ADMIN_EMAIL'] == "tebogo@sabooksonline.co.za" || $_SESSION['ADMIN_EMAIL'] == "kganyamilton@gmail.com"): ?>
+                            <?php
+                            $adminEmails = [
+                                "khumalopearl003@gmail.com",
+                                "tebogo@sabooksonline.co.za",
+                                "kganyamilton@gmail.com",
+                                "sabooksonline@gmail.com"
+                            ];
+
+                            if (isset($_SESSION['ADMIN_EMAIL']) && in_array($_SESSION['ADMIN_EMAIL'], $adminEmails)):
+                            ?>
                                 <li><a class="dropdown-item" href="/admin">Admin Dashboard</a></li>
                             <?php endif ?>
                             <li><a class="dropdown-item" href="/dashboards/profile">Profile</a></li>
