@@ -7,6 +7,7 @@ include __DIR__ . "/../layouts/tables/bTable.php";
 include __DIR__ . "/../layouts/banners/stickyBanner.php";
 include __DIR__ . "/../layouts/banners/pageBanner.php";
 include __DIR__ . "/../layouts/banners/popBanner.php";
+include __DIR__ . "/../layouts/forms/lsForm.php";
 
 require_once __DIR__ . "/../../Helpers/sessionAlerts.php";
 
@@ -24,6 +25,7 @@ renderAlerts();
 $listings = $data["listings"];
 $allBooks = $data["books"];
 $banners = $data["banners"];
+$sections = $data["sections"];
 
 $academicListings = $data["academic_listings"] ?? [];
 $academicAllBooks = $data["academic_books"] ?? [];
@@ -58,8 +60,13 @@ foreach ($listings as $book) {
     $booksBySection[$section][] = $book;
 }
 
-$headers = ["ID", "Cover", "Title", "Public Key", "Publisher Name"];
+renderSectionHeader(
+    "Book Listing Section",
+    "",
+);
+echo renderAddBookListingSectionForm($sections);
 
+$headers = ["ID", "Cover", "Title", "Public Key", "Publisher Name"];
 foreach ($booksBySection as $sectionName => $books) {
     renderSectionHeader(
         $sectionName,

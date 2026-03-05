@@ -15,8 +15,12 @@ class PagesController extends Controller
     public function __construct(mysqli $conn)
     {
         parent::__construct($conn);
+
         $this->bookModel = new BookModel($conn);
         $this->bannerModel = new BannerModel($conn);
+
+        // Ensure section table exists
+        $this->bookModel->createBookListingSections();
     }
 
     public function pages(): void
@@ -24,7 +28,7 @@ class PagesController extends Controller
         $allBooks = $this->bookModel->getAllBooks();
         $listings = $this->bookModel->getBooksListings();
 
-        // Academic-specific data — ensure listings table exists, create if missing
+        // Academic-specific data
         if (!$this->bookModel->academicListingsTableExists()) {
             $this->bookModel->createAcademicListingsTable();
         }
@@ -32,11 +36,15 @@ class PagesController extends Controller
         $academicListings = $this->bookModel->getAcademicListingsWithBooks();
         $academicAllBooks = $this->bookModel->getAllAcademicBooks();
 
+        // Book listing sections
+        $sections = $this->bookModel->getBookListingSections();
+
         $stickyBanners = $this->bannerModel->getStickyBanners();
         $pageBanners = $this->bannerModel->getPageBanner();
         $popupBanners = $this->bannerModel->getPopupBanners();
 
         $this->render("homePage", [
+            "sections" => $sections,
             "listings" => $listings,
             "books" => $allBooks,
             "academic_listings" => $academicListings,
@@ -49,6 +57,17 @@ class PagesController extends Controller
         ]);
     }
 
+    public function books(): void
+    {
+        $books = $this->bookModel->getBooksTable();
+
+        $this->render("books", [
+            "books" => $books
+        ]);
+    }
+
+    /** ---------------- LISTINGS ---------------- */
+
     public function addListing(string $publicKey, string $category): int
     {
         return $this->bookModel->addListing($publicKey, $category);
@@ -58,6 +77,8 @@ class PagesController extends Controller
     {
         return $this->bookModel->deleteListing($publicKey);
     }
+
+    /** ---------------- BANNERS ---------------- */
 
     public function addStickyBanner($data): int
     {
@@ -84,19 +105,12 @@ class PagesController extends Controller
         return $this->bannerModel->addPopupBanner($data);
     }
 
-    public function books(): void
-    {
-        $books = $this->bookModel->getBooksTable();
-
-        $this->render("books", [
-            "books" => $books
-        ]);
-    }
-
     public function deletePopupBanner($id): int
     {
         return $this->bannerModel->removePopupBanner($id);
     }
+
+    /** ---------------- ACADEMIC LISTINGS ---------------- */
 
     public function addAcademicListing(int $bookId, string $publicKey): int
     {
@@ -121,5 +135,32 @@ class PagesController extends Controller
     public function deleteAcademicListing(int $id): int
     {
         return $this->bookModel->deleteAcademicListing($id);
+    }
+
+    /** ---------------- BOOK LISTING SECTIONS ---------------- */
+
+    public function getBookListingSections(): array
+    {
+        return $this->bookModel->getBookListingSections();
+    }
+
+    public function addBookListingSection(string $sectionName, int $orderIndex, string $cardType = "standard"): int
+    {
+        return $this->bookModel->addBookListingSection($sectionName, $orderIndex, $cardType);
+    }
+
+    public function updateBookListingSection(int $id, string $sectionName, int $orderIndex, string $cardType): int
+    {
+        return $this->bookModel->updateBookListingSection($id, $sectionName, $orderIndex, $cardType);
+    }
+
+    public function deleteBookListingSection(int $id): int
+    {
+        return $this->bookModel->deleteBookListingSection($id);
+    }
+
+    public function updateBookListingSectionOrder($id, $orderIndex)
+    {
+        return $this->bookModel->updateSectionOrder($id, $orderIndex);
     }
 }

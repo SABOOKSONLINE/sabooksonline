@@ -250,4 +250,63 @@ class BookModel extends Model
     {
         return $this->delete("DELETE FROM academic_listings WHERE id = ?", "i", [$id]);
     }
+
+    public function createBookListingSections(): int
+    {
+        return $this->createTable('book_listing_sections', [
+            'id' => 'INT AUTO_INCREMENT PRIMARY KEY',
+            'section_name' => 'VARCHAR(255) NOT NULL UNIQUE',
+            'order_index' => 'INT NOT NULL',
+            'card_type' => 'VARCHAR(50) NOT NULL DEFAULT "standard"',
+            'created_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            'updated_at' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+        ]);
+    }
+
+    public function addBookListingSection(string $sectionName, int $orderIndex, string $cardType = "standard"): int
+    {
+        $this->createBookListingSections();
+
+        return $this->insert(
+            "INSERT INTO book_listing_sections (section_name, order_index, card_type) 
+             VALUES (?, ?, ?)",
+            "sis",
+            [$sectionName, $orderIndex, $cardType]
+        );
+    }
+
+    public function getBookListingSections(): array
+    {
+        return $this->fetchAll(
+            "SELECT * FROM book_listing_sections 
+             ORDER BY order_index ASC"
+        );
+    }
+
+    public function updateBookListingSection(int $id, string $sectionName, int $orderIndex, string $cardType): int
+    {
+        return $this->update(
+            "UPDATE book_listing_sections 
+                SET section_name = ?, order_index = ?, card_type = ? 
+             WHERE id = ?",
+            "sisi",
+            [$sectionName, $orderIndex, $cardType, $id]
+        );
+    }
+
+    public function deleteBookListingSection(int $id): int
+    {
+        return $this->delete("DELETE FROM book_listing_sections WHERE id = ?", "i", [$id]);
+    }
+
+    public function updateSectionOrder(int $id, int $orderIndex): int
+    {
+        return $this->update(
+            "UPDATE book_listing_sections 
+                SET order_index = ? 
+             WHERE id = ?",
+            "ii",
+            [$orderIndex, $id]
+        );
+    }
 }

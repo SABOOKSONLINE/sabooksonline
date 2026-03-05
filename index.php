@@ -80,7 +80,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/api', function () {
         require "Application/api.php";
     });
-    
+
     $r->addRoute('GET', '/api/onix', function () {
         require "Application/onix.php";
     });
@@ -651,7 +651,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         // Decode the URL-encoded filename
         $decodedFilename = rawurldecode($filename);
         $safeFilename = basename($decodedFilename); // prevent directory traversal
-        
+
         // Map allowed folders
         $allowedFolders = [
             'book-pdfs' => 'book-pdfs',
@@ -659,13 +659,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
             'magazine/pdfs' => 'magazine/pdfs',
             'newspaper/pdfs' => 'newspaper/pdfs'
         ];
-        
+
         if (!isset($allowedFolders[$folder])) {
             http_response_code(400);
             echo "Invalid folder.";
             exit;
         }
-        
+
         $safeFolder = $allowedFolders[$folder];
         $path = __DIR__ . '/cms-data/' . $safeFolder . '/' . $safeFilename;
 
@@ -680,13 +680,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         header('Access-Control-Allow-Methods: GET, OPTIONS');
         header('Access-Control-Allow-Headers: Range, Content-Type');
         header('Access-Control-Expose-Headers: Content-Length, Content-Range');
-        
+
         // Set PDF headers
         header('Content-Type: application/pdf');
         header('Content-Disposition: inline; filename="' . $safeFilename . '"');
         header('Content-Length: ' . filesize($path));
         header('Accept-Ranges: bytes');
-        
+
         // Handle range requests for PDF.js
         if (isset($_SERVER['HTTP_RANGE'])) {
             $size = filesize($path);
@@ -694,11 +694,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
             $range = str_replace('bytes=', '', $range);
             list($start, $end) = explode('-', $range);
             if ($end == '') $end = $size - 1;
-            
+
             header('HTTP/1.1 206 Partial Content');
             header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
             header('Content-Length: ' . ($end - $start + 1));
-            
+
             $fp = fopen($path, 'rb');
             fseek($fp, $start);
             echo fread($fp, $end - $start + 1);
@@ -774,6 +774,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
 
     $r->addRoute('GET', '/admin/purchases', function () {
         require  "Admin/index.php";
+    });
+
+    $r->addRoute('POST', '/admin/books/book-listing-sections/process', function () {
+        require  "Admin/Helpers/process_book_listing_sections.php";
     });
 
     // Mobile Management Routes
@@ -943,34 +947,34 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
         $controller = new OrderController($conn);
         $controller->retryPayment((int)$id);
     });
-    
+
     // Manual payment status update for localhost testing
     $r->addRoute('POST', '/payment/manual-update-status', function () {
         require_once "Application/Config/connection.php";
         header('Content-Type: application/json');
-        
+
         // Only allow on localhost
         $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || 
-                   strpos($httpHost, 'localhost') !== false ||
-                   strpos($httpHost, '127.0.0.1') !== false;
-        
+        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) ||
+            strpos($httpHost, 'localhost') !== false ||
+            strpos($httpHost, '127.0.0.1') !== false;
+
         if (!$isLocal) {
             echo json_encode(['success' => false, 'message' => 'Only available on localhost']);
             exit;
         }
-        
+
         $data = json_decode(file_get_contents('php://input'), true);
         $orderId = (int)($data['order_id'] ?? 0);
         $status = $data['status'] ?? 'paid';
-        
+
         if ($orderId > 0) {
             $stmt = $conn->prepare("UPDATE orders SET payment_status = ?, updated_at = NOW() WHERE id = ?");
             $stmt->bind_param("si", $status, $orderId);
             $result = $stmt->execute();
             $affected = $stmt->affected_rows;
             $stmt->close();
-            
+
             echo json_encode([
                 'success' => $result && $affected > 0,
                 'message' => $result && $affected > 0 ? 'Status updated' : 'Update failed',
