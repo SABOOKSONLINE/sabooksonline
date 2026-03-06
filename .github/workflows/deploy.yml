@@ -59,8 +59,8 @@ jobs:
                     "$COURIER_GUY_API_KEY" "$YOCO_SECRET_KEY" >> .env
                   printf 'PAYFAST_MERCHANT_ID=%s\nPAYFAST_MERCHANT_KEY=%s\nPAYFAST_PASSPHRASE=%s\nPAYFAST_SANDBOX_MODE=%s\n' \
                     "$PAYFAST_MERCHANT_ID" "$PAYFAST_MERCHANT_KEY" "$PAYFAST_PASSPHRASE" "$PAYFAST_SANDBOX_MODE" >> .env
-                  printf 'FLUTTERWAVE_WEBHOOK_HASH=%s\nMOBILE_API_MASTER_KEY=%s\n' \
-                    "$FLUTTERWAVE_WEBHOOK_HASH" "$MOBILE_API_MASTER_KEY" >> .env
+                  printf 'FLUTTERWAVE_WEBHOOK_HASH=%s\nMOBILE_API_MASTER_KEY=%s\nRECAPTCHA_SITE_KEY=%s\nRECAPTCHA_SECRET_KEY=%s\n' \
+                    "$FLUTTERWAVE_WEBHOOK_HASH" "$MOBILE_API_MASTER_KEY" "$RECAPTCHA_SITE_KEY" "$RECAPTCHA_SECRET_KEY" >> .env
 
             - name: Deploy via FTP (only changed files, safe)
               env:
