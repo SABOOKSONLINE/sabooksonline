@@ -48,6 +48,8 @@ jobs:
                   PAYFAST_SANDBOX_MODE: ${{ secrets.PAYFAST_SANDBOX_MODE }}
                   FLUTTERWAVE_WEBHOOK_HASH: ${{ secrets.FLUTTERWAVE_WEBHOOK_HASH }}
                   MOBILE_API_MASTER_KEY: ${{ secrets.MOBILE_API_MASTER_KEY }}
+                  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+                  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
               run: |
                   printf 'DB_HOST=%s\nDB_USERNAME=%s\nDB_PASSWORD=%s\nDB_NAME=%s\n' \
                     "$DB_HOST" "$DB_USERNAME" "$DB_PASSWORD" "$DB_NAME" > .env
