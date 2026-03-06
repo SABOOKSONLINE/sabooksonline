@@ -41,7 +41,7 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
                             <?php unset($_SESSION['alert']); ?>
                         <?php endif; ?>
 
-                        <form method="POST" action="/auth/signup-handler">
+                        <form method="POST" action="">
 
                             <div class="mb-3">
                                 <label for="reg_name" class="form-label">Name</label>
