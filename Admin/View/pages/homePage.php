@@ -67,6 +67,17 @@ renderSectionHeader(
 echo renderAddBookListingSectionForm($sections);
 
 $headers = ["ID", "Cover", "Title", "Public Key", "Publisher Name"];
+
+foreach ($sections as $section) {
+
+    $sectionName = $section['section_name'];
+    $sectionBooks = $booksBySection[$sectionName] ?? [];
+
+    renderSectionHeader($sectionName, "");
+    renderBookCards($sectionBooks, false, $sectionName);
+    echo renderBookTable($headers, $allBooks, $sectionName);
+}
+
 foreach ($booksBySection as $sectionName => $books) {
     renderSectionHeader(
         $sectionName,
@@ -81,10 +92,6 @@ renderSectionHeader(
     "Academic Collection",
     "Manage academic books in the featured collection.",
 );
-
-// echo "<pre>";
-// print_r($academicListings);
-// echo "</pre>";
 
 echo renderAcademicCollectionCards($academicListings, $academicAllBooks);
 echo renderAcademicCollectionModal($academicAllBooks);
