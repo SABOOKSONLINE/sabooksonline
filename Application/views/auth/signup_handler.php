@@ -2,9 +2,9 @@
 session_start();
 require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/mailer.php";
+require_once __DIR__ . "/../../../load_env.php";
 
-// 1️⃣ Verify Google reCAPTCHA first
-$secretKey = getenv('RECAPTCHA_SECRET_KEY'); // from .env
+$secretKey = $_ENV['RECAPTCHA_SECRET_KEY'] ?? getenv('RECAPTCHA_SECRET_KEY');
 $captcha = $_POST['g-recaptcha-response'] ?? '';
 
 if (!$captcha) {
@@ -13,19 +13,28 @@ if (!$captcha) {
     exit;
 }
 
-// Verify captcha with Google
-$response = file_get_contents(
-    "https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$captcha}&remoteip=" . $_SERVER['REMOTE_ADDR']
-);
+$url = "https://www.google.com/recaptcha/api/siteverify";
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+    'secret'   => $secretKey,
+    'response' => $captcha,
+    'remoteip' => $_SERVER['REMOTE_ADDR']
+]));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+$response = curl_exec($ch);
+curl_close($ch);
 
 $responseData = json_decode($response);
-if (!$responseData->success) {
-    $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Captcha verification failed.'];
+
+if (!$responseData || !$responseData->success) {
+    $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Captcha verification failed. Please try again.'];
     header("Location: /signup");
     exit;
 }
 
-// 2️⃣ Continue with existing signup logic
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["reg_name"] ?? '');
     $phone = trim($_POST["reg_phone"] ?? '');
@@ -36,7 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $token = bin2hex(random_bytes(16));
 
-    // Validate fields
     if (empty($name) || empty($phone) || empty($email) || empty($confirm_email) || empty($password) || empty($confirm_password)) {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'All fields are required.'];
         header("Location: /signup");
@@ -63,7 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if user already exists
     $stmt = mysqli_prepare($conn, "SELECT ADMIN_ID FROM users WHERE ADMIN_EMAIL = ?");
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
@@ -77,7 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     mysqli_stmt_close($stmt);
 
-    // Insert new user
     $userKey = uniqid('', true);
     $subscription = 'Free';
     $profile = "https://www.vecteezy.com/free-vector/default-profile-picture";
@@ -105,6 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $status,
         $token
     );
+
     if (!mysqli_stmt_execute($stmt)) {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Registration failed. Please try again.'];
         header("Location: /signup");
@@ -112,7 +119,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     mysqli_stmt_close($stmt);
 
-    // Send welcome notification (optional)
     try {
         require_once __DIR__ . "/../../helpers/NotificationHelper.php";
         NotificationHelper::sendWelcomeNotification($email, $name, $conn);
