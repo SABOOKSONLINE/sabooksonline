@@ -3,6 +3,30 @@ session_start();
 require_once __DIR__ . "/../../Config/connection.php";
 require_once __DIR__ . "/mailer.php";
 
+// 1️⃣ Verify Google reCAPTCHA first
+$secretKey = getenv('RECAPTCHA_SECRET_KEY'); // from .env
+$captcha = $_POST['g-recaptcha-response'] ?? '';
+
+if (!$captcha) {
+    $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Please verify that you are not a robot.'];
+    header("Location: /signup");
+    exit;
+}
+
+// Verify captcha with Google
+$response = file_get_contents(
+    "https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$captcha}&remoteip=" . $_SERVER['REMOTE_ADDR']
+);
+
+$responseData = json_decode($response);
+
+if (!$responseData->success) {
+    $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Captcha verification failed.'];
+    header("Location: /signup");
+    exit;
+}
+
+// 2️⃣ Continue with your existing signup logic
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["reg_name"] ?? '');
     $phone = trim($_POST["reg_phone"] ?? '');
@@ -104,19 +128,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     mysqli_stmt_close($stmt);
-    
-    // Send welcome notification if user has device token registered
+
+    // Send welcome notification
     try {
         require_once __DIR__ . "/../../helpers/NotificationHelper.php";
         NotificationHelper::sendWelcomeNotification($email, $name, $conn);
     } catch (Exception $e) {
         error_log("Failed to send welcome notification: " . $e->getMessage());
     }
-    
+
     mysqli_close($conn);
 
     $verifyLink = "https://" . $_SERVER['HTTP_HOST'] . "/verify/{$token}";
-    sendVerificationEmail($email,$name, $verifyLink);
+    sendVerificationEmail($email, $name, $verifyLink);
     header("Location: /registration_success");
     exit;
 } else {
