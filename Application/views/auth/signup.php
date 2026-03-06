@@ -3,8 +3,7 @@ require_once __DIR__ . "/../includes/header.php";
 require_once __DIR__ . "/../includes/google_authUrl.php";
 require_once __DIR__ . "/../../Config/connection.php";
 
-$recaptchaConfig = include __DIR__ . "/recaptcha.php";
-$siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
+$siteKey = getenv('RECAPTCHA_SITE_KEY'); // load from .env
 ?>
 
 <!-- Google reCAPTCHA Script -->
@@ -17,22 +16,19 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
 </script>
 
 <body class="d-flex flex-column min-vh-100 login-page">
-
     <section class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-
                     <div class="card p-4 shadow">
 
                         <h3 class="text-center mb-3">
                             <a href="/home">
-                                <img src="/public/images/sabo_logo.png" class="mb-2" alt="sabooksonline logo" width="150">
+                                <img src="/public/images/sabo_logo.png" alt="sabooksonline logo" width="150">
                             </a>
                         </h3>
 
                         <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
-
                         <?php if (!empty($_SESSION['alert'])): ?>
                             <div class="alert alert-<?= $_SESSION['alert']['type'] ?> alert-dismissible fade show" role="alert">
                                 <?= htmlspecialchars($_SESSION['alert']['message']) ?>
@@ -41,7 +37,7 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
                             <?php unset($_SESSION['alert']); ?>
                         <?php endif; ?>
 
-                        <form method="POST" action="">
+                        <form method="POST" action="/auth/signup-handler">
 
                             <div class="mb-3">
                                 <label for="reg_name" class="form-label">Name</label>
@@ -66,7 +62,6 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
                             <div class="mb-3 position-relative">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password" id="password" class="form-control" required>
-
                                 <button type="button" class="btn" id="togglePassword" tabindex="-1">
                                     <i class="fa fa-eye" id="toggleIcon"></i>
                                 </button>
@@ -82,9 +77,7 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="terms_accepted" id="terms_accepted" required>
                                     <label class="form-check-label" for="terms_accepted">
-                                        I agree to the
-                                        <a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
-                                        and
+                                        I agree to the <a href="/terms-and-conditions" target="_blank">Terms and Conditions</a> and
                                         <a href="/privacy-policy" target="_blank">Privacy Policy</a>
                                     </label>
                                 </div>
@@ -92,40 +85,33 @@ $siteKey = $recaptchaConfig['RECAPTCHA_SITE_KEY'];
 
                             <!-- Google reCAPTCHA -->
                             <div class="mb-3 d-flex justify-content-center">
-                                <div class="g-recaptcha" data-sitekey="<?= $RECAPTCHA_SITE_KEY ?>" data-callback="enableSignupBtn"></div>
+                                <div class="g-recaptcha" data-sitekey="<?= $siteKey ?>" data-callback="enableSignupBtn"></div>
                             </div>
 
-                            <button type="submit" class="btn btn-red w-100" id="signupBtn" disabled>
-                                Sign Up
-                            </button>
-
+                            <button type="submit" class="btn btn-red w-100" id="signupBtn" disabled>Sign Up</button>
                         </form>
 
-                        <div class="text-center mb-3 mt-3">
-                            Or
-                        </div>
+                        <div class="text-center mb-3 mt-3">Or</div>
 
                         <!-- Google Signup Button -->
                         <div class="text-center mb-4">
-                            <a href="<?php echo $authUrl; ?>" class="btn btn-outline-red">
+                            <a href="<?= $authUrl ?>" class="btn btn-outline-red">
                                 Sign Up with <i class="fab fa-google"></i> Google
                             </a>
                         </div>
 
                         <div class="text-center mb-2">
-                            <small>Already have an account?
-                                <a href="/login">Login</a>
-                            </small>
+                            <small>Already have an account? <a href="/login">Login</a></small>
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </section>
 
-    <?php require_once __DIR__ . "/../includes/footer.php" ?>
-    <?php require_once __DIR__ . "/../includes/scripts.php" ?>
-
+    <?php
+    require_once __DIR__ . "/../includes/footer.php";
+    require_once __DIR__ . "/../includes/scripts.php";
+    ?>
 </body>

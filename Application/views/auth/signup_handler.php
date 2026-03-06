@@ -19,14 +19,13 @@ $response = file_get_contents(
 );
 
 $responseData = json_decode($response);
-
 if (!$responseData->success) {
     $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Captcha verification failed.'];
     header("Location: /signup");
     exit;
 }
 
-// 2️⃣ Continue with your existing signup logic
+// 2️⃣ Continue with existing signup logic
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["reg_name"] ?? '');
     $phone = trim($_POST["reg_phone"] ?? '');
@@ -38,10 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $token = bin2hex(random_bytes(16));
 
     // Validate fields
-    if (
-        empty($name) || empty($phone) || empty($email) || empty($confirm_email)
-        || empty($password) || empty($confirm_password)
-    ) {
+    if (empty($name) || empty($phone) || empty($email) || empty($confirm_email) || empty($password) || empty($confirm_password)) {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'All fields are required.'];
         header("Location: /signup");
         exit;
@@ -69,11 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Check if user already exists
     $stmt = mysqli_prepare($conn, "SELECT ADMIN_ID FROM users WHERE ADMIN_EMAIL = ?");
-    if (!$stmt) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Database error: ' . mysqli_error($conn)];
-        header("Location: /signup");
-        exit;
-    }
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
@@ -89,7 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Insert new user
     $userKey = uniqid('', true);
     $subscription = 'Free';
-    $verificationLink = $userKey;
     $profile = "https://www.vecteezy.com/free-vector/default-profile-picture";
     $status = "Unverified";
 
@@ -99,12 +89,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);
-    if (!$stmt) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Database insert error: ' . mysqli_error($conn)];
-        header("Location: /signup");
-        exit;
-    }
-
     mysqli_stmt_bind_param(
         $stmt,
         "ssssssssssss",
@@ -114,22 +98,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hashedPassword,
         $userKey,
         $subscription,
-        $verificationLink,
+        $userKey,
         $profile,
         $status,
         $userKey,
         $status,
         $token
     );
-
     if (!mysqli_stmt_execute($stmt)) {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Registration failed. Please try again.'];
+        header("Location: /signup");
         exit;
     }
-
     mysqli_stmt_close($stmt);
 
-    // Send welcome notification
+    // Send welcome notification (optional)
     try {
         require_once __DIR__ . "/../../helpers/NotificationHelper.php";
         NotificationHelper::sendWelcomeNotification($email, $name, $conn);
