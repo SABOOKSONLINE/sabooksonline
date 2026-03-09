@@ -243,8 +243,9 @@
 }
 
 @media (max-width: 560px) {
+    /* ── Sliders ── */
     .bk-slider.bk-slider {
-        gap: 4px;
+        gap: var(--bk-space-sm);
         padding: var(--bk-space-sm);
     }
 
@@ -253,6 +254,24 @@
         padding: var(--bk-space-sm);
     }
 
+    /* ── Slider buttons ── */
+    .book-card-btn {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 12px !important;
+        opacity: 0.6 !important;
+        right: 4px !important;
+    }
+
+    .btn-left {
+        left: 4px !important;
+    }
+
+    .btn-right {
+        right: 4px !important;
+    }
+
+    /* ── Small card ── */
     .bk-card {
         min-width: 150px;
         max-width: 150px;
@@ -279,6 +298,7 @@
         font-size: var(--bk-text-xs);
     }
 
+    /* ── Large card ── */
     .bk-card-lg {
         min-width: 150px;
         max-width: 150px;
@@ -326,18 +346,8 @@
     .bk-card-lg .bk-tags {
         display: none;
     }
-
-    .book-card-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 16px;
-        right: 10px;
-    }
-
-    .btn-left {
-        left: 10px;
-    }
 }
+
 /* ------------------------------------------------------------------------------------------------------------------------------------------- */
 
 :root {

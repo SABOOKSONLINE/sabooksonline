@@ -134,3 +134,37 @@
         border-color: var(--gray);
     }
 }
+
+@media (max-width: 560px) {
+    .section {
+        padding: 20px 0;
+    }
+
+    .hero::after {
+        background: linear-gradient(
+            180deg,
+            var(--white),
+            var(--white),
+            transparent
+        );
+        opacity: 0.97;
+    }
+
+    .nl-section {
+        padding: 160px 8px 40px;
+    }
+
+    .nl-heading {
+        font-size: var(--bk-text-xl);
+        margin-bottom: var(--bk-space-sm);
+    }
+
+    .nl-subheading {
+        font-size: var(--bk-text-sm);
+        margin-bottom: var(--bk-space-md);
+    }
+
+    .nl-fine {
+        font-size: var(--bk-text-xs);
+    }
+}
