@@ -307,3 +307,9 @@
         filter: blur(15px);
     }
 }
+
+@media (max-width: 560px) {
+    #sticky-banner {
+        display: none;
+    }
+}
