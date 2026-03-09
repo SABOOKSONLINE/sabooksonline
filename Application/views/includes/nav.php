@@ -251,8 +251,6 @@ $navItems = [
         <a href="/library" class="mobile-quick-link">All Books</a>
         <a href="/library/academic" class="mobile-quick-link">Academic</a>
         <a href="/media" class="mobile-quick-link">Media</a>
-        <a href="/events" class="mobile-quick-link">Events</a>
-        <a href="/membership" class="mobile-quick-link">Membership</a>
         <a href="/sell" class="mobile-quick-link">Sell</a>
         <a href="/about" class="mobile-quick-link">Our Story</a>
         <a href="/services" class="mobile-quick-link">Services</a>
