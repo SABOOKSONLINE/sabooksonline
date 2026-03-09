@@ -244,33 +244,181 @@ body {
 /* ===============================
    HEADER / STYLING
 ================================= */
-
 .navbar {
-    z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: var(--bk-z-index-sticky);
     width: 100%;
-    transition: all 0.3s ease;
+    transition: var(--bk-transition-medium);
 }
 
+/* ── Nav links ── */
 .nav-link {
-    font-size: 14px;
-    color: black;
+    font-size: var(--size-base) !important;
+    color: var(--black) !important;
     text-decoration: none;
+    transition: var(--bk-transition-fast);
+    padding: var(--size-xs) var(--size-sm) !important;
+    border-radius: var(--bk-radius-xl);
+    font-weight: var(--font-weight-normal);
 }
 
 .nav-link:hover,
-.nav-link:hover {
-    color: var(--red);
+.nav-link:focus {
+    color: var(--black) !important;
+    background: var(--off-white);
+    text-decoration: none;
 }
 
-.fixed-top {
-    transition: all 0.3s ease;
-    z-index: 11;
+.navbar-nav {
+    gap: var(--size-xs);
 }
 
 .navbar-100 {
     margin-top: 100px;
 }
 
+/* ── Nav icons ── */
+.nav-icon {
+    font-size: var(--size-base);
+    color: var(--black) !important;
+    transition: var(--bk-transition-fast);
+    padding: var(--size-xs);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+}
+
+.nav-icon:hover {
+    color: var(--red) !important;
+}
+
+.nav-icon i {
+    font-size: var(--size-base);
+    line-height: 1;
+}
+
+/* ── Search ── */
+.nav-search {
+    min-width: 280px;
+}
+
+/* ── Profile button ── */
+.nav-profile-btn {
+    border: none;
+    background: none;
+    border-radius: 50%;
+}
+
+.nav-profile-btn::after {
+    display: none;
+}
+
+.nav-profile-img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 2px solid var(--bk-color-border);
+    box-shadow: var(--bk-shadow-sm);
+}
+
+.nav-profile-img-lg {
+    width: 44px;
+    height: 44px;
+}
+
+/* ── Mobile actions ── */
+.nav-mobile-actions {
+    gap: var(--size-md);
+}
+
+/* ── Notification menu ── */
+.nav-notification-menu {
+    width: 300px;
+}
+
+/* ── Notification items ── */
+.notification-item {
+    padding: var(--size-md) var(--size-base);
+    border-bottom: var(--bk-border-width) solid var(--bk-color-border);
+    cursor: pointer;
+    transition: var(--bk-transition-fast);
+}
+
+.notification-item:hover {
+    background: var(--bk-color-bg-secondary);
+}
+
+.notification-item.unread {
+    background: #e3f2fd;
+    border-left: 3px solid var(--blue);
+}
+
+.notification-item .notification-title {
+    font-weight: var(--font-weight-bold);
+    font-size: var(--size-sm);
+    margin-bottom: var(--size-xs);
+}
+
+.notification-item .notification-message {
+    color: var(--gray);
+    font-size: var(--size-sm);
+    margin-bottom: var(--size-xs);
+}
+
+.notification-item .notification-time {
+    color: var(--bk-color-text-muted);
+    font-size: var(--size-xs);
+}
+
+/* ── Mobile quick nav ── */
+.mobile-quick-nav {
+    position: sticky;
+    top: 62px;
+    z-index: calc(var(--bk-z-index-sticky) - 1);
+    background: var(--white);
+    border-bottom: var(--bk-border-width) solid var(--bk-color-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-quick-nav-inner {
+    display: flex;
+    gap: var(--size-base);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: var(--size-sm) var(--size-base);
+    align-items: center;
+}
+
+.mobile-quick-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-quick-link {
+    white-space: nowrap;
+    font-size: var(--size-sm);
+    font-weight: var(--font-weight-normal);
+    color: var(--black);
+    text-decoration: none;
+    padding: var(--size-xs) var(--size-md);
+    border-radius: var(--bk-radius-xl);
+    border: 1px solid var(--bk-color-border);
+    background: var(--white);
+    transition: var(--bk-transition-fast);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.mobile-quick-link:hover,
+.mobile-quick-link.active {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+}
 /* ===============================
    JUMBOTRON / STYLING
 ================================= */
