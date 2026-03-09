@@ -530,20 +530,19 @@ body {
     }
 
     .jumbo-details .display-4 {
-        font-size: var(--size-xl) !important;
-        margin-bottom: var(--size-xs) !important;
+        font-size: var(--size-2xl) !important;
+        margin-bottom: var(--size-md) !important;
         line-height: 1.2 !important;
     }
 
     .jumbo-details .lead {
-        font-size: var(--size-sm) !important;
+        font-size: var(--size-md) !important;
         opacity: 0.85 !important;
         margin-bottom: var(--size-xs) !important;
     }
 
     .jumbo-details .btn {
-        font-size: var(--size-sm) !important;
-        padding: var(--size-xs) var(--size-sm) !important;
+        margin-top: var(--size-md);
     }
 
     .jumbotron .container {
