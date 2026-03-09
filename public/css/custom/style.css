@@ -404,13 +404,63 @@ body {
 }
 
 /* ===============================
-   BANNER / STYLING
+   BANNER / CAROUSEL STYLING
 ================================= */
+.banner-inner {
+    border-radius: var(--bk-radius-lg);
+    overflow: hidden;
+}
 
-.banner {
-    margin-top: -25px;
-    margin-bottom: 50px;
-    z-index: 10;
+.banner-img {
+    object-fit: cover;
+    height: 180px;
+    width: 100%;
+    display: block;
+}
+
+.carousel-item {
+    min-height: 180px;
+    background: var(--off-white);
+}
+
+.carousel-item a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 560px) {
+    .banner-inner {
+        border-radius: var(--bk-radius-sm);
+    }
+
+    .banner-img {
+        height: 80px;
+    }
+
+    .carousel-item {
+        min-height: 80px;
+    }
+
+    #myCarousel {
+        margin: var(--size-sm) 0 !important;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 30px;
+    }
+
+    .carousel-indicators {
+        margin-bottom: var(--size-xs);
+    }
+
+    .carousel-indicators button {
+        width: 6px !important;
+        height: 6px !important;
+        border-radius: 50% !important;
+        border: none !important;
+    }
 }
 
 /* Education Banner */

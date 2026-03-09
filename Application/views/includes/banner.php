@@ -17,20 +17,17 @@ if ($pageBanners):
                     aria-label="Slide <?= $index + 1 ?>"></button>
             <?php endforeach; ?>
         </div>
-
-        <div class="carousel-inner" style="border-radius: 25px;">
+        <div class="carousel-inner banner-inner">
             <?php foreach ($pageBanners as $index => $banner): ?>
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
                     <a href="<?= $banner['link'] ?>">
                         <img src="/cms-data/banners/<?= $banner['banner_image'] ?>"
-                            class="d-block w-100"
-                            alt="Banner Image"
-                            style="border-radius: 25px; object-fit: cover; max-height: 500px;">
+                            class="d-block w-100 banner-img"
+                            alt="Banner Image">
                     </a>
                 </div>
             <?php endforeach; ?>
         </div>
-
         <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
