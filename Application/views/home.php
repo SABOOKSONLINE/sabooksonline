@@ -19,17 +19,13 @@ $academicBookController = new AcademicBookController($conn);
 
     <div class="jumbotron jumbotron-lg bg-dark text-white">
         <div class="container h-100 d-flex flex-column justify-content-end py-5">
-            <div class="jumbo-details text-center text-md-start justify-content-center">
+            <div class="jumbo-details text-center text-md-start">
                 <h1 class="display-4 fw-bold">Welcome to <b>SABooksOnline</b></h1>
-                <div class="row">
-                    <div class="col-12 col-md-7">
-                        <p class="lead mb-3 text-shadow">
-                            The Gateway to South African Literature. Discover stories that reflect the heart of South Africa, from township tales to historic struggles and modern voices.
-                        </p>
-                    </div>
-                </div>
+                <p class="lead mb-3">
+                    The Gateway to South African Literature. Discover stories that reflect the heart of South Africa, from township tales to historic struggles and modern voices.
+                </p>
                 <div class="d-flex flex-wrap gap-2 mt-2 justify-content-center justify-content-md-start">
-                    <a class="btn btn-danger me-2 " href="/library" role="button">
+                    <a class="btn btn-danger" href="/library" role="button">
                         Explore Library <i class="fas fa-arrow-right"></i>
                     </a>
                     <a class="btn btn-light" href="/signup" role="button">

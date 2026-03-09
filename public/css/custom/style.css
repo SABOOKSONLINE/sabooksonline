@@ -275,25 +275,21 @@ body {
    JUMBOTRON / STYLING
 ================================= */
 
-/* Large jumbotron background with fixed height and specific image */
 .jumbotron-lg {
     background: url("../../images/jumbo_img/jumbo_woman_reading.jpeg");
-    height: 650px;
+    height: 500px;
 }
 
-/* Medium jumbotron background variant */
 .jumbotron-md {
     background: url("../../images/jumbo_img/jumbo_women_reading_colorful.jpeg");
     height: 350px;
 }
 
-/* Small jumbotron background variant */
 .jumbotron-sm {
     background: url("../../images/jumbo_img/jumbo_african_elephant_reading.jpeg");
     height: 150px;
 }
 
-/* Shared styles for all jumbotron variants */
 .jumbotron {
     background-attachment: fixed;
     background-size: cover;
@@ -303,7 +299,6 @@ body {
     z-index: 1;
 }
 
-/* Gradient overlay on jumbotron for better text readability */
 .jumbotron::before {
     background: linear-gradient(90deg, var(--black), rgba(0, 0, 0, 0));
     content: "";
@@ -315,21 +310,97 @@ body {
     z-index: 1;
 }
 
-/* Text block inside jumbotron with high contrast and bold appearance */
 .jumbo-details {
     color: var(--white);
-    font-weight: 900;
+    font-weight: var(--font-weight-bold);
     padding-bottom: 0;
     z-index: 2;
+    position: relative;
+    max-width: 750px;
 }
 
 .jumbo-details .display-4 {
-    font-weight: 500;
+    font-weight: var(--font-weight-bold) !important;
+    line-height: 1.1 !important;
+    font-size: var(--size-6xl) !important;
+    margin-bottom: var(--size-sm) !important;
 }
 
-.lead {
-    font-weight: 500;
-    opacity: 0.5;
+.jumbo-details .lead {
+    font-weight: var(--font-weight-normal) !important;
+    opacity: 0.75 !important;
+    line-height: 1.6 !important;
+    font-size: var(--size-lg) !important;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    .jumbotron-lg {
+        height: 450px;
+    }
+
+    .jumbotron-md {
+        height: 280px;
+    }
+
+    .jumbo-details .display-4 {
+        font-size: var(--size-4xl) !important;
+    }
+
+    .jumbo-details .lead {
+        font-size: var(--size-base) !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+    .jumbotron-lg {
+        height: 400px;
+        background-attachment: scroll;
+    }
+
+    .jumbotron-md {
+        height: 220px;
+        background-attachment: scroll;
+    }
+
+    .jumbotron-sm {
+        height: 120px;
+        background-attachment: scroll;
+    }
+
+    .jumbotron::before {
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.85)
+        );
+    }
+
+    .jumbo-details {
+        max-width: 100%;
+    }
+
+    .jumbo-details .display-4 {
+        font-size: var(--size-xl) !important;
+        margin-bottom: var(--size-xs) !important;
+        line-height: 1.2 !important;
+    }
+
+    .jumbo-details .lead {
+        font-size: var(--size-sm) !important;
+        opacity: 0.85 !important;
+        margin-bottom: var(--size-xs) !important;
+    }
+
+    .jumbo-details .btn {
+        font-size: var(--size-sm) !important;
+        padding: var(--size-xs) var(--size-sm) !important;
+    }
+
+    .jumbotron .container {
+        padding-bottom: var(--size-base) !important;
+    }
 }
 
 /* ===============================
@@ -370,7 +441,7 @@ body {
         min-height: 150px;
         margin-bottom: 2rem;
     }
-    
+
     .education-banner-img {
         max-height: 180px;
     }
@@ -430,7 +501,7 @@ footer {
     body:has(.bv-view) footer {
         display: none !important;
     }
-    
+
     /* Hide the decorative div after footer too */
     body:has(.bv-view) footer + div {
         display: none !important;
