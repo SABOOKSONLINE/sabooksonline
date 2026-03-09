@@ -950,3 +950,191 @@ footer {
     transform: none;
     box-shadow: none;
 }
+
+/* ===============================
+   APP SECTION / STYLING
+================================= */
+.app-section {
+    overflow: hidden;
+}
+
+/* ── Download Buttons ── */
+.app-buttons {
+    display: flex;
+    gap: var(--size-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: var(--size-xl);
+}
+
+.app-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--size-md);
+    padding: var(--size-md) var(--size-2xl);
+    border-radius: var(--bk-radius-xl);
+    text-decoration: none;
+    transition: var(--btn-transition);
+    min-width: 200px;
+}
+
+.app-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+    text-decoration: none;
+}
+
+.app-btn-ios {
+    background: var(--black);
+    color: var(--white);
+}
+
+.app-btn-android {
+    background: #01875f;
+    color: var(--white);
+}
+
+.app-btn i {
+    font-size: var(--size-2xl);
+}
+
+.app-btn-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.app-btn-sub {
+    font-size: var(--size-sm);
+    opacity: 0.75;
+}
+
+.app-btn-main {
+    font-size: var(--size-lg);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ── Mockups ── */
+.app-mockups {
+    display: flex;
+    gap: var(--size-xl);
+    justify-content: center;
+    align-items: flex-end;
+    padding: var(--size-xl) 0 var(--size-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.app-mockups::-webkit-scrollbar {
+    display: none;
+}
+
+.mockup {
+    width: 200px;
+    flex-shrink: 0;
+    border-radius: var(--bk-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--bk-shadow-lg);
+    background: var(--off-white);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.mockup:nth-child(2),
+.mockup:nth-child(4) {
+    margin-bottom: var(--size-xl);
+}
+
+.mockup img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.mockup.scroll-from-bottom {
+    transform: translateY(60px) scale(0.95);
+}
+.mockup.scroll-from-left {
+    transform: translateX(-60px) scale(0.95);
+}
+.mockup.scroll-from-right {
+    transform: translateX(60px) scale(0.95);
+}
+
+.mockup.scroll-animated {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+}
+
+.mockup.scroll-animated:hover {
+    transform: translateY(-8px) scale(1.03) !important;
+    box-shadow: var(--bk-shadow-lg);
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.mockup.animated {
+    animation: float 6s ease-in-out infinite;
+}
+.mockup:nth-child(1).animated {
+    animation-delay: 0s;
+}
+.mockup:nth-child(2).animated {
+    animation-delay: 0.2s;
+}
+.mockup:nth-child(3).animated {
+    animation-delay: 0.4s;
+}
+.mockup:nth-child(4).animated {
+    animation-delay: 0.6s;
+}
+
+/* ── Mobile ── */
+@media (max-width: 560px) {
+    .app-buttons {
+        gap: var(--size-xs);
+    }
+
+    .app-btn {
+        flex: 1;
+        min-width: 160px;
+        padding: var(--size-sm) var(--size-xl);
+    }
+
+    .app-btn i {
+        font-size: var(--size-xl);
+    }
+
+    .app-btn-main {
+        font-size: var(--size-base);
+    }
+
+    .app-btn-sub {
+        font-size: var(--size-xs);
+    }
+
+    .app-mockups {
+        justify-content: flex-start;
+        padding: var(--size-md) 0 var(--size-sm);
+        gap: var(--size-md);
+    }
+
+    .mockup {
+        width: 140px;
+    }
+
+    .mockup:nth-child(2),
+    .mockup:nth-child(4) {
+        margin-bottom: var(--size-md);
+    }
+}
