@@ -78,15 +78,16 @@ foreach ($sections as $section) {
     echo renderBookTable($headers, $allBooks, $sectionName);
 }
 
-foreach ($booksBySection as $sectionName => $books) {
-    renderSectionHeader(
-        $sectionName,
-        "",
-    );
+// this will no longer be used
+// foreach ($booksBySection as $sectionName => $books) {
+//     renderSectionHeader(
+//         $sectionName,
+//         "",
+//     );
 
-    renderBookCards($books, false, $sectionName);
-    echo renderBookTable($headers, $allBooks, $sectionName);
-}
+//     renderBookCards($books, false, $sectionName);
+//     echo renderBookTable($headers, $allBooks, $sectionName);
+// }
 
 renderSectionHeader(
     "Academic Collection",
