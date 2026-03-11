@@ -836,7 +836,7 @@
     padding: 10px;
 
     overflow-x: auto;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     scrollbar-width: none;
 }
 

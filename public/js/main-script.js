@@ -12,34 +12,33 @@ document.addEventListener("DOMContentLoaded", function () {
             container.isPaused = false;
         });
 
-        function scrollLoop() {
-            if (!container.isPaused) {
-                if (direction === "right") {
-                    container.scrollLeft += scrollSpeed;
+        setTimeout(() => {
+            if (direction === "left") {
+                container.scrollLeft =
+                    container.scrollWidth - container.clientWidth;
+            }
 
-                    // STOP at end
-                    if (
-                        container.scrollLeft >=
-                        container.scrollWidth - container.clientWidth
-                    ) {
-                        return; // stop animation
-                    }
-                } else {
-                    container.scrollLeft -= scrollSpeed;
-
-                    // STOP at start
-                    if (container.scrollLeft <= 0) {
-                        return;
+            function scrollLoop() {
+                if (!container.isPaused) {
+                    if (direction === "right") {
+                        if (
+                            container.scrollLeft >=
+                            container.scrollWidth - container.clientWidth
+                        )
+                            return;
+                        container.scrollLeft += scrollSpeed;
+                    } else {
+                        if (container.scrollLeft <= 0) return;
+                        container.scrollLeft -= scrollSpeed;
                     }
                 }
+                requestAnimationFrame(scrollLoop);
             }
 
             requestAnimationFrame(scrollLoop);
-        }
-
-        requestAnimationFrame(scrollLoop);
+        }, 2000);
     }
-
+    
     document.querySelectorAll(".scroll-right").forEach((el) => {
         setupAutoScroll(el, "right");
     });
