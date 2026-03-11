@@ -11,11 +11,16 @@ require_once __DIR__ . "/../controllers/AcademicBookController.php";
 
 $bookController = new BookController($conn);
 $academicBookController = new AcademicBookController($conn);
-
 ?>
 
 <body>
     <?php require_once __DIR__ . "/includes/nav.php"; ?>
+
+    <?php
+    // echo "<pre>";
+    // print_r($homeController->books()["books"]["listings"]);
+    // echo "</pre>";
+    ?>
 
     <div class="jumbotron jumbotron-lg bg-dark text-white">
         <div class="container h-100 d-flex flex-column justify-content-end py-5">
@@ -36,24 +41,22 @@ $academicBookController = new AcademicBookController($conn);
         </div>
     </div>
 
-
-
     <div class="container">
         <?php
         include_once __DIR__ . "/includes/banner.php";
         ?>
     </div>
 
-    <section class="section" id="stylish-section">
+    <section class="section">
         <div class="container-fluid">
             <div class="container">
-                <?php renderSectionHeading("Recommended For You", "Your Next Great Read Starts Here.", "Show more", "/library") ?>
+                <?php renderSectionHeading("Latest Collections", "Fresh Off the Press — Discover the Newest Reads.", "Show more", "/library") ?>
             </div>
 
-            <div class="book-cards mt-4" id="recommended">
+            <div class="book-cards mt-4" id="latest_collections">
                 <div class="book-card-slide scroll-right">
                     <?php
-                    $bookController->renderBookCardByCategory();
+                    $bookController->renderBookCardByCategory("Latest Collections", 10);
                     ?>
                 </div>
 
@@ -100,18 +103,16 @@ $academicBookController = new AcademicBookController($conn);
         </div>
     </section>
 
-    <?php require_once __DIR__ . "/includes/mobile.php" ?>
+    <section class="section" id="stylish-section">
+        <div class="container-fluid">
+            <div class="container">
+                <?php renderSectionHeading("Recommended For You", "Your Next Great Read Starts Here.", "Show more", "/library") ?>
+            </div>
 
-    <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
-
-    <section class="section">
-        <div class="container">
-            <?php renderSectionHeading("Academic Listings", "Featured academic titles chosen by our editors.", "Show more", "/academic") ?>
-
-            <div class="book-cards mt-4" id="academic_listings">
-                <div class="book-card-slide">
+            <div class="book-cards mt-4" id="recommended">
+                <div class="book-card-slide scroll-right">
                     <?php
-                    $academicBookController->renderAcademicListingsForHome(10);
+                    $bookController->renderBookCardByCategory();
                     ?>
                 </div>
 
@@ -130,16 +131,19 @@ $academicBookController = new AcademicBookController($conn);
         </div>
     </section>
 
+    <?php require_once __DIR__ . "/includes/mobile.php" ?>
+
+    <?php include_once __DIR__ . "/includes/newsLetter.php" ?>
+
     <section class="section">
         <div class="container">
-            <?php renderSectionHeading("Latest Collections", "Fresh Off the Press — Discover the Newest Reads.", "Show more", "/library") ?>
+            <?php renderSectionHeading("Academic Listings", "Featured academic titles chosen by our editors.", "Show more", "/academic") ?>
 
-            <div class="book-cards mt-4" id="latest_collections">
+            <div class="book-cards mt-4" id="academic_listings">
                 <div class="book-card-slide">
                     <?php
-                    $bookController->renderListingsByCategory("Latest Collections", 10);
+                    $academicBookController->renderAcademicListingsForHome(10);
                     ?>
-
                 </div>
 
                 <div class="book-card-btn btn-left">
