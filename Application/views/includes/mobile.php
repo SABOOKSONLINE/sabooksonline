@@ -1,4 +1,4 @@
-<section class="section app-section">
+<section class="section app-section" id="mobile" style="scroll-margin-top: 100px;">
   <div class="container">
     <?php renderSectionHeading("Read. Listen. Discover.", "Explore books, magazines, newspapers and audiobooks — all in one app.", "", "#", "center") ?>
 
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="app-mockups">
+  <!-- <div class="app-mockups">
     <div class="mockup scroll-from-left" data-scroll>
       <img src="https://sabooksonline.co.za/cms-data/mobile/home.png" alt="Home screen" />
     </div>
@@ -33,10 +33,14 @@
     <div class="mockup scroll-from-bottom" data-scroll>
       <img src="https://sabooksonline.co.za/cms-data/mobile/media.png" alt="Media screen" />
     </div>
-  </div>
+  </div> -->
 </section>
 
-<script>
+<a href="#mobile">
+  <img style="width: 100%;" src="/public/images/banners/Download_app_on_homepage.png" alt="Home Page Ad">
+</a>
+
+<!-- <script>
   (function() {
     'use strict';
 
@@ -117,4 +121,4 @@
       document.body.style.opacity = '1';
     });
   })();
-</script>
+</script> -->
